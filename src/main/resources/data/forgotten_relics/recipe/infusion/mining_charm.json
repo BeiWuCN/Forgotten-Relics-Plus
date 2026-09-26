@@ -1,0 +1,27 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:instrumentum", "amount": 200 },
+    { "aspect": "thaumaturge:motus", "amount": 200 },
+    { "aspect": "thaumaturge:metallum", "amount": 175 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 200 }
+  ],
+  "catalyst": { "item": "botania:ring_of_far_reach" },
+  "components": [
+    { "item": "thaumaturge:elemental_pickaxe" },
+    { "item": "thaumaturge:crystal_terra" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "tag": "c:ingots/gold" },
+    {
+      "type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": { "minecraft:potion_contents": { "potion": "minecraft:long_swiftness" } }
+    },
+    { "item": "thaumaturge:crystal_terra" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "tag": "c:ingots/gold" }
+  ],
+  "instability": 1,
+  "research": { "entry": "forgotten_relics:mining_charm" },
+  "result": { "count": 1, "id": "forgotten_relics:mining_charm" }
+}

@@ -19,7 +19,7 @@
     },
     {
       "text": "fr.text.DimensionalMirror.2",
-      "recipes": [ "forgotten_relics:dimensional_mirror" ]
+      "recipes": [ "forgotten_relics:infusion/dimensional_mirror" ]
     }
   ],
   "complexity": 2

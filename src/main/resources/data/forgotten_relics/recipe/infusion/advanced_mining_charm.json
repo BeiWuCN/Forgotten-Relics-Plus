@@ -1,0 +1,29 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:instrumentum", "amount": 425 },
+    { "aspect": "thaumaturge:auram", "amount": 150 },
+    { "aspect": "thaumaturge:vitreus", "amount": 185 },
+    { "aspect": "thaumaturge:permutatio", "amount": 150 },
+    { "aspect": "thaumaturge:motus", "amount": 125 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 140 }
+  ],
+  "catalyst": { "item": "forgotten_relics:mining_charm" },
+  "components": [
+    { "item": "thaumaturge:vis_resonator" },
+    { "item": "thaumaturge:essentia_crystal" },
+    { "item": "botania:elementium_ingot" },
+    { "item": "botania:dragonstone" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:essentia_crystal" },
+    { "item": "thaumaturge:void_pickaxe" },
+    { "item": "thaumaturge:essentia_crystal" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "botania:dragonstone" },
+    { "item": "botania:elementium_ingot" },
+    { "item": "thaumaturge:essentia_crystal" }
+  ],
+  "instability": 8,
+  "research": { "entry": "forgotten_relics:advanced_mining_charm" },
+  "result": { "count": 1, "id": "forgotten_relics:advanced_mining_charm" }
+}

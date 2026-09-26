@@ -1,0 +1,24 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:alienis", "amount": 125 },
+    { "aspect": "thaumaturge:permutatio", "amount": 100 },
+    { "aspect": "thaumaturge:motus", "amount": 75 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 75 },
+    { "aspect": "thaumaturge:praemunio", "amount": 30 }
+  ],
+  "catalyst": { "item": "thaumaturge:ring_mundane" },
+  "components": [
+    { "item": "minecraft:ender_eye" },
+    { "item": "botania:pure_ender_essence" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "tag": "c:gems/emerald" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "botania:pure_ender_essence" }
+  ],
+  "instability": 4,
+  "research": { "entry": "forgotten_relics:ring_of_superposition" },
+  "result": { "count": 1, "id": "forgotten_relics:superposition_ring" }
+}

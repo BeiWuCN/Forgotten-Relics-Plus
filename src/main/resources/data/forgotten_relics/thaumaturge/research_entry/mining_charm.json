@@ -19,7 +19,7 @@
     },
     {
       "text": "fr.text.MiningCharm.2",
-      "recipes": [ "forgotten_relics:mining_charm" ]
+      "recipes": [ "forgotten_relics:infusion/mining_charm" ]
     }
   ],
   "note_aspects": [

@@ -19,7 +19,7 @@
     },
     {
       "text": "fr.text.WeatherStone.2",
-      "recipes": [ "forgotten_relics:weather_stone" ]
+      "recipes": [ "forgotten_relics:infusion/weather_stone" ]
     }
   ],
   "complexity": 2

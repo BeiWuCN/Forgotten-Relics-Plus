@@ -1,0 +1,32 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:motus", "amount": 65 },
+    { "aspect": "thaumaturge:aer", "amount": 85 },
+    { "aspect": "thaumaturge:aqua", "amount": 35 },
+    { "aspect": "thaumaturge:permutatio", "amount": 30 },
+    { "aspect": "thaumaturge:potentia", "amount": 75 }
+  ],
+  "catalyst": { "item": "thaumaturge:stone_arcane" },
+  "components": [
+    { "item": "botania:gaia_spirit" },
+    { "item": "minecraft:ghast_tear" },
+    { "item": "botania:rune_of_air" },
+    {
+      "type": "neoforge:components",
+      "items": "thaumaturge:celestial_notes",
+      "components": { "thaumaturge:celestial_body": "sun" }
+    },
+    { "item": "thaumaturge:nitor_white" },
+    {
+      "type": "neoforge:components",
+      "items": "thaumaturge:celestial_notes",
+      "components": { "thaumaturge:celestial_body": "moon_1" }
+    },
+    { "item": "botania:rune_of_air" },
+    { "item": "minecraft:ghast_tear" }
+  ],
+  "instability": 4,
+  "research": { "entry": "forgotten_relics:weather_stone" },
+  "result": { "count": 1, "id": "forgotten_relics:weather_stone" }
+}

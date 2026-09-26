@@ -22,7 +22,7 @@
     },
     {
       "text": "fr.text.AdvancedMiningCharm.2",
-      "recipes": [ "forgotten_relics:advanced_mining_charm" ]
+      "recipes": [ "forgotten_relics:infusion/advanced_mining_charm" ]
     }
   ],
   "complexity": 2

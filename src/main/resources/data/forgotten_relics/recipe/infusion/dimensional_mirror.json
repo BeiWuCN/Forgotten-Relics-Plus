@@ -1,0 +1,24 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:motus", "amount": 150 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 20 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 100 },
+    { "aspect": "thaumaturge:vacuos", "amount": 200 },
+    { "aspect": "thaumaturge:alienis", "amount": 10 }
+  ],
+  "catalyst": { "item": "thaumaturge:hand_mirror" },
+  "components": [
+    { "item": "botania:gaia_spirit" },
+    { "item": "minecraft:glowstone" },
+    { "item": "botania:dragonstone" },
+    { "item": "botania:pure_ender_essence" },
+    { "item": "thaumaturge:focus_2" },
+    { "item": "botania:pure_ender_essence" },
+    { "item": "botania:dragonstone" },
+    { "item": "minecraft:glowstone" }
+  ],
+  "instability": 6,
+  "research": { "entry": "forgotten_relics:dimensional_mirror" },
+  "result": { "count": 1, "id": "forgotten_relics:dimensional_mirror" }
+}

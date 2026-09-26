@@ -16,7 +16,7 @@
     },
     {
       "text": "fr.text.SuperpositionRing.2",
-      "recipes": [ "forgotten_relics:superposition_ring" ]
+      "recipes": [ "forgotten_relics:infusion/superposition_ring" ]
     }
   ],
   "complexity": 2

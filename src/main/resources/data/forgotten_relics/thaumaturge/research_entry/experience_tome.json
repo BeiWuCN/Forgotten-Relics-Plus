@@ -20,7 +20,7 @@
     },
     {
       "text": "fr.text.XPTome.2",
-      "recipes": [ "forgotten_relics:xp_tome" ]
+      "recipes": [ "forgotten_relics:infusion/xp_tome" ]
     }
   ],
   "complexity": 2
