@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_re.items;
 
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.registry.FRItems;
+import com.beiwu.forgottenrelics_re.utils.SoundHelper;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.chat.Component;
@@ -83,8 +84,8 @@ public class ItemSuperpositionRing extends FRCurioItem {
         other.teleportTo(hereLevel, here.x, here.y, here.z, other.getYRot(), other.getXRot());
         self.teleportTo(thereLevel, there.x, there.y, there.z, self.getYRot(), self.getXRot());
 
-        hereLevel.playSound(null, here.x, here.y, here.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, pitch);
-        thereLevel.playSound(null, there.x, there.y, there.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, pitch);
+        SoundHelper.play(hereLevel, here.x, here.y, here.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, pitch);
+        SoundHelper.play(thereLevel, there.x, there.y, there.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, pitch);
     }
 
     /**

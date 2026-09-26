@@ -52,6 +52,10 @@ public final class FRConfig {
     /** 引导时长（tick）。 */
     public static final ModConfigSpec.IntValue DIMENSIONAL_MIRROR_CHANNEL_DURATION;
 
+    // ---- 音效 / Sound ----
+    /** 全局音效音量倍率。原版音量偏大，这里统一压低。 */
+    public static final ModConfigSpec.DoubleValue SOUND_VOLUME_MULTIPLIER;
+
     // ---- Vis 上限 / Vis ----
     /** 符文天象石的最大 Vis 储量。 */
     public static final ModConfigSpec.IntValue WEATHER_STONE_MAX_CHARGE;
@@ -126,6 +130,15 @@ public final class FRConfig {
                 .comment("Channel duration in ticks for Dimensional Mirror.",
                          "空间魔镜的引导时长（tick）。")
                 .defineInRange("dimensionalMirrorChannelDuration", 80, 1, 32768);
+        builder.pop();
+
+        // 原版没有这一项：1.12.2 各处音量是写死的，最响的几处到了 8.0F，听感很吵。
+        // 这里新增一个总开关，把所有音效（含以后补的物品）统一压低。
+        builder.comment("音效（原版无此配置，为本模组新增）").push("sound");
+        SOUND_VOLUME_MULTIPLIER = builder
+                .comment("Global volume multiplier applied to every Forgotten Relics sound effect.",
+                         "本模组所有音效的音量倍率。原版音量偏大，默认降到 45%；设为 1.0 即恢复原版音量。")
+                .defineInRange("soundVolumeMultiplier", 0.45D, 0.0D, 1.0D);
         builder.pop();
 
         builder.comment("Vis 储量上限（原版分类 Vis）").push("vis");

@@ -303,6 +303,7 @@
   "item.OmegaCore1.lore": "§5持有它时你将获得永生",
   "item.OmegaCore2.lore": "§5提供无限的§6Vis",
   "tc.research_category.FORGOTTEN_RELICS": "失落遗物学",
+  "research_category.forgotten_relics.forgotten_relics": "失落遗物学",
   "fr.name.GenericTheory": "永恒遗物理论",
   "fr.name.SpellbookTheory": "法术典籍精要基础",
   "fr.name.MiningCharm": "挖掘之魅",

@@ -303,6 +303,7 @@
   "item.OmegaCore1.lore": "§5You are immortal while possessing it.",
   "item.OmegaCore2.lore": "§5Provides infinite §6Vis§5.",
   "tc.research_category.FORGOTTEN_RELICS": "Forgotten Relics",
+  "research_category.forgotten_relics.forgotten_relics": "Forgotten Relics",
   "fr.name.GenericTheory": "Theory of Eternal Artifacts",
   "fr.name.SpellbookTheory": "Basics of Spellbook Mastery",
   "fr.name.MiningCharm": "Mining Charm",

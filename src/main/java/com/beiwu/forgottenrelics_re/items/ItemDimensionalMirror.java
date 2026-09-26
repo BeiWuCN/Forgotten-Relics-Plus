@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_re.items;
 
 import com.beiwu.forgottenrelics_re.config.FRConfig;
+import com.beiwu.forgottenrelics_re.utils.SoundHelper;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -102,7 +103,7 @@ public class ItemDimensionalMirror extends FRRechargableItem {
                 tag.putInt(TAG_Z, player.blockPosition().getZ());
                 tag.putString(TAG_DIMENSION, level.dimension().location().toString());
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-                level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundHelper.play(level, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0F, 2.0F);
             }
             player.startUsingItem(hand);
@@ -155,8 +156,8 @@ public class ItemDimensionalMirror extends FRRechargableItem {
                     (Math.random() - 0.5D) * 3.0D, (Math.random() - 0.5D) * 3.0D, (Math.random() - 0.5D) * 3.0D, 0.05D);
         }
         float pitch = (float) (0.8D + Math.random() * 0.2D);
-        level.playSound(null, center.x, center.y, center.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, pitch);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, pitch);
+        SoundHelper.play(level, center.x, center.y, center.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, pitch);
+        SoundHelper.play(level, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, pitch);
     }
 
     @Override

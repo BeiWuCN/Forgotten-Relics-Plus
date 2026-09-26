@@ -9,6 +9,10 @@ version = "${mod_version}"
 displayName = "${mod_name}"
 authors = "${mod_authors}"
 description = '''${mod_description}'''
+# 模组列表里显示的图标。路径相对模组资源包根目录，图片放在 jar 根目录（与 curios、"Jade" 等一致）。
+# 由 Tools/make_logo.js 从 textures/item/omega_core.png 最近邻放大生成。
+logoFile = "logo.png"
+logoBlur = false
 
 [[dependencies."${mod_id}"]]
 modId = "neoforge"

@@ -5,7 +5,7 @@
   "column": 0,
   "row": 0,
   "meta": [ "round", "spiky", "hidden" ],
-  "icons": [ "forgotten_relics:omega_core" ],
+  "icons": [ "thaumaturge:curio_knowledge" ],
   "stages": [
     {
       "text": "fr.text.GenericTheory.1",

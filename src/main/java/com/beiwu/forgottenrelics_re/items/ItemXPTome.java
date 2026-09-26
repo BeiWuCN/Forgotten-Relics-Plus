@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_re.items;
 
 import com.beiwu.forgottenrelics_re.config.FRConfig;
+import com.beiwu.forgottenrelics_re.utils.SoundHelper;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -171,7 +172,7 @@ public class ItemXPTome extends FRItem {
                 CompoundTag tag = tag(stack);
                 tag.putBoolean(TAG_ABSORPTION, !isAbsorption(stack));
                 setTag(stack, tag);
-                level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS,
+                SoundHelper.play(level, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS,
                         1.0F, (float) (0.4D + Math.random() * 0.1D));
             } else {
                 // 潜行 + 右键：切换启用 / 停用
@@ -180,7 +181,7 @@ public class ItemXPTome extends FRItem {
                 tag.putBoolean(TAG_ACTIVE, nowActive);
                 setTag(stack, tag);
                 // 原版用的是 Thaumcraft 的飞行音效 SoundsTC.fly，这里用末影人传送音效代替
-                level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS,
+                SoundHelper.play(level, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS,
                         1.0F, (float) (0.8D + Math.random() * 0.2D));
                 // 同步附魔光效
                 stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, nowActive);

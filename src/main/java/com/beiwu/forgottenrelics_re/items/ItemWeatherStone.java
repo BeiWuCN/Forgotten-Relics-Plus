@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_re.items;
 
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.utils.CooldownHelper;
+import com.beiwu.forgottenrelics_re.utils.SoundHelper;
 import java.util.List;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -106,7 +107,7 @@ public class ItemWeatherStone extends FRRechargableItem {
         if (!com.leclowndu93150.thaumaturge.api.items.RechargeAccess.consumeCharge(stack, player, getVisCost())) {
             return;
         }
-        level.playSound(null, center.x, center.y, center.z, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS,
+        SoundHelper.play(level, center.x, center.y, center.z, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS,
                 1.0F, (float) (0.8D + Math.random() * 0.2D));
         if (level instanceof ServerLevel serverLevel) {
             // 停雨，并把下一次降雨推迟 24000 ~ 1000000 tick（原版是 24000 + 随机 0~976000）。
