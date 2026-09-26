@@ -76,6 +76,8 @@ dependencies {
 
 tasks.named('compileJava') {
     options.compilerArgs << '-Xmaxerrs' << '2000'
+    // 打开全部 javac 警告：IDEA 的黄色波浪线大多来自这里，编译期就暴露出来。
+    options.compilerArgs << '-Xlint:all'
     options.encoding = 'UTF-8'
 }
 
