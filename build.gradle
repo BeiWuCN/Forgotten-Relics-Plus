@@ -1,0 +1,129 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+version = mod_version
+group = mod_group_id
+base {
+    archivesName = "${mod_id}-${minecraft_version}-neoforge"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+repositories {
+    // 所有模组前置都是 libs/ 下的扁平文件，因此不需要任何模组 maven。
+    // 这里只留构建插件本身需要的仓库。
+    mavenLocal()
+    mavenCentral()
+}
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    // 只声明我们自己的 source set。Thaumaturge / Curios / TerraBlender 一律按 libs/ 里的
+    // 普通依赖解析，本项目不构建它们。
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+
+    runs {
+        client {
+            client()
+            // 需要快速进世界时： ./gradlew runClient -PquickPlay="世界名"
+            if (project.hasProperty('quickPlay')) {
+                programArguments.addAll '--quickPlaySingleplayer', project.property('quickPlay')
+            }
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    compileOnly "org.jspecify:jspecify:1.0.0"
+
+    // ---- 所有模组前置都是 libs/ 下的扁平 jar ----------------------------------
+    // Thaumaturge 不发布 maven 构件；扁平文件同时保证编译期用的就是运行期那一份。
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+tasks.named('compileJava') {
+    options.compilerArgs << '-Xmaxerrs' << '2000'
+    options.encoding = 'UTF-8'
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [minecraft_version      : minecraft_version,
+                             minecraft_version_range: minecraft_version_range,
+                             neo_version            : neo_version,
+                             neo_version_range      : neo_version_range,
+                             loader_version_range   : loader_version_range,
+                             mod_id                 : mod_id,
+                             mod_name               : mod_name,
+                             mod_license            : mod_license,
+                             mod_version            : mod_version,
+                             mod_authors            : mod_authors,
+                             mod_description        : mod_description]
+    inputs.properties replaceProperties
+    // expand 默认按平台编码读模板，mod_description 里的中文会变乱码，必须显式指定 UTF-8。
+    filteringCharset = 'UTF-8'
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+// 默认 test 任务关掉：真正有意义的校验需要在跑起来的游戏里做。
+tasks.named('test') {
+    enabled = false
+}
+
+jar {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_name,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : mod_name,
+                'Implementation-Version'  : mod_version,
+                'Implementation-Vendor'   : mod_authors
+        ])
+    }
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifactId = mod_id
+            from components.java
+        }
+    }
+}

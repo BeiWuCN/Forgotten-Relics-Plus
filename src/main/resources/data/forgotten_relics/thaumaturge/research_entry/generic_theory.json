@@ -1,0 +1,26 @@
+{
+  "category": "forgotten_relics:forgotten_relics",
+  "name": "fr.name.GenericTheory",
+  "parents": [ "thaumaturge:unlock_eldritch" ],
+  "column": 0,
+  "row": 0,
+  "meta": [ "round", "spiky", "hidden" ],
+  "icons": [ "forgotten_relics:omega_core" ],
+  "stages": [
+    {
+      "text": "fr.text.GenericTheory.1",
+      "required_knowledge": [
+        { "type": "theory", "category": "thaumaturge:artifice", "amount": 1 },
+        { "type": "theory", "category": "thaumaturge:eldritch", "amount": 1 }
+      ]
+    },
+    {
+      "text": "fr.text.GenericTheory.2"
+    }
+  ],
+  "note_aspects": [
+    { "aspect": "thaumaturge:praecantatio", "amount": 3 },
+    { "aspect": "thaumaturge:alienis", "amount": 2 }
+  ],
+  "complexity": 3
+}

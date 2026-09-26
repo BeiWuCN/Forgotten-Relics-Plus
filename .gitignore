@@ -1,0 +1,26 @@
+# Gradle
+build/
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.eclipse/
+.settings/
+bin/
+.classpath
+.project
+
+# 构建/校验脚本，按约定只放在本地，不入库
+Tools/
+
+# 参考产物（从上游 jar 解出来的格式样例）
+_refs/
+
+# 运行目录
+run/
+runs/
+
+# 本机开发用的前置 jar（体积大，不入库；见 libs/README.md）
+libs/*.jar

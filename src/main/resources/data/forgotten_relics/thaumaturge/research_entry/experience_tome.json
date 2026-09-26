@@ -1,0 +1,27 @@
+{
+  "category": "forgotten_relics:forgotten_relics",
+  "name": "fr.name.XPTome",
+  "parents": [ "forgotten_relics:weather_stone", "thaumaturge:jar_brain" ],
+  "column": -5,
+  "row": 2,
+  "icons": [ "forgotten_relics:xp_tome" ],
+  "stages": [
+    {
+      "text": "fr.text.XPTome.1",
+      "required_knowledge": [
+        { "type": "theory", "category": "thaumaturge:auromancy", "amount": 1 },
+        { "type": "theory", "category": "thaumaturge:artifice", "amount": 1 },
+        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 }
+      ],
+      "obtain": [
+        { "items": "thaumaturge:curio_arcane", "amount": 1 },
+        { "items": "minecraft:writable_book", "amount": 1 }
+      ]
+    },
+    {
+      "text": "fr.text.XPTome.2",
+      "recipes": [ "forgotten_relics:xp_tome" ]
+    }
+  ],
+  "complexity": 2
+}

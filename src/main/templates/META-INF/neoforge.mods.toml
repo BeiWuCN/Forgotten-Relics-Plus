@@ -1,0 +1,57 @@
+modLoader = "javafml"
+loaderVersion = "${loader_version_range}"
+license = "${mod_license}"
+issueTrackerURL = "https://github.com/gali2009/Forgotten-Relics-Unofficial/issues"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "${mod_authors}"
+description = '''${mod_description}'''
+
+[[dependencies."${mod_id}"]]
+modId = "neoforge"
+type = "required"
+versionRange = "${neo_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+# Thaumaturge 提供奥术合成、要素、灵气等本模组的全部内容基础。
+[[dependencies."${mod_id}"]]
+modId = "thaumaturge"
+type = "required"
+versionRange = "[0.4.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Botania 提供植物魔法相关材料与法杖 API（原版 1.12.2 就是硬依赖）。
+[[dependencies."${mod_id}"]]
+modId = "botania"
+type = "required"
+versionRange = "[457,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Curios 提供饰品栏（原版 1.12.2 用的是 Baubles）。
+[[dependencies."${mod_id}"]]
+modId = "curios"
+type = "required"
+versionRange = "[9.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# TerraBlender 是 Thaumaturge 的硬依赖，这里跟着声明。
+[[dependencies."${mod_id}"]]
+modId = "terrablender"
+type = "required"
+versionRange = "[4.1.0.0,)"
+ordering = "AFTER"
+side = "BOTH"

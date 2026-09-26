@@ -1,0 +1,26 @@
+{
+  "category": "forgotten_relics:forgotten_relics",
+  "name": "fr.name.DimensionalMirror",
+  "parents": [ "forgotten_relics:generic_theory", "thaumaturge:mirror_hand" ],
+  "column": 0,
+  "row": 3,
+  "meta": [ "spiky" ],
+  "icons": [ "forgotten_relics:dimensional_mirror" ],
+  "stages": [
+    {
+      "text": "fr.text.DimensionalMirror.1",
+      "required_knowledge": [
+        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 },
+        { "type": "theory", "category": "thaumaturge:artifice", "amount": 1 }
+      ],
+      "craft": [
+        { "items": "thaumaturge:hand_mirror", "amount": 1 }
+      ]
+    },
+    {
+      "text": "fr.text.DimensionalMirror.2",
+      "recipes": [ "forgotten_relics:dimensional_mirror" ]
+    }
+  ],
+  "complexity": 2
+}
