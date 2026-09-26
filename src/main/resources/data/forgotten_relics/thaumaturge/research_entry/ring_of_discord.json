@@ -1,0 +1,27 @@
+{
+  "category": "forgotten_relics:forgotten_relics",
+  "name": "fr.name.DiscordRing",
+  "parents": [ "forgotten_relics:deific_amulet", "thaumaturge:unlock_eldritch" ],
+  "column": 1,
+  "row": -4,
+  "meta": [ "round" ],
+  "icons": [ "forgotten_relics:discord_ring" ],
+  "stages": [
+    {
+      "text": "fr.text.DiscordRing.1",
+      "required_knowledge": [
+        { "type": "theory", "category": "thaumaturge:eldritch", "amount": 1 },
+        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 }
+      ]
+    },
+    {
+      "text": "fr.text.DiscordRing.2",
+      "recipes": [ "forgotten_relics:infusion/discord_ring" ]
+    }
+  ],
+  "note_aspects": [
+    { "aspect": "thaumaturge:permutatio", "amount": 3 },
+    { "aspect": "thaumaturge:motus", "amount": 3 }
+  ],
+  "complexity": 2
+}

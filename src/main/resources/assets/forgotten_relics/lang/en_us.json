@@ -1,4 +1,5 @@
 {
+  "key.categories.ForgottenRelicsRE": "Forgotten Relics",
   "itemGroup.tabForgottenRelics": "Forgotten Relics RE",
   "death.attack.trueDamage": "%1$s was judged to death by %2$s.",
   "death.attack.trueDamageUndef": "%1$s was judged to death.",

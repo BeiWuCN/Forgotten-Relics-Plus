@@ -126,6 +126,48 @@ public final class FRConfig {
     /** 湮灭护符的最大 Vis 储量。 */
     public static final ModConfigSpec.IntValue OBLIVION_AMULET_MAX_CHARGE;
 
+    // ---- 日耀石 / Shiny Stone ----
+    /** 静止判定间隔（tick）。 */
+    public static final ModConfigSpec.IntValue SHINY_STONE_CHECK_RATE;
+    /** 静止累计达到该值时进入第 2 档回血速度。 */
+    public static final ModConfigSpec.IntValue SHINY_STONE_THRESHOLD_2;
+    /** 静止累计达到该值时进入第 3 档回血速度。 */
+    public static final ModConfigSpec.IntValue SHINY_STONE_THRESHOLD_3;
+    /** 静止累计达到该值时进入第 4 档回血速度。 */
+    public static final ModConfigSpec.IntValue SHINY_STONE_THRESHOLD_4;
+    /** 每次判定静止时累计值的增量。 */
+    public static final ModConfigSpec.IntValue SHINY_STONE_STILL_INCREMENT;
+    /** 每次回血回复的生命值。 */
+    public static final ModConfigSpec.DoubleValue SHINY_STONE_HEAL_AMOUNT;
+
+    // ---- 浑浊之核 / Nebulous Core（注册名 arcanum）----
+    /** 被动生成 Vis 的概率倍率。 */
+    public static final ModConfigSpec.DoubleValue ARCANUM_GEN_RATE;
+    /** 每 tick 随机传送的概率。 */
+    public static final ModConfigSpec.DoubleValue ARCANUM_TELEPORT_CHANCE;
+    /** 随机传送的最大距离（格）。 */
+    public static final ModConfigSpec.IntValue ARCANUM_TELEPORT_RANGE;
+    /** 每 tick 转化为休眠态的概率。 */
+    public static final ModConfigSpec.DoubleValue ARCANUM_DORMANT_TRANSFORM_CHANCE;
+    /** 休眠态寿命的最小值。 */
+    public static final ModConfigSpec.IntValue ARCANUM_DORMANT_LIFE_MIN;
+    /** 休眠态寿命的最大值。 */
+    public static final ModConfigSpec.IntValue ARCANUM_DORMANT_LIFE_MAX;
+    /** 提供的 Vis 折扣（百分比）。 */
+    public static final ModConfigSpec.DoubleValue ARCANUM_VIS_DISCOUNT;
+    /** 浑浊之核的最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue ARCANUM_MAX_CHARGE;
+    /** 佩戴浑浊之核时的受击闪避概率。 */
+    public static final ModConfigSpec.DoubleValue NEBULOUS_CORE_DODGE_CHANCE;
+
+    // ---- 休眠浑浊之核 / Dormant Nebulous Core ----
+    /** 每 tick 唤醒消耗的 Vis。 */
+    public static final ModConfigSpec.IntValue DORMANT_ARCANUM_VIS_COST_PER_TICK;
+    /** 休眠浑浊之核的最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue DORMANT_ARCANUM_MAX_CHARGE;
+    /** 转化为休眠态时的寿命倍率。 */
+    public static final ModConfigSpec.DoubleValue DORMANT_ARCANUM_VIS_MULT;
+
     // ---- 恐惧之冠 / Crown of Terror ----
     /** 挑拨怪物互相攻击的作用半径（格）。 */
     public static final ModConfigSpec.IntValue TERROR_CROWN_HAVOC_RANGE;
@@ -354,6 +396,78 @@ public final class FRConfig {
         OBLIVION_AMULET_MAX_CHARGE = builder
                 .comment("Max Vis charge for Amulet of The Oblivion.", "湮灭护符的最大 Vis 储量。")
                 .defineInRange("oblivionAmuletMaxCharge", 400, 0, 32768);
+        builder.pop();
+
+        builder.comment("日耀石（原版分类 Shiny Stone）").push("shiny_stone");
+        SHINY_STONE_CHECK_RATE = builder
+                .comment("Interval in ticks between stillness checks.",
+                         "日耀石的静止判定间隔（tick）。")
+                .defineInRange("shinyStoneCheckrate", 4, 1, 32768);
+        SHINY_STONE_THRESHOLD_2 = builder
+                .comment("Still-tick threshold for the second heal rate.",
+                         "静止累计达到该值时进入第 2 档回血速度。")
+                .defineInRange("shinyStoneStillThreshold2", 40, 0, 32768);
+        SHINY_STONE_THRESHOLD_3 = builder
+                .comment("Still-tick threshold for the third heal rate.",
+                         "静止累计达到该值时进入第 3 档回血速度。")
+                .defineInRange("shinyStoneStillThreshold3", 80, 0, 32768);
+        SHINY_STONE_THRESHOLD_4 = builder
+                .comment("Still-tick threshold for the fourth heal rate.",
+                         "静止累计达到该值时进入第 4 档回血速度。")
+                .defineInRange("shinyStoneStillThreshold4", 200, 0, 32768);
+        SHINY_STONE_STILL_INCREMENT = builder
+                .comment("Increment added to the still counter on each successful check.",
+                         "每次判定静止时，累计值的增量。")
+                .defineInRange("shinyStoneStillIncrement", 4, 0, 32768);
+        SHINY_STONE_HEAL_AMOUNT = builder
+                .comment("Health restored per heal tick.", "每次回血回复的生命值。")
+                .defineInRange("shinyStoneHealAmount", 1.0D, 0.0D, 32768.0D);
+        builder.pop();
+
+        builder.comment("浑浊之核与休眠态（原版分类 Nebulous Core）").push("arcanum");
+        ARCANUM_GEN_RATE = builder
+                .comment("Multiplier applied to the 2.5% per-tick chance of generating Vis.",
+                         "浑浊之核被动生成 Vis 的概率倍率（基础概率 2.5%）。")
+                .defineInRange("arcanumGenRate", 1.0D, 0.0D, 1024.0D);
+        ARCANUM_TELEPORT_CHANCE = builder
+                .comment("Chance per tick to teleport the wearer at random.",
+                         "浑浊之核每 tick 随机传送佩戴者的概率。")
+                .defineInRange("arcanumTeleportChance", 0.000208D, 0.0D, 1.0D);
+        ARCANUM_TELEPORT_RANGE = builder
+                .comment("Maximum teleport distance in blocks.", "随机传送的最大距离（格）。")
+                .defineInRange("arcanumTeleportRange", 32, 1, 256);
+        ARCANUM_DORMANT_TRANSFORM_CHANCE = builder
+                .comment("Chance per tick to fall dormant.",
+                         "浑浊之核每 tick 转化为休眠态的概率。")
+                .defineInRange("arcanumDormantTransformChance", 0.000027D, 0.0D, 1.0D);
+        ARCANUM_DORMANT_LIFE_MIN = builder
+                .comment("Minimum dormant lifetime.", "休眠态寿命的最小值。")
+                .defineInRange("arcanumDormantLifeMin", 12, 0, 32768);
+        ARCANUM_DORMANT_LIFE_MAX = builder
+                .comment("Maximum dormant lifetime.", "休眠态寿命的最大值。")
+                .defineInRange("arcanumDormantLifeMax", 72, 0, 32768);
+        ARCANUM_VIS_DISCOUNT = builder
+                .comment("Vis discount percentage granted by Nebulous Core.",
+                         "浑浊之核提供的 Vis 折扣（百分比）。")
+                .defineInRange("arcanumVisDiscount", 35.0D, 0.0D, 100.0D);
+        ARCANUM_MAX_CHARGE = builder
+                .comment("Max Vis charge for Nebulous Core.", "浑浊之核的最大 Vis 储量。")
+                .defineInRange("arcanumMaxCharge", 500, 0, 32768);
+        NEBULOUS_CORE_DODGE_CHANCE = builder
+                .comment("Chance to dodge an incoming attack while wearing Nebulous Core.",
+                         "佩戴浑浊之核时闪避一次攻击的概率。")
+                .defineInRange("nebulousCoreDodgeChance", 0.4D, 0.0D, 1.0D);
+        DORMANT_ARCANUM_VIS_COST_PER_TICK = builder
+                .comment("Vis consumed per tick while dormant.",
+                         "休眠浑浊之核每 tick 唤醒消耗的 Vis。")
+                .defineInRange("dormantArcanumVisCostPerTick", 3, 0, 32768);
+        DORMANT_ARCANUM_MAX_CHARGE = builder
+                .comment("Max Vis charge for Dormant Nebulous Core.", "休眠浑浊之核的最大 Vis 储量。")
+                .defineInRange("dormantArcanumMaxCharge", 300, 0, 32768);
+        DORMANT_ARCANUM_VIS_MULT = builder
+                .comment("Lifetime multiplier applied when falling dormant.",
+                         "转化为休眠态时的寿命倍率。")
+                .defineInRange("dormantArcanumVisMult", 1.0D, 0.0D, 1024.0D);
         builder.pop();
 
         builder.comment("恐惧之冠（原版分类 Crown of Terror）").push("terror_crown");

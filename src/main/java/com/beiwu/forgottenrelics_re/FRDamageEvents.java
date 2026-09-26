@@ -61,6 +61,29 @@ public final class FRDamageEvents {
         handleOblivionAmulet(event, player, source);
         handleDeificAmulet(event, player);
         handleAncientAegis(event, player, source);
+        handleArcanumDodge(event, player, source);
+    }
+
+    /**
+     * 浑浊之核：受击时按概率闪避，并随机传送走。
+     *
+     * <p>对应原版 {@code RelicsEventHandler.onEntityAttacked} 里
+     * 「{@code hasBauble(player, arcanum) && random < nebulousCoreDodgeChance}」那一段：
+     * 最多尝试 32 次随机传送，成功一次就把这次伤害整个取消掉，并给 20 tick 无敌。
+     */
+    private static void handleArcanumDodge(LivingIncomingDamageEvent event, Player player, DamageSource source) {
+        if (FRDamageTypes.isAbsolute(source)
+                || !CurioHelper.isEquipped(player, FRItems.ARCANUM.get())
+                || player.getRandom().nextDouble() >= FRConfig.NEBULOUS_CORE_DODGE_CHANCE.get()) {
+            return;
+        }
+        if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) {
+            return;
+        }
+        if (com.beiwu.forgottenrelics_re.items.ItemArcanum.tryDodgeTeleport(serverPlayer)) {
+            event.setInvulnerabilityTicks(20);
+            event.setCanceled(true);
+        }
     }
 
     /**

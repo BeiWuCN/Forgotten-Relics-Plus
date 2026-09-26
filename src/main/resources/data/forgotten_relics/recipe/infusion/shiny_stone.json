@@ -1,0 +1,24 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:victus", "amount": 375 },
+    { "aspect": "thaumaturge:vinculum", "amount": 100 },
+    { "aspect": "thaumaturge:permutatio", "amount": 100 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 100 },
+    { "aspect": "thaumaturge:vitreus", "amount": 200 }
+  ],
+  "catalyst": { "item": "botania:dragonstone" },
+  "components": [
+    { "item": "thaumaturge:vis_resonator" },
+    { "tag": "c:ingots/gold" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:nitor_white" },
+    { "item": "minecraft:enchanted_golden_apple" },
+    { "item": "thaumaturge:nitor_white" },
+    { "item": "botania:gaia_spirit" },
+    { "tag": "c:ingots/gold" }
+  ],
+  "instability": 8,
+  "research": { "entry": "forgotten_relics:shiny_stone" },
+  "result": { "count": 1, "id": "forgotten_relics:shiny_stone" }
+}

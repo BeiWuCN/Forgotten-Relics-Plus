@@ -40,6 +40,10 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.DEIFIC_AMULET.get());
                         output.accept(FRItems.OBLIVION_AMULET.get());
                         output.accept(FRItems.TERROR_CROWN.get());
+                        output.accept(FRItems.SHINY_STONE.get());
+                        output.accept(FRItems.ARCANUM.get());
+                        output.accept(FRItems.DORMANT_ARCANUM.get());
+                        output.accept(FRItems.DISCORD_RING.get());
                     })
                     .build());
 

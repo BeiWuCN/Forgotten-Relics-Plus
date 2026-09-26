@@ -1,0 +1,27 @@
+{
+  "category": "forgotten_relics:forgotten_relics",
+  "name": "fr.name.ShinyStone",
+  "parents": [ "forgotten_relics:deific_amulet", "thaumaturge:infusion" ],
+  "column": 4,
+  "row": -6,
+  "meta": [ "hidden" ],
+  "icons": [ "forgotten_relics:shiny_stone" ],
+  "stages": [
+    {
+      "text": "fr.text.ShinyStone.1",
+      "required_knowledge": [
+        { "type": "theory", "category": "thaumaturge:auromancy", "amount": 1 },
+        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 }
+      ]
+    },
+    {
+      "text": "fr.text.ShinyStone.2",
+      "recipes": [ "forgotten_relics:infusion/shiny_stone" ]
+    }
+  ],
+  "note_aspects": [
+    { "aspect": "thaumaturge:victus", "amount": 3 },
+    { "aspect": "thaumaturge:vitreus", "amount": 3 }
+  ],
+  "complexity": 3
+}

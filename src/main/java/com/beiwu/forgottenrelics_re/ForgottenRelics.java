@@ -44,6 +44,22 @@ public final class ForgottenRelics {
         // 配置文件：与原版 1.12.2 的 RelicsConfigHandler 一一对应
         container.registerConfig(ModConfig.Type.COMMON, FRConfig.SPEC);
 
+        modBus.addListener(this::onCommonSetup);
+
         LOGGER.info("失落遗物学（非官方）正在加载……");
+    }
+
+    /**
+     * 通用初始化：报告本模组注册了多少件物品。
+     *
+     * <p>物品注册表在 common setup 之前就已经填好，所以这里能安全地数。
+     * 这条日志是给「迁移进度」做硬校验用的——加了新物品却在日志里看不到数量上涨，
+     * 就说明 DeferredRegister 没登记上，比只看编译通过可靠。
+     */
+    private void onCommonSetup(net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
+        long count = net.minecraft.core.registries.BuiltInRegistries.ITEM.keySet().stream()
+                .filter(key -> key.getNamespace().equals(MOD_ID))
+                .count();
+        LOGGER.info("失落遗物学：已注册 {} 件物品", count);
     }
 }
