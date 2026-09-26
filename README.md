@@ -51,7 +51,7 @@
 - 第二位 —— **第几波饰品**。每完成一批新的遗物物品就 +1；
 - 第三位 —— **修复版本**。每完成一批修复（哪怕是工程性修复）就 +1。
 
-例如 `1.1.4` 表示：1.21.1 线上的**第 1 波饰品**，累计到**第 4 个修复版本**。
+例如 `1.2.0` 表示：1.21.1 线上的**第 2 波饰品**，尚未有额外修复版本。
 
 ---
 
@@ -81,9 +81,9 @@
 
 ## 移植进度
 
-原版共 **34** 件物品，目前已移植 **6** 件。进度按「一个物品一个物品」推进。
+原版共 **34** 件物品，目前已移植 **11** 件。进度按「若干个物品一波」推进。
 
-### 已完成（第 1 波）
+### 已完成（第 1 波：6 件）
 
 | 物品 | 中文名 | 类型 | 研究 |
 | --- | --- | --- | --- |
@@ -94,20 +94,35 @@
 | `weather_stone` | 符文天象石 | 物品 | ✅ |
 | `xp_tome` | 永恒智慧之书 | 物品 | ✅ |
 
-同时完成了研究分类「失落遗物学」与 7 个研究词条、6 个灌注配方。
+### 已完成（第 2 波：5 件）
 
-### 待移植（28 件）
+| 物品 | 中文名 | 类型 | 研究 |
+| --- | --- | --- | --- |
+| `ancient_aegis` | 远古之庇护 | 饰品（腰带） | ✅ |
+| `dark_sun_ring` | 七阳之戒 | 饰品（戒指） | ✅ |
+| `deific_amulet` | 神圣护身符 | 饰品（护身符） | ✅ |
+| `oblivion_amulet` | 湮灭护符 | 饰品（护身符） | ✅ |
+| `terror_crown` | 恐惧之冠 | 护甲 + 饰品（头饰） | ✅ |
 
-`ancient_aegis`（远古之庇护）、`chaos_core`（混沌之核）、`dark_sun_ring`（七阳之戒）、
-`shiny_stone`（日耀石）、`terror_crown`（恐惧之冠）、`paradox`（悖论之刃）、
-`deific_amulet`（神圣护身符）、`oblivion_stone`（遗忘之石）、`oblivion_amulet`（湮灭护符）、
-`arcanum`（浑浊之核）、`dormant_arcanum`（休眠浑浊之核）、`omega_core`（欧米伽之核）、
-`false_justice`（虚伪审判）、`tome_of_broken_fates`（破碎的命运巨著）、
-`tome_of_predestiny`（命运巨著）、`nuclear_fury`（原子之怒）、`crimson_spell`（血腥咒书）、
+第 2 波同时引入了：
+研究分类「失落遗物学」延续、共 12 个研究词条、11 个灌注配方；
+自定义伤害类型（湮灭 / 超维）、物品数据组件（储存伤害、无敌帧冷却）；
+以及用 **Curios `ICurioRenderer` + 烘焙模型层** 重写的恐惧之冠佩戴渲染
+（取代 1.12.2 往 `RenderPlayer` 挂渲染层的做法）。
+
+### 待移植（23 件）
+
+`chaos_core`（混沌之核）、`shiny_stone`（日耀石）、`paradox`（悖论之刃）、
+`oblivion_stone`（遗忘之石）、`arcanum`（浑浊之核）、`dormant_arcanum`（休眠浑浊之核）、
+`omega_core`（欧米伽之核）、`false_justice`（虚伪审判）、
+`tome_of_broken_fates`（破碎的命运巨著）、`tome_of_predestiny`（命运巨著）、
+`nuclear_fury`（原子之怒）、`crimson_spell`（血腥咒书）、
 `devourer_of_the_void`（虚空吞噬者之书）、`eldritch_spell`（邪术咒书）、
 `tome_of_lunar_flares`（月耀咒书）、`tome_of_discord`（错位之典）、`soul_tome`（千魂号令之典）、
 `apotheosis`（王之宝典）、`tome_of_primal_chaos`（元始混沌之书）、`thunderpeal`（霹雳咒书）、
 `edict_of_banishment`（炼狱放逐咒书）、`void_grimoire`（深渊之魔书）、`discord_ring`（不和谐之戒）
+
+> 剩余的书籍类物品大多需要自定义弹射物实体与渲染器，届时同样采用现代化的写法。
 
 > 贴图、模型与语言键已随首次提交整批就位（`assets/` 下 34 套已齐），
 > 因此后续每个物品只要补 Java 实现、配方与研究即可。
@@ -154,14 +169,18 @@ gradlew.bat runData
 src/main/java/com/beiwu/forgottenrelics_re/
 ├── ForgottenRelics.java        # 模组主类
 ├── FRCommonEvents.java         # 公共事件
+├── FRDamageEvents.java         # 伤害事件（减伤、转嫁、反弹、吸收）
+├── client/                     # 客户端渲染（饰品佩戴渲染、模型层注册）
 ├── config/FRConfig.java        # 配置（对应原版 RelicsConfigHandler）
 ├── items/                      # 物品实现
-├── registry/                   # 物品与创造模式标签页注册
-└── utils/                      # 工具类（冷却、饰品栏、音效等）
+├── registry/                   # 物品、护甲材质、数据组件、创造模式标签页注册
+└── utils/                      # 工具类（冷却、饰品栏、音效、伤害类型等）
 
 src/main/resources/
 ├── assets/forgotten_relics/    # 贴图、模型、语言文件
+│   └── textures/models/armor/  # 护甲层贴图
 ├── data/forgotten_relics/
+│   ├── damage_type/            # 自定义伤害类型
 │   ├── recipe/infusion/        # 灌注配方
 │   └── thaumaturge/            # 研究分类与研究词条
 └── data/curios/tags/item/      # 饰品栏位归属

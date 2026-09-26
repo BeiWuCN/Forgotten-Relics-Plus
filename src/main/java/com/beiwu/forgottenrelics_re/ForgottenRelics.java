@@ -1,7 +1,9 @@
 package com.beiwu.forgottenrelics_re;
 
 import com.beiwu.forgottenrelics_re.config.FRConfig;
+import com.beiwu.forgottenrelics_re.registry.FRArmorMaterials;
 import com.beiwu.forgottenrelics_re.registry.FRCreativeTabs;
+import com.beiwu.forgottenrelics_re.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_re.registry.FRItems;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -35,6 +37,8 @@ public final class ForgottenRelics {
     public ForgottenRelics(IEventBus modBus, ModContainer container) {
         // 注册表挂到模组事件总线上
         FRItems.register(modBus);
+        FRArmorMaterials.register(modBus);
+        FRDataComponents.register(modBus);
         FRCreativeTabs.register(modBus);
 
         // 配置文件：与原版 1.12.2 的 RelicsConfigHandler 一一对应

@@ -26,9 +26,8 @@ public final class FRCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FORGOTTEN_RELICS =
             TABS.register("forgotten_relics", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.tabForgottenRelics"))
-                    // 原版图标是恐惧王冠；该物品尚未移植，先用已有的采矿护符占位，
-                    // 等 ItemTerrorCrown 移植过来再换回去。
-                    .icon(() -> new ItemStack(FRItems.ADVANCED_MINING_CHARM.get()))
+                    // 原版标签页图标就是恐惧之冠，移植完成后换回它。
+                    .icon(() -> new ItemStack(FRItems.TERROR_CROWN.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(FRItems.MINING_CHARM.get());
                         output.accept(FRItems.ADVANCED_MINING_CHARM.get());
@@ -36,6 +35,11 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.WEATHER_STONE.get());
                         output.accept(FRItems.XP_TOME.get());
                         output.accept(FRItems.DIMENSIONAL_MIRROR.get());
+                        output.accept(FRItems.ANCIENT_AEGIS.get());
+                        output.accept(FRItems.DARK_SUN_RING.get());
+                        output.accept(FRItems.DEIFIC_AMULET.get());
+                        output.accept(FRItems.OBLIVION_AMULET.get());
+                        output.accept(FRItems.TERROR_CROWN.get());
                     })
                     .build());
 

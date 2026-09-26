@@ -2,11 +2,17 @@ package com.beiwu.forgottenrelics_re.registry;
 
 import com.beiwu.forgottenrelics_re.ForgottenRelics;
 import com.beiwu.forgottenrelics_re.items.ItemAdvancedMiningCharm;
+import com.beiwu.forgottenrelics_re.items.ItemAncientAegis;
+import com.beiwu.forgottenrelics_re.items.ItemDarkSunRing;
+import com.beiwu.forgottenrelics_re.items.ItemDeificAmulet;
 import com.beiwu.forgottenrelics_re.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_re.items.ItemMiningCharm;
+import com.beiwu.forgottenrelics_re.items.ItemOblivionAmulet;
 import com.beiwu.forgottenrelics_re.items.ItemSuperpositionRing;
+import com.beiwu.forgottenrelics_re.items.ItemTerrorCrown;
 import com.beiwu.forgottenrelics_re.items.ItemWeatherStone;
 import com.beiwu.forgottenrelics_re.items.ItemXPTome;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
@@ -61,6 +67,41 @@ public final class FRItems {
     /** 经验之书（Tome of Ageless Wisdom，注册名 xp_tome）。原版稀有度 EPIC。 */
     public static final DeferredItem<ItemXPTome> XP_TOME =
             ITEMS.registerItem("xp_tome", ItemXPTome::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    // ---- 第二波：腰带 / 戒指 / 护身符 / 头饰 ----
+
+    /** 远古之庇护（Ancient Aegis）。原版稀有度 EPIC，BELT 槽。 */
+    public static final DeferredItem<ItemAncientAegis> ANCIENT_AEGIS =
+            ITEMS.registerItem("ancient_aegis", ItemAncientAegis::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /** 七阳之戒（Ring of The Seven Suns）。原版稀有度 EPIC，RING 槽。 */
+    public static final DeferredItem<ItemDarkSunRing> DARK_SUN_RING =
+            ITEMS.registerItem("dark_sun_ring", ItemDarkSunRing::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /** 神圣护身符（Deific Amulet）。原版稀有度 EPIC，AMULET 槽。 */
+    public static final DeferredItem<ItemDeificAmulet> DEIFIC_AMULET =
+            ITEMS.registerItem("deific_amulet", ItemDeificAmulet::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /** 湮灭护符（Amulet of The Oblivion）。原版稀有度 EPIC，AMULET 槽。 */
+    public static final DeferredItem<ItemOblivionAmulet> OBLIVION_AMULET =
+            ITEMS.registerItem("oblivion_amulet", ItemOblivionAmulet::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 恐惧之冠（Crown of Terror）。原版稀有度 EPIC。
+     *
+     * <p>它是本模组唯一的护甲类物品：既能戴在头盔位（{@code ArmorItem}），也能放进 Curios 的
+     * {@code head} 槽。原版是金材质 + {@code setMaxDamage(1000)}，这里护甲值走自定义材质
+     * {@link FRArmorMaterials#TERROR_CROWN}，耐久度在 {@code Item.Properties} 上单独给。
+     */
+    public static final DeferredItem<ItemTerrorCrown> TERROR_CROWN =
+            ITEMS.registerItem("terror_crown",
+                    properties -> new ItemTerrorCrown(FRArmorMaterials.TERROR_CROWN, ArmorItem.Type.HELMET,
+                            properties.durability(1000)),
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {
