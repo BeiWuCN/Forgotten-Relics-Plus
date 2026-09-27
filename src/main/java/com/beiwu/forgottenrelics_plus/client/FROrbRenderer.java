@@ -114,7 +114,7 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
         float scale = baseScale * (1.0F + bob);
 
         poseStack.pushPose();
-        // 面朝相机：与 Thaumaturge 的 EldritchOrbRenderer 同一写法。
+        // 面朝相机（标准公告板写法，纯原版 API，不依赖任何前置模组）。
         poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
         poseStack.scale(scale, scale, scale);
 
