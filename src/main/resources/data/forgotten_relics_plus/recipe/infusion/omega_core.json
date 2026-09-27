@@ -3,18 +3,13 @@
     { "type": "neoforge:mod_loaded", "modid": "avaritia" }
   ],
   "type": "thaumaturge:infusion",
-  "aspects": [
-    { "aspect": "thaumaturge:praecantatio", "amount": 200 },
-    { "aspect": "thaumaturge:auram", "amount": 160 },
-    { "aspect": "thaumaturge:vacuos", "amount": 160 },
-    { "aspect": "thaumaturge:alienis", "amount": 128 },
-    { "aspect": "thaumaturge:potentia", "amount": 128 },
-    { "aspect": "thaumaturge:cognitio", "amount": 96 },
-    { "aspect": "thaumaturge:permutatio", "amount": 96 },
-    { "aspect": "thaumaturge:motus", "amount": 96 },
-    { "aspect": "thaumaturge:lux", "amount": 64 },
-    { "aspect": "thaumaturge:ordo", "amount": 64 },
-    { "aspect": "thaumaturge:perditio", "amount": 64 }
+    "aspects": [
+    { "aspect": "thaumaturge:aer", "amount": 256 },
+    { "aspect": "thaumaturge:aqua", "amount": 256 },
+    { "aspect": "thaumaturge:ignis", "amount": 256 },
+    { "aspect": "thaumaturge:terra", "amount": 256 },
+    { "aspect": "thaumaturge:ordo", "amount": 256 },
+    { "aspect": "thaumaturge:perditio", "amount": 256 }
   ],
   "catalyst": { "item": "avaritia:enhancement_core" },
   "components": [
