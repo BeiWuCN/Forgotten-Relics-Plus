@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.FRRechargable;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.utils.SoundHelper;
 import java.util.List;
@@ -49,7 +50,7 @@ import net.minecraft.world.phys.Vec3;
  * <p>注意：原版还会在蓄力时用 {@code SuperpositionHandler.imposeBurst} 发一个网络包给周围玩家做特效。
  * 1.21.1 里粒子由服务端 {@code sendParticles} 直接广播，不再需要网络包。
  */
-public class ItemDimensionalMirror extends FRRechargableItem {
+public class ItemDimensionalMirror extends FRItem implements FRRechargable {
 
     private static final String TAG_X = "IStoredX";
     private static final String TAG_Y = "IStoredY";

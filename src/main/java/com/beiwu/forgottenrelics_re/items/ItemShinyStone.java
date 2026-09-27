@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.WearerTickBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.registry.FRDataComponents;
 import java.util.List;
@@ -9,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import top.theillusivec4.curios.api.SlotContext;
 
 /**
  * 日耀石（Shiny Stone），1.12.2 原版 {@code ItemShinyStone}，护符槽。
@@ -26,17 +26,14 @@ import top.theillusivec4.curios.api.SlotContext;
  *       直接用 {@link ServerLevel#sendParticles} 发原版粒子即可，省掉实体注册与同步开销。</li>
  * </ul>
  */
-public class ItemShinyStone extends FRCurioItem {
+public class ItemShinyStone extends FRCurioItem implements WearerTickBehaviour {
 
     public ItemShinyStone(Properties properties) {
         super(properties);
     }
 
     @Override
-    public void curioTick(SlotContext slotContext, ItemStack stack) {
-        if (!(slotContext.entity() instanceof LivingEntity wearer) || wearer.level().isClientSide()) {
-            return;
-        }
+    public void onWearerTick(LivingEntity wearer, ItemStack stack) {
         int checkRate = Math.max(1, FRConfig.SHINY_STONE_CHECK_RATE.get());
 
         if (wearer.tickCount % checkRate == 0) {

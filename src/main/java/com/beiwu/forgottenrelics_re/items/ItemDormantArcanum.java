@@ -1,5 +1,7 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.FRRechargable;
+import com.beiwu.forgottenrelics_re.api.WearerTickBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_re.registry.FRItems;
@@ -11,7 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import top.theillusivec4.curios.api.SlotContext;
 
 /**
  * 休眠浑浊之核（Dormant Nebulous Core，注册名 {@code dormant_arcanum}），
@@ -24,7 +25,7 @@ import top.theillusivec4.curios.api.SlotContext;
  *
  * <p>它没有独立的研究词条：原版里只能由浑浊之核转化而来，配方也是没有的。
  */
-public class ItemDormantArcanum extends FRRechargableCurioItem {
+public class ItemDormantArcanum extends FRCurioItem implements FRRechargable, WearerTickBehaviour {
 
     public ItemDormantArcanum(Properties properties) {
         super(properties);
@@ -36,8 +37,8 @@ public class ItemDormantArcanum extends FRRechargableCurioItem {
     }
 
     @Override
-    public void curioTick(SlotContext slotContext, ItemStack stack) {
-        if (!(slotContext.entity() instanceof ServerPlayer player)) {
+    public void onWearerTick(LivingEntity wearer, ItemStack stack) {
+        if (!(wearer instanceof ServerPlayer player)) {
             return;
         }
         int lifetime = stack.getOrDefault(FRDataComponents.DORMANT_LIFETIME.get(), 0);

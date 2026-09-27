@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.WearerTickBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.leclowndu93150.thaumaturge.api.items.IGoggles;
 import com.leclowndu93150.thaumaturge.api.items.IRevealer;
@@ -14,7 +15,6 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -42,7 +42,8 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
  * <p>渲染在客户端：1.12.2 是给 {@code RenderPlayer} 挂一层 {@code LayerCrown}；
  * 1.21.1 改用 Curios 的 {@code ICurioRenderer} 注册，见 {@code client.CrownCurioRenderer}。
  */
-public class ItemTerrorCrown extends ArmorItem implements ICurioItem, IWarpingGear, IGoggles, IRevealer {
+public class ItemTerrorCrown extends ArmorItem
+        implements ICurioItem, IWarpingGear, IGoggles, IRevealer, WearerTickBehaviour {
 
     public ItemTerrorCrown(Holder<ArmorMaterial> material, Type type, Properties properties) {
         super(material, type, properties);
@@ -65,20 +66,15 @@ public class ItemTerrorCrown extends ArmorItem implements ICurioItem, IWarpingGe
         return true;
     }
 
+    /**
+     * 佩戴时每 tick 触发。
+     *
+     * <p>原版分了两条路：饰品栏走 Curios 的 {@code curioTick}，头盔位走 {@code inventoryTick}
+     * 再自己判断「是不是戴在头上」。现在统一由派发器按「是否穿着」调用，饰品栏与护甲槽共用这一份实现。
+     */
     @Override
-    public void curioTick(SlotContext slotContext, ItemStack stack) {
-        if (slotContext.entity() instanceof LivingEntity wearer) {
-            tickCrown(stack, wearer);
-        }
-    }
-
-    @Override
-    public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-        // 走原版头盔位时 Curios 不会调用 curioTick，这里补上；两个分支靠是否已戴在头上区分。
-        if (entity instanceof LivingEntity wearer && wearer.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD) == stack) {
-            tickCrown(stack, wearer);
-        }
+    public void onWearerTick(LivingEntity wearer, ItemStack stack) {
+        tickCrown(stack, wearer);
     }
 
     /**
@@ -87,7 +83,7 @@ public class ItemTerrorCrown extends ArmorItem implements ICurioItem, IWarpingGe
      * <p>只在服务端跑，避免客户端重复施加效果。
      */
     private void tickCrown(ItemStack stack, LivingEntity wearer) {
-        if (wearer.level().isClientSide() || !(wearer instanceof Player player)) {
+        if (!(wearer instanceof Player player)) {
             return;
         }
         cryHavoc(player);
@@ -177,17 +173,14 @@ public class ItemTerrorCrown extends ArmorItem implements ICurioItem, IWarpingGe
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        if (net.minecraft.client.gui.screens.Screen.hasShiftDown()) {
+        FRItem.appendShift(tooltip, () -> {
             tooltip.add(Component.translatable("item.ItemTerrorCrown1.lore", FRConfig.TERROR_CROWN_HAVOC_RANGE.get()));
             tooltip.add(Component.translatable("item.ItemTerrorCrown2.lore"));
             tooltip.add(Component.translatable("item.FREmpty.lore"));
             tooltip.add(Component.translatable("item.ItemTerrorCrown3.lore"));
             tooltip.add(Component.translatable("item.FREmpty.lore"));
             tooltip.add(Component.translatable("item.ItemTerrorCrown4.lore"));
-        } else {
-            tooltip.add(Component.translatable("item.FRShiftTooltip.lore"));
-        }
-        tooltip.add(Component.translatable("item.FREmpty.lore"));
+        });
     }
 
     @Override

@@ -1,9 +1,13 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.FRRechargable;
+import com.beiwu.forgottenrelics_re.api.IncomingDamageBehaviour;
+import com.beiwu.forgottenrelics_re.api.WearerTickBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_re.utils.FRDamageTypes;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
+import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -11,9 +15,10 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import top.theillusivec4.curios.api.SlotContext;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
  * 湮灭护符（Amulet of The Oblivion），1.12.2 原版 {@code ItemOblivionAmulet}，护身符槽。
@@ -31,7 +36,8 @@ import top.theillusivec4.curios.api.SlotContext;
  *
  * <p>储存值用数据组件 {@link FRDataComponents#STORED_DAMAGE}，对应原版的 NBT 写法。
  */
-public class ItemOblivionAmulet extends FRRechargableCurioItem implements IWarpingGear {
+public class ItemOblivionAmulet extends FRCurioItem
+        implements FRRechargable, IWarpingGear, WearerTickBehaviour, IncomingDamageBehaviour {
 
     /** 原版随机负面效果的候选池：挖掘疲劳、失明、虚弱、凋零。 */
     private static final List<Holder<MobEffect>> RANDOM_DEBUFFS = List.of(
@@ -65,10 +71,7 @@ public class ItemOblivionAmulet extends FRRechargableCurioItem implements IWarpi
     }
 
     @Override
-    public void curioTick(SlotContext slotContext, ItemStack stack) {
-        if (!(slotContext.entity() instanceof LivingEntity wearer) || wearer.level().isClientSide()) {
-            return;
-        }
+    public void onWearerTick(LivingEntity wearer, ItemStack stack) {
         float stored = getStoredDamage(stack);
 
         // 先判定「释放伤害」；原版写的是 if / else if，两者同一 tick 只会触发一个。
@@ -94,6 +97,30 @@ public class ItemOblivionAmulet extends FRRechargableCurioItem implements IWarpi
             // 原版构造 PotionEffect 时用的是 (true, false)：环境效果、不显示粒子。
             wearer.addEffect(new MobEffectInstance(effect, duration, amplifier, true, false));
         }
+    }
+
+    /** 排在七阳之戒之后、神圣护符之前。 */
+    @Override
+    public int priority() {
+        return 200;
+    }
+
+    /**
+     * 吸收伤害并累加储存。
+     *
+     * <p>代价是按「伤害 × 8 × Vis 倍率」扣 Vis；Vis 不够就照常挨打。
+     */
+    @Override
+    public void onIncomingDamage(LivingIncomingDamageEvent event, Player wearer, ItemStack stack) {
+        if (FRDamageTypes.isAbsolute(event.getSource())) {
+            return;
+        }
+        int cost = (int) (event.getAmount() * 8.0F * FRConfig.OBLIVION_AMULET_VIS_MULT.get());
+        if (!RechargeAccess.consumeCharge(stack, wearer, cost)) {
+            return;
+        }
+        setStoredDamage(stack, getStoredDamage(stack) + event.getAmount());
+        event.setCanceled(true);
     }
 
     @Override
