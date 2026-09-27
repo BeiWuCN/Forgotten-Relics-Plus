@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
 import com.beiwu.forgottenrelics_plus.client.FRParticles;
+import java.util.Random;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
@@ -133,14 +134,24 @@ public class EntityRageousMissile extends FRHomingProjectile {
         // 原版在 super.onUpdate() 之前抓 prevPos：这里同样先记下移动前的位置。
         trailStart = center();
         super.tick();
-        if (isRemoved() || level().isClientSide()) {
+        if (isRemoved()) {
             return;
         }
 
-        // 原版 getTarget() 因为用的是非短路 &，每 tick 都会跑一次。
-        boolean hasTarget = refreshTarget();
+        // 速度<b>两端都算</b>——与基类 FRHomingProjectile 在 1.6.2 做的修正同一口径。
+        //
+        // 此前这里写的是「客户端直接 return」，于是客户端只能被动跟随每 tick 的服务端位置包，
+        // 一旦有延迟或抖动就表现为「一卡一卡」。1.6.2 那次修正只改到了基类的 applyHoming，
+        // 而这颗导弹不用基类的追踪（homingStrength 保持 0、速度由这里整条重写），所以没被覆盖到。
+        //
+        // 客户端的职责仍然只有「把速度算成与服务端一致的那一份」：不写同步数据、不做任何结算。
+        boolean client = level().isClientSide();
+        // 原版 getTarget() 因为用的是非短路 &，每 tick 都会跑一次；客户端只读服务端同步下来的目标 id。
+        boolean hasTarget = client || refreshTarget();
         if (!hasTarget && time > LIFESPAN_WITHOUT_TARGET) {
-            discard();
+            if (!client) {
+                discard();
+            }
             return;
         }
 
@@ -155,15 +166,20 @@ public class EntityRageousMissile extends FRHomingProjectile {
             }
             setDeltaMovement(motion);
             if (evil && diff.length() < EVIL_DETONATE_DISTANCE) {
-                discard();
+                if (!client) {
+                    discard();
+                }
                 return;
             }
         } else {
             // 原版：targetVec = 自身 ±16 格的随机点，速度 = 朝它的单位方向 × 0.5。
+            // 随机种子改用 getId() + time（原版用的是实体自身的 rand，两端不同源）：
+            // 无目标期间的每一 tick 都要让两端算出同一个方向，否则又会互相打架。
+            Random rr = new Random(getId() + time);
             Vec3 wander = thisVec.add(
-                    (random.nextDouble() - 0.5D) * WANDER_RANGE,
-                    (random.nextDouble() - 0.5D) * WANDER_RANGE,
-                    (random.nextDouble() - 0.5D) * WANDER_RANGE);
+                    (rr.nextDouble() - 0.5D) * WANDER_RANGE,
+                    (rr.nextDouble() - 0.5D) * WANDER_RANGE,
+                    (rr.nextDouble() - 0.5D) * WANDER_RANGE);
             setDeltaMovement(wander.subtract(thisVec).normalize().scale(SPEED));
         }
         time++;
