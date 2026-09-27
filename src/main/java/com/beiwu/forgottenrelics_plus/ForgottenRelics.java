@@ -3,6 +3,7 @@ package com.beiwu.forgottenrelics_plus;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FRArmorMaterials;
 import com.beiwu.forgottenrelics_plus.registry.FRCreativeTabs;
+import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.registry.FRItems;
 import net.neoforged.bus.api.IEventBus;
@@ -44,6 +45,7 @@ public final class ForgottenRelics {
     public ForgottenRelics(IEventBus modBus, ModContainer container) {
         // 注册表挂到模组事件总线上
         FRItems.register(modBus);
+        FREntities.register(modBus);
         FRArmorMaterials.register(modBus);
         FRDataComponents.register(modBus);
         FRCreativeTabs.register(modBus);

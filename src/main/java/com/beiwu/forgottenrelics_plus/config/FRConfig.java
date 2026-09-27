@@ -258,6 +258,11 @@ public final class FRConfig {
     /** 虚伪审判：附带的扭曲值。 */
     public static final ModConfigSpec.IntValue FALSE_JUSTICE_WARP;
 
+    /** 霹雳咒书：直接命中的伤害。 */
+    public static final ModConfigSpec.DoubleValue THUNDERPEAL_DIRECT_DAMAGE;
+    /** 霹雳咒书：范围与链式闪电的伤害。 */
+    public static final ModConfigSpec.DoubleValue THUNDERPEAL_BOLT_DAMAGE;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -698,6 +703,16 @@ public final class FRConfig {
         FALSE_JUSTICE_WARP = builder
                 .comment("Warp granted by False Justice.", "虚伪审判附带的扭曲值。原版是 4。")
                 .defineInRange("falseJusticeWarp", 4, 0, 32768);
+        builder.pop();
+
+        builder.comment("霹雳咒书（第六波：弹射物书籍）").push("thunderpeal");
+        THUNDERPEAL_DIRECT_DAMAGE = builder
+                .comment("Damage dealt to the entity the orb hits directly.", "直接命中实体的伤害。原版是 damageThunderpealDirect。")
+                .defineInRange("thunderpealDirectDamage", 8.0D, 0.0D, 32768.0D);
+        THUNDERPEAL_BOLT_DAMAGE = builder
+                .comment("Damage dealt to every entity in the blast, and halved again for chained targets.",
+                         "范围伤害；链式闪电按它的一半结算。原版是 damageThunderpealBolt。")
+                .defineInRange("thunderpealBoltDamage", 12.0D, 0.0D, 32768.0D);
         builder.pop();
 
         SPEC = builder.build();

@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_plus.client;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
 import com.beiwu.forgottenrelics_plus.items.ItemRingOfDiscord;
+import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.registry.FRItems;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -30,6 +31,18 @@ public final class FRClientSetup {
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(CrownCurioRenderer.CROWN_LAYER, CrownCurioRenderer::createLayer);
+    }
+
+    /**
+     * 实体渲染器注册。
+     *
+     * <p>注意这里用的是 {@code RegisterRenderers}，不是上面那个 {@code RegisterLayerDefinitions}——
+     * 两个事件的职责不同，放错事件编译期就会报「找不到符号」。
+     */
+    @SubscribeEvent
+    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        // 弹射物不画几何体，形体交给原版粒子，见 FRProjectileRenderer 的类注释。
+        event.registerEntityRenderer(FREntities.THUNDERPEAL_ORB.get(), FRProjectileRenderer::new);
     }
 
     @SubscribeEvent

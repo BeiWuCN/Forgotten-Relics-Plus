@@ -40,6 +40,9 @@ public final class FRDamageTypes {
     /** 无来源的真实伤害（原版 {@code DamageSourceTrueDamageUndef}）。 */
     public static final ResourceKey<DamageType> TRUE_DAMAGE_UNDEF = key("true_damage_undef");
 
+    /** 真雷伤害（原版 {@code DamageSourceTLightning}），霹雳咒书使用。 */
+    public static final ResourceKey<DamageType> TRUE_LIGHTNING = key("true_lightning");
+
     private static ResourceKey<DamageType> key(String path) {
         return ResourceKey.create(Registries.DAMAGE_TYPE,
                 ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, path));
