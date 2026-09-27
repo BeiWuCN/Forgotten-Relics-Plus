@@ -22,6 +22,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemMiningCharm;
 import com.beiwu.forgottenrelics_plus.items.ItemNuclearFury;
 import com.beiwu.forgottenrelics_plus.items.ItemOmegaCore;
 import com.beiwu.forgottenrelics_plus.items.ItemOblivionAmulet;
+import com.beiwu.forgottenrelics_plus.items.ItemOblivionStone;
 import com.beiwu.forgottenrelics_plus.items.ItemOverthrower;
 import com.beiwu.forgottenrelics_plus.items.ItemParadox;
 import com.beiwu.forgottenrelics_plus.items.ItemRingOfDiscord;
@@ -386,6 +387,21 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemFateTome> TOME_OF_BROKEN_FATES =
             ITEMS.registerItem("tome_of_broken_fates", ItemFateTome::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 湮灭之钥（Keystone of The Oblivion），注册名 {@code oblivion_stone}。
+     *
+     * <p>1.7.10 原版类名就是 {@code ItemOblivionStone}。原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
+     * 它不消耗也不储存 Vis，所以不实现 {@code FRRechargable}。
+     *
+     * <p>右键切换模式 / 启停；背包每 10 tick 按模式吞噬已绑定的物品；在合成栏里与一件物品组合可把它
+     * 登记进清单、只放它自己则清空清单（自定义合成配方，见
+     * {@code com.beiwu.forgottenrelics_plus.recipes.RecipeOblivionStone}）。
+     * 详见 {@link ItemOblivionStone}。
+     */
+    public static final DeferredItem<ItemOblivionStone> OBLIVION_STONE =
+            ITEMS.registerItem("oblivion_stone", ItemOblivionStone::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

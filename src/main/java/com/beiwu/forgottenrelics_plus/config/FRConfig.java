@@ -500,6 +500,14 @@ public final class FRConfig {
     /** 破碎的命运巨著：附带的扭曲值（原版 {@code getWarp} 返回 7，全模组第二高）。 */
     public static final ModConfigSpec.IntValue TOME_OF_BROKEN_FATES_WARP;
 
+    // ---- 湮灭之钥 / Keystone of The Oblivion ----
+    /** 湮灭之钥：可绑定条目数的硬上限（原版 {@code oblivionStoneHardCap}，默认 64）。 */
+    public static final ModConfigSpec.IntValue OBLIVION_STONE_HARD_CAP;
+    /** 湮灭之钥：Ctrl 清单全量展开的条数上限（原版 {@code oblivionStoneSoftCap}，默认 28）。 */
+    public static final ModConfigSpec.IntValue OBLIVION_STONE_SOFT_CAP;
+    /** 湮灭之钥：附带的扭曲值（原版 {@code getWarp} 返回 2）。 */
+    public static final ModConfigSpec.IntValue OBLIVION_STONE_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -1444,6 +1452,23 @@ public final class FRConfig {
                                  + " Original getWarp returns 7, the second highest value in the mod.",
                          "破碎的命运巨著附带的扭曲值。原版 getWarp 返回 7，全模组第二高（仅次于悖论之刃的 8）。")
                 .defineInRange("tomeOfBrokenFatesWarp", 7, 0, 32768);
+        builder.pop();
+
+        builder.comment("湮灭之钥（第七波：合成栏绑定物品、背包按模式吞噬）").push("oblivion_stone");
+        OBLIVION_STONE_HARD_CAP = builder
+                .comment("How many items a single Keystone of The Oblivion can bind before it refuses more.",
+                         "单把湮灭之钥能绑定的物品条数上限，超过后合成栏不再接受新样本。"
+                                 + "原版配置 key 是 oblivionStoneHardCap，默认 64（用于防止超长清单带来性能问题）。")
+                .defineInRange("oblivionStoneHardCap", 64, 0, 2048);
+        OBLIVION_STONE_SOFT_CAP = builder
+                .comment("How many entries the Ctrl tooltip lists before it switches to a random sample.",
+                         "Ctrl 清单全量展开的条数上限，超过后只随机显示这么多条（避免清单长到看不清）。"
+                                 + "原版配置 key 是 oblivionStoneSoftCap，默认 28。")
+                .defineInRange("oblivionStoneSoftCap", 28, 0, 2048);
+        OBLIVION_STONE_WARP = builder
+                .comment("Warp granted by the Keystone of The Oblivion. Original getWarp returns 2.",
+                         "湮灭之钥附带的扭曲值。原版 ItemOblivionStone#getWarp 返回 2。")
+                .defineInRange("oblivionStoneWarp", 2, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

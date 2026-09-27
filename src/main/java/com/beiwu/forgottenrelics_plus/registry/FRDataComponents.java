@@ -2,9 +2,11 @@ package com.beiwu.forgottenrelics_plus.registry;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
 import com.mojang.serialization.Codec;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -101,6 +103,30 @@ public final class FRDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FATE_COOLDOWN =
             DATA_COMPONENTS.registerComponentType("fate_cooldown",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
+    /**
+     * 湮灭之钥：当前模式。
+     *
+     * <p>对应 1.7.10 里压在物品 metadata 上的「模式 + 启用位」：原版 {@code 0/1/2} 是启用中的三种模式，
+     * {@code 100/101/102} 是同一模式的停用态。1.21.1 的物品没有 metadata，取值口径原样搬进组件，
+     * 便于与 1.7.10 逐行对照（见 {@code ItemOblivionStone}）。
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> OBLIVION_MODE =
+            DATA_COMPONENTS.registerComponentType("oblivion_mode",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
+    /**
+     * 湮灭之钥：已绑定的「可消耗物品」样本清单。
+     *
+     * <p>对应原版两个平行 NBT 数组 {@code SupersolidID}（数值物品 id）与 {@code SupersolidMetaID}
+     * （metadata；{@code -1} 表示可损毁物品，按物品类型通配）。1.21.1 既没有数值物品 id 也没有 metadata：
+     * 直接存整份 {@link ItemStack} 样本，天然带上组件（染色、药水内容等变体信息），
+     * 不必自己维护两份平行数组，匹配规则见 {@code ItemOblivionStone#matchesBound}。
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ItemStack>>> OBLIVION_BOUND_ITEMS =
+            DATA_COMPONENTS.registerComponentType("oblivion_bound_items",
+                    builder -> builder.persistent(ItemStack.CODEC.listOf())
+                            .networkSynchronized(ItemStack.LIST_STREAM_CODEC));
 
     public static void register(IEventBus modBus) {
         DATA_COMPONENTS.register(modBus);

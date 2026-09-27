@@ -79,6 +79,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.APOTHEOSIS.get());
                         // 第七波：破碎的命运巨著。
                         output.accept(FRItems.TOME_OF_BROKEN_FATES.get());
+                        // 第七波：湮灭之钥。
+                        output.accept(FRItems.OBLIVION_STONE.get());
                     })
                     .build());
 
