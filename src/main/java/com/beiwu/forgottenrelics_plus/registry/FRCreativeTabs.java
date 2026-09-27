@@ -46,6 +46,10 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.DISCORD_RING.get());
                         // 原创补完物品，排在最后。
                         output.accept(FRItems.GHASTLY_SKULL.get());
+                        // 第四波：核心类与武器。
+                        output.accept(FRItems.CHAOS_CORE.get());
+                        output.accept(FRItems.OMEGA_CORE.get());
+                        output.accept(FRItems.PARADOX.get());
                     })
                     .build());
 

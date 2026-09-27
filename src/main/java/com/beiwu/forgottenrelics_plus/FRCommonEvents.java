@@ -1,10 +1,13 @@
 package com.beiwu.forgottenrelics_plus;
 
 import com.beiwu.forgottenrelics_plus.api.AllyProtectionBehaviour;
+import com.beiwu.forgottenrelics_plus.api.DeathPreventionBehaviour;
 import com.beiwu.forgottenrelics_plus.api.BreakSpeedBehaviour;
 import com.beiwu.forgottenrelics_plus.api.IncomingDamageBehaviour;
 import com.beiwu.forgottenrelics_plus.api.WearerTickBehaviour;
+import com.beiwu.forgottenrelics_plus.api.WeaponAttackBehaviour;
 import com.beiwu.forgottenrelics_plus.utils.CooldownHelper;
+import com.beiwu.forgottenrelics_plus.utils.FRCarriedItems;
 import com.beiwu.forgottenrelics_plus.utils.FRWornItems;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -15,7 +18,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -29,6 +34,21 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * <p>于是新增物品只需写物品类，事件类一行都不用动；每件物品的触发顺序与副作用都写在它自己
  * 类里，不会再出现「两段相关逻辑分别写在 LivingAttackEvent 与 LivingHurtEvent 里导致顺序错乱」
  * 这类历史遗留问题（原版七阳之戒正是如此）。
+ *
+ * <h2>四个派发范围，别混用</h2>
+ *
+ * <p>「物品在哪」决定了它的效果该不该生效，这是很容易搞错、而且错了就会直接改变游戏行为的地方
+ * （把湮灭护符塞进背包不该让它开始吸伤害）。目前共四种范围：
+ *
+ * <table>
+ *   <tr><th>范围</th><th>遍历方式</th><th>典型物品</th></tr>
+ *   <tr><td>穿戴（饰品栏 + 护甲槽）</td><td>{@link FRWornItems}</td><td>七阳之戒、湮灭护符、远古之庇护</td></tr>
+ *   <tr><td>随身携带（整个物品栏 + 饰品栏）</td><td>{@link FRCarriedItems#forEach}</td>
+ *       <td>欧米伽之核、破碎的命运巨著（原版用 {@code inventory.hasItem} 判断）</td></tr>
+ *   <tr><td>手持（主手 + 副手）</td><td>{@link FRCarriedItems#forEachHeld}</td><td>悖论之刃</td></tr>
+ *   <tr><td>每 tick 的携带效果</td><td>不使用本派发器，直接用原生的 {@code Item#inventoryTick}</td>
+ *       <td>混沌之核、欧米伽之核</td></tr>
+ * </table>
  */
 @EventBusSubscriber(modid = ForgottenRelics.MOD_ID)
 public final class FRCommonEvents {
@@ -143,6 +163,61 @@ public final class FRCommonEvents {
         }
     }
 
+    /**
+     * 玩家致死时派发，范围是<b>随身携带</b>的物品。
+     *
+     * <p>对应原版 {@code RelicsEventHandler#onPlayerDeath}：欧米伽之核与破碎的命运巨著都是
+     * 「放在背包里就能救命」，所以这里<b>不能</b>只遍历佩戴物。同一件物品带多份时只触发一次，
+     * 与原版「带两个不会触发两次」的意图一致。
+     */
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event) {
+        if (event.isCanceled() || !(event.getEntity() instanceof Player player) || player.level().isClientSide()) {
+            return;
+        }
+        List<Guard> guards = new ArrayList<>();
+        FRCarriedItems.forEach(player, stack -> {
+            if (!(stack.getItem() instanceof DeathPreventionBehaviour behaviour)) {
+                return;
+            }
+            for (Guard existing : guards) {
+                if (existing.behaviour() == behaviour) {
+                    return;
+                }
+            }
+            guards.add(new Guard(behaviour, stack));
+        });
+        if (guards.isEmpty()) {
+            return;
+        }
+        guards.sort(Comparator.comparingInt(entry -> entry.behaviour().priority()));
+        for (Guard guard : guards) {
+            if (event.isCanceled()) {
+                return;
+            }
+            guard.behaviour().onLethalDamage(event, player, guard.stack());
+        }
+    }
+
+    /**
+     * 攻击实体时派发，范围只有<b>手持</b>的那一份。
+     *
+     * <p>对应原版的 {@code Item#onLeftClickEntity}：只有拿在手上的武器才该接管这次攻击，
+     * 背包里再放一把不参与。取消事件即等价于原版返回 {@code true}（由物品自己结算这次攻击）。
+     */
+    @SubscribeEvent
+    public static void onAttackEntity(AttackEntityEvent event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) {
+            return;
+        }
+        FRCarriedItems.forEachHeld(player, stack -> {
+            if (!event.isCanceled() && stack.getItem() instanceof WeaponAttackBehaviour behaviour) {
+                behaviour.onAttackEntity(event, player, stack);
+            }
+        });
+    }
+
     /** 挖掘速度派发。对应原版 {@code RelicsEventHandler.miningStuff}。 */
     @SubscribeEvent
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
@@ -165,6 +240,10 @@ public final class FRCommonEvents {
 
     /** 第二遍派发里的「哪个行为 + 哪位佩戴者 + 哪一份物品栈」。 */
     private record Ally(AllyProtectionBehaviour behaviour, Player guardian, ItemStack stack) {
+    }
+
+    /** 致死派发里的「哪个行为 + 哪一份物品栈」。 */
+    private record Guard(DeathPreventionBehaviour behaviour, ItemStack stack) {
     }
 
     private FRCommonEvents() {
