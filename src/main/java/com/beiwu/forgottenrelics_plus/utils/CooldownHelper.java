@@ -39,7 +39,6 @@ public final class CooldownHelper {
         COOLDOWNS.put(player.getUUID(), ticks);
     }
 
-    /** 玩家是否仍在冷却中。 */
     public static boolean isOnCooldown(Player player) {
         Integer remaining = COOLDOWNS.get(player.getUUID());
         return remaining != null && remaining > 0;

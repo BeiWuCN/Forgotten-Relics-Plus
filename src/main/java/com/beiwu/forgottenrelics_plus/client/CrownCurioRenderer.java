@@ -58,7 +58,6 @@ public final class CrownCurioRenderer implements ICurioRenderer {
 
     private ModelPart crown;
 
-    /** 描述模型几何：一个贴着头顶的环。 */
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();

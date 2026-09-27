@@ -12,9 +12,9 @@ import net.minecraft.world.item.TooltipFlag;
 /**
  * 不和谐之戒（Ring of Discord，注册名 {@code discord_ring}），1.12.2 原版 {@code ItemRingOfDiscord}，戒指槽。
  *
- * <p>它本身不产生任何效果，只保存一个「是否开启不和谐模式」的开关，
- * 供后续的《错位之典》读取（原版 {@code isDiscordActive}）。开关由默认 X 键切换：
- * 客户端按键 → 发一个空载荷到服务端 → 服务端改写开关并回一条状态提示。
+ * <p>它本身不产生任何效果，只在按键（默认 X）时替玩家<b>远程施放背包里的《错位之典》</b>：
+ * 客户端按键 → 发一个空载荷到服务端 → 服务端调 {@link #triggerTome}，由它对那本书执行一次右键。
+ * 书本身的行为一字不改。
  *
  * <p>1.12.2 用的是 {@code SimpleNetworkWrapper} 加 {@code IMessage}；1.21.1 换成了
  * {@code CustomPacketPayload} + {@code RegisterPayloadHandlersEvent}，见 {@code network} 包。

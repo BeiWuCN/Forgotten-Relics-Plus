@@ -27,7 +27,6 @@ public record ToggleDiscordPayload() implements CustomPacketPayload {
             new CustomPacketPayload.Type<>(
                     ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "toggle_discord"));
 
-    /** 空载荷：编码什么也不写，解码直接造一个新实例。 */
     public static final StreamCodec<RegistryFriendlyByteBuf, ToggleDiscordPayload> CODEC =
             StreamCodec.of((buffer, payload) -> {
             }, buffer -> new ToggleDiscordPayload());

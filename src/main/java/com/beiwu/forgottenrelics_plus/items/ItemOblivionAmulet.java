@@ -65,7 +65,6 @@ public class ItemOblivionAmulet extends FRCurioItem
         return stack.getOrDefault(FRDataComponents.STORED_DAMAGE.get(), 0.0F);
     }
 
-    /** 写回累计储存的伤害。 */
     public static void setStoredDamage(ItemStack stack, float value) {
         stack.set(FRDataComponents.STORED_DAMAGE.get(), Math.max(0.0F, value));
     }

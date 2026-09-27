@@ -427,24 +427,23 @@ public class ItemTelekinesisTome extends FRItem
      * 每颗 {@code wispFX(中心, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.2+rand*0.1,
      * xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=1.0)}；{@code supers = 3}，循环 {@code i <= 3}
      * 即 4 颗传送门粒子（原版就是 {@code EntityPortalFX}，初速 ±1.5）。
+     *
+     * <p>两处都是「位置正好在中心 + 各向同性随机初速」，所以能整簇发包：原版本来就只有
+     * <b>一个</b> {@code TelekinesisParticleMessage}，这里用两个包（两种粒子类型各一个）。
+     * 逐颗发是 6 个包/tick，而引导时长上限 72000 tick——本项目的每 tick 广播热点之一。
+     * 位置不变；初速由「均匀 ±0.075 / ±1.5」换成同标准差的 gaussian
+     *（{@code 0.15/√12 ≈ 0.043} 与 {@code 3.0/√12 ≈ 0.866}）；颜色与尺寸由逐颗随机改为
+     * 整簇抽一次——与 {@link FRParticles#serverWispBurst} 的既定口径一致。
      */
     private static void telekinesisParticles(ServerLevel level, Vec3 center) {
-        for (int i = 0; i <= 1; i++) {
-            FRParticles.serverWisp(level, center.x, center.y, center.z,
-                    0.2F + level.random.nextFloat() * 0.3F,
-                    0.0F,
-                    0.5F + level.random.nextFloat() * 0.2F,
-                    0.2F + level.random.nextFloat() * 0.1F,
-                    (level.random.nextDouble() - 0.5D) * 0.15D,
-                    (level.random.nextDouble() - 0.5D) * 0.15D,
-                    (level.random.nextDouble() - 0.5D) * 0.15D);
-        }
-        for (int i = 0; i <= 3; i++) {
-            level.sendParticles(ParticleTypes.PORTAL, center.x, center.y, center.z, 0,
-                    (level.random.nextDouble() - 0.5D) * 3.0D,
-                    (level.random.nextDouble() - 0.5D) * 3.0D,
-                    (level.random.nextDouble() - 0.5D) * 3.0D, 1.0D);
-        }
+        FRParticles.serverWispBurst(level, center.x, center.y, center.z,
+                0.2F + level.random.nextFloat() * 0.3F,
+                0.0F,
+                0.5F + level.random.nextFloat() * 0.2F,
+                0.2F + level.random.nextFloat() * 0.1F, 1.0F,
+                2, 0.0D, 0.15D / Math.sqrt(12.0D));
+        level.sendParticles(ParticleTypes.PORTAL, center.x, center.y, center.z, 4,
+                0.0D, 0.0D, 0.0D, 3.0D / Math.sqrt(12.0D));
     }
 
     // ------------------------------------------------------------------

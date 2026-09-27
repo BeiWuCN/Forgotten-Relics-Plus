@@ -172,7 +172,6 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
                     FRBoltParticleData.WIDTH_MAIN, 1,
                     FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE);
             strike(target, lightning, FRConfig.THUNDERPEAL_BOLT_DAMAGE.get().floatValue());
-            // 链式：从被击中者再向它附近最多 3 个目标打出一半伤害。
             List<LivingEntity> chained = level().getEntitiesOfClass(LivingEntity.class,
                     target.getBoundingBox().inflate(CHAIN_RADIUS),
                     entity -> entity != owner && entity != target && entity.isAlive());

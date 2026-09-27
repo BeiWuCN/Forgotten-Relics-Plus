@@ -105,7 +105,6 @@ public class ItemArcanum extends FRCurioItem
         return randomTeleport(player, 16);
     }
 
-    /** 按「快捷栏 → 饰品栏 → 护甲」的顺序，给第一个能充能的物品补 1 点 Vis。 */
     private static boolean rechargeOne(ServerPlayer player) {
         for (int slot = 0; slot < 9; slot++) {
             if (tryRecharge(player, player.getInventory().items.get(slot))) {
@@ -169,7 +168,6 @@ public class ItemArcanum extends FRCurioItem
         return false;
     }
 
-    /** 落点判定：脚下要是实体方块，脚部与头部都要没有碰撞体积。 */
     private static boolean isSafeSpot(ServerLevel level, BlockPos feet) {
         if (!level.isLoaded(feet)) {
             return false;

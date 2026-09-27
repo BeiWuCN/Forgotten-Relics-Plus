@@ -37,7 +37,6 @@ public record TelekinesisLeftClickPayload() implements CustomPacketPayload {
             new CustomPacketPayload.Type<>(
                     ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "telekinesis_left_click"));
 
-    /** 空载荷：编码什么也不写，解码直接造一个新实例。 */
     public static final StreamCodec<RegistryFriendlyByteBuf, TelekinesisLeftClickPayload> CODEC =
             StreamCodec.of((buffer, payload) -> {
             }, buffer -> new TelekinesisLeftClickPayload());

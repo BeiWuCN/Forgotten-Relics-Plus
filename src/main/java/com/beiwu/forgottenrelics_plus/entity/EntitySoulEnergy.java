@@ -114,10 +114,14 @@ public class EntitySoulEnergy extends FRHomingProjectile {
             return;
         }
         // 原版 world.getEntitiesWithinAABB(EntityLivingBase.class, 自身 ±0.5 的方框).contains(target)。
+        // 这里直接判「目标是否与该方框相交」，与那次查询等价——原生的
+        // getEntitiesOfClass(Class, AABB) 过滤条件就是 EntitySelector.NO_SPECTATORS 加包围盒相交
+        //（见 EntityGetter#getEntitiesOfClass），而目标必然在本维度里。
+        // 每 tick 每颗灵魂球省下一次空间查询与一次 List 分配。
         AABB reach = new AABB(
                 getX() - REACH_BOX, getY() - REACH_BOX, getZ() - REACH_BOX,
                 getX() + REACH_BOX, getY() + REACH_BOX, getZ() + REACH_BOX);
-        if (level().getEntitiesOfClass(LivingEntity.class, reach).contains(target)) {
+        if (!target.isRemoved() && !target.isSpectator() && reach.intersects(target.getBoundingBox())) {
             reachTarget(target);
         }
     }

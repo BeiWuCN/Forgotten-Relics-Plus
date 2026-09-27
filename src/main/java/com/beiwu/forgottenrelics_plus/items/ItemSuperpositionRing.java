@@ -27,8 +27,9 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  *
  * <p>1.12.2 原版（{@code ItemSuperpositionRing}）逻辑：
  * <ul>
- *   <li>占用 Baubles 的 RING 槽；佩戴时把受到伤害的一部分分摊给「世界上所有其他佩戴者」——
- *       这部分在 {@code RelicsEventHandler} 里，本类不涉及；</li>
+ *   <li>占用 Baubles 的 RING 槽；佩戴时把受到伤害的一部分分摊给「世界上所有其他佩戴者」
+ *       （1.12.2 里这段派发写在 {@code RelicsEventHandler}，1.21.1 由本类的
+ *       {@code onIncomingDamage} 实现）；</li>
  *   <li>每 {@code superpositionRingCheckInterval}（默认 600）tick 判定一次，
  *       有 {@code superpositionRingSwapChance}（默认 0.025）的概率把自己和随机另一名佩戴者
  *       的位置互换；若两人不在同一维度，则连维度一起交换。</li>

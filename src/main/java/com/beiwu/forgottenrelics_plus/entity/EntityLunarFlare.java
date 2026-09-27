@@ -128,14 +128,12 @@ public class EntityLunarFlare extends FRHomingProjectile {
         }
         DamageSource magic = FRDamageTypes.source(level(), FRDamageTypes.FORGOTTEN_MAGIC, owner);
 
-        // 直击：命中活体（且不是发射者）时造成直击伤害。
         if (result instanceof EntityHitResult entityHit
                 && entityHit.getEntity() != owner
                 && entityHit.getEntity() instanceof LivingEntity direct) {
             direct.hurt(magic, FRConfig.TOME_OF_LUNAR_FLARES_DIRECT_DAMAGE.get().floatValue());
         }
 
-        // 只有命中「当初锁定的那个方块」才引爆。
         if (result instanceof BlockHitResult blockHit && isLockedBlock(blockHit.getBlockPos())) {
             explode(server, owner, magic);
         }
@@ -203,7 +201,6 @@ public class EntityLunarFlare extends FRHomingProjectile {
         discard();
     }
 
-    /** 是否命中了物品当初锁定的那个方块。 */
     private boolean isLockedBlock(BlockPos pos) {
         return pos.getX() == lockX && pos.getY() == lockY && pos.getZ() == lockZ;
     }
@@ -225,7 +222,7 @@ public class EntityLunarFlare extends FRHomingProjectile {
      */
     @Override
     protected void spawnTrailParticles() {
-        Vec3 previous = new Vec3(xo, yo, zo);
+        var previous = new Vec3(xo, yo, zo);
         Vec3 current = position();
         Vec3 diff = current.subtract(previous);
         double length = diff.length();

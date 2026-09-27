@@ -119,7 +119,6 @@ public class ItemDeificAmulet extends FRCurioItem
         return 5;
     }
 
-    /** 延长无敌帧。冷却记在物品数据组件上，冷却没到就不延长。 */
     @Override
     public void onIncomingDamage(LivingIncomingDamageEvent event, Player wearer, ItemStack stack) {
         if (!FRConfig.DEIFIC_AMULET_INVINCIBILITY.get()) {

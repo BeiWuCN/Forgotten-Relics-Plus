@@ -85,7 +85,6 @@ public class EntityRageousMissile extends FRHomingProjectile {
     /** 原版每 tick 把速度重写成「单位方向 × 0.5」。 */
     private static final double SPEED = 0.5D;
 
-    /** 没有目标时乱飞的搜索半径（原版 ±16 格的随机点）。 */
     /**
      * 无目标时「流线」方向的扩散系数。
      *
@@ -164,11 +163,11 @@ public class EntityRageousMissile extends FRHomingProjectile {
             return;
         }
 
-        Vec3 thisVec = center();
-        LivingEntity target = resolvedTarget();
+        var thisVec = center();
+        var target = resolvedTarget();
         if (target != null) {
             Vec3 diff = center(target).subtract(thisVec);
-            Vec3 motion = diff.normalize().scale(SPEED);
+            var motion = diff.normalize().scale(SPEED);
             if (time < AIM_UP_TICKS) {
                 // 原版：this.motionY = Math.abs(this.motionY)。
                 motion = new Vec3(motion.x, Math.abs(motion.y), motion.z);
