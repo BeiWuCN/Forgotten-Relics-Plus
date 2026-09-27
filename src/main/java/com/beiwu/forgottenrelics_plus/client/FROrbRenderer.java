@@ -31,7 +31,7 @@ import org.joml.Matrix4f;
  *
  * <h2>为什么不是「用原版粒子代替」</h2>
  *
- * <p>上一版把实体渲染器做成空实现、只留粒子拖尾，理由是「1.7.10 没有实体贴图」。
+ * <p>上一版曾把实体渲染器做成空实现、只留粒子拖尾，理由是「1.7.10 没有实体贴图」。
  * 但那样根本看不到球，和 RE 的观感差得远。这里改成真正把两层画出来——
  * <b>形体由渲染器负责，粒子只作拖尾</b>（拖尾仍在各实体自己的 {@code spawnTrailParticles} 里）。
  *
@@ -42,9 +42,11 @@ import org.joml.Matrix4f;
  * <ul>
  *   <li>顶点全部来自 {@link MultiBufferSource#getBuffer(RenderType)} 的 {@link VertexConsumer}；</li>
  *   <li>姿态用 {@link PoseStack} + 原版 {@link Axis} 旋转，等价于 RE 那一串 {@code glRotatef}；</li>
- *   <li>公告板用原版 {@link RenderType#entityTranslucentEmissive(ResourceLocation)}（自发光、Iris 认识），
- *       尖刺用原版 {@link RenderType#lightning()}——它正好是 {@code POSITION_COLOR} + 四边形 +
- *       加法混合，和 RE 的 {@code disableTexture2D + blendFunc(SRC_ALPHA, ONE)} 一一对应；</li>
+ *   <li>公告板用 {@link RenderType#entityTranslucentEmissive(ResourceLocation)}（自发光、Iris 认识）；</li>
+ *   <li>尖刺用 {@link RenderType#eyes(ResourceLocation)}——它正好是原版「加法混合 + 主渲染目标 +
+ *       NEW_ENTITY 格式」，对应 RE 的 {@code disableTexture2D + blendFunc(SRC_ALPHA, ONE)}。
+ *       <b>注意</b>：{@code RenderType.lightning()} 虽然也是加法混合，但它的输出目标是
+ *       {@code WEATHER_TARGET}（天气缓冲），在实体渲染里用会画到错误的帧缓冲，所以不能用；</li>
  *   <li>随机数用 {@link RandomSource}（固定种子 187，与 RE 一致），不是 {@code Math.random()}。</li>
  * </ul>
  *
@@ -59,6 +61,10 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
     /** 原版自发光实体惯用的满亮光照值（{@code LightTexture.FULL_BRIGHT}）。 */
     private static final int FULL_BRIGHT = LightTexture.FULL_BRIGHT;
 
+    /** 尖刺顶点统一采样贴图中心（那里最亮），这样加法混合出来是一团光而不是硬片。 */
+    private static final float FLASH_U = 0.5F;
+    private static final float FLASH_V = 0.5F;
+
     /** RE 的尖刺爆闪：固定种子 + 12 组。 */
     private static final long FLASH_SEED = 187L;
     private static final int FLASH_COUNT = 12;
@@ -71,7 +77,8 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
     private final float green;
     private final float blue;
     private final float baseScale;
-    private final RenderType renderType;
+    private final RenderType billboardType;
+    private final RenderType flashType;
 
     /**
      * @param red       颜色红分量 0~1
@@ -85,7 +92,8 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
         this.green = green;
         this.blue = blue;
         this.baseScale = baseScale;
-        this.renderType = RenderType.entityTranslucentEmissive(TEXTURE);
+        this.billboardType = RenderType.entityTranslucentEmissive(TEXTURE);
+        this.flashType = RenderType.eyes(TEXTURE);
         this.shadowRadius = 0.0F;
     }
 
@@ -111,12 +119,12 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
         poseStack.scale(scale, scale, scale);
 
         Matrix4f pose = poseStack.last().pose();
-        VertexConsumer consumer = buffers.getBuffer(renderType);
+        VertexConsumer consumer = buffers.getBuffer(billboardType);
         // 顶点缠绕与 UV 顺序照抄 Thaumaturge 的 writeBillboard。
-        vertex(consumer, pose, -0.5F, -0.5F, 1.0F, 1.0F);
-        vertex(consumer, pose, -0.5F, 0.5F, 1.0F, 0.0F);
-        vertex(consumer, pose, 0.5F, 0.5F, 0.0F, 0.0F);
-        vertex(consumer, pose, 0.5F, -0.5F, 0.0F, 1.0F);
+        fullVertex(consumer, pose, -0.5F, -0.5F, 1.0F, 1.0F, red, green, blue, 1.0F);
+        fullVertex(consumer, pose, -0.5F, 0.5F, 1.0F, 0.0F, red, green, blue, 1.0F);
+        fullVertex(consumer, pose, 0.5F, 0.5F, 0.0F, 0.0F, red, green, blue, 1.0F);
+        fullVertex(consumer, pose, 0.5F, -0.5F, 0.0F, 1.0F, red, green, blue, 1.0F);
         poseStack.popPose();
     }
 
@@ -127,8 +135,8 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
      * 三角锥」；三角锥的顶点大小用 {@code fa = (rand*20 + 5) / 30 * ramp}、
      * {@code f4 = (rand*2 + 1) / 30 * ramp}，{@code ramp = min(ticks,10)/10}。
      *
-     * <p>RE 用的是 {@code GL_TRIANGLE_FAN}；现代 {@link RenderType#lightning()} 的图元模式是四边形，
-     * 所以每个三角形用「末点重复一次」的四边形表达，渲染结果一致。
+     * <p>RE 用的是 {@code GL_TRIANGLE_FAN}；本渲染类型图元是四边形，所以每个三角面用
+     * 「末点重复一次」的四边形表达，渲染结果一致。
      */
     private void renderFlash(PoseStack poseStack, MultiBufferSource buffers, float age) {
         float ramp = Math.min(age, FLASH_RAMP_TICKS) / FLASH_RAMP_TICKS;
@@ -144,7 +152,7 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
 
         RandomSource random = RandomSource.create(FLASH_SEED);
         poseStack.pushPose();
-        VertexConsumer consumer = buffers.getBuffer(RenderType.lightning());
+        VertexConsumer consumer = buffers.getBuffer(flashType);
         for (int i = 0; i < FLASH_COUNT; i++) {
             // 等价于 RE 的 6 次 glRotatef（第 6 次叠加自转）。
             poseStack.mulPose(Axis.XP.rotationDegrees(random.nextFloat() * 360.0F));
@@ -162,8 +170,8 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
     }
 
     /** 一个三角锥：中心白、外缘 {@code (er,eg,eb)}，三个面用四边形表达。 */
-    private static void addSpike(VertexConsumer consumer, Matrix4f pose, float fa, float f4,
-                                 float er, float eg, float eb) {
+    private void addSpike(VertexConsumer consumer, Matrix4f pose, float fa, float f4,
+                          float er, float eg, float eb) {
         float ax = -0.866F * f4;
         float az = -0.5F * f4;
         float bx = 0.866F * f4;
@@ -174,19 +182,21 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
         spikeFace(consumer, pose, 0.0F, fa, cz, ax, fa, az, er, eg, eb);
     }
 
-    /** 一个面：中心点 + 两个外缘点；最后一点重复一次凑成四边形。 */
-    private static void spikeFace(VertexConsumer consumer, Matrix4f pose,
-                                  float x1, float y1, float z1, float x2, float y2, float z2,
-                                  float er, float eg, float eb) {
-        consumer.addVertex(pose, 0.0F, 0.0F, 0.0F).setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        consumer.addVertex(pose, x1, y1, z1).setColor(er, eg, eb, 1.0F);
-        consumer.addVertex(pose, x2, y2, z2).setColor(er, eg, eb, 1.0F);
-        consumer.addVertex(pose, x2, y2, z2).setColor(er, eg, eb, 1.0F);
+    /** 一个面：中心点（白）+ 两个外缘点；最后一点重复一次凑成四边形。 */
+    private void spikeFace(VertexConsumer consumer, Matrix4f pose,
+                           float x1, float y1, float z1, float x2, float y2, float z2,
+                           float er, float eg, float eb) {
+        fullVertex(consumer, pose, 0.0F, 0.0F, FLASH_U, FLASH_V, 1.0F, 1.0F, 1.0F, 1.0F);
+        fullVertex(consumer, pose, x1, y1, FLASH_U, FLASH_V, er, eg, eb, 1.0F);
+        fullVertex(consumer, pose, x2, y2, FLASH_U, FLASH_V, er, eg, eb, 1.0F);
+        fullVertex(consumer, pose, x2, y2, FLASH_U, FLASH_V, er, eg, eb, 1.0F);
     }
 
-    private void vertex(VertexConsumer consumer, Matrix4f pose, float x, float y, float u, float v) {
+    /** NEW_ENTITY 格式的顶点：位置 + 颜色 + UV + overlay + 光照 + 法线。z 恒为 0。 */
+    private static void fullVertex(VertexConsumer consumer, Matrix4f pose, float x, float y,
+                                   float u, float v, float r, float g, float b, float a) {
         consumer.addVertex(pose, x, y, 0.0F)
-                .setColor(red, green, blue, 1.0F)
+                .setColor(r, g, b, a)
                 .setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(FULL_BRIGHT)
