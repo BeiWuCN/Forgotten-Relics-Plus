@@ -82,17 +82,21 @@ public final class FRBolts {
     private static final float ALPHA = 0.8F;
 
     /**
-     * 电弧存活时长（tick）。
+     * 电弧存活时长（tick）——它就是观感上的「绘制速度」。
      *
-     * <p>Botania {@code BoltParticleOptions} 的默认值是 <b>30</b>；电弧的「生长 / 抖动 / 淡出」
-     * 整套动画都按这个时长推进，所以它就是观感上的「绘制速度」。
-     * 玩家反馈「闪电出来了，但绘制速度太慢，应该加快 150%」，这里按 1.5 倍速取名
-     * {@code 30 / 1.5 = 20}。
+     * <p>{@code BoltParticleOptions} 默认带 {@code FadeFunction.fade(0.5)}：反编译
+     * {@code BoltRenderer.BoltInstance#render} 可见，它用
+     * {@code lifeScale = 已过 tick / lifespan} 交给 {@code FadeFunction#getRenderBounds}，
+     * 而 {@code fade(0.5)} 的语义是「弧头在前 50% 寿命里从起点爬到终点，后 50% 收尾」。
+     * 所以<b>弧头画到终点的时间 = lifespan / 2</b>：Botania 默认 {@code 30} → 15 tick（0.75 秒），
+     * 慢得像在「长」出来。
      *
-     * <p>注意中文「加快 150%」有歧义：本实现按「1.5 倍速」算。如果你要的是
-     * 「在现在基础上再快 150%」＝ 2.5 倍速，把这里改成 {@code 12} 即可。
+     * <p>玩家先要求「加快 150%」，按 1.5 倍速取 {@code 20}（10 tick 画完），实测反馈仍嫌慢，
+     * 因此现在再砍到 {@code 8}：<b>4 tick（约 0.2 秒）画到终点</b>，约为 Botania 默认的 3.75 倍速、
+     * 上一次的 2.5 倍，之后整道弧还会亮满 {@code 8 - 4 = 4} tick 才收尾。
+     * 想要更接近「瞬间全亮」就把这里调到 {@code 6}（3 tick 画完）。
      */
-    private static final int LIFESPAN_TICKS = 20;
+    private static final int LIFESPAN_TICKS = 8;
 
     /** 由 {@code FRClientSetup} 在模组总线上转发过来。 */
     public static void registerProvider(RegisterParticleProvidersEvent event) {
@@ -116,7 +120,7 @@ public final class FRBolts {
         BoltParticleOptions options = new BoltParticleOptions(info, data.from(), data.to())
                 .count(data.count())
                 .size(data.width())
-                // 电弧动画时长，见 LIFESPAN_TICKS（玩家要求加快 150%）。
+                // 电弧动画时长；默认 fade(0.5) 下「画到终点」= lifespan / 2 tick，见 LIFESPAN_TICKS。
                 .lifespan(LIFESPAN_TICKS)
                 // Botania 默认的 SpawnFunction 是「60 tick 后再生」；对一次性电弧来说，
                 // 世界时间不足 60 tick 时（刚进世界那几秒）会不显示，这里显式改成无延迟。
