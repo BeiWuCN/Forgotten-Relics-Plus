@@ -33,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -412,9 +413,12 @@ public class ItemOverthrower extends FRItem implements FRRechargable, IWarpingGe
      */
     private static boolean canEntityBeSeen(ServerLevel level, Vec3 eye, BlockPos pos) {
         Vec3 target = new Vec3(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-        // 显式转型成 Entity：ClipContext 还有 (..., CollisionContext) 的重载，传裸 null 会歧义。
+        // 这里**不能**传 null 实体：ClipContext 会走 CollisionContext.of(entity) ->
+        // EntityCollisionContext.<init>，里面直接 entity.isDescending()，传 null 会 NPE 崩服。
+        // 原版 EntityUtils.canEntityBeSeen 只是纯方块射线（不涉及实体碰撞上下文），
+        // 所以这里用 CollisionContext.empty() 语义完全对应。
         BlockHitResult hit = level.clip(new ClipContext(eye, target,
-                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, (Entity) null));
+                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
         return hit.getType() == HitResult.Type.MISS;
     }
 
