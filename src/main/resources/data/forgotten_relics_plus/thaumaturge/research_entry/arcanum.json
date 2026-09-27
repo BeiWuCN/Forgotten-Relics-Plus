@@ -3,7 +3,11 @@
   "name": "fr.name.NebulousCore",
   "parents": [
     "forgotten_relics_plus:deific_amulet",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~thaumaturge:primordial_pearl",
+    "~thaumaturge:vis_amulet",
+    "~forgotten_relics_plus:ring_of_superposition",
+    "~thaumaturge:metallurgy"
   ],
   "column": 0,
   "row": -6,

@@ -3,7 +3,8 @@
   "name": "fr.name.DiscordRing",
   "parents": [
     "forgotten_relics_plus:deific_amulet",
-    "thaumaturge:unlock_eldritch"
+    "thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:tome_of_discord"
   ],
   "column": 1,
   "row": -4,

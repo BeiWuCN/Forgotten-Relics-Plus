@@ -3,7 +3,8 @@
   "name": "fr.name.MiningCharm",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~thaumaturge:elemental_tools"
   ],
   "column": 2,
   "row": -2,

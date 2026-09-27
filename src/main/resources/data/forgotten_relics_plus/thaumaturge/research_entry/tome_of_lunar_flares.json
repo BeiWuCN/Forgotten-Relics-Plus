@@ -2,7 +2,9 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.LunarFlares",
   "parents": [
-    "forgotten_relics_plus:tome_of_predestiny"
+    "forgotten_relics_plus:tome_of_predestiny",
+    "~forgotten_relics_plus:eldritch_spell",
+    "~thaumaturge:primordial_pearl"
   ],
   "column": -5,
   "row": 9,

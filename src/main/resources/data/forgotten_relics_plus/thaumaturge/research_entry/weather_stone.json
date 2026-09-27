@@ -3,7 +3,8 @@
   "name": "fr.name.WeatherStone",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~forgotten_relics_plus:deific_amulet"
   ],
   "column": -3,
   "row": 0,

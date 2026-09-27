@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.FateTome",
   "parents": [
-    "forgotten_relics_plus:spellbook_theory"
+    "forgotten_relics_plus:spellbook_theory",
+    "~thaumaturge:enter_outer_lands"
   ],
   "column": -4,
   "row": 2,

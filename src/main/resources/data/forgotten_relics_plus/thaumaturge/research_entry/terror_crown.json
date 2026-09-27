@@ -3,7 +3,9 @@
   "name": "fr.name.TerrorCrown",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:unlock_eldritch"
+    "thaumaturge:unlock_eldritch",
+    "~thaumaturge:enter_outer_lands",
+    "~thaumaturge:oculus"
   ],
   "column": 4,
   "row": 0,

@@ -3,7 +3,9 @@
   "name": "fr.name.ChaosCore",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~thaumaturge:alumentum",
+    "~forgotten_relics_plus:ancient_aegis"
   ],
   "column": 8,
   "row": -4,

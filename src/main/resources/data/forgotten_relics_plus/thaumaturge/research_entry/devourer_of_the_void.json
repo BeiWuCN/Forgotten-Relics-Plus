@@ -2,7 +2,11 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.ObeliskDrainer",
   "parents": [
-    "forgotten_relics_plus:tome_of_discord"
+    "forgotten_relics_plus:tome_of_discord",
+    "~thaumaturge:enter_outer_lands",
+    "~thaumaturge:base_eldritch",
+    "~thaumaturge:base_alchemy",
+    "~thaumaturge:oculus"
   ],
   "column": 0,
   "row": 7,

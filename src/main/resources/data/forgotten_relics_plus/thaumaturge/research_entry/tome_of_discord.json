@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.DiscordTome",
   "parents": [
-    "forgotten_relics_plus:spellbook_theory"
+    "forgotten_relics_plus:spellbook_theory",
+    "~thaumaturge:focus_rift"
   ],
   "column": -2,
   "row": 5,

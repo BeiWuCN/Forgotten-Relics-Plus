@@ -3,7 +3,9 @@
   "name": "fr.name.DimensionalMirror",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:mirror_hand"
+    "thaumaturge:mirror_hand",
+    "~thaumaturge:focus_rift",
+    "~forgotten_relics_plus:deific_amulet"
   ],
   "column": 0,
   "row": 3,

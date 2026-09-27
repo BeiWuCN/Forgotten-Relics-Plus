@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.ChaosTome",
   "parents": [
-    "forgotten_relics_plus:eldritch_spell"
+    "forgotten_relics_plus:eldritch_spell",
+    "~thaumaturge:staff_primal"
   ],
   "column": 2,
   "row": 3,

@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.SoulTome",
   "parents": [
-    "forgotten_relics_plus:devourer_of_the_void"
+    "forgotten_relics_plus:devourer_of_the_void",
+    "~thaumaturge:jar_brain"
   ],
   "column": -1,
   "row": 9,

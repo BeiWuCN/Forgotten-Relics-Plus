@@ -3,7 +3,8 @@
   "name": "fr.name.TheParadox",
   "parents": [
     "forgotten_relics_plus:chaos_core",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~thaumaturge:primordial_pearl"
   ],
   "column": 6,
   "row": 0,

@@ -3,7 +3,10 @@
   "name": "fr.name.OblivionAmulet",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:unlock_eldritch"
+    "thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:oblivion_stone",
+    "~forgotten_relics_plus:terror_crown",
+    "~thaumaturge:primordial_pearl"
   ],
   "column": 0,
   "row": -2,

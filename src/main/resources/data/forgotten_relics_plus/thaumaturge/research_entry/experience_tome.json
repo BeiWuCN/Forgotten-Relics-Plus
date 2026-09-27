@@ -3,7 +3,8 @@
   "name": "fr.name.XPTome",
   "parents": [
     "forgotten_relics_plus:weather_stone",
-    "thaumaturge:jar_brain"
+    "thaumaturge:jar_brain",
+    "~thaumaturge:base_alchemy"
   ],
   "column": -5,
   "row": 2,
