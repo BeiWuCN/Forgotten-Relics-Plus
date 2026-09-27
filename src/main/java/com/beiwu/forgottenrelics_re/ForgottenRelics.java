@@ -26,8 +26,15 @@ import org.slf4j.LoggerFactory;
 @Mod(ForgottenRelics.MOD_ID)
 public final class ForgottenRelics {
 
-    /** 模组 ID。沿用 1.12.2 原版的 forgotten_relics，使贴图、模型、语言键、研究路径可直接复用。 */
-    public static final String MOD_ID = "forgotten_relics";
+    /**
+     * 模组 ID，也就是资源与数据包的命名空间。
+     *
+     * <p>1.12.2 原版与移植版用的都是 {@code forgotten_relics}；本项目更名后改为
+     * {@code forgotten_relics_plus}，让注册 ID 与项目名（Forgotten Relics +）、
+     * 显示名（Forgotten Relics Plus）一致。物品的注册键（{@code mining_charm} 等）没有变，
+     * 变的是命名空间这一层。
+     */
+    public static final String MOD_ID = "forgotten_relics_plus";
 
     /** 模组名称。 */
     public static final String MOD_NAME = "Forgotten Relics Plus";

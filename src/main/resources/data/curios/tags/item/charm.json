@@ -1,10 +1,10 @@
 {
   "replace": false,
   "values": [
-    "forgotten_relics:shiny_stone",
-    "forgotten_relics:arcanum",
-    "forgotten_relics:dormant_arcanum",
-    "forgotten_relics:deific_amulet",
-    "forgotten_relics:oblivion_amulet"
+    "forgotten_relics_plus:shiny_stone",
+    "forgotten_relics_plus:arcanum",
+    "forgotten_relics_plus:dormant_arcanum",
+    "forgotten_relics_plus:deific_amulet",
+    "forgotten_relics_plus:oblivion_amulet"
   ]
 }

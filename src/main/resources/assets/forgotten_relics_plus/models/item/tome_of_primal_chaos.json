@@ -1,0 +1,6 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "forgotten_relics_plus:item/tome_of_primal_chaos"
+    }
+}

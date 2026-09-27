@@ -1,0 +1,32 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:praemunio", "amount": 175 },
+    { "aspect": "thaumaturge:permutatio", "amount": 125 },
+    { "aspect": "thaumaturge:victus", "amount": 100 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 30 },
+    { "aspect": "thaumaturge:metallum", "amount": 20 }
+  ],
+  "catalyst": { "item": "thaumaturge:girdle_mundane" },
+  "components": [
+    { "item": "botania:dragonstone" },
+    {
+      "type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": { "minecraft:potion_contents": { "potion": "minecraft:strong_healing" } }
+    },
+    { "tag": "c:ingots/gold" },
+    { "item": "thaumaturge:fabric" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:fabric" },
+    { "tag": "c:ingots/gold" },
+    {
+      "type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": { "minecraft:potion_contents": { "potion": "minecraft:strong_healing" } }
+    }
+  ],
+  "instability": 5,
+  "research": { "entry": "forgotten_relics_plus:ancient_aegis" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:ancient_aegis" }
+}

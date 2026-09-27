@@ -1,0 +1,60 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "name": "fr.name.MiningCharm",
+  "parents": [
+    "forgotten_relics_plus:generic_theory",
+    "thaumaturge:infusion"
+  ],
+  "column": 2,
+  "row": -2,
+  "meta": [
+    "round"
+  ],
+  "icons": [
+    "forgotten_relics_plus:mining_charm"
+  ],
+  "stages": [
+    {
+      "text": "fr.text.MiningCharm.1",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        }
+      ],
+      "obtain": [
+        {
+          "items": "thaumaturge:elemental_pickaxe",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "fr.text.MiningCharm.2",
+      "recipes": [
+        "forgotten_relics_plus:infusion/mining_charm"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:terra",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:instrumentum",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:motus",
+      "amount": 3
+    }
+  ],
+  "complexity": 1
+}

@@ -1,0 +1,24 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:mortuus", "amount": 250 },
+    { "aspect": "thaumaturge:spiritus", "amount": 150 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 150 },
+    { "aspect": "thaumaturge:perditio", "amount": 100 },
+    { "aspect": "thaumaturge:vacuos", "amount": 50 }
+  ],
+  "catalyst": { "item": "minecraft:skeleton_skull" },
+  "components": [
+    { "item": "thaumaturge:void_seed" },
+    { "item": "minecraft:wither_skeleton_skull" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:nitor_white" },
+    { "item": "minecraft:soul_lantern" },
+    { "item": "thaumaturge:nitor_white" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "minecraft:wither_skeleton_skull" }
+  ],
+  "instability": 7,
+  "research": { "entry": "forgotten_relics_plus:ghastly_skull" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:ghastly_skull" }
+}

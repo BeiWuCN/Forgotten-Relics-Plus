@@ -92,9 +92,9 @@ src/main/java/com/beiwu/forgottenrelics_re/
 └── utils/                      # 工具类（冷却、佩戴物遍历、音效、伤害类型等）
 
 src/main/resources/
-├── assets/forgotten_relics/    # 贴图、模型、语言文件
+├── assets/forgotten_relics_plus/    # 贴图、模型、语言文件
 │   └── textures/models/armor/  # 护甲层贴图
-├── data/forgotten_relics/
+├── data/forgotten_relics_plus/
 │   ├── damage_type/            # 自定义伤害类型
 │   ├── recipe/infusion/        # 灌注配方
 │   └── thaumaturge/            # 研究分类与研究词条

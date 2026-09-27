@@ -97,9 +97,9 @@ src/main/java/com/beiwu/forgottenrelics_re/
 └── utils/                      # helpers (cooldowns, worn-item iteration, sounds, damage types, ...)
 
 src/main/resources/
-├── assets/forgotten_relics/    # textures, models, language files
+├── assets/forgotten_relics_plus/    # textures, models, language files
 │   └── textures/models/armor/  # armour layer textures
-├── data/forgotten_relics/
+├── data/forgotten_relics_plus/
 │   ├── damage_type/            # custom damage types
 │   ├── recipe/infusion/        # infusion recipes
 │   └── thaumaturge/            # research category and entries
