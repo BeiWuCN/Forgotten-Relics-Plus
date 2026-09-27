@@ -39,7 +39,6 @@ public final class FRParticleTypes {
             PARTICLE_TYPES.register("bolt", FRParticleTypes::createBoltType);
 
     private static ParticleType<FRBoltParticleData> createBoltType() {
-        // 与 ParticleTypes 里 DUST / VIBRATION 那些注册写法一致：codec / streamCodec 由类型自己给出。
         return new ParticleType<FRBoltParticleData>(true) {
             @Override
             public MapCodec<FRBoltParticleData> codec() {

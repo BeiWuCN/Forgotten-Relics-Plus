@@ -25,57 +25,43 @@ import vazkii.botania.common.handler.BotaniaSounds;
 /**
  * 核子之怒（Nuclear Fury），注册名 {@code nuclear_fury}，
  * 1.7.10 原版类名是 {@code ItemMissileTome}（这里沿用 RE 的 {@code ItemNuclearFury}）。
+ * 堆叠上限 1、Warp 5、{@code EnumAction.bow}，<b>原版没有施法冷却</b>。
  *
- * <p>原版逻辑：
- * <ul>
- *   <li>右键 {@code setItemInUse(stack, 72000)} 进入 {@code EnumAction.bow} 的拉弓姿态，<b>没有冷却</b>；</li>
- *   <li>{@code onUsingTick}：只要 {@code count % 2 == 0} 且不是第一个 tick，就尝试从背包法杖里抽一次
- *       Vis：火（Ignis）{@code 20} + 秩序（Ordo）{@code 10} + 混沌（Perditio）{@code 15} 厘 Vis
- *       = 每颗法球 {@code 0.45} 点（各项都乘 {@code nuclearFuryVisMult}）；
- *       抽得出来才生成一颗 {@code EntityRageousMissile}，于是引导期间<b>每 2 tick 抛出一颗</b>（10 颗/秒）；
- *       同一 tick 还会在玩家上方撒一颗颜色 {@code (1.0, 0.4, 1.0)} 的 Botania sparkle；</li>
- *   <li>生成导弹 {@code spawnMissile}：出生点 = {@code posX/Z ± 3.1 的随机量}、
- *       {@code Y = posY + 3.8 + (random - 1.55)}；在出生点播 {@code botania:missile}
- *       （0.6 音量 / 0.8 + random × 0.2 音调），并让 Thaumcraft 在该点炸一小簇粒子（0.25 强度）；</li>
- *   <li>物品堆叠上限 1，稀有度 EPIC，{@code getWarp} 返回 <b>5</b>。</li>
- * </ul>
+ * <p>行为：右键进入 72000 tick 的拉弓引导；引导期间只要 {@code count % 2 == 0} 且不是第一 tick，
+ * 就尝试抽一次 Vis——火（Ignis）20 + 秩序（Ordo）10 + 混沌（Perditio）15 厘 = 每颗法球 0.45 点
+ *（各项都乘 {@code nuclearFuryVisMult}）——抽得出来才生成一颗 {@code EntityRageousMissile}，于是
+ * 引导期间每 2 tick 抛出一颗（10 颗/秒）。导弹出生点水平 ±3.1 随机、竖直
+ * {@code Y = posY + 3.8 + (random - 1.55)}；在出生点播 {@code botania:missile}（0.6 / 0.8 + rand×0.2）
+ * 并炸一小簇粒子，同一 tick 还在玩家上方 {@code posY + 2.4} 撒一颗颜色 {@code (1.0, 0.4, 1.0)} 的
+ * Botania sparkle。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>{@code onItemRightClick} → {@code Item#use}；{@code onUsingTick} → {@code Item#onUseTick}；
- *       {@code getMaxItemUseDuration} → {@code Item#getUseDuration}；{@code EnumAction.bow} → {@link UseAnim#BOW}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>（见
- *       {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1）。按本模组统一约定改成
- *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge} 扣除；</li>
- *   <li>导弹音 {@code botania:missile} 在 Botania 里就是 {@link BotaniaSounds#MISSILE}，
- *       不需要换成原版音效，直接引用并按项目约定过 {@link SoundHelper#play} 压音量；</li>
- *   <li>Thaumcraft 的 {@code proxy.burst}（纯客户端粒子，<b>不是 Botania</b>）→ 服务端
- *       {@code ServerLevel#sendParticles} 的原版 {@link ParticleTypes#WITCH}，按「原版本来就不是
- *       Botania 就保持原样」的口径保留；玩家上方的 sparkle 本来就是 Botania，改用
- *       {@link FRParticles#serverSparkle}，颜色 {@code (1.0, 0.4, 1.0)}、尺寸 6.0、m=6；</li>
- *   <li>原版 {@code spawnMissile} 返回 {@code boolean} 但调用方忽略返回值，这里直接写成 {@code void}；
- *       原版 {@code isFull3D()} 返回 {@code false}，1.21.1 已没有对应概念，略过。</li>
- * </ul>
+ * <p>1.21.1 对应：{@code onItemRightClick / onUsingTick / getMaxItemUseDuration / EnumAction.bow} →
+ * {@code use / onUseTick / getUseDuration / UseAnim.BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
+ *（见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），按本模组统一约定改成 {@link FRRechargable}
+ * 的物品自身充能；导弹音 {@code botania:missile} 本就是 {@link BotaniaSounds#MISSILE}，直接引用并按项目
+ * 约定过 {@link SoundHelper#play} 压音量；Thaumcraft 的 {@code proxy.burst}（纯客户端粒子，<b>不是
+ * Botania</b>）→ 服务端 {@link ParticleTypes#WITCH}，玩家上方的 Botania sparkle →
+ * {@link FRParticles#serverSparkle}（颜色 {@code (1.0, 0.4, 1.0)}、尺寸 6.0、m=6）；原版
+ * {@code spawnMissile} 返回 {@code boolean} 但调用方忽略、{@code isFull3D()} 无对应概念，都略过。
  *
- * <p><b>Vis 折算（沿用 RE）</b>：原版每颗法球 0.45 点、每秒 10 颗 = 4.5 点/秒，而充能是整数。
- * RE 把它折算成 {@code nuclearFuryVisCostPerSecond = 5}（4.5 向上取整到 5）、
- * {@code nuclearFuryMaxCharge = 500}（正好 100 秒的连续引导）、{@code nuclearFuryClearRange = 32}。
- * 本项目沿用这套值：导弹仍然是每 2 tick 一发，<b>在每一秒的第一发导弹之前扣一次
- * {@code getVisCostPerSecond()} 点</b>，扣不出来就停止引导——于是 500 充能恰好打出 100 秒（1000 颗）。
- * 扣费放在该秒第一发之前（而不是固定每 20 tick 的边界上），是为了不让「0 充能先白打半秒、松手再按」
- * 变成可反复白嫖的漏洞。代价是「不满 1 秒就松手会按满 1 秒计费」。
+ * <p><b>Vis 折算（沿用 RE）</b>：原版每秒 10 颗 × 每颗 0.45 = 4.5 点/秒，而充能是整数。RE 把它折算成
+ * {@code nuclearFuryVisCostPerSecond = 5}（4.5 向上取整）、{@code nuclearFuryMaxCharge = 500}（正好
+ * 100 秒连续引导）、{@code nuclearFuryClearRange = 32}。本项目沿用这套值：导弹仍然每 2 tick 一发，
+ * <b>在每一秒的第一发导弹之前扣一次 {@code getVisCostPerSecond()} 点</b>，扣不出来就停止引导——于是
+ * 500 充能恰好打出 100 秒（1000 颗）。扣费放在该秒第一发之前（而不是固定每 20 tick 的边界上），是为了
+ * 不让「0 充能先白打半秒、松手再按」变成可反复白嫖的漏洞；代价是「不满 1 秒就松手会按满 1 秒计费」。
  *
- * <p><b>与 1.7.10 的三处偏差</b>：
+ * <p><b>与 1.7.10 的偏差</b>：
  * <ol>
- *   <li>原版是「每颗法球从法杖抽 0.45 点，抽不到就不发」，这里是「每秒从物品充能扣 5 点，扣不到就停」。
+ *   <li>原版是「每颗法球从法杖抽 0.45 点，抽不到就不发」，这里是「每秒从物品充能扣 5 点，扣不到就停」，
  *       见上面的折算说明；</li>
  *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerSecond.lore} + 各要素成本）依赖
- *       {@code GuiScreen.isCtrlKeyDown}，而本项目的共享基类 {@code FRItem} 只实现了 Shift 展开，
- *       近几件施法物品（霹雳咒书、腥红之咒、邪术之咒）也都没有该行，这里保持一致；
- *       lang 里现成的 {@code item.NuclearFuryVisCost.lore} 因此不引用（留给以后复用它做 tooltip 的物品）；</li>
+ *       {@code GuiScreen.isCtrlKeyDown}，而共享基类 {@code FRItem} 只实现 Shift 展开，近几件施法物品
+ *       （霹雳咒书、腥红之咒、邪术之咒）也都没有该行，这里保持一致；lang 里现成的
+ *       {@code item.NuclearFuryVisCost.lore} 因此不引用（留给以后复用它做 tooltip 的物品）；</li>
  *   <li>RE 给本物品加了「左键清除 32 格内自己的导弹」（{@code clearMissiles} + 自定义网络包），
- *       1.7.10 的 {@code ItemMissileTome} <b>没有</b>这个功能，所以本项目不实现；
- *       配置 {@code nuclearFuryClearRange} 转交给实体做目标搜索半径。</li>
+ *       1.7.10 的 {@code ItemMissileTome} <b>没有</b>这个功能，所以本项目不实现；配置
+ *       {@code nuclearFuryClearRange} 转交给实体做目标搜索半径。</li>
  * </ol>
  */
 public class ItemNuclearFury extends FRItem implements FRRechargable, IWarpingGear {

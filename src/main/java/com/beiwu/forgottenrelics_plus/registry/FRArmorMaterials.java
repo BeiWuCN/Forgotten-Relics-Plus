@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -38,7 +39,7 @@ public final class FRArmorMaterials {
                     Map.of(ArmorItem.Type.HELMET, 3),
                     0,
                     SoundEvents.ARMOR_EQUIP_GOLD,
-                    () -> Ingredient.of(net.minecraft.world.item.Items.GOLD_INGOT),
+                    () -> Ingredient.of(Items.GOLD_INGOT),
                     List.of(new ArmorMaterial.Layer(
                             ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "crown_prs"))),
                     0.0F,

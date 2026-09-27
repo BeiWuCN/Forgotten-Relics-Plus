@@ -124,7 +124,6 @@ public class ItemXPTome extends FRItem {
         player.experienceLevel = 0;
         player.experienceProgress = 0.0F;
         player.totalExperience = 0;
-        // 逐级往上加，进度条部分单独处理
         while (total >= player.getXpNeededForNextLevel()) {
             total -= player.getXpNeededForNextLevel();
             player.experienceLevel++;
@@ -148,7 +147,6 @@ public class ItemXPTome extends FRItem {
             if (playerXp <= 0) {
                 return;
             }
-            // 一次最多转移 rate 点，不足 rate 时把剩下的转完
             int moved = Math.min(rate, playerXp);
             drainPlayerXp(player, moved);
             setStoredXp(stack, getStoredXp(stack) + moved);
@@ -168,14 +166,12 @@ public class ItemXPTome extends FRItem {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide()) {
             if (!player.isShiftKeyDown()) {
-                // 右键：切换吸收 / 提取
                 CompoundTag tag = tag(stack);
                 tag.putBoolean(TAG_ABSORPTION, !isAbsorption(stack));
                 setTag(stack, tag);
                 SoundHelper.play(level, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS,
                         1.0F, (float) (0.4D + Math.random() * 0.1D));
             } else {
-                // 潜行 + 右键：切换启用 / 停用
                 CompoundTag tag = tag(stack);
                 boolean nowActive = !isActive(stack);
                 tag.putBoolean(TAG_ACTIVE, nowActive);
@@ -183,7 +179,6 @@ public class ItemXPTome extends FRItem {
                 // 原版用的是 Thaumcraft 的飞行音效 SoundsTC.fly，这里用末影人传送音效代替
                 SoundHelper.play(level, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS,
                         1.0F, (float) (0.8D + Math.random() * 0.2D));
-                // 同步附魔光效
                 stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, nowActive);
             }
         }

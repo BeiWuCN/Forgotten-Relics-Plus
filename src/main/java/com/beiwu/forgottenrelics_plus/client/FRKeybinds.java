@@ -13,13 +13,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 /**
- * 客户端键位的轮询逻辑。
+ * 客户端键位的轮询逻辑，对应 1.12.2 原版 {@code RelicsKeybindHandler}。
  *
- * <p>对应 1.12.2 原版 {@code RelicsKeybindHandler}：按住检测、按下沿发一条消息到服务端。
- * 1.21.1 的轮询事件是 {@code ClientTickEvent.Post}，发消息改用 {@code PacketDistributor}。
- *
- * <p>键位本身在 {@link FRClientSetup} 里注册（那属于模组总线的注册事件），
- * 这里只处理运行期的输入——两者挂的总线不同，必须拆成两个类。
+ * <p>1.21.1 的轮询事件是 {@code ClientTickEvent.Post}，发消息改用 {@code PacketDistributor}。
+ * 主键位注册在 {@link FRClientSetup}（模组总线），这里只处理运行期输入——两者挂的总线不同，
+ * 必须拆成两个类。
  *
  * <p>用「按下沿」而非「按住」触发：按住不放只切一次，与原版那个 {@code checkVariable} 标志等价。
  */

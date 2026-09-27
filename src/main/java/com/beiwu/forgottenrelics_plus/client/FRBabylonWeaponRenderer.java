@@ -28,7 +28,7 @@ import vazkii.botania.client.core.helper.RenderHelper;
  *
  * <p>RE 的 {@code RenderBabylonWeapon} 本来就是抄 Botania 的。这里按 1.21.1 Botania 的现代实现
  * {@code vazkii.botania.client.render.entity.BabylonWeaponRenderer}（反编译见
- * {@code build/botania_dec/BabylonWeaponRenderer.java}）逐句重写，两层结构一一对应：
+ * {@code build/botania_dec/BabylonWeaponRenderer.java}）重写，两层结构一一对应：
  *
  * <ol>
  *   <li><b>武器模型</b>：{@code MiscellaneousModels.INSTANCE.kingKeyWeaponModels[variety]} 这个
@@ -46,24 +46,20 @@ import vazkii.botania.client.core.helper.RenderHelper;
  *       {@code MiscellaneousModels#onModelBake}（NeoForge 的模型烘焙事件）里才填充这个数组。
  *       本渲染器<b>只在每次 render 时惰性读取</b>，不在构造时缓存——那时模型还没烘焙。
  *       读到 {@code null}（未烘焙，或数组为空/越界）时退回本模组的金色公告板光球；</li>
- *   <li><b>为什么不自己摆模型姿态</b>：{@code renderModel} 需要调用方自己给 PoseStack。
- *       Botania 的 {@code VecHelper.rotateX/Y/Z(度)} 等价于原版 {@link Axis} 的
- *       {@code XP/YP/ZP.rotationDegrees(度)}（前者是 {@code new Quaternionf().rotateX(toRadians(a))}），
- *       所以下面的旋转直接换成原版 {@code Axis}；</li>
+ *   <li><b>为什么不自己摆模型姿态</b>：Botania 的 {@code VecHelper.rotateX/Y/Z(度)} 等价于原版
+ *       {@link Axis} 的 {@code XP/YP/ZP.rotationDegrees(度)}，所以下面的旋转直接换成原版 {@code Axis}；</li>
  *   <li><b>与 {@code client/package-info.java} 的硬约束</b>：模型那层走原版
- *       {@link Sheets#translucentItemSheet()}（标准实体半透明层）；
- *       光晕那层用的是 Botania 的 {@link RenderHelper#BABYLON_ICON}。后者<b>不是原版 RenderType，
- *       严格说越过了包约束里「只用原版 RenderType」一条</b>——这是为对齐 Botania 观感而做的
- *       明确取舍（见提交说明）。它在 Botania 里是用 {@code CompositeState.builder()} 标准装配出来的
- *       （POSITION_TEX_COLOR + <b>Botania 自己的 {@code CoreShaders::halo}</b> + TRANSLUCENT_TRANSPARENCY +
- *       ITEM_ENTITY_TARGET + NO_CULL）。
- *       <p><b>1.6.2 复核更正</b>：之前这里写成「没有挂自定义 shader」，其实 Botania 的 halo.fsh 是一个
- *       盒式模糊 + 亮度脉动的自定义片元着色器，所以本行<b>确实没有完全满足 {@code package-info} 的第三条</b>。
- *       不改的理由有两条：一是换掉它就必须放弃模糊/脉动，观感会明显偏离 Botania 与本模组 1.6.1 的对齐目标；
- *       二是它<b>不直接碰 GL 状态</b>，混合是 {@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA}（会采样 alpha，
- *       贴图 {@code babylon.png} 的 RGB 恒定金色、形状全在 alpha 上），所以画出来是柔光贴片，
- *       不可能变成 1.6.2 修掉的那种「实心硬边大 quad」。Botania 是本模组的硬依赖
- *       （mods.toml 已声明），不存在缺少它时崩溃的问题。</li>
+ *       {@link Sheets#translucentItemSheet()}（标准实体半透明层）；光晕那层用的是 Botania 的
+ *       {@link RenderHelper#BABYLON_ICON}。后者<b>不是原版 RenderType，严格说越过了包约束里
+ *       「只用原版 RenderType」一条</b>——它在 Botania 里是用 {@code CompositeState.builder()} 标准装配
+ *       出来的（POSITION_TEX_COLOR + <b>Botania 自己的 {@code CoreShaders::halo}</b> +
+ *       TRANSLUCENT_TRANSPARENCY + ITEM_ENTITY_TARGET + NO_CULL），halo.fsh 是一个盒式模糊 + 亮度脉动的
+ *       自定义片元着色器，所以本行<b>确实没有完全满足 {@code package-info} 的第三条</b>。
+ *       不改的理由有两条：一是换掉它就必须放弃模糊/脉动，观感会明显偏离 Botania 与本模组 1.6.1 的
+ *       对齐目标；二是它<b>不直接碰 GL 状态</b>，混合是 {@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA}
+ *       （会采样 alpha，贴图 {@code babylon.png} 的 RGB 恒定金色、形状全在 alpha 上），所以画出来是
+ *       柔光贴片，不可能变成那种「实心硬边大 quad」。Botania 是本模组的硬依赖（mods.toml 已声明），
+ *       不存在缺少它时崩溃的问题。</li>
  * </ul>
  */
 public class FRBabylonWeaponRenderer extends EntityRenderer<EntityBabylonWeapon> {
@@ -71,9 +67,6 @@ public class FRBabylonWeaponRenderer extends EntityRenderer<EntityBabylonWeapon>
     /** 退回金色光球时用的贴图（与 {@code FROrbRenderer} 同一张）。 */
     private static final ResourceLocation ORB_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "textures/entity/fr_orb.png");
-
-    /** 满亮光照值（Botania 反编译里写死的 {@code 0xF000F0}）。 */
-    private static final int FULL_BRIGHT = 0xF000F0;
 
     /** 充能满值：Botania 的 {@code charge / 10.0f}。 */
     private static final float FULL_CHARGE_TICKS = 10.0F;
@@ -101,7 +94,7 @@ public class FRBabylonWeaponRenderer extends EntityRenderer<EntityBabylonWeapon>
 
         renderWeaponModel(weapon, poseStack, buffers);
         // 原版（1.7.10 / RE / Botania）在这之后用 Botania 的 halo 着色器再画一层光罩。
-        // 1.6.2 曾按玩家反馈「不好看」把它摘掉；1.6.4 玩家明确要求恢复并保留（「这个你别删」），故接回。
+        // 玩家明确要求保留（「这个你别删」），故接回。
         renderHalo(weapon, poseStack, buffers, live, delay, charge, chargeMul, partialTicks);
 
         poseStack.popPose();
@@ -131,7 +124,7 @@ public class FRBabylonWeaponRenderer extends EntityRenderer<EntityBabylonWeapon>
                 null,
                 model,
                 1.0F, 1.0F, 1.0F,
-                FULL_BRIGHT,
+                LightTexture.FULL_BRIGHT,
                 OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }

@@ -27,61 +27,31 @@ import vazkii.botania.common.handler.BotaniaSounds;
 
 /**
  * 千咒之诫（Edict of a Thousand Damned Souls），注册名 {@code soul_tome}，
- * 1.7.10 原版 {@code ItemSoulTome}。
+ * 1.7.10 原版 {@code ItemSoulTome}。堆叠上限 1、稀有度 EPIC、Warp 3，<b>没有施法后冷却</b>。
  *
- * <p>原版逻辑：
- * <ul>
- *   <li>右键 {@code setItemInUse(stack, 72000)} 进入 {@code EnumAction.bow} 的拉弓姿态，
- *       <b>没有施法后冷却</b>，法术强度完全来自持续引导；</li>
- *   <li>{@code onUsingTick} 每 tick 无条件把玩家的 {@code motionX / motionZ} 清零，
- *       也就是引导期间锁住水平移动（对应词条 "You are greatly slowed down while casting"）；</li>
- *   <li>引导满 20 tick 后开始结算，其中<b>两件事彼此独立</b>：
- *     <ol>
- *       <li><b>近距离击退</b>（每 tick）：对 20 格内、且距玩家 &lt;= 3.0 格的每个活体，
- *           各抽一次法杖 Vis（火 150 + 混沌 120 厘 = 2.70 点），抽得出来才画 4 道自定义闪电、
- *           播 {@code thaumcraft:zap}、造成 {@code DamageSourceTLightning} 的
- *           {@code 20 + 80 × random} 伤害，并把它朝远离玩家的方向击飞（竖直方向额外 +1.0）；</li>
- *       <li><b>灵魂抽取</b>（每 4 tick）：抽一次法杖 Vis（土 25 + 风 20 + 火 35 + 混沌 50 厘 = 1.30 点），
- *           从 20 格内的活体里随机挑一个，造成 {@code 目标最大生命 / soulTomeDivisor} 的
- *           {@code DamageSourceSoulDrain} 伤害（夹在 1.0 ~ 20.0 之间），并从该目标处生成一颗
- *           追踪玩家的灵魂能量 {@code EntitySoulEnergy}——命中玩家时治疗 1 点并补 1 点饥饿；</li>
- *     </ol>
- *   </li>
- *   <li>物品堆叠上限 1，稀有度 EPIC，{@code getWarp} 返回 <b>3</b>。</li>
- * </ul>
+ * <p>行为：右键进入 {@code EnumAction.bow} 拉弓姿态（可用时长 72000），引导期间每 tick 无条件把水平移动
+ * 清零；满 20 tick 后开始结算，其中<b>两件事彼此独立</b>——<b>近距离击退</b>（每 tick）对 20 格内、距玩家
+ * &lt;= 3.0 格的每个活体各抽一次 Vis（火 150 + 混沌 120 厘 = 2.70 点），抽得出来才连画 4 道闪电、播
+ * {@code thaumcraft:zap}、造成 {@code 20 + 80 × 随机} 的真雷伤害并朝远离玩家的方向击飞（竖直额外 +1.0）；
+ * <b>灵魂抽取</b>（每 4 tick）抽一次 Vis（土 25 + 风 20 + 火 35 + 混沌 50 厘 = 1.30 点），从 20 格内随机
+ * 挑一个活体，造成 {@code 最大生命 / soulTomeDivisor}（夹在 1.0~20.0）的夺魂伤害，并从目标处生成一颗追踪
+ * 施法者的 {@link EntitySoulEnergy}——命中玩家时治疗 1 点、补 1 点饥饿。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>{@code onItemRightClick} → {@code Item#use}；{@code onUsingTick} → {@code Item#onUseTick}；
- *       {@code getMaxItemUseDuration} → {@code Item#getUseDuration}；{@code EnumAction.bow} → {@link UseAnim#BOW}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>（见
- *       {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1）。按本模组统一约定改成
- *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge} 扣除：</li>
- *   <ul>
- *     <li>灵魂抽取每次 1 点（原版 1.30 取整）；</li>
- *     <li>击退每命中一个实体 2 点（原版 2.70，与 RE 的取值一致）。</li>
- *   </ul>
- *   <li><b>击退闪电（1.6.2 重做）</b>：原版 {@code Main.proxy.lightning(...)} 在
- *       {@code for (counterZ = 0; counterZ <= 3; ++counterZ)} 里连画 4 道（客户端是 Thaumcraft
- *       {@code FXLightningBolt}），起点 {@code (player.x, player.y + 1.0, player.z)}、
- *       终点目标身体中心、宽度 0.075。本项目改成 {@link FRBoltParticleData#broadcast}
- *       走原版粒子包把两端送到客户端，再由 {@code client/FRBolts} 交给 Botania 的
- *       {@code BoltRenderer} 画真正的折线闪电；</li>
- *   <li><b>领域结界环</b>（1.6.2 新增）：1.7.10 原版<b>没有</b>这个视觉，是 RE 补的
- *       （{@code ItemSoulTome#renderAuraBoundary}，客户端 {@code onUpdate} 里画两圈白色粒子，
- *       模仿 Botania 盖亚守护者的竞技场边界）。本项目此前完全没实现，玩家反馈「领域展开没有结界」，
- *       所以按 RE 的两圈照做：外圈半径 = 灵魂抽取搜索半径（20 格，每 8° 一颗白色 wisp），
- *       内圈半径 = 击退判定半径（每 16° 一颗淡粉白 sparkle）。RE 用的就是 Botania 的
- *       {@code wispFX / sparkleFX}，这里直接用 {@link FRParticles#wisp}（白色、尺寸 0.5、
- *       maxAgeMul 0.8）与 {@link FRParticles#sparkle}（{@code (1.0, 0.9, 0.9)}、尺寸 2.0、m=4）复刻；</li>
- *   <li>音效 {@code thaumcraft:zap} 换成原版等价物 {@link SoundEvents#FIREWORK_ROCKET_BLAST}
- *       （与霹雳咒书、腥红之咒同一替代方案）；生成灵魂能量时的 {@code botania:missile}
- *       在 Botania 里就是 {@link BotaniaSounds#MISSILE}，直接引用；命中时的 {@code random.fizz}
- *       换成 {@link SoundEvents#FIRE_EXTINGUISH}（与邪术之咒、核子之怒同一替代方案）。
- *       所有音效都过 {@link SoundHelper#play} 统一压低音量；</li>
- *   <li>原版 {@code DamageSourceSoulDrain} → {@link FRDamageTypes#SOUL_DRAIN}（仓库已有）；
- *       {@code DamageSourceTLightning} → {@link FRDamageTypes#TRUE_LIGHTNING}（霹雳咒书已有）。</li>
- * </ul>
+ * <p>1.21.1 对应：{@code onItemRightClick} / {@code onUsingTick} / {@code EnumAction.bow} →
+ * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
+ * （见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），改成 {@link FRRechargable} 的物品自身充能，
+ * 灵魂抽取每次 1 点（原版 1.30 取整）、击退每命中一个实体 2 点（原版 2.70，与 RE 一致）。<b>不写任何自定义
+ * 网络包</b>：击退闪电（1.6.2 重做）用 {@link FRBoltParticleData#broadcast} 把两端送到客户端、由
+ * {@code client/FRBolts} 交给 Botania {@code BoltRenderer} 画真正的折线闪电；音效 {@code thaumcraft:zap} →
+ * {@link SoundEvents#FIREWORK_ROCKET_BLAST}、生成灵魂能量的 {@code botania:missile} 直接引用
+ * {@link BotaniaSounds#MISSILE}、命中时的 {@code random.fizz} → {@link SoundEvents#FIRE_EXTINGUISH}，都过
+ * {@link SoundHelper#play} 统一压低音量；{@code DamageSourceSoulDrain} / {@code DamageSourceTLightning} →
+ * {@link FRDamageTypes#SOUL_DRAIN} / {@link FRDamageTypes#TRUE_LIGHTNING}。
+ *
+ * <p><b>领域结界环</b>（1.6.2 新增）：1.7.10 原版<b>没有</b>这个视觉，是 RE 补的
+ * （{@code ItemSoulTome#renderAuraBoundary}，客户端画两圈白色粒子模仿 Botania 盖亚守护者的竞技场边界）。
+ * 本项目此前完全没实现，玩家反馈「领域展开没有结界」后按 RE 照做——外圈半径 20 格、每 8° 一颗白色 wisp，
+ * 内圈半径 3.0 格、每 16° 一颗淡粉白 sparkle（细节见 {@link #renderAuraBoundary}）。
  *
  * <p><b>与原版的两处偏差</b>：
  * <ol>

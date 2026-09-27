@@ -27,35 +27,20 @@ import net.minecraft.world.phys.Vec3;
 /**
  * 邪术之咒的暗物质法球（Dark Matter Orb），1.7.10 原版 {@code EntityDarkMatterOrb}。
  *
- * <p>原版逻辑（{@code EntityThrowable} 子类，{@code getGravityVelocity} 返回 0）：
- * <ul>
- *   <li>无重力沿初始方向直线飞行，每个 tick 只做 0.99 的速度衰减；</li>
- *   <li>{@code ticksExisted >= 200} 时静静消失（<b>不结算伤害</b>）；
- *       {@code ticksExisted >= 100} 且速度的三个分量都小于 {@code 0.01} 时<b>原地自爆</b>；</li>
- *   <li>撞到方块时，若方块是 {@code BlockBush} / {@code BlockLeaves} / {@code BlockLiquid}
- *       就直接返回，<b>穿过</b>继续飞；否则冒烟消失、不造成伤害；</li>
- *   <li>命中实体（或原地自爆）时，对<b>自身碰撞箱外扩 1.0 格</b>内的所有
- *       {@code EntityLivingBase}（排除发射者）造成一次暗物质魔法伤害，并施加三种负面效果，
- *       外域（Outer Lands）里伤害与效果都更强。原版这段范围结算只在
- *       {@code getThrower() != null} 时执行。</li>
- * </ul>
+ * <p>原版（{@code EntityThrowable}，无重力 + 0.99 阻尼）：沿初始方向直线飞行；200 tick 静静消失
+ * （<b>不结算伤害</b>）；100 tick 后若速度三分量都小于 0.01 则原地自爆；撞草丛 / 树叶 / 液体穿过，
+ * 其余方块命中只冒烟消失；命中实体或自爆时，对自身碰撞箱外扩 1 格内的所有活体（排除发射者）
+ * 造成一次暗物质魔法伤害并施加三种负面效果，外域（Outer Lands）里更强——这段只在
+ * {@code getThrower() != null} 时执行。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>基类换成 {@link FRHomingProjectile}（无重力、有生存时限、命中钩子），
- *       但本实体<b>不追踪</b>（{@code homingStrength} 保持 0）；</li>
- *   <li>原版 {@code onImpact} 里「草丛/树叶/液体穿过」的写法，1.21.1 的射线检测默认
- *       只命中带碰撞箱的方块——液体与草丛本来就不拦射线，只有<b>树叶</b>需要显式放行。
- *       即便如此这里仍按原版的三类逐条判断，语义保持一致；</li>
- *   <li>原版用 {@code Thaumcraft.proxy.wispFXEG} 画拖尾、用状态码 16 让客户端爆出 30 个怨灵粒子；
- *       这两处都是 <b>Thaumcraft 自己的粒子</b>，但 RE 的 {@code EntityDarkMatterOrb} 已经把它们
- *       换成了 Botania 的 {@code wispFX}，本项目照 RE 复刻：
- *       拖尾每 tick 2 颗 {@code (0.05, 0.05, 0.1)} 的小 wisp，命中/冒烟时 30 颗 {@code (0.1, 0.1, 0.15)}
- *       的 wisp 再叠一颗 {@code (0.4, 0.4, 0.6)} 的 sparkle；</li>
- *   <li>原版冒烟音效是 {@code random.fizz}，这里换成等价的原版 {@link SoundEvents#FIRE_EXTINGUISH}；</li>
- *   <li>{@code Config.dimensionOuterId} → Thaumaturge 的 {@link OuterLands#DIMENSION}；</li>
- *   <li>原版 {@code DamageSourceDarkMatter} → {@link FRDamageTypes#DARK_MATTER}。</li>
- * </ul>
+ * <p>1.21.1 对应：基类 {@link FRHomingProjectile} 负责无重力与生存时限，但本实体<b>不追踪</b>
+ * （{@code homingStrength} 保持 0）；1.21.1 的射线本来就穿液体与草丛，只有<b>树叶</b>需要显式放行，
+ * 这里仍按原版三类逐条判断以保持语义。粒子照 RE 复刻（原版是 Thaumcraft {@code wispFXEG} 拖尾 +
+ * 状态码 16 爆 30 个怨灵，RE 换成 Botania：拖尾每 tick 2 颗 {@code (0.05,0.05,0.1)} 小 wisp，
+ * 命中/冒烟 30 颗 {@code (0.1,0.1,0.15)} wisp 再叠一颗 {@code (0.4,0.4,0.6)} sparkle）。
+ * 冒烟音 {@code random.fizz} → {@link SoundEvents#FIRE_EXTINGUISH}；
+ * {@code Config.dimensionOuterId} → Thaumaturge 的 {@link OuterLands#DIMENSION}；
+ * 伤害类型 {@code DamageSourceDarkMatter} → {@link FRDamageTypes#DARK_MATTER}。
  *
  * <p><b>与原版的两处已知偏差</b>：
  * <ol>

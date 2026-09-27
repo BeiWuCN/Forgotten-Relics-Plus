@@ -18,12 +18,8 @@ import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
  * 客户端初始化（模组总线）。
  *
  * <p>对应 1.12.2 原版 {@code ClientProxy.addRenderLayers()} 与
- * {@code RelicsKeybindHandler.registerKeybinds()}，这边合并成几件事：
- * <ol>
- *   <li>把恐惧之冠的几何描述交给 NeoForge 烘焙（{@code RegisterLayerDefinitions}）；</li>
- *   <li>把佩戴渲染器注册给 Curios；</li>
- *   <li>注册不和谐之戒的开关按键。</li>
- * </ol>
+ * {@code RelicsKeybindHandler.registerKeybinds()}：把恐惧之冠的几何交给 NeoForge 烘焙、把佩戴
+ * 渲染器注册给 Curios、注册不和谐之戒的开关按键。
  *
  * <p>{@code value = Dist.CLIENT} 保证这些类只在客户端加载，服务端不会因为缺少客户端类而崩。
  */
@@ -77,9 +73,8 @@ public final class FRClientSetup {
     /**
      * 闪电弧的粒子 provider。
      *
-     * <p>1.7.10 / RE 是「自定义网络包 → 客户端收包后调 Thaumcraft 画电弧」；
-     * 这里换成「原版粒子包 → 客户端 provider 调 Botania 的 {@code BoltRenderer}」，
-     * 所以只需要在这一处把 provider 挂上，见 {@link FRBolts}。
+     * <p>1.7.10 / RE 是「自定义网络包 → 客户端调 Thaumcraft 画电弧」，这里换成
+     * 「原版粒子包 → 客户端 provider 调 Botania 的 {@code BoltRenderer}」，见 {@link FRBolts}。
      */
     @SubscribeEvent
     public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {

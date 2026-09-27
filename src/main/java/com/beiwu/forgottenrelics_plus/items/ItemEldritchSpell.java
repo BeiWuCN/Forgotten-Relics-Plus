@@ -21,39 +21,29 @@ import net.minecraft.world.level.Level;
 
 /**
  * 邪术之咒（Eldritch Spell），注册名 {@code eldritch_spell}，1.7.10 原版 {@code ItemEldritchSpell}。
+ * 堆叠上限 1、稀有度 EPIC、Warp 4。
  *
- * <p>原版逻辑：
- * <ul>
- *   <li>右键发射一颗暗物质法球 {@code EntityDarkMatterOrb}：从视线前方 1.0 格、抬高 0.5 处出现，
- *       速度是视线的 1.5 倍，并在玩家脚下播放 {@code thaumcraft:egattack}；</li>
- *   <li>消耗<b>背包里法杖的 Vis</b>：混沌（ENTROPY / Perditio）{@code 400} 厘 Vis，即 4 点，
- *       乘 {@code eldritchSpellVisMult}；</li>
- *   <li>随后进入 {@code SuperpositionHandler.setCasted(player, 20, true)} 的 20 tick 共用冷却；</li>
- *   <li>物品堆叠上限 1，稀有度 EPIC，{@code getWarp} 返回 4。</li>
- * </ul>
+ * <p>行为：右键发射一颗暗物质法球 {@code EntityDarkMatterOrb}——从视线前方 1.0 格、抬高 0.5 处出现，
+ * 速度是视线的 1.5 倍，并在玩家脚下播 {@code thaumcraft:egattack}；消耗背包里法杖的混沌（Perditio）
+ * {@code 400} 厘 Vis（= 4 点，乘 {@code eldritchSpellVisMult}，正好是整数、无需取整取舍）；随后进入
+ * {@code SuperpositionHandler.setCasted(player, 20, true)} 的 20 tick 共用冷却。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>{@code onItemRightClick} → {@code Item#use}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>。按本模组统一约定改成
- *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge} 扣除；</li>
- *   <li>原版的 {@code SuperpositionHandler} 冷却 → {@link CooldownHelper}（与其它遗物共用）；</li>
- *   <li>发射音效 {@code thaumcraft:egattack} 换成原版 {@link SoundEvents#FIREWORK_ROCKET_BLAST}
- *       （与霹雳咒书同一套替代方案，且照原版音量 0.6 / 音调 0.8 + 随机 0.2）；</li>
- *   <li>原版 tooltip 用 {@code ItemEldritchSpell5_1.lore + " " + 伤害 + " " + ItemEldritchSpell5_2.lore}
- *       拼出「造成 X 伤害」那一行；RE 已把它合并成带 {@code %s} 的 {@code ItemEldritchSpell5.lore}，
- *       本项目的 lang 沿用合并后的键，这里直接传配置里的基础伤害值。</li>
- * </ul>
+ * <p>1.21.1 对应：{@code onItemRightClick} → {@code Item#use}；<b>「从背包法杖抽 Vis」没有对应 API</b>，
+ * 按本模组统一约定改成 {@link FRRechargable} 的物品自身充能，用 {@link RechargeAccess#consumeCharge}
+ * 扣除；原版的 {@code SuperpositionHandler} 冷却 → {@link CooldownHelper}（与其它遗物共用）；发射音效
+ * {@code thaumcraft:egattack} → {@link SoundEvents#FIREWORK_ROCKET_BLAST}（与霹雳咒书同一套替代方案，
+ * 且照原版音量 0.6 / 音调 0.8 + 随机 0.2）；RE 已把原版的 {@code ItemEldritchSpell5_1.lore + " " +
+ * 伤害 + " " + ItemEldritchSpell5_2.lore} 合并成带 {@code %s} 的 {@code ItemEldritchSpell5.lore}，
+ * 本项目的 lang 沿用合并后的键，这里直接传配置里的基础伤害值。
  *
  * <p><b>两处刻意的取舍</b>：
  * <ol>
- *   <li>原版 tooltip 在按住 Shift 时显示的是「按持有者是否身处外域」取的伤害值
- *       （{@code eldritchSpellDamageEx} 或 {@code eldritchSpellDamage}）。1.21.1 的
- *       {@code appendHoverText} 拿不到玩家实例，本项目也不在通用物品类里引入客户端专属类，
- *       所以这里固定显示基础伤害 {@code eldritchSpellDamage}（RE 的 1.12.2 版同样只显示基础值）；</li>
- *   <li>原版的「Ctrl 查看 Vis 消耗」那一支依赖 {@code FRVisPerCast.lore} / {@code FRPerditioCost.lore}，
- *       而本项目的共享基类 {@code FRItem} 只实现了 Shift 展开，近几件施法物品（霹雳咒书、错位之典）
- *       也都没有该行，这里保持一致、不新增语言键。</li>
+ *   <li>原版 tooltip 按住 Shift 时显示的是按「持有者是否身处外域」取的伤害值（{@code eldritchSpellDamageEx}
+ *       或 {@code eldritchSpellDamage}）。1.21.1 的 {@code appendHoverText} 拿不到玩家实例，本项目也不在
+ *       通用物品类里引入客户端专属类，所以固定显示基础伤害（RE 的 1.12.2 版同样只显示基础值）；</li>
+ *   <li>原版的「Ctrl 查看 Vis 消耗」分支依赖 {@code FRVisPerCast.lore} / {@code FRPerditioCost.lore}，
+ *       而共享基类 {@code FRItem} 只实现 Shift 展开，近几件施法物品（霹雳咒书、错位之典）也都没有该行，
+ *       这里保持一致、不新增语言键。</li>
  * </ol>
  */
 public class ItemEldritchSpell extends FRItem implements FRRechargable, IWarpingGear {

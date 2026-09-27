@@ -31,8 +31,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
  *   <li>{@code RelicsEventHandler#onPlayerDeath}：<b>致死时免死</b>，把血量设为 1。</li>
  * </ol>
  *
- * <p>第二处的原版是 if / else if：欧米伽之核在前，破碎的命运巨著在后——也就是说带着欧米伽之核
- * 时永远不会去消耗命运巨著。这里用 {@link #priority()} 表达同一优先级关系。
+ * <p>第二处的原版是 if / else if：欧米伽之核在前，破碎的命运巨著在后，这里用 {@link #priority()}
+ * 表达同一优先级关系（具体后果见 {@code PRIORITY} 字段注释）。
  *
  * <p><b>关于获取方式</b>：1.7.10 里它<b>没有研究词条、也没有灌注配方</b>，只能创造模式获取
  * （原版源码里 {@code RelicsResearchRegistry} 完全没有提到它）。按「只以原版为准」的原则，

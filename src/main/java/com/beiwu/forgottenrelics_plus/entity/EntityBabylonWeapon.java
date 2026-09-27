@@ -77,7 +77,8 @@ import vazkii.botania.common.handler.BotaniaSounds;
  *       {@link EnderDragon} 与 {@link WitherBoss}（与 {@code EntityLunarFlare} 同一写法）；</li>
  *   <li><b>不写任何自定义网络包</b>：{@code ApotheosisParticleMessage}（40 颗 wisp）与
  *       {@code SuperpositionHandler.imposeBurst}（Thaumcraft 的爆裂特效）都改成服务端
- *       {@code ServerLevel#sendParticles}；拖尾同样服务端发；</li>
+ *       {@code ServerLevel#sendParticles}；每 tick 的拖尾则和其余法球一样挪到客户端本地生成
+ *       （见 {@link #spawnTrailParticles()}），不再占带宽；</li>
  *   <li>音效 {@code botania:babylonSpawn} / {@code botania:babylonAttack} 在 Botania 1.21.1 里
  *       改名为 {@link BotaniaSounds#TREASURE_WEAPON_SPAWN} / {@link BotaniaSounds#TREASURE_WEAPON_ATTACK}
  *       （音效文件就是 {@code treasureweaponspawn.ogg} / {@code treasureweaponattack.ogg}），
@@ -262,7 +263,7 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
 
     @Override
     public void tick() {
-        // 客户端不做任何结算：位置由服务端同步，粒子也全部由服务端下发。
+        // 客户端不做任何结算：位置由服务端同步，拖尾粒子在基类的客户端钩子里本地生成。
         if (level().isClientSide()) {
             super.tick();
             return;
@@ -307,9 +308,6 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
             }
         }
 
-        if (liveTime > delay && launched) {
-            spawnTrail();
-        }
         if (liveTime > MAX_LIVE_TICKS + delay) {
             discard();
         }
@@ -468,17 +466,27 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
     /**
      * 原版每 tick 的黄色 wisp 拖尾：{@code wispFX(world, x, y, z, 1.0, 1.0, 0.0, size=0.3, gravity=0.0)}
      *（9 参重载里第 8 个是 size、第 9 个是 gravity），对应
-     * {@link FRParticles#serverWisp}（maxAgeMul 默认 1.0、gravity 默认 0）。
+     * {@link FRParticles#wisp}（maxAgeMul 默认 1.0、gravity 默认 0）。
+     *
+     * <p>1.7.0 起改由客户端本地生成（{@code Level#addParticle}），不再走
+     * {@code ServerLevel#sendParticles} 的每 tick 发包；位置取客户端插值后的 {@code getX/Y/Z}，
+     * 与原先服务端坐标等价。
+     *
+     * <p>服务端原条件是 {@code liveTime > delay && launched}。客户端没有 {@code launched} 字段，
+     * 但 {@code launched} 只在 {@code liveTime == delay} 那一 tick 变真、紧接着 {@code liveTicks}
+     * 自增，所以「已发射」与「{@code liveTicks > delay}」恒等价，原来那个 {@code launched} 项
+     * 其实是冗余的；这里直接用同步过来的 {@code liveTicks} / {@code delay} 判断，逐 tick 一致。
      *
      * <p>没有几何体之后，用 {@code variety} 的 12 档暖金色调给整排武器做区分（见
      * {@link #VARIETY_COLORS}）。
      */
-    private void spawnTrail() {
-        if (!(level() instanceof ServerLevel server)) {
+    @Override
+    protected void spawnTrailParticles() {
+        if (getLiveTicks() <= getDelay()) {
             return;
         }
         int color = VARIETY_COLORS[Math.floorMod(getVariety(), VARIETY_COLORS.length)];
-        FRParticles.serverWisp(server, getX(), getY(), getZ(),
+        FRParticles.wisp(level(), getX(), getY(), getZ(),
                 ((color >> 16) & 0xFF) / 255.0F,
                 ((color >> 8) & 0xFF) / 255.0F,
                 (color & 0xFF) / 255.0F,

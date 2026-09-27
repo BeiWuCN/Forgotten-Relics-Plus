@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 
 /**
@@ -48,7 +47,7 @@ public final class FRCarriedItems {
             }
         }
         CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
-            IItemHandlerModifiable equipped = handler.getEquippedCurios();
+            var equipped = handler.getEquippedCurios();
             for (int slot = 0; slot < equipped.getSlots(); slot++) {
                 ItemStack stack = equipped.getStackInSlot(slot);
                 if (!stack.isEmpty()) {

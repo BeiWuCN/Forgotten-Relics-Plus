@@ -25,46 +25,33 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 月耀咒书（Tome of Lunar Flares），注册名 {@code tome_of_lunar_flares}，
- * 1.7.10 原版 {@code ItemLunarFlares}。
+ * 1.7.10 原版 {@code ItemLunarFlares}。堆叠上限 1、稀有度 EPIC、Warp 3，<b>没有冷却</b>。
  *
- * <p>原版逻辑：
- * <ul>
- *   <li>右键 {@code setItemInUse(stack, 72000)}，进入 {@code EnumAction.bow} 的拉弓姿态，<b>没有冷却</b>；</li>
- *   <li>{@code onUsingTick}：只要 {@code count % 2 == 0} 且不是第一个 tick，就先用
- *       {@code SuperpositionHandler.getPointedBlock(player, world, 128.0F)} 取准星指向的方块
- *       （射线长 128 格）；拿不到方块就什么都不发生；</li>
- *   <li>拿到方块后抽一次 Vis：风（Aer）{@code 35} + 火（Ignis）{@code 50} + 秩序（Ordo）{@code 65}
- *       厘 Vis（合计 1.5 点，三项都乘 {@code lunarFlaresVisMult}），抽得出来才发射一颗
- *       {@code EntityLunarFlare}。于是引导期间<b>每 2 tick 降下一颗耀月之辉</b>；</li>
- *   <li>每 4 tick 在玩家处补一次 {@code ForgottenRelics:sound.starfall}（音量 2.0，音调 1.0 + rand × 0.5）；</li>
- *   <li>物品堆叠上限 1，稀有度 EPIC，{@code getWarp} 返回 3。</li>
- * </ul>
+ * <p>行为：右键进入 {@code EnumAction.bow} 拉弓姿态（可用时长 72000）。只要 {@code count % 2 == 0}
+ * 且不是第一个 tick，就先用 {@code SuperpositionHandler.getPointedBlock(player, world, 128.0F)} 取准星
+ * 指向的方块（射线长 128 格），拿不到方块就什么都不发生；拿到后抽一次 Vis（风 35 + 火 50 + 秩序 65 厘
+ * = 1.5 点，三项都乘 {@code lunarFlaresVisMult}），抽得出来才发射一颗 {@link EntityLunarFlare}，于是
+ * 引导期间<b>每 2 tick 降下一颗耀月之辉</b>；每 4 tick 在玩家处补一次
+ * {@code ForgottenRelics:sound.starfall}（音量 2.0、音调 1.0 + 随机 × 0.5）。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>{@code onItemRightClick} → {@code Item#use}；{@code onUsingTick} → {@code Item#onUseTick}；
- *       {@code getMaxItemUseDuration} → {@code Item#getUseDuration}；{@code EnumAction.bow} → {@link UseAnim#BOW}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>（见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1）。
- *       按本模组统一约定改成 {@link FRRechargable} 的<b>物品自身充能</b>，用
- *       {@link RechargeAccess#consumeCharge} 扣除；</li>
- *   <li>取方块改用原版 {@code ClipContext} 射线（透视液体、与传送之典同一写法）；</li>
- *   <li>发射音效 {@code ForgottenRelics:sound.starfall} 换成原版等价物
- *       模组自带音效 {@link FRSounds#STARFALL}（原版 {@code sound.starfall}），
- *       并按项目约定过 {@link SoundHelper#play} 统一压低音量。</li>
- * </ul>
+ * <p>1.21.1 对应：{@code onItemRightClick} / {@code onUsingTick} / {@code EnumAction.bow} →
+ * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
+ * （见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），改成 {@link FRRechargable} 的物品自身充能；
+ * 取方块改用原版 {@link ClipContext} 射线（透视液体、与错位之典同一写法）；发射音效
+ * {@code ForgottenRelics:sound.starfall} 换成模组自带的 {@link FRSounds#STARFALL}（原版
+ * {@code sound.starfall}），并按项目约定过 {@link SoundHelper#play} 统一压低音量。
  *
  * <p><b>两处刻意的取舍</b>：
  * <ol>
- *   <li>原版每颗耀月之辉的 Vis 消耗是风 0.35 + 火 0.50 + 秩序 0.65 = 1.5 点，充能是整数，
- *       按本项目「把原版单次合计取整成一个固定值」的既有做法（霹雳咒书 2.2 → 2、错位之典 6.4 → 6）
- *       就近取 2；</li>
+ *   <li>原版每颗耀月之辉的 Vis 消耗是风 0.35 + 火 0.50 + 秩序 0.65 = 1.5 点，充能是整数，按本项目
+ *       「把原版单次合计取整成一个固定值」的既有做法（霹雳咒书 2.2 → 2、错位之典 6.4 → 6）就近取 2；</li>
  *   <li>原版右键引导<b>没有冷却</b>，节奏完全来自 {@code count % 2 == 0}。本项目为它保留了
- *       {@code tomeOfLunarFlaresCooldown} 配置，但它的语义是<b>两次发射之间的间隔</b>（默认 2），
- *       不是施法后的冷却，因此不接 {@code CooldownHelper}（与原初混沌之典同一处理）。</li>
+ *       {@code tomeOfLunarFlaresCooldown} 配置，但它的语义是<b>两次发射之间的间隔</b>（默认 2），不是
+ *       施法后的冷却，因此不接 {@code CooldownHelper}（与原初混沌之典同一处理）。</li>
  * </ol>
  *
- * <p>原版 {@code spawnLunarFlare} 里先按 {@code mop} 周围 ±6 格做过一次 {@code setPosition}，
- * 但紧接着又被第二段（散布向量那段）覆盖，是一段死代码，这里不保留。
+ * <p>原版 {@code spawnLunarFlare} 里先按 {@code mop} 周围 ±6 格做过一次 {@code setPosition}，但紧接着又被
+ * 第二段（散布向量那段）覆盖，是一段死代码，这里不保留。
  */
 public class ItemLunarFlares extends FRItem implements FRRechargable, IWarpingGear {
 

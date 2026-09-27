@@ -10,6 +10,7 @@ import com.beiwu.forgottenrelics_plus.entity.EntityRageousMissile;
 import com.beiwu.forgottenrelics_plus.entity.EntityShinyEnergy;
 import com.beiwu.forgottenrelics_plus.entity.EntitySoulEnergy;
 import com.beiwu.forgottenrelics_plus.entity.EntityThunderpealOrb;
+import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -112,7 +113,7 @@ public final class FREntities {
                             .updateInterval(5));
 
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(
-            String name, java.util.function.Supplier<EntityType.Builder<T>> builder) {
+            String name, Supplier<EntityType.Builder<T>> builder) {
         return ENTITIES.register(name, () -> builder.get().build(name));
     }
 

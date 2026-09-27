@@ -21,24 +21,19 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 /**
  * 混沌之核（Chaos Core），1.7.10 原版 {@code ItemChaosCore}。
  *
- * <p>它的效果分散在两个类里：物品类只有一个（随身携带时按概率施加随机状态效果），
- * 其余三条全部写在 {@code RelicsEventHandler} 中，用 {@code player.inventory.hasItem(...)} 判断
- * ——也就是说它是<b>随身携带</b>生效，不需要佩戴。四条完整效果：
+ * <p>它的效果分散在两个类里：物品类只有一个（随身携带时按概率施加随机状态效果），其余三条全部写在
+ * {@code RelicsEventHandler} 中，用 {@code player.inventory.hasItem(...)} 判断——也就是说它是
+ * <b>随身携带</b>生效，不需要佩戴。四条完整效果：
  *
  * <ol>
- *   <li><b>攻击者携带</b>（原版 {@code RelicsEventHandler:177}，45%）：把 {@code 伤害 × rand×2}
- *       转嫁给目标 16 格内的随机实体，其中 15% 的概率改为<b>反弹给攻击者自己</b>，并取消原伤害；</li>
- *   <li><b>受害者携带</b>（{@code :190}，42%）：把 {@code 伤害 × rand×2} 转嫁给 16 格内随机实体，
- *       取消原伤害（没有反弹分支）；</li>
- *   <li><b>受害者携带</b>（{@code :246}）：受到的伤害乘以 {@code rand×2}；</li>
+ *   <li>三条「转嫁 / 放大伤害」效果（原版 {@code RelicsEventHandler:177} 攻击者 45%、
+ *       {@code :190} 受害者 42%、{@code :246} 受害者受伤放大）。1.21.1 没有 {@code LivingAttackEvent}，
+ *       由 {@link CarriedDamageBehaviour} 的三个钩子按原版先后次序落地，细节见各方法 javadoc；</li>
  *   <li><b>随身携带</b>（本类 {@code inventoryTick}，即原版 {@code func_77663_a}）：每 tick 有
  *       {@code chaosCoreChance}（原版写死 2.08E-4）的概率触发；随机取 1~21 号「药水 ID」，
  *       其中 6 / 7（瞬间治疗 / 瞬间伤害）改判为 20（凋零）；时长 {@code 100 + rand(2400)} tick，
  *       等级 {@code rand(3)}。</li>
  * </ol>
- *
- * <p>1.21.1 没有 {@code LivingAttackEvent}，前三条的落地方式见 {@link CarriedDamageBehaviour}——
- * 那个接口的三个钩子正是为了让这三段的先后次序与原版完全一致。
  *
  * <p>1.21.1 也没有数字药水 ID，所以按同一顺序列出对应的现代效果，见 {@link #EFFECT_POOL}：
  * 索引 0 对应原版 ID 1，索引 5 / 6 都指向凋零（对应原版 6 / 7 的改判）。

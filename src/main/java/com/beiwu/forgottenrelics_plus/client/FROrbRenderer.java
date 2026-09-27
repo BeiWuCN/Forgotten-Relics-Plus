@@ -19,7 +19,7 @@ import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4f;
 
 /**
- * 弹射物「法球」的渲染器——**按 1.12.2 移植版（RE）的两层结构复刻**，但用现代渲染 API 写。
+ * 弹射物「法球」的渲染器——按 1.12.2 移植版（RE）的<b>两层结构</b>复刻，用现代渲染 API 写。
  *
  * <h2>复刻的是 RE 的哪两层</h2>
  *
@@ -31,24 +31,14 @@ import org.joml.Matrix4f;
  *       中心白、外缘是该颜色压暗 30%，大小在前 10 tick 内线性长到 {@code (5~25)/30}。</li>
  * </ol>
  *
- * <h2>逐实体的差异（本次 1.6.1 对齐）</h2>
+ * <p>逐实体的差异用三个开关表达（本次 1.6.1 对齐）：
+ * lunar_flare / rageous_missile <b>只有尖刺层</b>；thunderpeal / primal 的公告板是加法混合
+ * （{@code SRC_ALPHA, ONE}），crimson / dark_matter 是普通透明（{@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA}）；
+ * primal 的颜色按实体同步过来的要素索引从 6 色表取，其余法球的颜色写死在各自的渲染器里。
  *
- * <p>对照 RE 的各个 {@code RenderXxx} 逐个实体校准，需要三个开关：
- * <ul>
- *   <li><b>要不要画公告板</b>：RE 的 {@code RenderLunarFlare} 与 {@code RenderRageousMissile}
- *       <b>只有尖刺层</b>，没有公告板；其余渲染器两层都有；</li>
- *   <li><b>公告板是不是加法混合</b>：RE 的 {@code RenderThunderpealOrb} 与 {@code RenderPrimalOrb}
- *       公告板用 {@code blendFunc(SRC_ALPHA, ONE)}（加法），而 {@code RenderCrimsonOrb} /
- *       {@code RenderDarkMatterOrb} 用 {@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA}（普通透明）；</li>
- *   <li><b>颜色是不是按实体取</b>：RE 的 {@code RenderPrimalOrb} 用 {@code entity.getColorIndex()}
- *       从 6 色表取色，其余法球的颜色写死在各自的渲染器里。</li>
- * </ul>
- *
- * <h2>为什么不是「用原版粒子代替」</h2>
- *
- * <p>上一版曾把实体渲染器做成空实现、只留粒子拖尾，理由是「1.7.10 没有实体贴图」。
- * 但那样根本看不到球，和 RE 的观感差得远。这里改成真正把两层画出来——
- * <b>形体由渲染器负责，粒子只作拖尾</b>（拖尾仍在各实体自己的 {@code spawnTrailParticles} 里）。
+ * <p>早先曾把实体渲染器做成空实现、只留粒子拖尾，结果根本看不到球，观感与 RE 差得远。
+ * 现在改成真正画两层——<b>形体由渲染器负责，粒子只作拖尾</b>（拖尾仍在各实体自己的
+ * {@code spawnTrailParticles} 里）。
  *
  * <h2>现代写法（满足 {@code client/package-info.java} 的三条硬约束）</h2>
  *
@@ -60,9 +50,8 @@ import org.joml.Matrix4f;
  *   <li>公告板：普通透明用 {@link RenderType#entityTranslucentEmissive(ResourceLocation)}
  *       （自发光、Iris 认识）；加法时用 {@link RenderType#eyes(ResourceLocation)}；</li>
  *   <li>尖刺用 {@link RenderType#eyes(ResourceLocation)}——它正好是原版「加法混合 + 主渲染目标 +
- *       NEW_ENTITY 格式」，对应 RE 的 {@code disableTexture2D + blendFunc(SRC_ALPHA, ONE)}。
- *       <b>注意</b>：{@code RenderType.lightning()} 虽然也是加法混合，但它的输出目标是
- *       {@code WEATHER_TARGET}（天气缓冲），在实体渲染里用会画到错误的帧缓冲，所以不能用；</li>
+ *       NEW_ENTITY 格式」。<b>注意</b>：{@code RenderType.lightning()} 虽然也是加法混合，但它的输出
+ *       目标是 {@code WEATHER_TARGET}（天气缓冲），在实体渲染里用会画到错误的帧缓冲，<b>不能用</b>；</li>
  *   <li>随机数用 {@link RandomSource}（固定种子 187，与 RE 一致），不是 {@code Math.random()}。</li>
  * </ul>
  *
@@ -84,10 +73,10 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
      *
      * <p>为什么加法层不能用 {@link #TEXTURE}：原版 {@link RenderType#eyes(ResourceLocation)} 的混合是
      * {@code ADDITIVE_TRANSPARENCY}，其实现是 {@code RenderSystem.blendFunc(ONE, ONE)}——
-     * <b>alpha 完全不参与混合</b>（顶点 alpha 也一样被忽略），shader 只把「贴图 RGB × 顶点色」直接加到帧缓冲。
-     * 于是「RGB 全白、只有 alpha 有渐变」的贴图在加法层里会被当成一整块实心白 quad 加起来：
-     * 边缘没有渐变、四边形覆盖到哪里就把那里刷亮到哪里，贴近相机时就是玩家反馈的那块「巨大的硬边半透明面片」。
-     * RE 的 {@code RenderThunderpealOrb} 用的是 {@code blendFunc(SRC_ALPHA, ONE)}（会乘 alpha），
+     * <b>alpha 完全不参与混合</b>（顶点 alpha 也一样被忽略），shader 只把「贴图 RGB × 顶点色」直接加到
+     * 帧缓冲。于是「RGB 全白、只有 alpha 有渐变」的贴图在加法层里会被当成一整块实心白 quad 加起来：
+     * 边缘没有渐变、四边形覆盖到哪里就把那里刷亮到哪里，贴近相机时就是玩家反馈的那块「巨大的硬边半透明
+     * 面片」。RE 的 {@code RenderThunderpealOrb} 用的是 {@code blendFunc(SRC_ALPHA, ONE)}（会乘 alpha），
      * 1.21.1 没有「贴图 + SRC_ALPHA,ONE + 主渲染目标」的现成 RenderType，所以这里改为把衰减放进 RGB，
      * 用它配合 {@code eyes} 的 {@code ONE,ONE} 得到等价的柔光加法效果。
      */
@@ -127,13 +116,12 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
 
     /**
      * 颜色来源：返回打包成 {@code 0xRRGGBB} 的颜色。{@code null} 表示用构造时传入的固定色。
-     *
-     * <p>只有原初球需要它——对应 RE 的 {@code entity.getColorIndex()}。
+     * 只有原初球需要它——对应 RE 的 {@code entity.getColorIndex()}。
      */
     private final ToIntFunction<T> colorSource;
 
     /**
-     * 固定颜色、画公告板、公告板普通透明（沿用旧调用点行为的便捷构造）。
+     * 固定颜色、画公告板、公告板普通透明的便捷构造。
      *
      * @param red       颜色红分量 0~1
      * @param green     颜色绿分量 0~1
@@ -147,7 +135,7 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
     /**
      * 固定颜色的便捷构造。
      *
-     * @param renderBillboard  是否绘制外层公告板（RE 的 lunar_flare / rageous_missile 传 {@code false}）
+     * @param renderBillboard   是否绘制外层公告板（RE 的 lunar_flare / rageous_missile 传 {@code false}）
      * @param additiveBillboard 公告板是否用加法混合（RE 的 thunderpeal / primal 传 {@code true}）
      */
     public FROrbRenderer(EntityRendererProvider.Context context, float red, float green, float blue, float baseScale,

@@ -43,13 +43,12 @@ public class ItemDormantArcanum extends FRCurioItem implements FRRechargable, We
         }
         int lifetime = stack.getOrDefault(FRDataComponents.DORMANT_LIFETIME.get(), 0);
         if (lifetime > 0) {
-            // 有 Vis 就扣一点、寿命减一；没 Vis 就维持休眠，等灵气慢慢补。
+            // 没 Vis 就维持休眠，等灵气慢慢补回来。
             if (RechargeAccess.consumeCharge(stack, player, FRConfig.DORMANT_ARCANUM_VIS_COST_PER_TICK.get())) {
                 stack.set(FRDataComponents.DORMANT_LIFETIME.get(), lifetime - 1);
             }
             return;
         }
-        // 寿命耗尽：原地变回浑浊之核。
         CurioHelper.replaceFirst(player, FRItems.DORMANT_ARCANUM.get(), new ItemStack(FRItems.ARCANUM.get()));
     }
 

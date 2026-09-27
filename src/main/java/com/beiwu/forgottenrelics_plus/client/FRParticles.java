@@ -8,45 +8,30 @@ import vazkii.botania.client.fx.WispParticleData;
 /**
  * Botania 粒子（sparkle / wisp）在本项目里的<b>唯一</b>调用入口。
  *
- * <h2>为什么要有这个类</h2>
+ * <h2>与旧版 Botania 粒子代理的对应</h2>
  *
- * <p>1.7.10 原版与 1.12.2 移植版（RE）的这些视觉特效，绝大多数都是直接调 Botania 的粒子代理：
+ * <p>1.7.10 原版与 RE 直接调 Botania 的粒子代理，本项目改回它们的现代对应物：
  * <pre>
  *   Botania.proxy.sparkleFX(world, x, y, z, r, g, b, size, m);
- *   Botania.proxy.wispFX(world, x, y, z, r, g, b, size, xm, ym, zm);            // maxAgeMul 默认 1.0
- *   Botania.proxy.wispFX(world, x, y, z, r, g, b, size, xm, ym, zm, maxAgeMul);
- *   Botania.proxy.wispFX(world, x, y, z, r, g, b, size, gravity);               // 只有 9 参时才带 gravity
+ *   Botania.proxy.wispFX(world, x, y, z, r, g, b, size, xm, ym, zm[, maxAgeMul]);
  * </pre>
- * 本项目早期把这些调用整体换成了原版粒子（ENTITY_EFFECT / END_ROD / ELECTRIC_SPARK …），
- * 玩家明确要求「和原来保持」，所以本次改回 Botania 的现代对应物。参数语义见下面的分节说明。
- *
- * <h2>Modern Botania 的对应物（已用 javap + CFR 反编译 libs/botania-neoforge-1.21.1-457.jar 核对）</h2>
- *
+ * 参数语义已用 javap + CFR 反编译 {@code libs/botania-neoforge-1.21.1-457.jar} 核对：
  * <ul>
- *   <li>{@code sparkleFX(..., size, m)} → {@link SparkleParticleData#sparkle(float, float, float, float, int)}
- *       <br>反编译 {@code vazkii.botania.client.fx.FXSparkle} 确认：
+ *   <li>{@code sparkle(..., size, m)} → {@link SparkleParticleData#sparkle(float, float, float, float, int)}：
  *       {@code quadSize = (rand*0.5+0.5) * 0.2 * size}、{@code lifetime = 3 * m}、{@code alpha = 0.75}、
  *       初速恒为 0。也就是说 <b>m 是寿命倍率（存活 3×m tick），不是速度也不是数量</b>。</li>
- *   <li>{@code wispFX(..., size, xm, ym, zm[, maxAgeMul])} →
- *       {@link WispParticleData#wisp(float, float, float, float)} /
- *       {@link WispParticleData#wisp(float, float, float, float, float)}
- *       <br>反编译 {@code vazkii.botania.client.fx.FXWisp} 确认：
+ *   <li>{@code wisp(..., size, xm, ym, zm[, maxAgeMul])} → {@link WispParticleData#wisp}：
  *       {@code quadSize = (rand*0.5+0.5) * 2.0 * size}、{@code alpha = 0.375}、
  *       {@code lifetime = maxAgeMul * 28 / (rand*0.3 + 0.7)}、{@code gravity} 默认 0。
  *       <b>xm / ym / zm 是粒子的初始速度</b>，由 {@code Level#addParticle} 的第 4~6 个参数（或
  *       {@code sendParticles} 的 count==0 分支）传入。</li>
  * </ul>
  *
- * <p>1.7.10 里成对出现的 {@code setWispFXDistanceLimit(false/true)} 与 {@code setSparkleFXCorrupt(false)}
- * 是旧版粒子代理上的<b>全局开关</b>（前者放宽粒子的渲染距离上限，后者切换 corrupt 着色器）。
- * 1.21.1 的 Botania 已把这两个开关去掉（{@code SparkleParticleData} 只有 noClip / fake / corrupt
- * 三种静态工厂，wisp 也没有渲染距离开关），粒子一律按原版渲染距离规则绘制，因此本类不提供对应方法；
- * 需要「不受距离限制」的旧语义时，观感上只剩「粒子正常显示」这一条，已经满足。
+ * <p>旧版成对出现的 {@code setWispFXDistanceLimit(false/true)} 与 {@code setSparkleFXCorrupt(false)}
+ * 是粒子代理上的<b>全局开关</b>；1.21.1 的 Botania 已把它们去掉，粒子一律按原版渲染距离规则绘制，
+ * 因此本类不提供对应方法。
  *
  * <h2>客户端 / 服务端</h2>
- *
- * <p>原版这些调用都发生在客户端（拖尾在 {@code onUpdate} 的 {@code world.isRemote} 分支里逐帧 addParticle；
- * 一次性爆发则由网络包送到客户端后同样只用 addParticle）。本项目沿用同样的分工：
  * <ul>
  *   <li>{@link #sparkle} / {@link #wisp} 只用于<b>客户端</b>路径（拖尾、结界环）——零网络开销；</li>
  *   <li>{@link #serverSparkle} / {@link #serverWisp} / {@link #serverWispBurst} 用于服务端一次性效果，
@@ -67,9 +52,7 @@ public final class FRParticles {
     private FRParticles() {
     }
 
-    // ------------------------------------------------------------------
-    // 客户端：逐颗、可精确指定初速
-    // ------------------------------------------------------------------
+    // ---- 客户端：逐颗、可精确指定初速 ----
 
     /**
      * 客户端 sparkle，对应 {@code Botania.proxy.sparkleFX(world, x, y, z, r, g, b, size, m)}。
@@ -102,9 +85,7 @@ public final class FRParticles {
         level.addParticle(WispParticleData.wisp(size, r, g, b, maxAgeMul), x, y, z, xm, ym, zm);
     }
 
-    // ------------------------------------------------------------------
-    // 服务端：一次性爆发
-    // ------------------------------------------------------------------
+    // ---- 服务端：一次性爆发 ----
 
     /** 服务端单颗 sparkle（count == 0 分支），用于命中点的那一颗「爆闪」。 */
     public static void serverSparkle(ServerLevel level, double x, double y, double z,

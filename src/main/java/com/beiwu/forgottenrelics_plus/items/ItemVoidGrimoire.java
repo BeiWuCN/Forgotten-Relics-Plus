@@ -35,102 +35,45 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 深渊魔典（Grimoire of The Abyss），注册名 {@code void_grimoire}，
- * 1.7.10 原版 {@code ItemVoidGrimoire}。
+ * 1.7.10 原版 {@code ItemVoidGrimoire}。堆叠上限 1、Warp 3、引导 100 tick、{@code EnumAction.bow}。
  *
- * <p>原版逻辑：
- * <ol>
- *   <li>{@code onItemRightClick}：若服务端且玩家还在共用冷却里就直接返回；客户端则另有
- *       {@code localCooldown} 计数（纯客户端防连点，冷却结束的 60 tick 内不再重新起手）。
- *       然后用 {@code EntityUtils.getPointedEntity(world, player, 0.0, 64.0, 3.0F)}
- *       沿视线找活体（射线 64 格、搜索盒外扩 3 格）：找到就记进以玩家为键的静态 map
- *       {@code targetList} 并 {@code setItemInUse(stack, 100)} 进入 {@code EnumAction.bow} 的引导；
- *       找不到就什么都不做（连引导都不开始）；</li>
- *   <li>{@code onUsingTick}（<b>两侧都跑</b>）：
- *     <ol>
- *       <li>先从背包法杖抽 Vis：<b>秩序（Ordo）9 + 混沌（Perditio）16 = 25 厘 Vis</b>，
- *           即 0.25 点/tick（5 点/秒），两项都乘 {@code voidGrimoireVisMult}；
- *           <b>抽不出来立刻 {@code stopUsingItem}</b>，且这一扣发生在目标校验之前；</li>
- *       <li>若 {@code targetList} 里没有该玩家，把该项置 null 并停止引导；</li>
- *       <li>目标存在时，<b>每 tick</b> 都做：清零坠落距离、施加 30 tick、amplifier 100 的
- *           <b>移动缓慢</b>（{@code Potion.field_76421_d}，即缓慢；amp 100 足以把目标定住）、
- *           把 {@code motionY} 直接写成 {@code 0.03}（目标缓缓上浮）、
- *           {@code noClip = true}（穿过方块上浮）；
- *           服务端每 tick 往目标周围广播 {@code PacketVoidMessage(.., false)}
- *           （8 颗随机紫色 wisp 向内收束 + 5 颗原版传送门粒子），
- *           并在引导的第一个 tick（{@code count == getMaxItemUseDuration()}）在目标中心播一次
- *           {@code forgottenrelics:sound.mdcharge}（音量 4.0、音调 0.75）；</li>
- *       <li>{@code count == 1}（100 tick 引导的最后一 tick）结算：
- *           服务端 {@code imposeBurst(.., 2.0)}（Thaumcraft 的爆裂特效）+
- *           {@code PacketVoidMessage(.., true)}（129 颗向外炸开的紫色 wisp），
- *           在目标处播 {@code thaumcraft:craftfail}（音量 4.0、音调 0.8+rand*0.2），
- *           然后 {@code overthrow(target, player)}、
- *           {@code SuperpositionHandler.setCasted(player, 30, false)}（30 tick 共用冷却）；
- *           客户端把 {@code localCooldown} 置 60；</li>
- *     </ol>
- *   </li>
- *   <li>{@code overthrow(entity, overthrower)}：把目标直接搬到<b>同一个维度</b>的
- *       {@code x/z = ±10001 随机、y = -100000 ± 10001 随机}处（世界的虚空）。
- *       非玩家目标搬完立刻 {@code setDead()}；玩家目标留在原地等虚空伤害慢慢杀死，
- *       并向全服广播 {@code OverthrowChatMessage(type 1)}
- *       （{@code <施法者> has overthrown <目标> into the Void.}）。
- *       注意这里<b>不换维度</b>，也不像永恒放逐之诫那样在下界找落脚点；</li>
- *   <li>物品堆叠上限 1、稀有度 EPIC，{@code EnumAction.bow}、可用时长 100，
- *       {@code getWarp} 返回 <b>3</b>。</li>
- * </ol>
+ * <p>行为：右键用 {@code EntityUtils.getPointedEntity(world, player, 0.0, 64.0, 3.0F)}（射线 64 格、
+ * 搜索盒外扩 3 格）锁定准星指向的活体并记入组件，随后进入 100 tick 引导。引导期间每 tick：折算后的
+ * 扣费发生在目标校验之前，抽不出来立刻停止；然后清零目标坠落距离、施加 30 tick / amplifier 100 的
+ * 移动缓慢、把 {@code motionY} 写成 0.03（缓缓上浮）、置 {@code noClip = true}，并广播紫色 wisp 与
+ * 传送门粒子；第一 tick 播一次蓄力音。最后一 tick 结算：爆裂特效 + 129 颗向外炸开的 wisp +
+ * {@code thaumcraft:craftfail} 的替代音效，再 {@code overthrow} 把目标丢进<b>当前维度</b>的虚空
+ *（X/Z 各 ±10001 随机、Y = -100000 ± 10001）：非玩家目标搬完立即抹除，玩家目标留在虚空等死并
+ * 全服广播 type 1 消息（"into the Void."），最后进 30 tick 共用冷却。
  *
- * <p><b>{@code voidGrimoireEnabled} 这个总开关</b>（原版 {@code RelicsConfigHandler}）只在一个地方用到：
- * {@code RelicsResearchRegistry} 用它包住整个「VoidGrimoire 研究词条」的注册，
- * 也就是说关掉之后<b>只是让这件遗物无法合法制造</b>（研究不存在 → 无法解锁灌注配方），
- * 既不会删除世界里已有的成品，也不阻止创造模式刷出。本项目<b>没有移植这个开关</b>，
- * 理由与做法见提交说明：1.21.1 的研究只能写数据包 JSON、没有任何 Java 注册/注销 API
- * （{@code docs/reference/thaumaturge-1.21.1-api.md} §4.1 已实测确认），
- * 想禁用它只能删/改 {@code research_entry/void_grimoire.json}；前一版的「虚伪审判」遇到同名的
- * {@code falseJusticeEnabled} 也是同样处理。</p>
+ * <p>1.21.1 对应：{@code onItemRightClick / onUsingTick / getMaxItemUseDuration / EnumAction.bow} →
+ * {@code use / onUseTick / getUseDuration / UseAnim.BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
+ *（见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），按本模组统一约定改成 {@link FRRechargable}
+ * 的物品自身充能；以玩家为键的静态 map {@code targetList} → {@link FRDataComponents#VOID_GRIMOIRE_TARGET}；
+ * 原版自定义网络包（{@code PacketVoidMessage / BurstMessage / EntityMotionMessage}）全部改由服务端直接
+ * 生成粒子 / 改速度并靠原版同步送达；音效 {@code forgottenrelics:sound.mdcharge} → {@link FRSounds#MD_CHARGE}、
+ * {@code thaumcraft:craftfail} → {@link SoundEvents#FIRE_EXTINGUISH}，都过 {@link SoundHelper#play} 压音量。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>{@code onItemRightClick} → {@code Item#use}；{@code onUsingTick} → {@code Item#onUseTick}；
- *       {@code getMaxItemUseDuration} → {@code Item#getUseDuration}；{@code EnumAction.bow} → {@link UseAnim#BOW}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>（见
- *       {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1）。按本模组统一约定改成
- *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge} 扣除：</li>
- *   <li>原版以玩家为键的静态 map {@code targetList} → 物品数据组件
- *       {@link FRDataComponents#VOID_GRIMOIRE_TARGET}（与永恒放逐之诫的 {@code EDICT_TARGET} 同源）；</li>
- *   <li>原版 {@code SuperpositionHandler} 的共用冷却 → {@link CooldownHelper}（同样是全体共用）；</li>
- *   <li><b>不写任何自定义网络包</b>：{@code PacketVoidMessage} / {@code BurstMessage} /
- *       {@code EntityMotionMessage} 全部改由服务端直接生成粒子与改速度，
- *       靠原版同步送达客户端（服务端改 {@code motion} 后置 {@code hurtMarked} 即会同步）；</li>
- *   <li>音效：{@code forgottenrelics:sound.mdcharge} → 模组自带音效 {@link FRSounds#MD_CHARGE}
- *       （同为「蓄力」音，且都有音调参数）；{@code thaumcraft:craftfail} → 原版
- *       {@link SoundEvents#FIRE_EXTINGUISH}（同为失败时的「嗤」声）。本模组对自定义/Thaumcraft
- *       音效一律换原版等价物，且都过 {@link SoundHelper#play} 统一压低音量；</li>
- *   <li>粒子：Botania 紫色 wisp 改用 {@link FRParticles}（颜色 {@code r=0.2+rand*0.3, g=0, b=0.5+rand*0.2}，
- *       与原版逐字对齐）；Thaumcraft 的 {@code portalstuff} 本来就是原版 {@code EntityPortalFX}，
- *       所以继续用 {@link ParticleTypes#PORTAL}；{@code imposeBurst} 走的是 Thaumcraft
- *       {@code proxy.burst}（非 Botania），按口径保留「FLASH + 一簇 effect」。</li>
- * </ul>
- *
- * <p><b>Vis 折算</b>：原版每 tick 抽 25 厘 Vis = 0.25 点/tick，即 <b>5 点/秒</b>；充能是整数，
- * 故在原版数值上直接取 5，并在每一秒的第一 tick 扣一次（与永恒放逐之诫、核子之怒同一扣费节奏）。
- * 一次完整引导（100 tick）合计扣 5 次 = 25 点。
+ * <p>{@code voidGrimoireEnabled} 总开关<b>没有移植</b>：它原版只包住研究词条的注册，而 1.21.1 的研究
+ * 只能写数据包 JSON、没有 Java 注册/注销 API（与 {@code falseJusticeEnabled} 同样处理），想禁用只能改
+ * {@code research_entry/void_grimoire.json}。
  *
  * <p><b>与 1.7.10 的偏差</b>：
  * <ol>
- *   <li>原版 {@code onUsingTick} 在<b>两侧都执行</b>（客户端也自己改目标速度、加缓慢）。
- *       这里整套只在服务端跑，客户端完全依赖服务端同步 —— 可见结果一致，但少掉客户端那一份
- *       冗余计算（与永恒放逐之诫同一写法）；</li>
- *   <li>原版的 {@code localCooldown = 60} 是纯客户端防连点计数，与 {@code setCasted} 的 30 tick
- *       共用冷却是两回事。这里只保留服务端权威的 30 tick 冷却，不实现客户端计数；</li>
- *   <li>原版把 {@code noClip = true}（1.21.1 里该字段名为 {@code noPhysics}）写在目标身上后<b>从不复位</b>：引导若被提前打断
- *       （松手、Vis 耗尽、目标消失），目标会永久保持 {@code noClip}。这是 1.7.10 自身的缺陷，
- *       按「以 1.7.10 为准」的原则<b>逐字保留</b>，未做修正（见提交说明「不确定点」）；</li>
- *   <li>原版非玩家目标用 {@code setPosition} 后 {@code setDead()}；1.21.1 对玩家目标走
- *       {@code ServerPlayer#teleportTo(ServerLevel, ..)}（保证客户端被同步），其它实体走
- *       {@code Entity#teleportTo(x, y, z)} 后 {@code discard()}；</li>
- *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerTick.lore} + 各要素成本）依赖
- *       {@code GuiScreen.isCtrlKeyDown}，而共享基类 {@link FRItem} 只实现 Shift 展开，
- *       近几件施法物品同样没有该行，这里保持一致。</li>
+ *   <li>原版 {@code onUsingTick} 两侧都跑（客户端也自己改速度、加缓慢），这里只在服务端跑，可见结果一致；</li>
+ *   <li>原版的 {@code localCooldown = 60} 是纯客户端防连点，这里只保留服务端权威的 30 tick 共用冷却；</li>
+ *   <li>原版把 {@code noClip = true}（1.21.1 里字段名为 {@code noPhysics}）写在目标身上后<b>从不复位</b>：
+ *       引导被提前打断（松手、Vis 耗尽、目标消失）时目标会永久穿墙。这是 1.7.10 自身的缺陷，按
+ *       「以 1.7.10 为准」<b>逐字保留</b>。另外非玩家目标 {@code setPosition + setDead()} →
+ *       {@code teleportTo(x, y, z) + discard()}，玩家目标走 {@code ServerPlayer#teleportTo(ServerLevel, ..)}
+ *       保证客户端被同步；</li>
+ *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerTick.lore} + 各要素成本）依赖 {@code GuiScreen.isCtrlKeyDown}，
+ *       而共享基类 {@link FRItem} 只实现 Shift 展开，这里保持一致。</li>
  * </ol>
+ *
+ * <p><b>Vis 折算</b>：原版每 tick 抽秩序（Ordo）9 + 混沌（Perditio）16 = 25 厘 Vis = 0.25 点/tick，
+ * 即 <b>5 点/秒</b>；充能是整数，故直接取 5，并在每一秒的第一 tick 扣一次（与永恒放逐之诫、核子之怒
+ * 同一扣费节奏），一次完整引导（100 tick）合计扣 5 次 = 25 点。
  */
 public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingGear {
 

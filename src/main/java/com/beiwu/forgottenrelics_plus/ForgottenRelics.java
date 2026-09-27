@@ -9,10 +9,12 @@ import com.beiwu.forgottenrelics_plus.registry.FRItems;
 import com.beiwu.forgottenrelics_plus.registry.FRParticleTypes;
 import com.beiwu.forgottenrelics_plus.registry.FRRecipeSerializers;
 import com.beiwu.forgottenrelics_plus.registry.FRSounds;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,6 @@ public final class ForgottenRelics {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
     public ForgottenRelics(IEventBus modBus, ModContainer container) {
-        // 注册表挂到模组事件总线上
         FRItems.register(modBus);
         FREntities.register(modBus);
         FRArmorMaterials.register(modBus);
@@ -73,8 +74,8 @@ public final class ForgottenRelics {
      * 这条日志是给「迁移进度」做硬校验用的——加了新物品却在日志里看不到数量上涨，
      * 就说明 DeferredRegister 没登记上，比只看编译通过可靠。
      */
-    private void onCommonSetup(net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
-        long count = net.minecraft.core.registries.BuiltInRegistries.ITEM.keySet().stream()
+    private void onCommonSetup(FMLCommonSetupEvent event) {
+        long count = BuiltInRegistries.ITEM.keySet().stream()
                 .filter(key -> key.getNamespace().equals(MOD_ID))
                 .count();
         LOGGER.info("失落遗物学：已注册 {} 件物品", count);

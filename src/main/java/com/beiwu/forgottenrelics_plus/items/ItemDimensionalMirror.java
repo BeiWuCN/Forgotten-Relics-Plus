@@ -130,7 +130,6 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isShiftKeyDown()) {
-            // Shift + 右键：记录当前位置与维度
             if (!level.isClientSide()) {
                 CompoundTag tag = storedTag(stack);
                 tag.putInt(TAG_X, player.blockPosition().getX());

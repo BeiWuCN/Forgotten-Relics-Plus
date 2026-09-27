@@ -28,63 +28,31 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 原初混沌之典的能量法球（Orb of Primordial Energy），1.7.10 原版 {@code EntityChaoticOrb}，
- * 本项目注册名 {@code primal_orb}（沿用 lang 里现成的 {@code entity.forgotten_relics_plus.primal_orb}）。
+ * 本项目注册名 {@code primal_orb}。
  *
- * <p>原版逻辑（{@code EntityThrowable} 子类）：
- * <ul>
- *   <li><b>重力 0.001、阻尼 0.5</b>（原版覆写了 {@code getGravityVelocity} 与 0.99 阻尼那个方法）。
- *       阻尼 0.5 意味着速度每 tick 减半，法球出膛后几乎立刻慢下来，只在原地附近飘；</li>
- *   <li>每 tick 先 {@code count++}；身处水中则立刻用「撞到自己」的命中结算引爆；</li>
- *   <li>客户端每 tick 撒 6 颗颜色索引 0~5 的 {@code Thaumcraft.proxy.wispFX4} + 1 颗随机颜色的
- *       {@code wispFX2}（<b>都是 Thaumcraft 的粒子，不是 Botania</b>）；</li>
- *   <li>出生 20 tick 之后开始运动：
- *       <ul>
- *         <li><b>普通法球</b>：用 {@code new Random(getId() + count)} 做种子，三个速度分量各加
- *             {@code (nextFloat() - nextFloat()) * 0.01} 的随机游走；</li>
- *         <li><b>追踪法球（seeker，35% 概率）</b>：在 16 格内找最近的活体，瞄准点取目标高度 90% 处，
- *             每 tick 三个分量各加 {@code dx / d * 0.2}（<b>注意 d 是平方距离</b>，见下文「原版笔误」），
- *             然后把速度三分量各自夹到 ±0.2；发射者（{@code oi}）每次评估有 80% 概率被跳过，
- *             所以追踪法球有概率反过来打施法者（lore 里也这么写）；</li>
- *       </ul>
- *   </li>
- *   <li>生存时限 5000 tick；</li>
- *   <li>命中结算：命中实体（且发射者非空）时造成 {@code 1 + random * chaosTomeDamageCap} 的
- *       {@code DamageSourceMagic} 伤害；随后以 {@code 1 + random * 6} 的威力、{@code isFlaming = true}
- *       引爆；<b>非追踪</b>法球还有 {@code rand.nextInt(100) <= specialchance} 的概率追加一次
- *       「腐化爆裂（taintSplosion）」或「就地生成一个灵气节点」二选一，
- *       默认 {@code specialchance = 1}（约 2%），撞方块且身处水中时是 10（约 11%）。</li>
- * </ul>
+ * <p>原版（{@code EntityThrowable}，重力 0.001、阻尼 0.5——出膛后几乎立刻慢下来）：出生 20 tick 后
+ * 才开始运动；普通球用 {@code new Random(getId() + count)} 做种子三分量随机游走；35% 概率是追踪球
+ * （16 格内找最近活体、瞄准高度 90% 处、每 tick 加 {@code dx / d * 0.2}，<b>d 是平方距离</b>，
+ * 见下文笔误；分量夹到 ±0.2；发射者每次评估有 80% 概率被跳过）；生存 5000 tick；命中实体造成
+ * {@code 1 + random * chaosTomeDamageCap} 魔法伤害，随后以 {@code 1 + random * 6} 威力引爆；
+ * <b>非追踪</b>球还有 {@code rand.nextInt(100) <= specialchance} 概率追加一次「腐化爆裂」或
+ * 「就地生成灵气节点」二选一（默认 {@code specialchance = 1} 约 2%，撞方块且入水时 10 约 11%）。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>基类换成 {@link FRHomingProjectile}（无重力、有生存时限、命中钩子）。但本实体<b>不用它的追踪</b>
- *       （{@code homingStrength} 保持 0）：原版的追踪是「跳发射者概率 + 平方距离 + 分量限速」那一套，
- *       与基类通用的「朝目标中心按单位向量加速」不是一回事，所以整段自己实现，放在 {@code super.tick()}
- *       之前，保持原版「先加速、后移动、再阻尼」的顺序；</li>
- *   <li>原版的阻尼 0.5、重力 0.001 覆盖了 {@code EntityThrowable} 的默认值。1.21.1 的
- *       {@code ThrowableProjectile} 把 0.99 阻尼写死在 {@code tick()} 里（不可覆写），
- *       所以这里在 {@code super.tick()} 之后把速度乘回 {@code 0.5 / 0.99}、再减去 0.001，
- *       净效果与原版完全一致；</li>
- *   <li>原版用 {@code IEntityAdditionalSpawnData} 把 {@code seeker} / {@code oi} 同步给客户端，
- *       是因为原版<b>两端都跑</b>追踪/游走逻辑。本项目沿用既有约定：轨迹以服务端为准，
- *       客户端只负责粒子（见 {@code EntityCrimsonOrb}），所以 {@code seeker} 只是服务端字段，无需同步；</li>
- *   <li>原版 {@code DamageSourceMagic} → {@link FRDamageTypes#FORGOTTEN_MAGIC}
- *       （上一件腥红之咒已建好该类型，直接复用）；</li>
- *   <li>原版的 {@code ThaumcraftWorldGenerator.createRandomNodeAt} 与 {@code Utils.setBiomeAt} /
- *       {@code blockTaintFibres} 在 1.21.1 由 Thaumaturge 承担：节点用 {@link NodeGenerator}，
- *       腐化用 {@link TaintBiomeManager#taintColumn} + {@link BlockTaintFibre}。
- *       这三处的参数与用法与 Thaumaturge 自家对「原初法杖核心」的复刻（{@code FocusEffectPrimal}）
- *       保持一致，语义对齐 1.7.10；</li>
- *   <li>1.7.10 没有实体贴图，形体本来就是粒子。原版那几处调的是 Thaumcraft 的
- *       {@code wispFX4 / wispFX2 / wispFX3}（非 Botania），而 RE 的 {@code EntityPrimalOrb}
- *       已经把它们全部换成了 Botania 的 {@code wispFX} / {@code sparkleFX}，本处按 RE 复刻：
- *       拖尾 1 颗 wisp（颜色 = 法球自身的要素色，与 {@link #getColorIndex()} 同色）+
- *       每 3 tick 一颗 sparkle，命中时 6 色 × 4 颗 = 24 颗朝外飞散的 wisp。</li>
- *   <li><b>形体与颜色</b>：形体现在由 {@code client/FROrbRenderer} 画（公告板 + 尖刺爆闪）。
- *       颜色取 {@link #getColorIndex()} 这个<b>同步</b>索引——对应 RE 的
- *       {@code RenderPrimalOrb} 读 {@code entity.getColorIndex()} 从 6 色表取色，
- *       这里是服务端生成时随机 0~5、经 {@link SynchedEntityData} 同步给客户端。</li>
- * </ul>
+ * <p>1.21.1 对应：基类 {@link FRHomingProjectile} 只管无重力 / 生存时限 / 命中钩子，本实体
+ * <b>不用它的追踪</b>（{@code homingStrength} 保持 0）：原版追踪是「跳发射者概率 + 平方距离 + 分量限速」
+ * 那一套，与基类通用的按单位向量加速不是一回事，所以整段自己实现并放在 {@code super.tick()} 之前，
+ * 保持原版「先加速、后移动、再阻尼」的顺序；{@code ThrowableProjectile} 把 0.99 阻尼写死在
+ * {@code tick()} 里（不可覆写），所以 {@code super.tick()} 之后把速度乘回 {@code 0.5 / 0.99} 再减 0.001 重力，
+ * 净效果与原版一致；原版 {@code IEntityAdditionalSpawnData} 同步的 {@code seeker} / {@code oi}
+ * 在本项目只是服务端字段（轨迹以服务端为准，客户端只负责粒子）；{@code DamageSourceMagic} →
+ * {@link FRDamageTypes#FORGOTTEN_MAGIC}；{@code createRandomNodeAt} / {@code setBiomeAt} /
+ * {@code blockTaintFibres} 由 Thaumaturge 的 {@link NodeGenerator}、
+ * {@link TaintBiomeManager#taintColumn} + {@link BlockTaintFibre} 承担（参数与 Thaumaturge 自家
+ * {@code FocusEffectPrimal} 一致）；粒子照 RE 复刻：拖尾 1 颗 wisp（颜色 = 自身要素色）+ 每 3 tick
+ * 一颗 sparkle，命中时 6 色 × 4 颗 = 24 颗朝外飞散的 wisp（1.7.10 这里是 Thaumcraft
+ * {@code wispFX4/wispFX2/wispFX3}，不是 Botania）；形体现在由 {@code client/FROrbRenderer} 画，
+ * 颜色取 {@link #getColorIndex()} 这个<b>同步</b>索引（对应 RE 的 {@code RenderPrimalOrb} 读
+ * {@code entity.getColorIndex()} 取色）。
  *
  * <p><b>四处刻意的取舍 / 原版笔误</b>：
  * <ol>
@@ -254,7 +222,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
     /**
      * 取某个原初要素索引的 {@code 0xRRGGBB} 颜色。
      *
-     * <p>渲染器（{@code client/FROrbRenderer}）与粒子（{@link #primalColor(int)}）共用这同一张表，
+     * <p>渲染器（{@code client/FROrbRenderer}）与粒子（{@link #primalColorRgb(int)}）共用这同一张表，
      * 对应 RE 里渲染器与粒子各自持有同一组颜色的做法。
      */
     public static int primalColorRgb(int index) {
@@ -308,20 +276,18 @@ public class EntityChaoticOrb extends FRHomingProjectile {
             // 从未锁定过目标的球：7 秒后消失。其中 SELFDESTRUCT_CHANCE 比例是「原地爆炸」
             // （复用撞击路径，本项目的爆炸已经是 ExplosionInteraction.NONE，不破坏方块），其余淡出。
             // 只要期间锁定到过一次目标就不再消失（玩家口径：「只对一直没锁定到目标的球」）。
-            if (!everLockedTarget) {
-                if (++noTargetTicks > NO_TARGET_FADE_TICKS) {
-                    if (selfDestruct) {
-                        onImpact(new EntityHitResult(this, position()));
-                        discard();
-                        return;
-                    }
-                    int fade = entityData.get(DATA_FADE) + 1;
-                    if (fade >= FADE_TICKS) {
-                        discard();
-                        return;
-                    }
-                    entityData.set(DATA_FADE, fade);
+            if (!everLockedTarget && ++noTargetTicks > NO_TARGET_FADE_TICKS) {
+                if (selfDestruct) {
+                    onImpact(new EntityHitResult(this, position()));
+                    discard();
+                    return;
                 }
+                int fade = entityData.get(DATA_FADE) + 1;
+                if (fade >= FADE_TICKS) {
+                    discard();
+                    return;
+                }
+                entityData.set(DATA_FADE, fade);
             }
         }
         super.tick();
@@ -329,14 +295,14 @@ public class EntityChaoticOrb extends FRHomingProjectile {
             return;
         }
         // 1.21.1 内建的是 0.99 阻尼，原版这里是 0.5；把差额补上，再减去原版的 0.001 重力。
-        Vec3 motion = getDeltaMovement().scale(DRAG / BASE_DRAG);
+        var motion = getDeltaMovement().scale(DRAG / BASE_DRAG);
         setDeltaMovement(motion.x, motion.y - GRAVITY, motion.z);
     }
 
     /** 普通法球的随机游走：种子是 {@code getId() + count}，与原版 {@code new Random(id + count)} 一致。 */
     private void wander() {
         Random rr = new Random(getId() + count);
-        Vec3 motion = getDeltaMovement();
+        var motion = getDeltaMovement();
         setDeltaMovement(
                 motion.x + (rr.nextFloat() - rr.nextFloat()) * WANDER_ACCEL,
                 motion.y + (rr.nextFloat() - rr.nextFloat()) * WANDER_ACCEL,
@@ -383,7 +349,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
         double dx = target.getX() - getX();
         double dy = target.getBoundingBox().minY + target.getBbHeight() * 0.9D - getY();
         double dz = target.getZ() - getZ();
-        Vec3 motion = getDeltaMovement();
+        var motion = getDeltaMovement();
         // 原版这里除以的是平方距离（笔误），逐字保留。
         setDeltaMovement(
                 Mth.clamp(motion.x + dx / best * SEEK_ACCEL, -SEEK_MAX_SPEED, SEEK_MAX_SPEED),

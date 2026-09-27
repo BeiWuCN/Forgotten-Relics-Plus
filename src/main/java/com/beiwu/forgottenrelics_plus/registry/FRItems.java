@@ -168,12 +168,7 @@ public final class FRItems {
 
     // ---- 第四波：核心类与武器 ----
 
-    /**
-     * 虚伪审判（False Justice）。原版稀有度 EPIC，附带 4 点扭曲。研究格子 col=-7 / row=0。
-     *
-     * <p>随身携带生效：把携带者造成与受到的伤害都转成两倍真实伤害，并且让携带者与
-     * <b>被携带者打死的目标</b>都不死。详见 {@link ItemFalseJustice}。
-     */
+    /** 虚伪审判（False Justice）。原版稀有度 EPIC，附带 4 点扭曲。研究格子 col=-7 / row=0。 */
     public static final DeferredItem<ItemFalseJustice> FALSE_JUSTICE =
             ITEMS.registerItem("false_justice", ItemFalseJustice::new,
                     new Item.Properties().rarity(Rarity.EPIC));
@@ -211,12 +206,7 @@ public final class FRItems {
 
     // ---- 第六波：弹射物书籍 ----
 
-    /**
-     * 霹雳咒书（Thunderpeal）。原版稀有度 EPIC，堆叠上限 1。
-     *
-     * <p>右键发射雷电球，消耗物品自身的 Vis 充能，并有 30 tick 的共用冷却。
-     * 详见 {@link ItemThunderpeal}。
-     */
+    /** 霹雳咒书（Thunderpeal）。原版稀有度 EPIC，堆叠上限 1。 */
     public static final DeferredItem<ItemThunderpeal> THUNDERPEAL =
             ITEMS.registerItem("thunderpeal", ItemThunderpeal::new,
                     new Item.Properties().rarity(Rarity.EPIC));
@@ -229,9 +219,6 @@ public final class FRItems {
      * <p>原版类名是 {@code ItemTeleportationTome}（研究键才叫 DiscordTome），1.7.10 注册名也是
      * ItemTeleportationTome；本项目按「一个物品一个物品」的节奏迁移时统一改用
      * {@code tome_of_discord} 这个注册名。原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
-     *
-     * <p>右键有三种传送模式，消耗物品自身 Vis 充能，并有 20 tick 共用冷却。
-     * 详见 {@link ItemTeleportationTome}。
      */
     public static final DeferredItem<ItemTeleportationTome> TELEPORTATION_TOME =
             ITEMS.registerItem("tome_of_discord", ItemTeleportationTome::new,
@@ -242,9 +229,6 @@ public final class FRItems {
      *
      * <p>原版类名是 {@code ItemObeliskDrainer}（本项目的注册名按第 7 波口径统一改成
      * {@code devourer_of_the_void}）。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
-     *
-     * <p>手持右键可锁定 16 格内的神秘方尖碑并拉弓引导：每 30 tick 抽取一次，
-     * 回复 4 点生命、补 2 点饥饿。详见 {@link ItemDevourerOfTheVoid}。
      */
     public static final DeferredItem<ItemDevourerOfTheVoid> DEVOURER_OF_THE_VOID =
             ITEMS.registerItem("devourer_of_the_void", ItemDevourerOfTheVoid::new,
@@ -254,9 +238,6 @@ public final class FRItems {
      * 邪术之咒（Eldritch Spell），注册名 {@code eldritch_spell}。
      *
      * <p>原版类名 {@code ItemEldritchSpell}。原版稀有度 EPIC，堆叠上限 1，附带 4 点扭曲。
-     *
-     * <p>右键发射暗物质法球，消耗物品自身 Vis 充能，并有 20 tick 共用冷却。
-     * 详见 {@link ItemEldritchSpell}。
      */
     public static final DeferredItem<ItemEldritchSpell> ELDRITCH_SPELL =
             ITEMS.registerItem("eldritch_spell", ItemEldritchSpell::new,
@@ -266,9 +247,6 @@ public final class FRItems {
      * 腥红之咒（Crimson Spell），注册名 {@code crimson_spell}。
      *
      * <p>原版类名 {@code ItemCrimsonSpell}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
-     *
-     * <p>右键沿视线索敌并发射猩红法球，消耗物品自身 Vis 充能，并有 30 tick 共用冷却。
-     * 详见 {@link ItemCrimsonSpell}。
      */
     public static final DeferredItem<ItemCrimsonSpell> CRIMSON_SPELL =
             ITEMS.registerItem("crimson_spell", ItemCrimsonSpell::new,
@@ -278,9 +256,6 @@ public final class FRItems {
      * 原初混沌之典（Tome of Primal Chaos），注册名 {@code tome_of_primal_chaos}。
      *
      * <p>原版类名 {@code ItemChaosTome}。原版稀有度 EPIC，堆叠上限 1，附带 4 点扭曲。
-     *
-     * <p>右键拉弓持续引导，每 2 tick 生成一颗原初能量法球，消耗物品自身 Vis 充能。
-     * 详见 {@link ItemChaosTome}。
      */
     public static final DeferredItem<ItemChaosTome> TOME_OF_PRIMAL_CHAOS =
             ITEMS.registerItem("tome_of_primal_chaos", ItemChaosTome::new,
@@ -291,9 +266,6 @@ public final class FRItems {
      *
      * <p>1.7.10 原版类名是 {@code ItemMissileTome}（这里沿用 RE 的 {@link ItemNuclearFury}）。
      * 原版稀有度 EPIC，堆叠上限 1，附带 5 点扭曲。
-     *
-     * <p>右键拉弓持续引导，每 2 tick 生成一颗追踪导弹，每秒消耗 5 点 Vis 充能；没有冷却。
-     * 详见 {@link ItemNuclearFury}。
      */
     public static final DeferredItem<ItemNuclearFury> NUCLEAR_FURY =
             ITEMS.registerItem("nuclear_fury", ItemNuclearFury::new,
@@ -303,10 +275,6 @@ public final class FRItems {
      * 千咒之诫（Edict of a Thousand Damned Souls），注册名 {@code soul_tome}。
      *
      * <p>原版类名 {@code ItemSoulTome}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
-     *
-     * <p>右键拉弓持续引导：20 格内的活体每 4 tick 被随机抽取一次最大生命 1/10 的灵魂伤害，
-     * 3 格内的活体每 tick 被击退并承受真雷伤害；引导期间玩家几乎无法水平移动。
-     * 详见 {@link ItemSoulTome}。
      */
     public static final DeferredItem<ItemSoulTome> SOUL_TOME =
             ITEMS.registerItem("soul_tome", ItemSoulTome::new,
@@ -318,9 +286,6 @@ public final class FRItems {
      * <p>1.7.10 原版类名就是 {@code ItemOverthrower}（1.7.10 的 Main 里注册的是它，同目录那份
      * {@code ItemOverthrowerLegacy} 只是没被任何地方引用的备用实现，详见提交说明）。
      * 原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
-     *
-     * <p>右键锁定准星指向的活体后拉弓引导 150 tick，结束时把目标放逐到下界并劈下真雷；
-     * 引导期间每秒消耗物品自身的 Vis 充能。详见 {@link ItemOverthrower}。
      */
     public static final DeferredItem<ItemOverthrower> EDICT_OF_BANISHMENT =
             ITEMS.registerItem("edict_of_banishment", ItemOverthrower::new,
@@ -330,10 +295,6 @@ public final class FRItems {
      * 深渊魔典（Grimoire of The Abyss），注册名 {@code void_grimoire}。
      *
      * <p>1.7.10 原版类名就是 {@code ItemVoidGrimoire}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
-     *
-     * <p>右键锁定准星指向的活体后拉弓引导 100 tick：每 tick 把目标定身并缓缓上浮，
-     * 引导结束时把目标直接丢进本维度的虚空（{@code y ≈ -100000}）；引导期间每秒消耗物品自身的
-     * Vis 充能，结束后有 30 tick 共用冷却。详见 {@link ItemVoidGrimoire}。
      */
     public static final DeferredItem<ItemVoidGrimoire> VOID_GRIMOIRE =
             ITEMS.registerItem("void_grimoire", ItemVoidGrimoire::new,
@@ -344,9 +305,6 @@ public final class FRItems {
      *
      * <p>1.7.10 原版类名就是 {@code ItemTelekinesisTome}（同目录的 {@code ItemTelekinesisTomeLegacy}
      * 没有被任何地方引用，不移植）。原版稀有度 EPIC，堆叠上限 1，附带 4 点扭曲。
-     *
-     * <p>按住右键以念力控制视线前方的活体（潜行时保持距离、否则拉近），左键对锁定目标劈闪电，
-     * 潜行 + 左键则把它抛开；引导与攻击都消耗物品自身的 Vis 充能。详见 {@link ItemTelekinesisTome}。
      */
     public static final DeferredItem<ItemTelekinesisTome> TOME_OF_PREDESTINY =
             ITEMS.registerItem("tome_of_predestiny", ItemTelekinesisTome::new,
@@ -356,10 +314,6 @@ public final class FRItems {
      * 月耀咒书（Tome of Lunar Flares），注册名 {@code tome_of_lunar_flares}。
      *
      * <p>1.7.10 原版类名就是 {@code ItemLunarFlares}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
-     *
-     * <p>右键拉弓持续引导，每 2 tick 对准星指向的方块降下一颗耀月之辉，消耗物品自身 Vis 充能；
-     * 耀月之辉击中锁定方块时爆炸，对 5×5×5 格内的活体造成范围伤害并把它们推开。
-     * 详见 {@link ItemLunarFlares} 与 {@link com.beiwu.forgottenrelics_plus.entity.EntityLunarFlare}。
      */
     public static final DeferredItem<ItemLunarFlares> TOME_OF_LUNAR_FLARES =
             ITEMS.registerItem("tome_of_lunar_flares", ItemLunarFlares::new,
@@ -369,11 +323,6 @@ public final class FRItems {
      * 神化（Apotheosis），注册名 {@code apotheosis}。
      *
      * <p>1.7.10 原版类名 {@code ItemApotheosis}。原版稀有度 EPIC，堆叠上限 1，附带 5 点扭曲。
-     *
-     * <p>右键拉弓持续引导，每 2 tick 召唤一把巴比伦武器，消耗物品自身 Vis 充能；
-     * 武器先悬停 15 tick，再朝视线落点直线飞出，直击与爆炸各有独立伤害。
-     * 详见 {@link ItemApotheosis} 与
-     * {@link com.beiwu.forgottenrelics_plus.entity.EntityBabylonWeapon}。
      */
     public static final DeferredItem<ItemApotheosis> APOTHEOSIS =
             ITEMS.registerItem("apotheosis", ItemApotheosis::new,
@@ -384,10 +333,6 @@ public final class FRItems {
      *
      * <p>1.7.10 原版类名 {@code ItemFateTome}。原版稀有度 EPIC，堆叠上限 1，附带 7 点扭曲
      * （全模组第二高，仅次于悖论之刃的 8）。
-     *
-     * <p>放在背包里就能生效：致死时消耗 600 点 Vis 充能取消死亡、回满生命、随机施加增益或减益，
-     * 随后进入 30~90 秒冷却；同时携带两本则有约六万分之一的概率触发自毁。
-     * 详见 {@link ItemFateTome}。
      */
     public static final DeferredItem<ItemFateTome> TOME_OF_BROKEN_FATES =
             ITEMS.registerItem("tome_of_broken_fates", ItemFateTome::new,
@@ -398,11 +343,6 @@ public final class FRItems {
      *
      * <p>1.7.10 原版类名就是 {@code ItemOblivionStone}。原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
      * 它不消耗也不储存 Vis，所以不实现 {@code FRRechargable}。
-     *
-     * <p>右键切换模式 / 启停；背包每 10 tick 按模式吞噬已绑定的物品；在合成栏里与一件物品组合可把它
-     * 登记进清单、只放它自己则清空清单（自定义合成配方，见
-     * {@code com.beiwu.forgottenrelics_plus.recipes.RecipeOblivionStone}）。
-     * 详见 {@link ItemOblivionStone}。
      */
     public static final DeferredItem<ItemOblivionStone> OBLIVION_STONE =
             ITEMS.registerItem("oblivion_stone", ItemOblivionStone::new,
