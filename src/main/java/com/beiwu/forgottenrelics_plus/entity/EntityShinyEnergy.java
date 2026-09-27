@@ -69,14 +69,25 @@ public class EntityShinyEnergy extends Entity {
     /** 原版 {@code ticksExisted > 30} 就消失。 */
     private static final int MAX_LIFE_TICKS = 30;
 
-    /** 原版每 tick 的 sparkle 数量。 */
-    private static final int SPARKLES_PER_TICK = 8;
+    /**
+     * 每 tick 的 sparkle 数量。
+     *
+     * <p>原版是 <b>8</b>；玩家实测反馈日耀石的粒子太密集（档位高时 4 tick 生成 4 个能量体、
+     * 每个活 30 tick，叠起来整屏都是），要求「保留 25%」，所以这里取 {@code 8 * 0.25 = 2}。
+     * 想恢复原版密度把这里的 2 改回 8 即可。
+     */
+    private static final int SPARKLES_PER_TICK = 2;
 
     /** 原版到达判定的外扩量。 */
     private static final double REACH_INFLATE = 0.1D;
 
-    /** 原版 {@code particleExplosion()} 的 wisp 数量。 */
-    private static final int BURST_COUNT = 24;
+    /**
+     * 到达时的 wisp 爆发数量。
+     *
+     * <p>原版 {@code particleExplosion()} 是 <b>24</b> 颗；同样按玩家要求「保留 25%」，
+     * 这里取 {@code 24 * 0.25 = 6}。（该爆发在原版是死代码，是本项目的刻意补完，见类注释。）
+     */
+    private static final int BURST_COUNT = 6;
 
     public EntityShinyEnergy(EntityType<? extends EntityShinyEnergy> type, Level level) {
         super(type, level);
