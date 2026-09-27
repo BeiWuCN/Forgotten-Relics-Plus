@@ -12,7 +12,7 @@ as closely as possible, while the code is **re-implemented** against the 1.21.1 
 - MCMod.cn entry: <https://www.mcmod.cn/class/28217.html>
 - 1.7.10 original (**the only behavioural reference and asset source**): <https://github.com/jss2a98aj/Forgotten-Relics>
 - 1.12.2 port (used for behaviour comparison only, see "Code provenance" below): <https://github.com/NNYYOONNIIOO/Forgotten-Relics-RE>
-- Issue tracker: <https://github.com/beiwucn/Forgotten-Relics-Unofficial/issues>
+- Issue tracker: <https://github.com/beiwucn/Forgotten-Relics-Plus/issues>
 
 ---
 
