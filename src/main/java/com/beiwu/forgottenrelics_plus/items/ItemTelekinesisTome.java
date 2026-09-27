@@ -111,11 +111,17 @@ import vazkii.botania.common.entity.GaiaGuardianEntity;
  *       {@code PlayerMotionUpdateMessage} 改为改完速度后置 {@code hurtMarked}，靠原版同步；</li>
  *   <li>音效 {@code thaumcraft:zap} → 原版等价物 {@link SoundEvents#FIREWORK_ROCKET_BLAST}
  *       （与千咒之诫的 {@code zap} 替代方案一致），并过 {@link SoundHelper#play} 统一压低音量；</li>
- *   <li>左键「闪电 / 抛开」在原版是客户端按下攻击键后发的 {@code TelekinesisAttackMessage}。
- *       1.21.1 不写自定义包，改用 NeoForge 的 {@code AttackEntityEvent}（经
- *       {@link WeaponAttackBehaviour} 派发）—— 也就是「左键点到实体」才触发。
- *       这是本件与 1.7.10 的一处<b>已知偏差</b>：原版朝空气挥空拳也能打锁定目标，
- *       这里必须真的点到实体（通常是正在被念力控制的那个）。详见类尾「与 1.7.10 的偏差」。</li>
+ *   <li>左键「闪电 / 抛开」在原版是客户端在 {@code onUpdate} 里检测攻击键<b>按下的边沿</b>后
+ *       发 {@code TelekinesisAttackMessage}，服务端 {@code leftClick(player)} 只看「有没有锁定目标」，
+ *       与这次左键有没有点到实体<b>无关</b>。1.21.1 对应成两条互补的入口：
+ *     <ul>
+ *       <li>左键点到<b>实体</b>：服务端 {@code AttackEntityEvent}（经 {@link WeaponAttackBehaviour} 派发）；</li>
+ *       <li>左键点<b>空气或方块</b>：只有客户端的 {@code PlayerInteractEvent.LeftClickEmpty} /
+ *           {@code LeftClickBlock} 会触发，所以补了一个空载荷
+ *           {@code TelekinesisLeftClickPayload}，由 {@code client/FRClientEvents} 发出（见其类注释）。</li>
+ *     </ul>
+ *     两条路最终都汇到 {@link #leftClick(Player, ItemStack)}，冷却/锁定/充能校验只有那一个副本。
+ *     <b>1.6.2 修正</b>：上一版只有第一条路，于是「点空气完全没反应」，与 1.7.10 不一致。</li>
  * </ul>
  *
  * <p><b>使用姿态的取舍</b>：原版默认（{@code altTelekinesisAlgorithm = false}）右键<b>不进入</b>
@@ -131,7 +137,8 @@ import vazkii.botania.common.entity.GaiaGuardianEntity;
  *
  * <p><b>与 1.7.10 的偏差</b>：
  * <ol>
- *   <li>左键触发从「按下攻击键」收紧成「左键点到实体」（原因见上）；</li>
+ *   <li><s>左键触发从「按下攻击键」收紧成「左键点到实体」</s>——<b>1.6.2 已取消这条偏差</b>：
+ *       现在点实体、点空气、点方块三条路都能触发，语义回到 1.7.10 的「按下左键就打锁定目标」；</li>
  *   <li>念力的 Vis 从「每 tick 抽一次、抽不出来当 tick 不动」改成「每秒扣一次、
  *       扣不出来才中断引导」，节奏与其它引导型遗物统一；</li>
  *   <li>原版搜索目标时把 {@code target} 累加（既加 {@code look × distance} 又累加 {@code y += 0.5}），
@@ -263,11 +270,7 @@ public class ItemTelekinesisTome extends FRItem
     }
 
     /**
-     * 左键攻击入口，对应原版 {@code leftClick(player) -> lightningAttack(player, item, ..)}。
-     *
-     * <p>1.21.1 没有「按下攻击键」的服务端事件，用 NeoForge 的
-     * {@code AttackEntityEvent}（{@link WeaponAttackBehaviour} 派发）代替：左键点到实体时，
-     * 只要这个实体是<b>已锁定</b>且仍能从视线前方找到的目标，就打一发闪电。
+     * 左键点到<b>实体</b>的入口：NeoForge 的 {@code AttackEntityEvent}（{@link WeaponAttackBehaviour} 派发）。
      *
      * <p><b>不取消事件</b>：原版的左键闪电是独立于普通攻击的一条包，普通挥击照常结算，
      * 这里保持同样行为。
@@ -278,22 +281,46 @@ public class ItemTelekinesisTome extends FRItem
         if (attacker.getMainHandItem() != stack) {
             return;
         }
-        Level level = attacker.level();
+        leftClick(attacker, stack);
+    }
+
+    /**
+     * 左键点到<b>空气 / 方块</b>的入口，由 {@code TelekinesisLeftClickPayload} 在服务端调用。
+     *
+     * <p>只认主手是不是预言之典，其余判定与 {@link #onAttackEntity} 完全共用。
+     */
+    public static void onServerLeftClick(Player player) {
+        if (player.getMainHandItem().getItem() instanceof ItemTelekinesisTome tome) {
+            tome.leftClick(player, player.getMainHandItem());
+        }
+    }
+
+    /**
+     * 对应原版 {@code leftClick(player) -> lightningAttack(player, item, ..)}：不管这次左键
+     * 有没有点到东西，只要身上锁着目标、目标还在视线前方，就打一发闪电（潜行时改为抛开）。
+     *
+     * <p>这就是原版「按下左键就朝已锁定目标打闪电」的语义，两条入口（点实体 / 点空气或方块）
+     * 共用这一份实现，冷却、锁定与充能校验因此不会出现两个副本。
+     */
+    private void leftClick(Player player, ItemStack stack) {
+        Level level = player.level();
         if (level.isClientSide()) {
             return;
         }
-        TomeState state = state(attacker);
+        TomeState state = state(player);
+        // 原版 targetID == -1 直接返回（没有锁定目标时按左键什么都不发生）。
         if (state.target == -1) {
             return;
         }
+        // 原版 getEntityByID + getExistingTarget(.., 6.0) 双重确认目标还在视线前方。
         if (level.getEntity(state.target) == null) {
             return;
         }
-        LivingEntity target = getExistingTarget(attacker, level, state.target, EXISTING_RANGE);
+        LivingEntity target = getExistingTarget(player, level, state.target, EXISTING_RANGE);
         if (target == null) {
             return;
         }
-        lightningAttack(attacker, target, stack, level);
+        lightningAttack(player, target, stack, level);
     }
 
     // ------------------------------------------------------------------

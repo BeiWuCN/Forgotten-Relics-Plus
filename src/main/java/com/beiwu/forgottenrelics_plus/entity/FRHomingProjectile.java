@@ -87,10 +87,18 @@ public abstract class FRHomingProjectile extends ThrowableProjectile {
             discard();
             return;
         }
+        // 追踪在**两端都算**（1.6.2 修正）：上一版只在服务端加加速度，客户端的速度只会每 tick 衰减，
+        // 于是客户端位置一路落后、每 10 tick 被服务端的位置包硬拉一次——玩家看到的「弹幕像 PPT」。
+        // 目标 id 本来就通过 SynchedEntityData 下发，客户端完全可以算出同一份加速度；
+        // 加上 updateInterval 改成 1（见 FREntities），位置包只做轻微校正，弹道于是连续。
+        applyHoming();
         if (level().isClientSide()) {
             spawnTrailParticles();
-            return;
         }
+    }
+
+    /** 对应原版 {@code EntityAIProjectileBase} 的追踪：每 tick 朝目标身高的 60% 处叠加加速度。 */
+    private void applyHoming() {
         double strength = homingStrength();
         if (strength <= 0.0D) {
             return;
