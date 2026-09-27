@@ -34,6 +34,12 @@ public final class FRDamageTypes {
     /** 夺魂伤害（原版 {@code DamageRegistryHandler.DamageSourceSoulDrain}），食尸鬼之颅的怨魂冲击使用。 */
     public static final ResourceKey<DamageType> SOUL_DRAIN = key("soul_drain");
 
+    /** 真实伤害（原版 {@code DamageSourceTrueDamage}，带来源实体），虚伪审判把伤害「转化成」的就是它。 */
+    public static final ResourceKey<DamageType> TRUE_DAMAGE = key("true_damage");
+
+    /** 无来源的真实伤害（原版 {@code DamageSourceTrueDamageUndef}）。 */
+    public static final ResourceKey<DamageType> TRUE_DAMAGE_UNDEF = key("true_damage_undef");
+
     private static ResourceKey<DamageType> key(String path) {
         return ResourceKey.create(Registries.DAMAGE_TYPE,
                 ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, path));
@@ -60,7 +66,10 @@ public final class FRDamageTypes {
      * 判断一种伤害是否「绝对伤害」——即不该被本模组的各种减伤/转移逻辑拦截的伤害。
      *
      * <p>对应原版 {@code SuperpositionHandler.isDamageTypeAbsolute}：虚空、饥饿，以及模组自己的
-     * 湮灭 / 超维 / 夺魂伤害。原版还列了命运、真伤等类型，那些物品尚未移植，等移植时再补。
+     * 湮灭 / 超维 / 夺魂 / 真伤伤害。原版还列了「命运」类型，那件物品尚未移植，等移植时再补。
+     *
+     * <p>这张表同时承担<b>递归保护</b>的职责：虚伪审判把伤害取消后重新以真伤结算，如果真伤不在表里，
+     * 那次重结算会被自己再拦一次，无限递归；传送之戒的分摊也是同一个道理。
      */
     public static boolean isAbsolute(DamageSource source) {
         return source.is(DamageTypes.FELL_OUT_OF_WORLD)
@@ -68,7 +77,9 @@ public final class FRDamageTypes {
                 || source.is(OBLIVION)
                 || source.is(SUPERPOSITION)
                 || source.is(SUPERPOSITION_DEFINED)
-                || source.is(SOUL_DRAIN);
+                || source.is(SOUL_DRAIN)
+                || source.is(TRUE_DAMAGE)
+                || source.is(TRUE_DAMAGE_UNDEF);
     }
 
     private FRDamageTypes() {
