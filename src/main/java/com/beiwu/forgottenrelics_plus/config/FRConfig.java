@@ -281,12 +281,8 @@ public final class FRConfig {
     public static final ModConfigSpec.IntValue DISCORD_TOME_COOLDOWN;
 
     // ---- 虚空吞噬者 / Devourer of The Void ----
-    /** 虚空吞噬者：每次抽取脉冲的 Vis 基础消耗。 */
-    public static final ModConfigSpec.IntValue DEVOURER_OF_THE_VOID_VIS_COST;
-    /** 虚空吞噬者：Vis 消耗倍率（对应原版 {@code obeliskDrainerVisMult}）。 */
+    /** 虚空吞噬者：给背包法杖补 Vis 的倍率（对应原版 {@code obeliskDrainerVisMult}）。 */
     public static final ModConfigSpec.DoubleValue DEVOURER_OF_THE_VOID_VIS_MULT;
-    /** 虚空吞噬者：最大 Vis 储量。 */
-    public static final ModConfigSpec.IntValue DEVOURER_OF_THE_VOID_MAX_CHARGE;
     /** 虚空吞噬者：能感知到神秘方尖碑的最大距离（格）。 */
     public static final ModConfigSpec.DoubleValue DEVOURER_OF_THE_VOID_RANGE;
     /** 虚空吞噬者：两次抽取之间的间隔（tick）。 */
@@ -785,19 +781,10 @@ public final class FRConfig {
         builder.pop();
 
         builder.comment("虚空吞噬者（第七波：神秘方尖碑引导）").push("devourer_of_the_void");
-        DEVOURER_OF_THE_VOID_VIS_COST = builder
-                .comment("Base Vis consumed per drain pulse by the Devourer of The Void.",
-                         "虚空吞噬者每次抽取脉冲消耗的 Vis 基础消耗。原版是「产出」0.075~0.30 点 Vis 给法杖，"
-                                 + "本移植按项目约定改为消耗物品自身充能，故取 1（一点 Vis 换 4 血 + 2 饥饿）。")
-                .defineInRange("devourerOfTheVoidVisCost", 1, 0, 32768);
         DEVOURER_OF_THE_VOID_VIS_MULT = builder
-                .comment("Vis cost multiplier for the Devourer of The Void. Original key: obeliskDrainerVisMult.",
-                         "虚空吞噬者的 Vis 消耗倍率。原版配置 key 就是 obeliskDrainerVisMult，默认 1.0。")
+                .comment("Multiplier applied to the Vis the Devourer of The Void grants to wands. Original key: obeliskDrainerVisMult.",
+                         "虚空吞噬者给背包法杖补 Vis 的倍率。原版配置 key 就是 obeliskDrainerVisMult，默认 1.0。")
                 .defineInRange("devourerOfTheVoidVisMult", 1.0D, 0.0D, 1024.0D);
-        DEVOURER_OF_THE_VOID_MAX_CHARGE = builder
-                .comment("Max Vis charge for the Devourer of The Void.",
-                         "虚空吞噬者的最大 Vis 储量。1.7.10 原版不可充能，此值为本移植新增（参考同批遗物的 100）。")
-                .defineInRange("devourerOfTheVoidMaxCharge", 100, 0, 32768);
         DEVOURER_OF_THE_VOID_RANGE = builder
                 .comment("Radius in blocks within which the Devourer of The Void can sense an Eldritch Obelisk.",
                          "虚空吞噬者能感知到神秘方尖碑的最大距离（格）。原版写死 16。")
@@ -816,8 +803,8 @@ public final class FRConfig {
                 .defineInRange("devourerOfTheVoidHunger", 2, 0, 20);
         DEVOURER_OF_THE_VOID_WARP = builder
                 .comment("Warp granted by the Devourer of The Void.",
-                         "虚空吞噬者附带的扭曲值。原版是 ThaumcraftApi.addWarpToItem(obeliskDrainer, 3)，即 3。")
-                .defineInRange("devourerOfTheVoidWarp", 3, 0, 32768);
+                         "虚空吞噬者附带的扭曲值。原版 ItemObeliskDrainer#getWarp 返回 4。")
+                .defineInRange("devourerOfTheVoidWarp", 4, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();
