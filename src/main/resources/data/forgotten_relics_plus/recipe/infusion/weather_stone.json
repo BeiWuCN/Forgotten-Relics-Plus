@@ -17,7 +17,7 @@
       "items": "thaumaturge:celestial_notes",
       "components": { "thaumaturge:celestial_body": "sun" }
     },
-    { "item": "thaumaturge:nitor_white" },
+    { "tag": "thaumaturge:nitors" },
     {
       "type": "neoforge:components",
       "items": "thaumaturge:celestial_notes",

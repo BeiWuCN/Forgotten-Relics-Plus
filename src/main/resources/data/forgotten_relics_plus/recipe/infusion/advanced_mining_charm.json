@@ -11,33 +11,17 @@
   "catalyst": { "item": "forgotten_relics_plus:mining_charm" },
   "components": [
     { "item": "thaumaturge:vis_resonator" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    },
+    { "item": "thaumaturge:crystal_aer" },
     { "item": "botania:elementium_ingot" },
     { "item": "botania:dragonstone" },
     { "item": "botania:gaia_spirit" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    },
+    { "item": "thaumaturge:crystal_aer" },
     { "item": "thaumaturge:void_pickaxe" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    },
+    { "item": "thaumaturge:crystal_aer" },
     { "item": "botania:gaia_spirit" },
     { "item": "botania:dragonstone" },
     { "item": "botania:elementium_ingot" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    }
+    { "item": "thaumaturge:crystal_aer" }
   ],
   "instability": 8,
   "research": { "entry": "forgotten_relics_plus:advanced_mining_charm" },
