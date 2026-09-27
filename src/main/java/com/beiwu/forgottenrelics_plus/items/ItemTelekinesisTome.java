@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
 import com.beiwu.forgottenrelics_plus.api.WeaponAttackBehaviour;
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.utils.CooldownHelper;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
@@ -14,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -105,9 +105,11 @@ import vazkii.botania.common.entity.GaiaGuardianEntity;
  *       {@code Map<UUID, TomeState>}（1.21.1 的 {@code Player} 实例会在维度切换/重登时被替换，
  *       用 UUID 更稳，与 {@link CooldownHelper} 同一考虑）；</li>
  *   <li>原版 {@code SuperpositionHandler} 的共用施法冷却 → {@link CooldownHelper}；</li>
- *   <li><b>不写任何自定义网络包</b>：{@code TelekinesisParticleMessage} 改为服务端
- *       {@link ServerLevel#sendParticles}；{@code LightningMessage} 改为服务端沿
- *       玩家→目标撒 {@link ParticleTypes#ELECTRIC_SPARK} 电弧（与千咒之诫同一方案）；
+ *   <li><b>不写任何自定义网络包</b>：{@code TelekinesisParticleMessage} 的紫色 wisp 改为服务端
+ *       {@link FRParticles}（原版就是 Botania wispFX），portalstuff 本来就是原版
+ *       {@code EntityPortalFX}、继续用 {@link ParticleTypes#PORTAL}；{@code LightningMessage}
+ *       走的是 Thaumcraft {@code FXLightningBolt}（非 Botania），改为服务端沿
+ *       玩家→目标撒 {@link ParticleTypes#ELECTRIC_SPARK} 电弧（与千咒之诫同一方案，按口径保留）；
  *       {@code PlayerMotionUpdateMessage} 改为改完速度后置 {@code hurtMarked}，靠原版同步；</li>
  *   <li>音效 {@code thaumcraft:zap} → 原版等价物 {@link SoundEvents#FIREWORK_ROCKET_BLAST}
  *       （与千咒之诫的 {@code zap} 替代方案一致），并过 {@link SoundHelper#play} 统一压低音量；</li>
@@ -170,9 +172,6 @@ public class ItemTelekinesisTome extends FRItem
 
     /** 折算后的念力扣费节奏：每 1 秒（20 tick）扣一次，且扣在这一秒的第一 tick。 */
     private static final int VIS_INTERVAL = 20;
-
-    /** 原版 {@code PacketTelekinesisParticleMessage} 里 wisp 的颜色（r≈0.35 / g=0 / b≈0.6）。 */
-    private static final int WISP_COLOR = 0x590099;
 
     /** 玩家 UUID -> 念力状态。对应原版 {@code globalTomeMap}（以玩家对象为键）。 */
     private static final Map<UUID, TomeState> TOME_STATES = new HashMap<>();
@@ -491,18 +490,21 @@ public class ItemTelekinesisTome extends FRItem
      * 对应原版 {@code TelekinesisParticleMessage(x, y, z, 1.0f)} 的客户端渲染
      * （Botania wispFX + Thaumcraft portalstuff）。
      *
-     * <p>{@code modifier = 1.0} 时：{@code wisps = 1}，循环 {@code i <= 1} 即 2 颗紫色 wisp
-     * （位置带 ±0.075 的随机初速）；{@code supers = 3}，循环 {@code i <= 3} 即 4 颗传送门粒子
-     * （初速 ±1.5）。{@code sendParticles} 在 {@code count == 0} 时会发一颗「位置不动、
-     * 初速 = 给定向量 × speed」的粒子，正好复刻这个带初速的单粒子。
+     * <p>{@code modifier = 1.0} 时：{@code wisps = 1}，循环 {@code i <= 1} 即 2 颗紫色 wisp，
+     * 每颗 {@code wispFX(中心, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.2+rand*0.1,
+     * xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=1.0)}；{@code supers = 3}，循环 {@code i <= 3}
+     * 即 4 颗传送门粒子（原版就是 {@code EntityPortalFX}，初速 ±1.5）。
      */
     private static void telekinesisParticles(ServerLevel level, Vec3 center) {
         for (int i = 0; i <= 1; i++) {
-            level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
-                    center.x, center.y, center.z, 0,
+            FRParticles.serverWisp(level, center.x, center.y, center.z,
+                    0.2F + level.random.nextFloat() * 0.3F,
+                    0.0F,
+                    0.5F + level.random.nextFloat() * 0.2F,
+                    0.2F + level.random.nextFloat() * 0.1F,
                     (level.random.nextDouble() - 0.5D) * 0.15D,
                     (level.random.nextDouble() - 0.5D) * 0.15D,
-                    (level.random.nextDouble() - 0.5D) * 0.15D, 1.0D);
+                    (level.random.nextDouble() - 0.5D) * 0.15D);
         }
         for (int i = 0; i <= 3; i++) {
             level.sendParticles(ParticleTypes.PORTAL, center.x, center.y, center.z, 0,

@@ -185,6 +185,9 @@ public class ItemGhastlySkull extends FRItem implements FRRechargable, IWarpingG
         }
 
         // 鬼火由施术者脚下窜向落点，再在落点炸开一圈。
+        // 依据：1.7.10 的 {@code ItemGhastlySkull} 与 RE 的同名类里<b>没有任何粒子调用</b>
+        // （原版只做 {@code setHealth(1)}），这三发原版灵魂粒子是本项目为了表现「鬼火」自行加的，
+        // 不属于「用原版粒子代替 Botania」，按「原版本来就没有粒子就保持原样」的口径保留。
         for (double t = 0.0D; t <= 1.0D; t += 0.1D) {
             serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
                     caster.getX() + (center.x - caster.getX()) * t,

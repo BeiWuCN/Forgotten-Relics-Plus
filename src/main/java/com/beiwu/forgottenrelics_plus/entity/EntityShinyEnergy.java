@@ -1,9 +1,7 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
-import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -14,7 +12,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 /**
  * 日耀石（shiny_stone）的「日耀能量」，1.7.10 原版 {@code EntityShinyEnergy}
@@ -44,17 +41,14 @@ import org.joml.Vector3f;
  *   <li><b>目标用 {@link SynchedEntityData} 同步</b>：原版靠 {@code IEntityAdditionalSpawnData}
  *       把目标 id 写进生成包，这里换成同步数据（与 {@code FRHomingProjectile} 同一套做法），
  *       两端都能解析出目标，客户端因此可以自己算 {@code size} 并本地移动；</li>
- *   <li><b>sparkle 用原版粒子</b>：原版调 Botania 的 {@code sparkleFX}（可带颜色与尺寸的
- *       加算光点）。1.21.1 的原版粒子里只有 {@link DustParticleOptions}（红石粉）同时接受
- *       <b>任意 RGB 与尺寸</b>，所以 8 颗 sparkle 用红石粉粒子复刻——颜色、数量、单颗尺寸
- *       都按原版公式算，位置抖动 ±0.05 也照抄。
- *       原版 {@code size} 与 Botania sparkle 的 quad 大致是 0.1 格/单位；红石粉的 quad 是
- *       {@code 0.075 × scale}，两者同量级，所以直接把 {@code size} 当 scale 传；
- *       <b>旧实现只发单调的 {@code END_ROD}（白点、无颜色/尺寸），本次是明确替换</b>；</li>
+ *   <li><b>sparkle 直接用 Botania</b>：原版调的就是 Botania 的 {@code sparkleFX}，1.21.1 有
+ *       现成对应物 {@link FRParticles#sparkle}（内部是 {@code SparkleParticleData}）。8 颗 sparkle
+ *       的颜色、数量、单颗尺寸、位置抖动 ±0.05 全部按原版公式算，不再用原版粒子近似；</li>
  *   <li><b>撞击爆发</b>：原版的 {@code particleExplosion()}（24 颗 wisp，颜色
- *       {@code (0, 0.8+rand*0.2, 0.4+rand*0.6)}）在 1.7.10 与 RE 里<b>都没有任何调用点</b>，
- *       是一段死代码。任务口径明确要求「碰到玩家时再 particleExplosion()」，所以这里把它
- *       接到「到达施法者」这一事件上（服务端一次性发 24 颗 {@code ENTITY_EFFECT} 染成黄绿），
+ *       {@code (0, 0.8+rand*0.2, 0.4+rand*0.6)}、尺寸 {@code 0.3+rand*0.3}、初速 {@code (rand-0.5)*0.4}）
+ *       在 1.7.10 与 RE 里<b>都没有任何调用点</b>，是一段死代码。任务口径明确要求
+ *       「碰到玩家时再 particleExplosion()」，所以这里把它接到「到达施法者」这一事件上，
+ *       服务端一次性发 24 颗 Botania wisp（{@link FRParticles#serverWispBurst}），
  *       属于<b>刻意的偏离</b>，视觉效果与原作者预留的写法一致；</li>
  *   <li>服务端的到达判定用「自身包围盒外扩 0.1 与目标包围盒相交」，等价于原版的
  *       {@code getEntitiesWithinAABB(..., box.expand(0.1,0.1,0.1)).contains(target)}。</li>
@@ -154,11 +148,12 @@ public class EntityShinyEnergy extends Entity {
         for (int i = 0; i < SPARKLES_PER_TICK; i++) {
             float r = (float) (0.9D + random.nextDouble() * 0.1D);
             float g = (float) (0.2D + random.nextDouble() * 0.2D);
-            level().addParticle(new DustParticleOptions(new Vector3f(r, g, 0.0F), size),
+            // 原版 sparkleFX(pos ± 0.05, r, g, 0, size=min(1/dist, 1.5), m=2)。
+            FRParticles.sparkle(level(),
                     getX() + (random.nextDouble() - 0.5D) * 0.1D,
                     getY() + (random.nextDouble() - 0.5D) * 0.1D,
                     getZ() + (random.nextDouble() - 0.5D) * 0.1D,
-                    0.0D, 0.0D, 0.0D);
+                    r, g, 0.0F, size, 2);
         }
     }
 
@@ -174,12 +169,15 @@ public class EntityShinyEnergy extends Entity {
         if (!(level() instanceof ServerLevel server)) {
             return;
         }
-        int g = (int) ((0.8D + random.nextDouble() * 0.2D) * 255.0D);
-        int b = (int) ((0.4D + random.nextDouble() * 0.6D) * 255.0D);
-        int color = (g << 8) | b;
+        // 原版 24 颗 wispFX(锁定点, r=0, g=0.8+rand*0.2, b=0.4+rand*0.6,
+        //   size=0.3+rand*0.3, xm/ym/zm=(rand-0.5)*0.4, maxAgeMul=1.0)。
+        // 颜色/尺寸各抽一次（原版逐颗随机）；初速取 m=0.4 的等效 gaussian（0.4/√12 ≈ 0.116）。
         Vec3 center = centerOf(target);
-        server.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, color),
-                center.x, center.y, center.z, BURST_COUNT, 0.2D, 0.2D, 0.2D, 0.05D);
+        FRParticles.serverWispBurst(server, center.x, center.y, center.z,
+                0.0F,
+                (float) (0.8D + random.nextDouble() * 0.2D),
+                (float) (0.4D + random.nextDouble() * 0.6D),
+                0.3F + random.nextFloat() * 0.3F, 1.0F, BURST_COUNT, 0.0D, 0.116D);
     }
 
     /** 对应原版/RE 的 {@code Vector3.fromEntityCenter}：脚底坐标 + 身高的一半。 */

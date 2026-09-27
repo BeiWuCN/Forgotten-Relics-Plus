@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
@@ -33,8 +34,10 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>与原版的两处差异：
  * <ul>
- *   <li>原版的闪电是自定义网络包画出来的（{@code imposeLightning} / {@code imposeArcLightning}）；
- *       1.21.1 里改成原版粒子 {@code ELECTRIC_SPARK} 组成的电弧，视觉接近且不需要自定义渲染；</li>
+ *   <li>原版的闪电是自定义网络包画出来的（{@code imposeLightning} / {@code imposeArcLightning}，
+ *       客户端画的是 Thaumcraft 的 {@code FXLightningBolt}）；1.21.1 里改成原版粒子
+ *       {@code ELECTRIC_SPARK} 组成的电弧。这一处原版<b>不是</b> Botania 粒子，按「原版本来就不是
+ *       Botania 就保持原样」的口径保留，不改成 Botania；</li>
  *   <li>原版用裸字段算落点，这里用 {@code Vec3} 运算，语义一致。</li>
  * </ul>
  */
@@ -71,15 +74,29 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         return MAX_LIFE_TICKS;
     }
 
+    /**
+     * 拖尾：1.7.10 的 {@code EntityThunderpealOrb} 本身没有粒子（只有自定义闪电网络包），
+     * 轨迹粒子是 RE 补的（{@code EntityThunderpealOrb#onUpdate} 客户端分支）。照抄 RE：
+     * <pre>
+     *   每 tick：wispFX(pos, r=rand*0.1, g=0.4+rand*0.3, b=0.9+rand*0.1,
+     *                  size=0.12+rand*0.08, xm/ym/zm=(rand-0.5)*0.05, maxAgeMul=0.6)
+     *   ticksExisted % 2 == 0：sparkleFX(pos, 0.4, 0.6, 1.0, size=1.0, m=2)
+     * </pre>
+     * 对应本项目 {@link FRParticles#wisp} 与 {@link FRParticles#sparkle}（纯客户端 addParticle）。
+     */
     @Override
     protected void spawnTrailParticles() {
-        // 一条青白色电弧拖尾，代替原版的自定义闪电网络包。
-        for (int i = 0; i < 2; i++) {
-            level().addParticle(ParticleTypes.ELECTRIC_SPARK,
-                    getX() + (random.nextDouble() - 0.5D) * 0.3D,
-                    getY() + (random.nextDouble() - 0.5D) * 0.3D,
-                    getZ() + (random.nextDouble() - 0.5D) * 0.3D,
-                    0.0D, 0.0D, 0.0D);
+        FRParticles.wisp(level(), getX(), getY(), getZ(),
+                random.nextFloat() * 0.1F,
+                0.4F + random.nextFloat() * 0.3F,
+                0.9F + random.nextFloat() * 0.1F,
+                0.12F + random.nextFloat() * 0.08F,
+                (random.nextDouble() - 0.5D) * 0.05D,
+                (random.nextDouble() - 0.5D) * 0.05D,
+                (random.nextDouble() - 0.5D) * 0.05D,
+                0.6F);
+        if (tickCount % 2 == 0) {
+            FRParticles.sparkle(level(), getX(), getY(), getZ(), 0.4F, 0.6F, 1.0F, 1.0F, 2);
         }
     }
 
@@ -110,6 +127,9 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
             }
         }
         // 爆发粒子 + 音效，对应原版两发 imposeBurst 与 thaumcraft:shock。
+        // 注意：imposeBurst 走的是 Thaumcraft 的 proxy.burst（1.7.10）/ BurstMessage（RE），
+        // 不是 Botania 粒子，所以这里的两发 FLASH 与 ELECTRIC_SPARK 按「原版本来就不是 Botania」
+        // 的口径保留，不改成 wisp。
         server.sendParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(), 60, 1.5D, 1.5D, 1.5D, 0.2D);
         server.sendParticles(ParticleTypes.FLASH, getX(), getY(), getZ(), 3, 0.2D, 0.2D, 0.2D, 0.0D);
         SoundHelper.play(level(), getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT,

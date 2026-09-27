@@ -67,8 +67,9 @@ import net.minecraft.world.phys.Vec3;
  *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge}
  *       扣费，充能由周围灵气补充；</li>
  *   <li>原版的 {@code SuperpositionHandler} 冷却 → {@link CooldownHelper}（与其它遗物共用）；</li>
- *   <li>原版用 {@code PortalTraceMessage} 画传送轨迹，这里改用原版 {@code ParticleTypes.PORTAL}
- *       粒子沿起止两点的连线撒点，<b>不引入自定义网络包</b>；</li>
+ *   <li>原版用 {@code PortalTraceMessage} → {@code Main.proxy.spawnSuperParticle("portalstuff")}
+ *       → 原版 {@code EntityPortalFX} 画传送轨迹。<b>它本来就是原版传送门粒子</b>，
+ *       所以这里继续用 {@link ParticleTypes#PORTAL} 沿起止两点的连线撒点，只是不再走自定义网络包；</li>
  *   <li>原版 {@code setPosition} → 玩家用 {@code ServerPlayer#teleportTo(ServerLevel, x, y, z, yRot, xRot)}
  *       （这样客户端才会被同步），其它实体用 {@code Entity#teleportTo(x, y, z)}。</li>
  * </ul>

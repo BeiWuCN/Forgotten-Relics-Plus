@@ -1,13 +1,13 @@
 package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.entity.EntityRageousMissile;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import java.util.List;
-import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -49,9 +49,10 @@ import vazkii.botania.common.handler.BotaniaSounds;
  *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge} 扣除；</li>
  *   <li>导弹音 {@code botania:missile} 在 Botania 里就是 {@link BotaniaSounds#MISSILE}，
  *       不需要换成原版音效，直接引用并按项目约定过 {@link SoundHelper#play} 压音量；</li>
- *   <li>Thaumcraft 的 {@code proxy.burst}（纯客户端粒子）→ 服务端 {@code ServerLevel#sendParticles}
- *       的原版 {@link ParticleTypes#WITCH}；玩家的 sparkle 同样改成服务端
- *       {@link ParticleTypes#ENTITY_EFFECT}，按原版颜色 {@code (1.0, 0.4, 1.0)} 染色；</li>
+ *   <li>Thaumcraft 的 {@code proxy.burst}（纯客户端粒子，<b>不是 Botania</b>）→ 服务端
+ *       {@code ServerLevel#sendParticles} 的原版 {@link ParticleTypes#WITCH}，按「原版本来就不是
+ *       Botania 就保持原样」的口径保留；玩家上方的 sparkle 本来就是 Botania，改用
+ *       {@link FRParticles#serverSparkle}，颜色 {@code (1.0, 0.4, 1.0)}、尺寸 6.0、m=6；</li>
  *   <li>原版 {@code spawnMissile} 返回 {@code boolean} 但调用方忽略返回值，这里直接写成 {@code void}；
  *       原版 {@code isFull3D()} 返回 {@code false}，1.21.1 已没有对应概念，略过。</li>
  * </ul>
@@ -102,9 +103,6 @@ public class ItemNuclearFury extends FRItem implements FRRechargable, IWarpingGe
      * {@code (random - 0.5) * 3.1}，两者相差一个左括号）。按「1.7.10 是唯一行为参照」逐字保留。
      */
     private static final double VERTICAL_SPREAD = 1.55D;
-
-    /** 原版玩家上方 sparkle 的颜色 {@code (1.0, 0.4, 1.0)}。 */
-    private static final int PLAYER_SPARKLE_COLOR = 0xFF66FF;
 
     public ItemNuclearFury(Properties properties) {
         super(properties.stacksTo(1));
@@ -192,11 +190,13 @@ public class ItemNuclearFury extends FRItem implements FRRechargable, IWarpingGe
             // 原版 world.playSoundAtEntity(x, y, z, "botania:missile", 0.6F, 0.8F + random * 0.2F)。
             SoundHelper.play(level, x, y, z, BotaniaSounds.MISSILE, SoundSource.PLAYERS,
                     0.6F, 0.8F + level.random.nextFloat() * 0.2F);
-            // 原版 Thaumcraft.proxy.burst(world, x, y, z, 0.25F) 的纯粒子替身。
+            // 原版 Thaumcraft.proxy.burst(world, x, y, z, 0.25F) 的纯粒子替身
+            //（Thaumcraft 粒子，非 Botania，按口径保留原版 WITCH）。
             server.sendParticles(ParticleTypes.WITCH, x, y, z, 8, 0.15D, 0.15D, 0.15D, 0.02D);
-            // 原版 onUsingTick 每 2 tick 在 player.posY + 2.4 处撒一颗 (1.0, 0.4, 1.0) 的 sparkle。
-            server.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, PLAYER_SPARKLE_COLOR),
-                    player.getX(), player.getY() + 2.4D, player.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            // 原版 onUsingTick 每 2 tick 在 player.posY + 2.4 处撒一颗 (1.0, 0.4, 1.0) 的 Botania sparkle：
+            // sparkleFX(player, y + 2.4, 1.0, 0.4, 1.0, size=6.0, m=6)。
+            FRParticles.serverSparkle(server, player.getX(), player.getY() + 2.4D, player.getZ(),
+                    1.0F, 0.4F, 1.0F, 6.0F, 6);
         }
         level.addFreshEntity(missile);
     }

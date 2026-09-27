@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.utils.CooldownHelper;
@@ -102,8 +103,10 @@ import net.minecraft.world.phys.Vec3;
  *       （同为「蓄力」音，且都有音调参数）；{@code thaumcraft:craftfail} → 原版
  *       {@link SoundEvents#FIRE_EXTINGUISH}（同为失败时的「嗤」声）。本模组对自定义/Thaumcraft
  *       音效一律换原版等价物，且都过 {@link SoundHelper#play} 统一压低音量；</li>
- *   <li>粒子：Botania 紫色 wisp → 原版 {@link ParticleTypes#ENTITY_EFFECT} 上色（与永恒放逐之诫同一方案），
- *       Thaumcraft 的 {@code portalstuff} 就是原版 {@code EntityPortalFX} → {@link ParticleTypes#PORTAL}。</li>
+ *   <li>粒子：Botania 紫色 wisp 改用 {@link FRParticles}（颜色 {@code r=0.2+rand*0.3, g=0, b=0.5+rand*0.2}，
+ *       与原版逐字对齐）；Thaumcraft 的 {@code portalstuff} 本来就是原版 {@code EntityPortalFX}，
+ *       所以继续用 {@link ParticleTypes#PORTAL}；{@code imposeBurst} 走的是 Thaumcraft
+ *       {@code proxy.burst}（非 Botania），按口径保留「FLASH + 一簇 effect」。</li>
  * </ul>
  *
  * <p><b>Vis 折算</b>：原版每 tick 抽 25 厘 Vis = 0.25 点/tick，即 <b>5 点/秒</b>；充能是整数，
@@ -353,24 +356,41 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
     /**
      * 对应原版 {@code PacketVoidMessage} 的客户端渲染（Botania wispFX + EntityPortalFX）。
      *
-     * <p>{@code finish == false}（每 tick）：在中心 ±6 内随机取 8 个点，初速 = (中心 - 取点) × 0.08，
-     * 让紫色 wisp 向内收束；再在中心撒 5 颗随机初速的原版传送门粒子。
-     * {@code finish == true}（引导结束）：{@code i <= 128}，即 129 颗 wisp 从中心向外炸开
-     * （初速 ±0.25，即 speed 参数取 0.5）。
+     * <p>{@code finish == false}（每 tick）：在中心 ±6 内随机取 8 个点
+     * （{@code (rand-0.5)*12}），每颗
+     * {@code wispFX(取点, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.2+rand*0.2,
+     * 初速=(中心-取点)*0.08, maxAgeMul=0.45)}，让紫色 wisp 向内收束；
+     * 再在中心撒 5 颗随机初速的原版传送门粒子（原版就是 {@code EntityPortalFX}）。
+     *
+     * <p>{@code finish == true}（引导结束）：{@code i <= 128} 即 129 颗
+     * {@code wispFX(中心, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.4+rand*0.4,
+     * xm/ym/zm=(rand-0.5)*0.5, maxAgeMul=1.0)} 向外炸开；
+     * 颜色 / 尺寸各抽一次，初速幅度按 {@code 0.5/√12 ≈ 0.144} 折算。
      */
     private static void voidParticles(ServerLevel level, Vec3 center, boolean finish) {
         if (finish) {
-            level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
-                    center.x, center.y, center.z, 129, 0.0D, 0.0D, 0.0D, 0.5D);
+            FRParticles.serverWispBurst(level, center.x, center.y, center.z,
+                    0.2F + level.random.nextFloat() * 0.3F,
+                    0.0F,
+                    0.5F + level.random.nextFloat() * 0.2F,
+                    0.4F + level.random.nextFloat() * 0.4F, 1.0F,
+                    129, 0.0D, 0.144D);
             return;
         }
+        // 每颗颜色 / 尺寸 / 初速都不同，逐颗单独发包（count == 0 分支能精确指定初速）。
         for (int i = 0; i < 8; i++) {
             double px = center.x + (level.random.nextDouble() - 0.5D) * 12.0D;
             double py = center.y + (level.random.nextDouble() - 0.5D) * 12.0D;
             double pz = center.z + (level.random.nextDouble() - 0.5D) * 12.0D;
-            level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
-                    px, py, pz, 0,
-                    (center.x - px) * 0.08D, (center.y - py) * 0.08D, (center.z - pz) * 0.08D, 1.0D);
+            FRParticles.serverWisp(level, px, py, pz,
+                    0.2F + level.random.nextFloat() * 0.3F,
+                    0.0F,
+                    0.5F + level.random.nextFloat() * 0.2F,
+                    0.2F + level.random.nextFloat() * 0.2F,
+                    (center.x - px) * 0.08D,
+                    (center.y - py) * 0.08D,
+                    (center.z - pz) * 0.08D,
+                    0.45F);
         }
         for (int i = 0; i < 5; i++) {
             level.sendParticles(ParticleTypes.PORTAL, center.x, center.y, center.z, 0,

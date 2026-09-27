@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
@@ -183,10 +184,18 @@ public class EntityLunarFlare extends FRHomingProjectile {
             target.push(push.x, push.y, push.z);
         }
 
-        // 原版 LunarFlaresParticleMessage：在锁定方块上方撒 48 颗青白色 wisp；
-        // 原版 LunarBurstMessage（FXBurst）：中心一团大光斑；这里都用原版粒子近似。
-        server.sendParticles(ParticleTypes.END_ROD,
-                lockX + 0.5D, lockY + 1.25D, lockZ + 0.5D, 48, 0.4D, 0.4D, 0.4D, 0.05D);
+        // 原版 LunarFlaresParticleMessage(lockX+0.5, lockY+1.25, lockZ+0.5, 48)：
+        //   for (i = 0; i <= 48; i++)  —— 共 49 颗 ——
+        //   wispFX(锁定点, r=0, g=0.8+rand*0.2, b=0.4+rand*0.6,
+        //          size=0.3+rand*0.3, xm/ym/zm=(rand-0.5)*0.4, maxAgeMul=1.0)。
+        // 颜色/尺寸各抽一次（原版逐颗随机），位置固定、初速用 m=0.4 的等效 gaussian（0.4/√12 ≈ 0.116）。
+        FRParticles.serverWispBurst(server, lockX + 0.5D, lockY + 1.25D, lockZ + 0.5D,
+                0.0F,
+                (float) (0.8D + random.nextDouble() * 0.2D),
+                (float) (0.4D + random.nextDouble() * 0.6D),
+                0.3F + random.nextFloat() * 0.3F, 1.0F, 49, 0.0D, 0.116D);
+        // 原版 LunarBurstMessage → Main.proxy.lunarBurst → 自定义 FXBurst（FR 自己的粒子，不是 Botania），
+        // 按「原版本来就不是 Botania 就保持原样」的口径保留这一发 FLASH。
         server.sendParticles(ParticleTypes.FLASH,
                 lockX + 0.5D, lockY + 1.5D, lockZ + 0.5D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
         // 原版 world.playAuxSFX(2001, lockX, lockY, lockZ, blockId + meta << 12)：方块破坏粒子。
@@ -232,19 +241,24 @@ public class EntityLunarFlare extends FRHomingProjectile {
         int steps = (int) (length / TRAIL_STEP);
         Vec3 particlePos = previous;
         for (int i = 0; i < steps; i++) {
-            // 原版 sparkleFX(..., r=0, g=0.8+rand*0.2, b=0.4+rand*0.6, size=2.0, type=1)。
-            level().addParticle(ParticleTypes.END_ROD,
+            // 原版 sparkleFX(..., r=0, g=0.8+rand*0.2, b=0.4+rand*0.6, size=2.0, m=1)。
+            float sparkleG = (float) (0.8D + random.nextDouble() * 0.2D);
+            float sparkleB = (float) (0.4D + random.nextDouble() * 0.6D);
+            FRParticles.sparkle(level(),
                     particlePos.x + (random.nextDouble() - 0.5D) * 0.2D,
                     particlePos.y + (random.nextDouble() - 0.5D) * 0.2D,
                     particlePos.z + (random.nextDouble() - 0.5D) * 0.2D,
-                    0.0D, 0.0D, 0.0D);
-            // 原版 nextInt(steps) <= 1：偶尔叠一颗 size=2.4、type=4、抖动 ±1.0 的大 sparkle。
+                    0.0F, sparkleG, sparkleB, 2.0F, 1);
+            // 原版 nextInt(steps) <= 1：偶尔叠一颗 size=2.4、m=4、抖动 ±1.0 的大 sparkle。
             if (random.nextInt(steps) <= 1) {
-                level().addParticle(ParticleTypes.SOUL_FIRE_FLAME,
+                FRParticles.sparkle(level(),
                         particlePos.x + (random.nextDouble() - 0.5D) * 1.0D,
                         particlePos.y + (random.nextDouble() - 0.5D) * 1.0D,
                         particlePos.z + (random.nextDouble() - 0.5D) * 1.0D,
-                        0.0D, 0.0D, 0.0D);
+                        0.0F,
+                        (float) (0.8D + random.nextDouble() * 0.2D),
+                        (float) (0.4D + random.nextDouble() * 0.6D),
+                        2.4F, 4);
             }
             particlePos = particlePos.add(step);
         }
