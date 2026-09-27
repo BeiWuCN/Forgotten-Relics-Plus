@@ -188,6 +188,10 @@ public final class FRItems {
      *
      * <p><b>原版没有研究词条、也没有灌注配方</b>，只能创造模式获取；按「只以原版为准」的原则，
      * 本项目同样不配配方与研究。
+     *
+     * <p><b>这是既定设计，不是漏做</b>：项目负责人明确表示它的定位应当是「创造物品级别、
+     * 要非常贵」，因此普通灌注配方与研究都刻意留空。将来若引入无尽贪婪（Avaritia）之类
+     * 极昂贵的终局前置，再把它作为终局配方接进去——在此之前<b>不要</b>顺手给它补配方或研究。
      */
     public static final DeferredItem<ItemOmegaCore> OMEGA_CORE =
             ITEMS.registerItem("omega_core", ItemOmegaCore::new,
