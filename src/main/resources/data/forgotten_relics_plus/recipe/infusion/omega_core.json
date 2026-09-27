@@ -3,13 +3,18 @@
     { "type": "neoforge:mod_loaded", "modid": "avaritia" }
   ],
   "type": "thaumaturge:infusion",
-        "aspects": [
+          "aspects": [
     { "aspect": "thaumaturge:aer", "amount": 512 },
     { "aspect": "thaumaturge:aqua", "amount": 512 },
     { "aspect": "thaumaturge:ignis", "amount": 512 },
     { "aspect": "thaumaturge:terra", "amount": 512 },
     { "aspect": "thaumaturge:ordo", "amount": 512 },
-    { "aspect": "thaumaturge:perditio", "amount": 512 }
+    { "aspect": "thaumaturge:perditio", "amount": 512 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 256 },
+    { "aspect": "thaumaturge:auram", "amount": 256 },
+    { "aspect": "thaumaturge:vacuos", "amount": 256 },
+    { "aspect": "thaumaturge:alienis", "amount": 192 },
+    { "aspect": "thaumaturge:cognitio", "amount": 192 }
   ],
   "catalyst": { "item": "avaritia:enhancement_core" },
     "components": [
@@ -28,7 +33,7 @@
     { "item": "thaumaturge:ingot_void" },
     { "item": "minecraft:nether_star" },
     { "item": "minecraft:enchanted_golden_apple" },
-    { "item": "minecraft:dragon_breath" },
+    { "item": "thaumaturge:jar_node" },
     { "item": "botania:terrasteel_ingot" }
   ],
   "instability": 64,
