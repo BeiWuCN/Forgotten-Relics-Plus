@@ -1,4 +1,4 @@
-# 失落遗物学：重现 — 高版本移植（Forgotten Relics: Unofficial）
+# Forgotten Relics + — 失落遗物学高版本移植
 
 [English](README.en.md) | **简体中文**
 
@@ -25,7 +25,7 @@
 | --- | --- | --- | --- |
 | Forgotten Relics（原版） | 1.7.10 | Integral / Extegral / VictorShadow | [WTFPL](https://github.com/jss2a98aj/Forgotten-Relics/blob/master/LICENSE) |
 | Forgotten Relics RE（1.12.2 移植） | 1.12.2 | NNYYOONNIIOO 等 | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)（**本项目未使用其代码**） |
-| **Forgotten Relics: Unofficial（本项目）** | 1.21.1 | beiwu、gali2009 等 | **[MIT](https://opensource.org/license/mit)** |
+| **Forgotten Relics +（本项目）** | 1.21.1 | beiwu、gali2009 等 | **[MIT](https://opensource.org/license/mit)** |
 
 ### 代码来源
 
@@ -33,6 +33,10 @@
 1.21.1 / NeoForge 的 API 独立实现，**不含 1.12.2 移植版（RE）的代码**。
 RE 版采用 CC BY-NC-SA 4.0，参考其代码会一并继承「禁止商用」与「必须同协议共享」两项限制，
 这正是本项目改用 MIT 的原因。RE 版只用于对照行为表现；物品纹理与文本直接取自 1.7.10 原版。
+
+> **关于名字**：本项目的移植对象是原版**《失落遗物学》（Forgotten Relics）**，所以沿用原版的名字；
+> 1.12.2 移植版把中文名改成了「失落遗物学：重现」，那个名字属于那一版的作者，本项目不使用它。
+> 「+」是本项目自己的后缀，只用来标记这条 1.21.1 分支，不代表获得了任何一方的背书。
 
 ### 你可以自由地
 

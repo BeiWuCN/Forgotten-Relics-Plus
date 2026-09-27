@@ -1,6 +1,6 @@
 {
-  "key.categories.ForgottenRelicsRE": "失落遗物学",
-  "itemGroup.tabForgottenRelics": "失落遗物学：重现",
+  "key.categories.ForgottenRelicsRE": "失落遗物学 +",
+  "itemGroup.tabForgottenRelics": "失落遗物学 +",
   "death.attack.trueDamage": "%1$s被%2$s审判致死。",
   "death.attack.trueDamageUndef": "%1$s被审判致死。",
   "death.attack.attackOblivion": "%1$s的灵魂被湮灭吞噬。",
@@ -54,7 +54,7 @@
   "entity.forgotten_relics.lunar_flare": "耀月之辉",
   "entity.forgotten_relics.primal_orb": "元初能量法球",
   "entity.forgotten_relics.thunderpeal_orb": "霹雳雷珠",
-  "key.category.ForgottenRelicsRE": "失落遗物学：重现",
+  "key.category.ForgottenRelicsRE": "失落遗物学 +",
   "key.discordRing": "不谐之戒",
   "item.FRCode0.lore": "§0",
   "item.FRCode1.lore": "§1",

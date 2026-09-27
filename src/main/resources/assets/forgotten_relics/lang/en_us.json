@@ -1,6 +1,6 @@
 {
-  "key.categories.ForgottenRelicsRE": "Forgotten Relics",
-  "itemGroup.tabForgottenRelics": "Forgotten Relics RE",
+  "key.categories.ForgottenRelicsRE": "Forgotten Relics Plus",
+  "itemGroup.tabForgottenRelics": "Forgotten Relics Plus",
   "death.attack.trueDamage": "%1$s was judged to death by %2$s.",
   "death.attack.trueDamageUndef": "%1$s was judged to death.",
   "death.attack.attackOblivion": "%1$s's soul was consumed by Oblivion.",
@@ -54,7 +54,7 @@
   "entity.forgotten_relics.lunar_flare": "Lunar Flare",
   "entity.forgotten_relics.primal_orb": "Orb of Primordial Energy",
   "entity.forgotten_relics.thunderpeal_orb": "Thunderpeal Orb",
-  "key.category.ForgottenRelicsRE": "Forgotten Relics RE",
+  "key.category.ForgottenRelicsRE": "Forgotten Relics Plus",
   "key.discordRing": "Ring of Discord",
   "item.FRCode0.lore": "§0",
   "item.FRCode1.lore": "§1",
