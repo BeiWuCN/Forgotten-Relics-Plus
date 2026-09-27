@@ -2,7 +2,10 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.VoidGrimoire",
   "parents": [
-    "forgotten_relics_plus:edict_of_banishment"
+    "forgotten_relics_plus:edict_of_banishment",
+    "~thaumaturge:oculus",
+    "~forgotten_relics_plus:terror_crown",
+    "~forgotten_relics_plus:chaos_core"
   ],
   "column": -7,
   "row": 7,
@@ -15,6 +18,7 @@
   "stages": [
     {
       "text": "fr.text.VoidGrimoire.1",
+      "warp": 4,
       "required_knowledge": [
         {
           "type": "observation",

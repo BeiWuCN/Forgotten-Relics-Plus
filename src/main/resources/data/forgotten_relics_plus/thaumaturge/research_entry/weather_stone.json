@@ -3,7 +3,8 @@
   "name": "fr.name.WeatherStone",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~forgotten_relics_plus:deific_amulet"
   ],
   "column": -3,
   "row": 0,
@@ -42,21 +43,6 @@
       "recipes": [
         "forgotten_relics_plus:infusion/weather_stone"
       ]
-    }
-  ],
-  "complexity": 1,
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:aer",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:aqua",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:ignis",
-      "amount": 3
     }
   ]
 }

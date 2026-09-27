@@ -82,24 +82,34 @@ public class ItemFalseJustice extends FRItem
         target.hurt(converted, amount);
     }
 
-    /** 携带者自己将要死亡（原版 {@code :298}）。 */
+    /** 携带者自己将要死亡（原版 {@code :296-299}）。真伤不在免死范围内。 */
     @Override
     public void onLethalDamage(LivingDeathEvent event, Player player, ItemStack stack) {
-        if (!FRConfig.FALSE_JUSTICE_PREVENT_DEATH.get()) {
+        if (!FRConfig.FALSE_JUSTICE_PREVENT_DEATH.get() || isTrueDamage(event.getSource())) {
             return;
         }
         event.setCanceled(true);
         keepAlive(player);
     }
 
-    /** 携带者打死了一个生物（原版 {@code :303}）：那个生物也不死。 */
+    /** 携带者打死了一个生物（原版 {@code :301-305}）：那个生物也不死。同样排除真伤。 */
     @Override
     public void onLethalDamageCaused(LivingDeathEvent event, Player attacker, ItemStack stack) {
-        if (!FRConfig.FALSE_JUSTICE_PREVENT_DEATH.get() || !(event.getEntity() instanceof LivingEntity victim)) {
+        if (!FRConfig.FALSE_JUSTICE_PREVENT_DEATH.get() || !(event.getEntity() instanceof LivingEntity victim)
+                || isTrueDamage(event.getSource())) {
             return;
         }
         event.setCanceled(true);
         keepAlive(victim);
+    }
+
+    /**
+     * 原版 {@code RelicsEventHandler.java:296,301} 在免死判定里明确排除了两种真伤来源
+     * （{@code DamageSourceTrueDamage} 与 {@code DamageSourceTrueDamageUndef}）——
+     * 即「虚伪审判挡不住真正的伤害」。
+     */
+    private static boolean isTrueDamage(DamageSource source) {
+        return source.is(FRDamageTypes.TRUE_DAMAGE) || source.is(FRDamageTypes.TRUE_DAMAGE_UNDEF);
     }
 
     /** 原版只取消事件、不设血量；1.21.1 里 0 血仍被判定为死亡状态，所以这里补到 1 点。 */

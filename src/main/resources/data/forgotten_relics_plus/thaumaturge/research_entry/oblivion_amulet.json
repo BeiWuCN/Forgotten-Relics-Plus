@@ -3,7 +3,10 @@
   "name": "fr.name.OblivionAmulet",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:unlock_eldritch"
+    "thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:oblivion_stone",
+    "~forgotten_relics_plus:terror_crown",
+    "~thaumaturge:primordial_pearl"
   ],
   "column": 0,
   "row": -2,
@@ -28,7 +31,7 @@
           "amount": 1
         }
       ],
-      "warp": 3
+      "warp": 8
     },
     {
       "text": "fr.text.OblivionAmulet.2",
@@ -36,24 +39,5 @@
         "forgotten_relics_plus:infusion/oblivion_amulet"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 7
-    },
-    {
-      "aspect": "thaumaturge:mortuus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:spiritus",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

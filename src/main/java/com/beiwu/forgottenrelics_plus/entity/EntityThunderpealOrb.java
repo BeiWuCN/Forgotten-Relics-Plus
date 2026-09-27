@@ -7,7 +7,6 @@ import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import java.util.List;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -88,6 +87,16 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
     }
 
     /**
+     * 原版 {@code EntityThunderpealOrb#func_70185_h()} 返回 <b>0.05</b>——这是本模组所有弹射物里
+     * 唯一有重力的一颗（其余都返回 0，基类 {@link FRHomingProjectile} 已统一处理）。
+     * 此前这里沿用基类的 0，弹道变成了纯直线。
+     */
+    @Override
+    protected double getDefaultGravity() {
+        return 0.05D;
+    }
+
+    /**
      * 拖尾：1.7.10 的 {@code EntityThunderpealOrb} 本身没有粒子（只有自定义闪电网络包），
      * 轨迹粒子是 RE 补的（{@code EntityThunderpealOrb#onUpdate} 客户端分支）。照抄 RE：
      * <pre>
@@ -113,6 +122,29 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         }
     }
 
+    /**
+     * 原版 {@code attackEntityFrom}（{@code EntityThunderpealOrb.java:114-133}）：雷电球本身不吃伤害，
+     * 被击中时改为<b>沿攻击者视线方向被打飞</b>（速度 = 视线单位向量 × 0.9），并播放 {@code thaumcraft:zap}。
+     *
+     * <p>音效按本项目既有口径换成原版等价物（{@link SoundEvents#FIREWORK_ROCKET_BLAST}），
+     * 与 {@link EntityCrimsonOrb#hurt} 是同一套实现。
+     */
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (isInvulnerableTo(source)) {
+            return false;
+        }
+        markHurt();
+        Entity attacker = source.getEntity();
+        if (attacker == null) {
+            return false;
+        }
+        setDeltaMovement(attacker.getLookAngle().scale(0.9D));
+        SoundHelper.play(level(), getX(), getY(), getZ(), SoundEvents.FIREWORK_ROCKET_BLAST, SoundSource.PLAYERS,
+                1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
+        return true;
+    }
+
     @Override
     protected void onImpact(HitResult result) {
         if (!(level() instanceof ServerLevel server)) {
@@ -122,12 +154,18 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         Player owner = getOwner() instanceof Player player ? player : null;
         // 原版/RE 的闪电起点就是雷电球自身位置。
         Vec3 origin = position();
+        // 原版把「直接命中的那一个」从范围列表里移除（EntityThunderpealOrb.java:71-73），
+        // 所以它只吃一次直接伤害，不会再吃一次范围伤害。此前漏了这一步。
+        LivingEntity directHit = null;
         if (result instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity direct) {
             strike(direct, lightning, FRConfig.THUNDERPEAL_DIRECT_DAMAGE.get().floatValue());
+            directHit = direct;
         }
+        final LivingEntity excludeDirect = directHit;
 
         List<LivingEntity> nearby = level().getEntitiesOfClass(LivingEntity.class,
-                getBoundingBox().inflate(BLAST_RADIUS), entity -> entity != owner && entity.isAlive());
+                getBoundingBox().inflate(BLAST_RADIUS),
+                entity -> entity != owner && entity != excludeDirect && entity.isAlive());
         for (LivingEntity target : nearby) {
             // 主电弧：雷电球 → 目标身体中心（RE LightningMessage(main=true)，宽 0.075）。
             FRBoltParticleData.broadcast(server, origin, centerOf(target),
@@ -149,10 +187,15 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
                 strike(secondary, lightning, FRConfig.THUNDERPEAL_BOLT_DAMAGE.get().floatValue() / 2.0F);
             }
         }
-        // 爆发粒子 + 音效，对应原版两发 imposeBurst 与 thaumcraft:shock。
-        // imposeBurst 走的是 Thaumcraft 的 proxy.burst（1.7.10）/ BurstMessage（RE），
-        // 不是 Botania 粒子，所以这里仍按既有口径用原版 FLASH 近似。
-        server.sendParticles(ParticleTypes.FLASH, getX(), getY(), getZ(), 3, 0.2D, 0.2D, 0.2D, 0.0D);
+        // 爆发粒子 + 音效，对应原版<b>两发</b> imposeBurst(.., 2.0f) 与 thaumcraft:shock。
+        // imposeBurst → BurstMessage → 模组自带的 FXBurst：青绿色加法柔光精灵，不是白色方片。
+        for (int i = 0; i < 2; i++) {
+            FRParticles.serverWispBurst(server, getX(), getY(), getZ(),
+                    0.0F,
+                    (float) (0.8D + random.nextDouble() * 0.2D),
+                    (float) (0.4D + random.nextDouble() * 0.6D),
+                    2.0F, 1.0F, 1, 0.0D, 0.0D);
+        }
         SoundHelper.play(level(), getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT,
                 SoundSource.PLAYERS, 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
     }

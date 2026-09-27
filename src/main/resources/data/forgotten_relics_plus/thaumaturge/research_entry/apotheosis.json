@@ -2,7 +2,19 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.Apotheosis",
   "parents": [
-    "forgotten_relics_plus:tome_of_discord"
+    "forgotten_relics_plus:tome_of_discord",
+    "~forgotten_relics_plus:tome_of_lunar_flares",
+    "~forgotten_relics_plus:soul_tome",
+    "~forgotten_relics_plus:nuclear_fury",
+    "~forgotten_relics_plus:crimson_spell",
+    "~forgotten_relics_plus:tome_of_broken_fates",
+    "~forgotten_relics_plus:arcanum",
+    "~forgotten_relics_plus:oblivion_amulet",
+    "~forgotten_relics_plus:paradox",
+    "~forgotten_relics_plus:edict_of_banishment",
+    "~forgotten_relics_plus:dark_sun_ring",
+    "~forgotten_relics_plus:shiny_stone",
+    "~forgotten_relics_plus:dimensional_mirror"
   ],
   "column": -2,
   "row": 7,
@@ -15,6 +27,7 @@
   "stages": [
     {
       "text": "fr.text.Apotheosis.1",
+      "warp": 10,
       "required_knowledge": [
         {
           "type": "observation",

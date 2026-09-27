@@ -4,12 +4,11 @@ import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
+import com.beiwu.forgottenrelics_plus.registry.FRSounds;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -59,7 +58,7 @@ import net.minecraft.world.phys.Vec3;
  *       爆发用一圈 {@code END_ROD} + 中心一个 {@code FLASH}；</li>
  *   <li>原版 {@code world.playAuxSFX(2001, ...)}（方块破坏粒子）→ {@code ServerLevel#levelEvent(2001, ...)}，
  *       方块状态 id 用 {@code Block.getId(state)}；</li>
- *   <li>原版 {@code sound.lunarFlare}（音量 16）→ {@link SoundEvents#GENERIC_EXPLODE}，
+ *   <li>原版 {@code sound.lunarFlare}（音量 16）→ 模组自带音效 {@link FRSounds#LUNAR_FLARE}，
  *       经 {@link SoundHelper#play} 统一压低音量。</li>
  * </ul>
  *
@@ -194,16 +193,12 @@ public class EntityLunarFlare extends FRHomingProjectile {
                 (float) (0.8D + random.nextDouble() * 0.2D),
                 (float) (0.4D + random.nextDouble() * 0.6D),
                 0.3F + random.nextFloat() * 0.3F, 1.0F, 49, 0.0D, 0.116D);
-        // 原版 LunarBurstMessage → Main.proxy.lunarBurst → 自定义 FXBurst（FR 自己的粒子，不是 Botania），
-        // 按「原版本来就不是 Botania 就保持原样」的口径保留这一发 FLASH。
-        server.sendParticles(ParticleTypes.FLASH,
-                lockX + 0.5D, lockY + 1.5D, lockZ + 0.5D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
         // 原版 world.playAuxSFX(2001, lockX, lockY, lockZ, blockId + meta << 12)：方块破坏粒子。
         BlockPos lockPos = new BlockPos(lockX, lockY, lockZ);
         BlockState state = level().getBlockState(lockPos);
         server.levelEvent(2001, lockPos, Block.getId(state));
-        // 原版 sound.lunarFlare：音量 16、音调 0.8 + rand * 0.2。
-        SoundHelper.play(level(), lockX, lockY, lockZ, SoundEvents.GENERIC_EXPLODE.value(),
+        // 原版 sound.lunarFlare：音量 16、音调 0.8 + rand * 0.2。现用模组自带音效，不再用原版爆炸音近似。
+        SoundHelper.play(level(), lockX, lockY, lockZ, FRSounds.LUNAR_FLARE.get(),
                 SoundSource.PLAYERS, 16.0F, 0.8F + random.nextFloat() * 0.2F);
         discard();
     }

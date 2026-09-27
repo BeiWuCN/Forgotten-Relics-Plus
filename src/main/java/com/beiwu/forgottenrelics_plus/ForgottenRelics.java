@@ -8,6 +8,7 @@ import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.registry.FRItems;
 import com.beiwu.forgottenrelics_plus.registry.FRParticleTypes;
 import com.beiwu.forgottenrelics_plus.registry.FRRecipeSerializers;
+import com.beiwu.forgottenrelics_plus.registry.FRSounds;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -54,6 +55,8 @@ public final class ForgottenRelics {
         FRParticleTypes.register(modBus);
         FRRecipeSerializers.register(modBus);
         FRCreativeTabs.register(modBus);
+        // 模组自带的音效（1.7.10 assets/forgottenrelics/sounds.json 的 4 个可用条目）。
+        FRSounds.register(modBus);
 
         // 配置文件：与原版 1.12.2 的 RelicsConfigHandler 一一对应
         container.registerConfig(ModConfig.Type.COMMON, FRConfig.SPEC);

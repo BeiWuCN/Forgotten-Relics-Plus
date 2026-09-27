@@ -3,7 +3,9 @@
   "name": "fr.name.DimensionalMirror",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:mirror_hand"
+    "thaumaturge:mirror_hand",
+    "~thaumaturge:focus_rift",
+    "~forgotten_relics_plus:deific_amulet"
   ],
   "column": 0,
   "row": 3,
@@ -16,6 +18,7 @@
   "stages": [
     {
       "text": "fr.text.DimensionalMirror.1",
+      "warp": 1,
       "required_knowledge": [
         {
           "type": "observation",
@@ -40,21 +43,6 @@
       "recipes": [
         "forgotten_relics_plus:infusion/dimensional_mirror"
       ]
-    }
-  ],
-  "complexity": 2,
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:alienis",
-      "amount": 7
-    },
-    {
-      "aspect": "thaumaturge:motus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 4
     }
   ]
 }

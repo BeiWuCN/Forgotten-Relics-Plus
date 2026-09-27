@@ -593,8 +593,9 @@ public final class FRConfig {
         builder.comment("音效（原版无此配置，为本模组新增）").push("sound");
         SOUND_VOLUME_MULTIPLIER = builder
                 .comment("Global volume multiplier applied to every Forgotten Relics sound effect.",
-                         "本模组所有音效的音量倍率。原版音量偏大，默认降到 45%；设为 1.0 即恢复原版音量。")
-                .defineInRange("soundVolumeMultiplier", 0.45D, 0.0D, 1.0D);
+                         "本模组所有音效的音量倍率。原版音量偏大，1.6.2 玩家实测仍嫌响，默认降到 40%；",
+                         "设为 1.0 即恢复原版音量。注意：真实响度 = clamp(原始音量,0,1) * 本倍率 * 玩家音量滑条。")
+                .defineInRange("soundVolumeMultiplier", 0.4D, 0.0D, 1.0D);
         builder.pop();
 
         builder.comment("Vis 储量上限（原版分类 Vis）").push("vis");

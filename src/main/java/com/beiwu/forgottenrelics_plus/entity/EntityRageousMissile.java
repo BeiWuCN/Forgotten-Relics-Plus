@@ -86,7 +86,14 @@ public class EntityRageousMissile extends FRHomingProjectile {
     private static final double SPEED = 0.5D;
 
     /** 没有目标时乱飞的搜索半径（原版 ±16 格的随机点）。 */
-    private static final double WANDER_RANGE = 16.0D;
+    /**
+     * 无目标时「流线」方向的扩散系数。
+     *
+     * <p>原版这一段是每 tick 重取一个自身 ±16 格内的随机点当方向（{@code EntityRageousMissile.java:155-162}），
+     * 速度方向每 tick 都在跳，观感像蚊子。现按项目负责人要求改成「沿发射者视线方向、略微分散的流线运动」，
+     * 这是<b>刻意偏离原版</b>：方向只取一次，每颗球在视线基础上叠 ±{@code STREAM_SPREAD} 的随机量。
+     */
+    private static final double STREAM_SPREAD = 0.18D;
 
     /** {@code evil} 为真时，距目标小于该值即自毁（原版 {@code diffVec.mag() < 1.0}）。 */
     private static final double EVIL_DETONATE_DISTANCE = 1.0D;
@@ -105,6 +112,9 @@ public class EntityRageousMissile extends FRHomingProjectile {
 
     /** 本 tick 移动前的位置（身体中心），供客户端拖尾粒子使用。 */
     private Vec3 trailStart = Vec3.ZERO;
+
+    /** 无目标时的流线方向：第一次需要时算定，此后一直保持（null = 还没算）。 */
+    private Vec3 streamDirection;
 
     public EntityRageousMissile(EntityType<? extends EntityRageousMissile> type, Level level) {
         super(type, level);
@@ -133,14 +143,24 @@ public class EntityRageousMissile extends FRHomingProjectile {
         // 原版在 super.onUpdate() 之前抓 prevPos：这里同样先记下移动前的位置。
         trailStart = center();
         super.tick();
-        if (isRemoved() || level().isClientSide()) {
+        if (isRemoved()) {
             return;
         }
 
-        // 原版 getTarget() 因为用的是非短路 &，每 tick 都会跑一次。
-        boolean hasTarget = refreshTarget();
+        // 速度<b>两端都算</b>——与基类 FRHomingProjectile 在 1.6.2 做的修正同一口径。
+        //
+        // 此前这里写的是「客户端直接 return」，于是客户端只能被动跟随每 tick 的服务端位置包，
+        // 一旦有延迟或抖动就表现为「一卡一卡」。1.6.2 那次修正只改到了基类的 applyHoming，
+        // 而这颗导弹不用基类的追踪（homingStrength 保持 0、速度由这里整条重写），所以没被覆盖到。
+        //
+        // 客户端的职责仍然只有「把速度算成与服务端一致的那一份」：不写同步数据、不做任何结算。
+        boolean client = level().isClientSide();
+        // 原版 getTarget() 因为用的是非短路 &，每 tick 都会跑一次；客户端只读服务端同步下来的目标 id。
+        boolean hasTarget = client || refreshTarget();
         if (!hasTarget && time > LIFESPAN_WITHOUT_TARGET) {
-            discard();
+            if (!client) {
+                discard();
+            }
             return;
         }
 
@@ -155,18 +175,45 @@ public class EntityRageousMissile extends FRHomingProjectile {
             }
             setDeltaMovement(motion);
             if (evil && diff.length() < EVIL_DETONATE_DISTANCE) {
-                discard();
+                if (!client) {
+                    discard();
+                }
                 return;
             }
+        } else if (client) {
+            // 客户端在「无目标」时什么都不算：位置包同时带着服务端的 delta，
+            // 跟着它飞就与服务端一致；自己再算一份反而两边打架（那正是之前的「一卡一卡」）。
         } else {
-            // 原版：targetVec = 自身 ±16 格的随机点，速度 = 朝它的单位方向 × 0.5。
-            Vec3 wander = thisVec.add(
-                    (random.nextDouble() - 0.5D) * WANDER_RANGE,
-                    (random.nextDouble() - 0.5D) * WANDER_RANGE,
-                    (random.nextDouble() - 0.5D) * WANDER_RANGE);
-            setDeltaMovement(wander.subtract(thisVec).normalize().scale(SPEED));
+            // 无目标时的「流线运动」：方向只取一次并保持不变（原版是每 tick 重取随机点，方向乱跳）。
+            // 见 STREAM_SPREAD 的说明——这是刻意偏离原版。
+            if (streamDirection == null) {
+                streamDirection = computeStreamDirection();
+            }
+            setDeltaMovement(streamDirection.scale(SPEED));
         }
         time++;
+    }
+
+    /**
+     * 无目标时那一段流线的方向：发射者的视线，叠一点随机偏移让整片弹幕散开。
+     *
+     * <p>只在第一次需要时调用，结果缓存在 {@link #streamDirection}。若拿不到发射者（或视线退化），
+     * 依次退回「自身当前速度方向」和「正上方」。
+     */
+    private Vec3 computeStreamDirection() {
+        Vec3 aim = getOwner() instanceof LivingEntity thrower
+                ? thrower.getLookAngle()
+                : getDeltaMovement();
+        if (aim.lengthSqr() < 1.0E-6D) {
+            aim = getDeltaMovement().lengthSqr() > 1.0E-6D
+                    ? getDeltaMovement()
+                    : new Vec3(0.0D, 1.0D, 0.0D);
+        }
+        Vec3 dir = aim.add(
+                (random.nextDouble() - 0.5D) * STREAM_SPREAD,
+                (random.nextDouble() - 0.5D) * STREAM_SPREAD,
+                (random.nextDouble() - 0.5D) * STREAM_SPREAD);
+        return dir.lengthSqr() < 1.0E-6D ? aim.normalize() : dir.normalize();
     }
 
     /**

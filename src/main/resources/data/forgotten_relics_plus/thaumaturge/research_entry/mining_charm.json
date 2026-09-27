@@ -3,7 +3,8 @@
   "name": "fr.name.MiningCharm",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~thaumaturge:elemental_tools"
   ],
   "column": 2,
   "row": -2,
@@ -41,20 +42,5 @@
         "forgotten_relics_plus:infusion/mining_charm"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:terra",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:instrumentum",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:motus",
-      "amount": 3
-    }
-  ],
-  "complexity": 1
+  ]
 }

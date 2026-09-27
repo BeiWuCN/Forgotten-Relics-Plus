@@ -125,8 +125,32 @@ public class EntityChaoticOrb extends FRHomingProjectile {
     /** 原版把追踪法球的速度三分量各自夹在 ±0.2。 */
     private static final double SEEK_MAX_SPEED = 0.2D;
 
-    /** 原版普通法球的随机游走加速度 {@code (nextFloat() - nextFloat()) * 0.01}。 */
-    private static final double WANDER_ACCEL = 0.01D;
+    /**
+     * 普通法球的随机游走加速度。
+     *
+     * <p>原版是 {@code (nextFloat() - nextFloat()) * 0.01}。但配合原版 0.5/tick 的阻尼，
+     * 终端速度只有约 0.01 格/tick（0.2 格/秒）——观感上几乎是悬停，玩家反馈「不会自己无序运动」。
+     * 按玩家要求改成「能看出乱窜但不野」，放大到 4 倍。<b>这是刻意偏离原版</b>，想回原版改回 0.01。
+     */
+    private static final double WANDER_ACCEL = 0.04D;
+
+    /** 「从未锁定过目标」的球在出生多少 tick 后开始淡出（玩家设定：7 秒）。 */
+    private static final int NO_TARGET_FADE_TICKS = 140;
+
+    /** 淡出的持续时长（tick）：这段时间里渲染缩放从 1 线性降到 0，然后直接消失，不爆炸。 */
+    private static final int FADE_TICKS = 20;
+
+    /**
+     * 非追踪球里「随机选一个方向飞出去」的比例，其余留在出生点附近做无序游走。
+     * （玩家设定；刻意偏离原版——原版所有非追踪球都是原地游走。）
+     */
+    private static final double TRAVELER_CHANCE = 0.35D;
+
+    /** 飞出去的球的恒定速度（格/tick，约 3 格/秒）。 */
+    private static final double TRAVEL_SPEED = 0.15D;
+
+    /** 从未锁定目标的球在 7 秒时「原地爆炸（不破坏方块）」而不是淡出的概率。 */
+    private static final double SELFDESTRUCT_CHANCE = 0.15D;
 
     /** 原版追踪时对发射者的「跳过」概率（{@code e.id == oi && Math.random() < 0.8}）。 */
     private static final float OWNER_SKIP_CHANCE = 0.8F;
@@ -167,6 +191,25 @@ public class EntityChaoticOrb extends FRHomingProjectile {
     /** 原版由物品以 35% 概率决定的追踪开关。只在服务端有意义。 */
     private boolean seeker;
 
+    /** 是否<b>曾经</b>锁定过目标。只要锁定过一次，就不再执行「7 秒淡出」。 */
+    private boolean everLockedTarget;
+
+    /** 出生以来「尚未锁定过目标」的累计 tick。 */
+    private int noTargetTicks;
+
+    /** 出生时定下：非追踪球里「选一个方向飞出去」的那种（仅服务端有意义）。 */
+    private boolean traveler;
+
+    /** 飞出去时的方向，首次需要时算定后一直保持。 */
+    private Vec3 travelDirection;
+
+    /** 出生时定下：7 秒时原地爆炸（不破坏方块）而不是淡出。 */
+    private boolean selfDestruct;
+
+    /** 淡出剩余进度（0 = 没在淡出）。同步给客户端，由 {@link #renderScale()} 换算成缩放。 */
+    private static final EntityDataAccessor<Integer> DATA_FADE =
+            SynchedEntityData.defineId(EntityChaoticOrb.class, EntityDataSerializers.INT);
+
     public EntityChaoticOrb(EntityType<? extends EntityChaoticOrb> type, Level level) {
         super(type, level);
         entityData.set(DATA_COLOR_INDEX, random.nextInt(PRIMAL_COLORS.length));
@@ -176,6 +219,10 @@ public class EntityChaoticOrb extends FRHomingProjectile {
     public EntityChaoticOrb(Level level, LivingEntity caster, boolean seeker) {
         super(FREntities.PRIMAL_ORB.get(), level);
         this.seeker = seeker;
+        // 玩家设定的三分：35% 追踪、剩下的再分「飞出去」与「原地无序游走」；
+        // 另有 15% 的球 7 秒时原地爆炸而不是淡出。
+        this.traveler = !seeker && random.nextDouble() < TRAVELER_CHANCE;
+        this.selfDestruct = random.nextDouble() < SELFDESTRUCT_CHANCE;
         setOwner(caster);
         entityData.set(DATA_COLOR_INDEX, random.nextInt(PRIMAL_COLORS.length));
     }
@@ -184,6 +231,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_COLOR_INDEX, 0);
+        builder.define(DATA_FADE, 0);
     }
 
     /**
@@ -218,6 +266,16 @@ public class EntityChaoticOrb extends FRHomingProjectile {
         return MAX_LIFE_TICKS;
     }
 
+    /** 淡出期间线性缩小到 0；渲染器（{@code FROrbRenderer}）用它实现「淡出」。 */
+    @Override
+    public float renderScale() {
+        int fade = entityData.get(DATA_FADE);
+        if (fade <= 0) {
+            return 1.0F;
+        }
+        return Math.max(0.0F, 1.0F - (float) fade / FADE_TICKS);
+    }
+
     @Override
     public void tick() {
         count++;
@@ -232,9 +290,37 @@ public class EntityChaoticOrb extends FRHomingProjectile {
             // 这里的 tickCount 同样还没自增，两者对齐。
             if (tickCount > WANDER_START_TICK) {
                 if (seeker) {
-                    seek();
+                    if (seek()) {
+                        everLockedTarget = true;
+                    }
+                } else if (traveler) {
+                    // 「选一个方向飞出去」的那部分：方向只取一次并一直保持，所以是直线流线。
+                    if (travelDirection == null) {
+                        travelDirection = randomTravelDirection();
+                    }
+                    setDeltaMovement(travelDirection.scale(TRAVEL_SPEED));
                 } else {
+                    // 其余留在出生点附近做无序游走：wander 的加速度很小（终端速度约 0.08 格/tick），
+                    // 7 秒内的随机位移不到 1 格，观感就是「在生成位置乱动」。
                     wander();
+                }
+            }
+            // 从未锁定过目标的球：7 秒后消失。其中 SELFDESTRUCT_CHANCE 比例是「原地爆炸」
+            // （复用撞击路径，本项目的爆炸已经是 ExplosionInteraction.NONE，不破坏方块），其余淡出。
+            // 只要期间锁定到过一次目标就不再消失（玩家口径：「只对一直没锁定到目标的球」）。
+            if (!everLockedTarget) {
+                if (++noTargetTicks > NO_TARGET_FADE_TICKS) {
+                    if (selfDestruct) {
+                        onImpact(new EntityHitResult(this, position()));
+                        discard();
+                        return;
+                    }
+                    int fade = entityData.get(DATA_FADE) + 1;
+                    if (fade >= FADE_TICKS) {
+                        discard();
+                        return;
+                    }
+                    entityData.set(DATA_FADE, fade);
                 }
             }
         }
@@ -257,12 +343,18 @@ public class EntityChaoticOrb extends FRHomingProjectile {
                 motion.z + (rr.nextFloat() - rr.nextFloat()) * WANDER_ACCEL);
     }
 
+    /** 飞行球的方向：水平随机一整周，竖直只给一点扰动，避免直接钻地或冲天。 */
+    private Vec3 randomTravelDirection() {
+        double angle = random.nextDouble() * Math.PI * 2.0D;
+        return new Vec3(Math.cos(angle), (random.nextDouble() - 0.5D) * 0.4D, Math.sin(angle)).normalize();
+    }
+
     /**
      * 追踪：对应原版 {@code EntityUtils.getEntitiesInRange(...)} 那一段。
      *
      * <p>注意原版有两个特征必须保留：发射者每次评估有 80% 概率被跳过；除数用的是<b>平方距离</b>。
      */
-    private void seek() {
+    private boolean seek() {
         Entity owner = getOwner();
         int ownerId = owner == null ? -1 : owner.getId();
         List<LivingEntity> candidates = level().getEntitiesOfClass(LivingEntity.class,
@@ -286,7 +378,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
             target = candidate;
         }
         if (target == null) {
-            return;
+            return false;
         }
         double dx = target.getX() - getX();
         double dy = target.getBoundingBox().minY + target.getBbHeight() * 0.9D - getY();
@@ -297,6 +389,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
                 Mth.clamp(motion.x + dx / best * SEEK_ACCEL, -SEEK_MAX_SPEED, SEEK_MAX_SPEED),
                 Mth.clamp(motion.y + dy / best * SEEK_ACCEL, -SEEK_MAX_SPEED, SEEK_MAX_SPEED),
                 Mth.clamp(motion.z + dz / best * SEEK_ACCEL, -SEEK_MAX_SPEED, SEEK_MAX_SPEED));
+        return true;
     }
 
     @Override

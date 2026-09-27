@@ -214,6 +214,18 @@ public class ItemArcanum extends FRCurioItem
         }
     }
 
+    /**
+     * 原版 {@code ItemArcanum.java:72}：<b>常驻</b>一行 {@code item.ItemArcanum1.lore} + 实际折扣 + "%"，
+     * 后面跟一个空行，之后才是按住 Shift 才显示的正文。此前这一行整条没做，语言键也不存在。
+     */
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("item.ItemArcanum1.lore")
+                .append(" " + getVisDiscount(stack) + "%"));
+        tooltip.add(Component.translatable("item.FREmpty.lore"));
+        super.appendHoverText(stack, context, tooltip, flag);
+    }
+
     @Override
     protected void appendShiftTooltip(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("item.ItemArcanum2.lore"));

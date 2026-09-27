@@ -3,7 +3,8 @@
   "name": "fr.name.XPTome",
   "parents": [
     "forgotten_relics_plus:weather_stone",
-    "thaumaturge:jar_brain"
+    "thaumaturge:jar_brain",
+    "~thaumaturge:base_alchemy"
   ],
   "column": -5,
   "row": 2,
@@ -13,6 +14,7 @@
   "stages": [
     {
       "text": "fr.text.XPTome.1",
+      "warp": 2,
       "required_knowledge": [
         {
           "type": "observation",
@@ -46,21 +48,6 @@
       "recipes": [
         "forgotten_relics_plus:infusion/xp_tome"
       ]
-    }
-  ],
-  "complexity": 2,
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:cognitio",
-      "amount": 7
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
     }
   ]
 }

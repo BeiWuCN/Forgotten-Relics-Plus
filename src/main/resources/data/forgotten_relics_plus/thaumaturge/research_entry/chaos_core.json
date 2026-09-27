@@ -3,7 +3,9 @@
   "name": "fr.name.ChaosCore",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~thaumaturge:alumentum",
+    "~forgotten_relics_plus:ancient_aegis"
   ],
   "column": 8,
   "row": -4,
@@ -16,6 +18,7 @@
   "stages": [
     {
       "text": "fr.text.ChaosCore.1",
+      "warp": 2,
       "required_knowledge": [
         {
           "type": "observation",
@@ -35,24 +38,5 @@
         "forgotten_relics_plus:infusion/chaos_core"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:perditio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:ordo",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 4
-    }
-  ],
-  "complexity": 2
+  ]
 }

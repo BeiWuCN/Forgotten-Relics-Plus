@@ -3,7 +3,8 @@
   "name": "fr.name.SuperpositionRing",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "~thaumaturge:unlock_eldritch"
   ],
   "column": 3,
   "row": -3,
@@ -36,21 +37,6 @@
       "recipes": [
         "forgotten_relics_plus:infusion/superposition_ring"
       ]
-    }
-  ],
-  "complexity": 2,
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:alienis",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:motus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 4
     }
   ]
 }

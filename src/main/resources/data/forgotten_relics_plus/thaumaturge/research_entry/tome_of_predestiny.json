@@ -2,7 +2,9 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.TelekinesisTome",
   "parents": [
-    "forgotten_relics_plus:tome_of_discord"
+    "forgotten_relics_plus:tome_of_discord",
+    "~thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:thunderpeal"
   ],
   "column": -4,
   "row": 7,
@@ -34,12 +36,5 @@
         "forgotten_relics_plus:infusion/tome_of_predestiny"
       ]
     }
-  ],
-  "note_aspects": [
-    { "aspect": "thaumaturge:motus", "amount": 6 },
-    { "aspect": "thaumaturge:volatus", "amount": 5 },
-    { "aspect": "thaumaturge:vinculum", "amount": 4 },
-    { "aspect": "thaumaturge:cognitio", "amount": 3 }
-  ],
-  "complexity": 2
+  ]
 }

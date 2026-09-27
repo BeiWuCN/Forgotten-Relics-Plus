@@ -1,0 +1,26 @@
+{
+  "lunar_flare": {
+    "category": "player",
+    "sounds": [
+      { "name": "specific/lunar_flare", "stream": false }
+    ]
+  },
+  "starfall": {
+    "category": "player",
+    "sounds": [
+      { "name": "specific/starfall", "stream": false }
+    ]
+  },
+  "md_charge": {
+    "category": "player",
+    "sounds": [
+      { "name": "specific/md_charge", "stream": false }
+    ]
+  },
+  "directed": {
+    "category": "player",
+    "sounds": [
+      { "name": "specific/directed", "stream": false }
+    ]
+  }
+}

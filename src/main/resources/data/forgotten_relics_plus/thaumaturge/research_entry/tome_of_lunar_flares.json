@@ -2,7 +2,9 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.LunarFlares",
   "parents": [
-    "forgotten_relics_plus:tome_of_predestiny"
+    "forgotten_relics_plus:tome_of_predestiny",
+    "~forgotten_relics_plus:eldritch_spell",
+    "~thaumaturge:primordial_pearl"
   ],
   "column": -5,
   "row": 9,
@@ -34,12 +36,5 @@
         "forgotten_relics_plus:infusion/tome_of_lunar_flares"
       ]
     }
-  ],
-  "note_aspects": [
-    { "aspect": "thaumaturge:lux", "amount": 6 },
-    { "aspect": "thaumaturge:potentia", "amount": 5 },
-    { "aspect": "thaumaturge:aer", "amount": 4 },
-    { "aspect": "thaumaturge:sensus", "amount": 3 }
-  ],
-  "complexity": 3
+  ]
 }

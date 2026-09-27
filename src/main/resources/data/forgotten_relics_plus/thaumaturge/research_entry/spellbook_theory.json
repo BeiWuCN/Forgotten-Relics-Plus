@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.SpellbookTheory",
   "parents": [
-    "forgotten_relics_plus:generic_theory"
+    "forgotten_relics_plus:generic_theory",
+    "~thaumaturge:crimson_rites"
   ],
   "column": -1,
   "row": 2,
@@ -32,24 +33,5 @@
     {
       "text": "fr.text.SpellbookTheory.2"
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:cognitio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:fabrico",
-      "amount": 3
-    },
-    {
-      "aspect": "thaumaturge:ordo",
-      "amount": 3
-    }
-  ],
-  "complexity": 1
+  ]
 }

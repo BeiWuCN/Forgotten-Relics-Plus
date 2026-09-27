@@ -3,7 +3,8 @@
   "name": "fr.name.DiscordRing",
   "parents": [
     "forgotten_relics_plus:deific_amulet",
-    "thaumaturge:unlock_eldritch"
+    "thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:tome_of_discord"
   ],
   "column": 1,
   "row": -4,
@@ -35,20 +36,5 @@
         "forgotten_relics_plus:infusion/discord_ring"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:perditio",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:aversio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    }
-  ],
-  "complexity": 2
+  ]
 }

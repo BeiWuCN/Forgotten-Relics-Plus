@@ -3,7 +3,9 @@
   "name": "fr.name.TerrorCrown",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:unlock_eldritch"
+    "thaumaturge:unlock_eldritch",
+    "~thaumaturge:enter_outer_lands",
+    "~thaumaturge:oculus"
   ],
   "column": 4,
   "row": 0,
@@ -35,7 +37,7 @@
           "amount": 1
         }
       ],
-      "warp": 2
+      "warp": 4
     },
     {
       "text": "fr.text.TerrorCrown.2",
@@ -43,24 +45,5 @@
         "forgotten_relics_plus:infusion/terror_crown"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:alienis",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:aversio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:mortuus",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:sensus",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

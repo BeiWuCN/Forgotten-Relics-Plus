@@ -37,12 +37,12 @@ public record ToggleDiscordPayload() implements CustomPacketPayload {
         return TYPE;
     }
 
-    /** 服务端处理：切换佩戴中的戒指状态。 */
+    /** 服务端处理：戒指按键 —— 戴着戒指且背包里有错位之典时远程施放它。 */
     public static void handle(ToggleDiscordPayload payload, IPayloadContext context) {
         // 网络线程不能直接碰世界状态，挪到主线程执行。
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) {
-                ItemRingOfDiscord.toggle(player);
+                ItemRingOfDiscord.triggerTome(player);
             }
         });
     }

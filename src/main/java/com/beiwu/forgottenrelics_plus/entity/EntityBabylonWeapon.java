@@ -89,8 +89,10 @@ import vazkii.botania.common.handler.BotaniaSounds;
  * 六个同步字段里本实体保留 {@code variety / chargeTicks / liveTicks / delay / rotation}
  * （渲染器 {@code client/FRBabylonWeaponRenderer} 全部要用）；唯独 {@code charging}
  * 不保留——本项目用 {@code tickCount <= 15} 直接推得蓄力窗口，没有需要同步的独立状态。
- * 原版 {@code rotation} 在 Apotheosis 的召唤路径里从不被写入（只在读档时恢复），
- * 所以这里也只是同步着，默认恒为 0。
+ * 原版 {@code rotation} 由 Apotheosis 在召唤时写入
+ * （{@code ItemApotheosis.java:150}：{@code setRotation(wrapAngleTo180_float(-player.rotationYawHead + 180))}），
+ * 渲染器用它决定武器绕 Y 轴的朝向。此前这里错误地写成「原版从不写入」，
+ * 相应地召唤路径漏了这一步，武器朝向恒为 0——1.6.3 已修正。
  *
  * <p><b>与原版的偏差</b>：
  * <ol>
@@ -451,9 +453,14 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
      * （与 {@code ItemVoidGrimoire#voidBurst} 同一方案）。
      */
     private static void burst(ServerLevel level, Vec3 center) {
-        // imposeBurst → Thaumcraft.proxy.burst（非 Botania），按「原版本来就不是 Botania 就保持原样」
-        // 的口径保留：一发 FLASH + 24 颗暖金色原版 effect 粒子。
-        level.sendParticles(ParticleTypes.FLASH, center.x, center.y, center.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        // 原版 imposeBurst(.., 1.5f) → BurstMessage → 模组<b>自带</b>的 FXBurst 粒子：
+        // 一颗加法混合的青绿色柔光精灵（颜色 0 / 0.8+rand*0.2 / 0.4+rand*0.6，寿命 31 tick，尺寸 ×1.5）。
+        // 此前用 ParticleTypes.FLASH 顶替——那是一张巨大的白色方片，玩家反馈「一层白色遮罩，很不好看」。
+        FRParticles.serverWispBurst(level, center.x, center.y, center.z,
+                0.0F,
+                (float) (0.8D + level.random.nextDouble() * 0.2D),
+                (float) (0.4D + level.random.nextDouble() * 0.6D),
+                1.5F, 1.0F, 1, 0.0D, 0.0D);
         level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
                 center.x, center.y, center.z, 24, 0.5D, 0.5D, 0.5D, 0.1D);
     }

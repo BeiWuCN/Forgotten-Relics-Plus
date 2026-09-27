@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.api.DeathPreventionBehaviour;
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.registry.FRItems;
@@ -204,7 +205,13 @@ public class ItemFateTome extends FRItem implements FRRechargable, IWarpingGear,
     private static void playFateFeedback(Player player) {
         if (player.level() instanceof ServerLevel server) {
             double y = player.getY() + 1.0D;
-            server.sendParticles(ParticleTypes.FLASH, player.getX(), y, player.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            // 原版同样是 imposeBurst（SuperpositionHandler:335/344，size 1.25）→ 模组自带的 FXBurst。
+            // 此前用 ParticleTypes.FLASH（巨大白色方片）顶替，现换成同一族的青绿柔光精灵。
+            FRParticles.serverWispBurst(server, player.getX(), y, player.getZ(),
+                    0.0F,
+                    (float) (0.8D + server.random.nextDouble() * 0.2D),
+                    (float) (0.4D + server.random.nextDouble() * 0.6D),
+                    1.25F, 1.0F, 1, 0.0D, 0.0D);
             server.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, BURST_COLOR),
                     player.getX(), y, player.getZ(), 32, 0.4D, 0.4D, 0.4D, 0.1D);
         }

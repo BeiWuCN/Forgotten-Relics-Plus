@@ -55,6 +55,14 @@ public abstract class FRHomingProjectile extends ThrowableProjectile {
     /** 命中结算（只在服务端调用，调用后本实体已被移除）。 */
     protected abstract void onImpact(HitResult result);
 
+    /**
+     * 渲染缩放（默认 1.0）。目前只有 {@code EntityChaoticOrb} 覆写它做「淡出」：
+     * 从未锁定过目标的球在 7 秒后线性缩小到 0 再消失。
+     */
+    public float renderScale() {
+        return 1.0F;
+    }
+
     /** 每 tick 的粒子，只在客户端调用。 */
     protected void spawnTrailParticles() {
     }

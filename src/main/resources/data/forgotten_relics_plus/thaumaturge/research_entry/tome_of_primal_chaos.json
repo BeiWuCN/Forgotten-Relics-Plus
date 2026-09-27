@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.ChaosTome",
   "parents": [
-    "forgotten_relics_plus:eldritch_spell"
+    "forgotten_relics_plus:eldritch_spell",
+    "~thaumaturge:staff_primal"
   ],
   "column": 2,
   "row": 3,
@@ -15,6 +16,7 @@
   "stages": [
     {
       "text": "fr.text.ChaosTome.1",
+      "warp": 7,
       "required_knowledge": [
         {
           "type": "observation",
@@ -34,24 +36,5 @@
         "forgotten_relics_plus:infusion/tome_of_primal_chaos"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:perditio",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:ordo",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 3
-    }
-  ],
-  "complexity": 2
+  ]
 }

@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.SoulTome",
   "parents": [
-    "forgotten_relics_plus:devourer_of_the_void"
+    "forgotten_relics_plus:devourer_of_the_void",
+    "~thaumaturge:jar_brain"
   ],
   "column": -1,
   "row": 9,
@@ -15,6 +16,7 @@
   "stages": [
     {
       "text": "fr.text.SoulTome.1",
+      "warp": 3,
       "required_knowledge": [
         {
           "type": "observation",
@@ -34,24 +36,5 @@
         "forgotten_relics_plus:infusion/soul_tome"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:spiritus",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:mortuus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:vinculum",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

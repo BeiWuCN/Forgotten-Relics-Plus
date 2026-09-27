@@ -2,7 +2,11 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.ObeliskDrainer",
   "parents": [
-    "forgotten_relics_plus:tome_of_discord"
+    "forgotten_relics_plus:tome_of_discord",
+    "~thaumaturge:enter_outer_lands",
+    "~thaumaturge:base_eldritch",
+    "~thaumaturge:base_alchemy",
+    "~thaumaturge:oculus"
   ],
   "column": 0,
   "row": 7,
@@ -15,6 +19,7 @@
   "stages": [
     {
       "text": "fr.text.ObeliskDrainer.1",
+      "warp": 4,
       "required_knowledge": [
         {
           "type": "observation",
@@ -34,24 +39,5 @@
         "forgotten_relics_plus:infusion/devourer_of_the_void"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:alienis",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:victus",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

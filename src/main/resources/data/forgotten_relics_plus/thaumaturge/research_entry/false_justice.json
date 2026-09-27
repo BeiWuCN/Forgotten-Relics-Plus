@@ -3,7 +3,8 @@
   "name": "fr.name.FalseJustice",
   "parents": [
     "forgotten_relics_plus:generic_theory",
-    "thaumaturge:unlock_eldritch"
+    "thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:apotheosis"
   ],
   "column": -7,
   "row": 0,
@@ -16,6 +17,7 @@
   "stages": [
     {
       "text": "fr.text.FalseJustice.1",
+      "warp": 4,
       "required_knowledge": [
         {
           "type": "observation",
@@ -35,24 +37,5 @@
         "forgotten_relics_plus:infusion/false_justice"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:lux",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:instrumentum",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

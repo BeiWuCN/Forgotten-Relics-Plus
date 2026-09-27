@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.Overthrower",
   "parents": [
-    "forgotten_relics_plus:tome_of_discord"
+    "forgotten_relics_plus:tome_of_discord",
+    "~thaumaturge:focus_hellbat"
   ],
   "column": -5,
   "row": 5,
@@ -15,6 +16,7 @@
   "stages": [
     {
       "text": "fr.text.Overthrower.1",
+      "warp": 3,
       "required_knowledge": [
         {
           "type": "observation",
@@ -34,24 +36,5 @@
         "forgotten_relics_plus:infusion/edict_of_banishment"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:ignis",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:motus",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 3
-    }
-  ],
-  "complexity": 2
+  ]
 }

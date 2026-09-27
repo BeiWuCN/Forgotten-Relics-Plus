@@ -35,24 +35,5 @@
         "forgotten_relics_plus:infusion/ghastly_skull"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:mortuus",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:spiritus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:perditio",
-      "amount": 3
-    }
-  ],
-  "complexity": 2
+  ]
 }

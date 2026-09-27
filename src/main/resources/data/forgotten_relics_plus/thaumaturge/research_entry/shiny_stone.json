@@ -35,20 +35,5 @@
         "forgotten_relics_plus:infusion/shiny_stone"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:victus",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:lux",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:vitreus",
-      "amount": 4
-    }
-  ],
-  "complexity": 2
+  ]
 }

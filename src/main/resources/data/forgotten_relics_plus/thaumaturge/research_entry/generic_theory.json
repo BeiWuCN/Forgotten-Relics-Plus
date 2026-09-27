@@ -2,7 +2,9 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.GenericTheory",
   "parents": [
-    "thaumaturge:unlock_eldritch"
+    "thaumaturge:unlock_eldritch",
+    "~thaumaturge:infusion",
+    "~thaumaturge:metallurgy"
   ],
   "column": 0,
   "row": 0,
@@ -33,20 +35,5 @@
     {
       "text": "fr.text.GenericTheory.2"
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:cognitio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:fabrico",
-      "amount": 3
-    }
-  ],
-  "complexity": 1
+  ]
 }

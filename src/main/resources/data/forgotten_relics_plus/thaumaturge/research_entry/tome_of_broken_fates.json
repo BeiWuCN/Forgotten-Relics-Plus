@@ -2,7 +2,8 @@
   "category": "forgotten_relics_plus:forgotten_relics",
   "name": "fr.name.FateTome",
   "parents": [
-    "forgotten_relics_plus:spellbook_theory"
+    "forgotten_relics_plus:spellbook_theory",
+    "~thaumaturge:enter_outer_lands"
   ],
   "column": -4,
   "row": 2,
@@ -15,6 +16,7 @@
   "stages": [
     {
       "text": "fr.text.FateTome.1",
+      "warp": 8,
       "required_knowledge": [
         {
           "type": "observation",
@@ -34,12 +36,5 @@
         "forgotten_relics_plus:infusion/tome_of_broken_fates"
       ]
     }
-  ],
-  "note_aspects": [
-    { "aspect": "thaumaturge:victus", "amount": 6 },
-    { "aspect": "thaumaturge:permutatio", "amount": 5 },
-    { "aspect": "thaumaturge:praecantatio", "amount": 4 },
-    { "aspect": "thaumaturge:cognitio", "amount": 3 }
-  ],
-  "complexity": 3
+  ]
 }
