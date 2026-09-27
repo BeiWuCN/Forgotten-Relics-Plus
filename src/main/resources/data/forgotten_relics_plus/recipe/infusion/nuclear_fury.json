@@ -1,0 +1,31 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:lux", "amount": 72 },
+    { "aspect": "thaumaturge:ignis", "amount": 80 },
+    { "aspect": "thaumaturge:perditio", "amount": 36 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 64 },
+    { "aspect": "thaumaturge:auram", "amount": 16 },
+    { "aspect": "thaumaturge:potentia", "amount": 48 },
+    { "aspect": "thaumaturge:sensus", "amount": 32 },
+    { "aspect": "thaumaturge:vacuos", "amount": 40 }
+  ],
+  "catalyst": { "item": "forgotten_relics_plus:tome_of_primal_chaos" },
+  "components": [
+    { "item": "botania:rod_of_the_unstable_reservior" },
+    { "item": "thaumaturge:alumentum" },
+    { "item": "botania:terrasteel_ingot" },
+    { "item": "thaumaturge:primal_charm" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:crystal_ignis" },
+    { "item": "thaumaturge:primordial_pearl" },
+    { "item": "thaumaturge:crystal_ignis" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:primal_charm" },
+    { "item": "botania:terrasteel_ingot" },
+    { "item": "thaumaturge:alumentum" }
+  ],
+  "instability": 10,
+  "research": { "entry": "forgotten_relics_plus:nuclear_fury" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:nuclear_fury" }
+}

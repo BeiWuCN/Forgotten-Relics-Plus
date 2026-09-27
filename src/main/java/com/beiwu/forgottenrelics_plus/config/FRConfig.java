@@ -338,6 +338,33 @@ public final class FRConfig {
     /** 原初混沌之典：附带的扭曲值。 */
     public static final ModConfigSpec.IntValue TOME_OF_PRIMAL_CHAOS_WARP;
 
+    // ---- 核子之怒 / Nuclear Fury ----
+    /** 核子之怒：每秒的 Vis 基础消耗（原版每秒 10 颗 × 每颗 0.45 = 4.5，RE 取整为 5）。 */
+    public static final ModConfigSpec.IntValue NUCLEAR_FURY_VIS_COST_PER_SECOND;
+    /**
+     * 核子之怒：Vis 消耗倍率。
+     *
+     * <p>原版配置 key 就叫 {@code nuclearFuryVisCost}（字段名却是 {@code nuclearFuryVisMult}），
+     * 与其它物品的「基础值 + 倍率」同名 key 冲突一样，这里沿用 {@code nuclearFuryVisMult} 作为 key。
+     */
+    public static final ModConfigSpec.DoubleValue NUCLEAR_FURY_VIS_MULT;
+    /** 核子之怒：最大 Vis 储量（正好是 100 秒的连续引导）。 */
+    public static final ModConfigSpec.IntValue NUCLEAR_FURY_MAX_CHARGE;
+    /**
+     * 核子之怒：导弹的目标搜索半径。
+     *
+     * <p>key 照抄 RE 的 {@code nuclearFuryClearRange}（RE 用它做「左键清除 32 格内导弹」的范围）；
+     * 1.7.10 的 {@code ItemMissileTome} 没有清弹功能，而同为 32 的这个数字在那边的实体里是
+     * <b>目标搜索半径</b>（{@code double range = 32.0}），所以这里就把它用作搜索半径。
+     */
+    public static final ModConfigSpec.DoubleValue NUCLEAR_FURY_CLEAR_RANGE;
+    /** 核子之怒：导弹伤害下限。 */
+    public static final ModConfigSpec.DoubleValue NUCLEAR_FURY_DAMAGE_MIN;
+    /** 核子之怒：导弹伤害上限。 */
+    public static final ModConfigSpec.DoubleValue NUCLEAR_FURY_DAMAGE_MAX;
+    /** 核子之怒：附带的扭曲值（原版 {@code getWarp} 返回 5）。 */
+    public static final ModConfigSpec.IntValue NUCLEAR_FURY_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -933,6 +960,40 @@ public final class FRConfig {
                 .comment("Warp granted by the Tome of Primal Chaos.",
                          "原初混沌之典附带的扭曲值。原版 ItemChaosTome#getWarp 返回 4。")
                 .defineInRange("tomeOfPrimalChaosWarp", 4, 0, 32768);
+        builder.pop();
+
+        builder.comment("核子之怒（第六波：追踪导弹法书）").push("nuclear_fury");
+        NUCLEAR_FURY_VIS_COST_PER_SECOND = builder
+                .comment("Base Vis cost per second while channelling Nuclear Fury.",
+                         "核子之怒每秒的 Vis 基础消耗。原版每颗法球从法杖抽火 0.20 + 秩序 0.10 + 混沌 0.15 = 0.45 点，"
+                                 + "每秒 10 颗即 4.5 点，RE 折算为 5；充能为整数，故沿用 5。")
+                .defineInRange("nuclearFuryVisCostPerSecond", 5, 0, 32768);
+        NUCLEAR_FURY_VIS_MULT = builder
+                .comment("Vis cost multiplier for Nuclear Fury.",
+                         "核子之怒的 Vis 消耗倍率。原版配置 key 是 nuclearFuryVisCost，字段名叫 nuclearFuryVisMult。")
+                .defineInRange("nuclearFuryVisMult", 1.0D, 0.0D, 1024.0D);
+        NUCLEAR_FURY_MAX_CHARGE = builder
+                .comment("Max Vis charge for Nuclear Fury.",
+                         "核子之怒的最大 Vis 储量。RE 的折算：500 点正好支持 100 秒连续引导。")
+                .defineInRange("nuclearFuryMaxCharge", 500, 0, 32768);
+        NUCLEAR_FURY_CLEAR_RANGE = builder
+                .comment("Target search radius in blocks for the Rageous Missiles. Original 1.7.10 hardcodes 32;"
+                                 + " RE reuses the same 32 as its nuclearFuryClearRange.",
+                         "导弹的目标搜索半径（格）。1.7.10 的实体里写死的就是 32；RE 的同名配置 nuclearFuryClearRange"
+                                 + "（用于左键清弹，1.7.10 没有该功能）也是 32，这里沿用该 key 作为搜索半径。")
+                .defineInRange("nuclearFuryClearRange", 32.0D, 1.0D, 128.0D);
+        NUCLEAR_FURY_DAMAGE_MIN = builder
+                .comment("Minimal damage dealt by a Rageous Missile.",
+                         "每颗导弹能造成的伤害下限。原版 key 是 nuclearFuryDamageMIN，默认 24。")
+                .defineInRange("nuclearFuryDamageMIN", 24.0D, 0.0D, 32768.0D);
+        NUCLEAR_FURY_DAMAGE_MAX = builder
+                .comment("Maximal damage dealt by a Rageous Missile.",
+                         "每颗导弹能造成的伤害上限。原版 key 是 nuclearFuryDamageMAX，默认 32。")
+                .defineInRange("nuclearFuryDamageMAX", 32.0D, 0.0D, 32768.0D);
+        NUCLEAR_FURY_WARP = builder
+                .comment("Warp granted by Nuclear Fury.",
+                         "核子之怒附带的扭曲值。原版 ItemMissileTome#getWarp 返回 5。")
+                .defineInRange("nuclearFuryWarp", 5, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

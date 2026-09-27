@@ -4,6 +4,7 @@ import com.beiwu.forgottenrelics_plus.ForgottenRelics;
 import com.beiwu.forgottenrelics_plus.entity.EntityChaoticOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityCrimsonOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityDarkMatterOrb;
+import com.beiwu.forgottenrelics_plus.entity.EntityRageousMissile;
 import com.beiwu.forgottenrelics_plus.entity.EntityThunderpealOrb;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
@@ -53,6 +54,14 @@ public final class FREntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityChaoticOrb>> PRIMAL_ORB =
             register("primal_orb",
                     () -> EntityType.Builder.<EntityChaoticOrb>of(EntityChaoticOrb::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10));
+
+    /** 核子之怒的追踪导弹（原版 {@code EntityRageousMissile}，注册名沿用 RE 的 {@code rageous_missile}）。 */
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityRageousMissile>> RAGEOUS_MISSILE =
+            register("rageous_missile",
+                    () -> EntityType.Builder.<EntityRageousMissile>of(EntityRageousMissile::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
                             .updateInterval(10));

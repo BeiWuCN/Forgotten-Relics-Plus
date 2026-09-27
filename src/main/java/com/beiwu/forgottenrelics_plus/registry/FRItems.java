@@ -16,6 +16,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemFalseJustice;
 import com.beiwu.forgottenrelics_plus.items.ItemGhastlySkull;
 import com.beiwu.forgottenrelics_plus.items.ItemMiningCharm;
+import com.beiwu.forgottenrelics_plus.items.ItemNuclearFury;
 import com.beiwu.forgottenrelics_plus.items.ItemOmegaCore;
 import com.beiwu.forgottenrelics_plus.items.ItemOblivionAmulet;
 import com.beiwu.forgottenrelics_plus.items.ItemParadox;
@@ -271,6 +272,19 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemChaosTome> TOME_OF_PRIMAL_CHAOS =
             ITEMS.registerItem("tome_of_primal_chaos", ItemChaosTome::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 核子之怒（Nuclear Fury），注册名 {@code nuclear_fury}。
+     *
+     * <p>1.7.10 原版类名是 {@code ItemMissileTome}（这里沿用 RE 的 {@link ItemNuclearFury}）。
+     * 原版稀有度 EPIC，堆叠上限 1，附带 5 点扭曲。
+     *
+     * <p>右键拉弓持续引导，每 2 tick 生成一颗追踪导弹，每秒消耗 5 点 Vis 充能；没有冷却。
+     * 详见 {@link ItemNuclearFury}。
+     */
+    public static final DeferredItem<ItemNuclearFury> NUCLEAR_FURY =
+            ITEMS.registerItem("nuclear_fury", ItemNuclearFury::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {
