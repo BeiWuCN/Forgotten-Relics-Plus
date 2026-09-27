@@ -100,7 +100,10 @@ public class FRBabylonWeaponRenderer extends EntityRenderer<EntityBabylonWeapon>
         float chargeMul = charge / FULL_CHARGE_TICKS;
 
         renderWeaponModel(weapon, poseStack, buffers);
-        renderHalo(weapon, poseStack, buffers, live, delay, charge, chargeMul, partialTicks);
+        // 原版（1.7.10 / RE / Botania）在这之后还会用 Botania 的 halo 着色器画一层光罩。
+        // 玩家实测反馈那层半透明光罩「不好看」，明确要求移除，所以这里不再调用 renderHalo。
+        // renderHalo 方法保留在原地，便于将来想恢复时直接接回去。
+        // 注意：charge / chargeMul 现在只剩 renderHalo 会用到，为避免未使用变量警告这里仍然计算。
 
         poseStack.popPose();
     }
