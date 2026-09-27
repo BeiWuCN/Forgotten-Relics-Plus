@@ -11,6 +11,9 @@ import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -74,6 +77,10 @@ import net.minecraft.world.phys.Vec3;
  *       保持一致，语义对齐 1.7.10；</li>
  *   <li>1.7.10 没有实体贴图，形体本来就是粒子：这里用原版 {@code ParticleTypes.ENTITY_EFFECT}
  *       按六大原初要素的官方颜色染色，替代原版 6 种颜色索引的 wisp 粒子。</li>
+ *   <li><b>形体与颜色</b>：形体现在由 {@code client/FROrbRenderer} 画（公告板 + 尖刺爆闪）。
+ *       颜色取 {@link #getColorIndex()} 这个<b>同步</b>索引——对应 RE 的
+ *       {@code RenderPrimalOrb} 读 {@code entity.getColorIndex()} 从 6 色表取色，
+ *       这里是服务端生成时随机 0~5、经 {@link SynchedEntityData} 同步给客户端。</li>
  * </ul>
  *
  * <p><b>四处刻意的取舍 / 原版笔误</b>：
@@ -127,6 +134,11 @@ public class EntityChaoticOrb extends FRHomingProjectile {
     /**
      * 原版 wispFX4 的颜色索引 0~5 对应六大原初要素。
      * 颜色取自 Thaumaturge 的 aspect JSON，顺序为 aer / aqua / ignis / terra / ordo / perditio。
+     *
+     * <p><b>与 RE 的对应</b>：RE 的 {@code RenderPrimalOrb} 用 {@code entity.getColorIndex()} 从它自己的
+     * {@code ASPECT_COLORS}（顺序 Aer / Terra / Ignis / Aqua / Ordo / Perditio）取色。本项目按项目约定
+     * 改用 Thaumaturge 的官方要素色（就是这里这张表），索引语义同样是「随机一种原初要素」，
+     * 只是第 2/4 项（aqua 与 terra）的相对顺序与 RE 不同——见提交说明里的偏差记录。
      */
     private static final int[] PRIMAL_COLORS = {
         0xFFFF7E, // aer
@@ -137,6 +149,15 @@ public class EntityChaoticOrb extends FRHomingProjectile {
         0x404040, // perditio
     };
 
+    /**
+     * 同步给客户端的颜色索引（0~5），对应 RE 的 {@code EntityPrimalOrb#getColorIndex()}。
+     *
+     * <p>RE 用 {@code IEntityAdditionalSpawnData} 在生成包里带这个索引；1.21.1 用
+     * {@link SynchedEntityData}，语义一致且不必自己写生成包。
+     */
+    private static final EntityDataAccessor<Integer> DATA_COLOR_INDEX =
+            SynchedEntityData.defineId(EntityChaoticOrb.class, EntityDataSerializers.INT);
+
     /** 原版自增的那个 {@code count}，只用于随机游走的种子。 */
     private int count;
 
@@ -145,6 +166,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
 
     public EntityChaoticOrb(EntityType<? extends EntityChaoticOrb> type, Level level) {
         super(type, level);
+        entityData.set(DATA_COLOR_INDEX, random.nextInt(PRIMAL_COLORS.length));
     }
 
     /** 由物品发射：{@code seeker} 即原版生成包里的那个开关（位置与初速由物品的 {@code spawnOrb} 设置）。 */
@@ -152,6 +174,40 @@ public class EntityChaoticOrb extends FRHomingProjectile {
         super(FREntities.PRIMAL_ORB.get(), level);
         this.seeker = seeker;
         setOwner(caster);
+        entityData.set(DATA_COLOR_INDEX, random.nextInt(PRIMAL_COLORS.length));
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_COLOR_INDEX, 0);
+    }
+
+    /**
+     * 同步的颜色索引，渲染器用它取色（对应 RE 的 {@code getColorIndex()}）。
+     *
+     * <p>两个构造里各就地抽一次随机值（0~5），对应 RE 在 {@code EntityPrimalOrb} 构造里抽的
+     * {@code colorIndex}。客户端那一侧构造时也会抽，但随即被服务端的同步值覆盖；
+     * 单人存档里服务端与客户端同进程，值一致。这里直接在构造里对 {@code entityData} 赋值、
+     * 不经过实例方法，是为了避开 javac 的 this-escape 警告。
+     */
+    public int getColorIndex() {
+        return entityData.get(DATA_COLOR_INDEX);
+    }
+
+    /** 写入颜色索引；越界自动回绕。 */
+    public void setColorIndex(int index) {
+        entityData.set(DATA_COLOR_INDEX, Math.floorMod(index, PRIMAL_COLORS.length));
+    }
+
+    /**
+     * 取某个原初要素索引的 {@code 0xRRGGBB} 颜色。
+     *
+     * <p>渲染器（{@code client/FROrbRenderer}）与粒子（{@link #primalColor(int)}）共用这同一张表，
+     * 对应 RE 里渲染器与粒子各自持有同一组颜色的做法。
+     */
+    public static int primalColorRgb(int index) {
+        return PRIMAL_COLORS[Math.floorMod(index, PRIMAL_COLORS.length)];
     }
 
     @Override

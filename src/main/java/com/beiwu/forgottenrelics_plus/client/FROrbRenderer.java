@@ -4,6 +4,7 @@ import com.beiwu.forgottenrelics_plus.ForgottenRelics;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import java.util.function.ToIntFunction;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -29,6 +30,19 @@ import org.joml.Matrix4f;
  *       中心白、外缘是该颜色压暗 30%，大小在前 10 tick 内线性长到 {@code (5~25)/30}。</li>
  * </ol>
  *
+ * <h2>逐实体的差异（本次 1.6.1 对齐）</h2>
+ *
+ * <p>对照 RE 的各个 {@code RenderXxx} 逐个实体校准，需要三个开关：
+ * <ul>
+ *   <li><b>要不要画公告板</b>：RE 的 {@code RenderLunarFlare} 与 {@code RenderRageousMissile}
+ *       <b>只有尖刺层</b>，没有公告板；其余渲染器两层都有；</li>
+ *   <li><b>公告板是不是加法混合</b>：RE 的 {@code RenderThunderpealOrb} 与 {@code RenderPrimalOrb}
+ *       公告板用 {@code blendFunc(SRC_ALPHA, ONE)}（加法），而 {@code RenderCrimsonOrb} /
+ *       {@code RenderDarkMatterOrb} 用 {@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA}（普通透明）；</li>
+ *   <li><b>颜色是不是按实体取</b>：RE 的 {@code RenderPrimalOrb} 用 {@code entity.getColorIndex()}
+ *       从 6 色表取色，其余法球的颜色写死在各自的渲染器里。</li>
+ * </ul>
+ *
  * <h2>为什么不是「用原版粒子代替」</h2>
  *
  * <p>上一版曾把实体渲染器做成空实现、只留粒子拖尾，理由是「1.7.10 没有实体贴图」。
@@ -42,7 +56,8 @@ import org.joml.Matrix4f;
  * <ul>
  *   <li>顶点全部来自 {@link MultiBufferSource#getBuffer(RenderType)} 的 {@link VertexConsumer}；</li>
  *   <li>姿态用 {@link PoseStack} + 原版 {@link Axis} 旋转，等价于 RE 那一串 {@code glRotatef}；</li>
- *   <li>公告板用 {@link RenderType#entityTranslucentEmissive(ResourceLocation)}（自发光、Iris 认识）；</li>
+ *   <li>公告板：普通透明用 {@link RenderType#entityTranslucentEmissive(ResourceLocation)}
+ *       （自发光、Iris 认识）；加法时用 {@link RenderType#eyes(ResourceLocation)}；</li>
  *   <li>尖刺用 {@link RenderType#eyes(ResourceLocation)}——它正好是原版「加法混合 + 主渲染目标 +
  *       NEW_ENTITY 格式」，对应 RE 的 {@code disableTexture2D + blendFunc(SRC_ALPHA, ONE)}。
  *       <b>注意</b>：{@code RenderType.lightning()} 虽然也是加法混合，但它的输出目标是
@@ -77,23 +92,64 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
     private final float green;
     private final float blue;
     private final float baseScale;
+    private final boolean renderBillboard;
     private final RenderType billboardType;
     private final RenderType flashType;
 
     /**
+     * 颜色来源：返回打包成 {@code 0xRRGGBB} 的颜色。{@code null} 表示用构造时传入的固定色。
+     *
+     * <p>只有原初球需要它——对应 RE 的 {@code entity.getColorIndex()}。
+     */
+    private final ToIntFunction<T> colorSource;
+
+    /**
+     * 固定颜色、画公告板、公告板普通透明（沿用旧调用点行为的便捷构造）。
+     *
      * @param red       颜色红分量 0~1
      * @param green     颜色绿分量 0~1
      * @param blue      颜色蓝分量 0~1
      * @param baseScale 公告板基准大小（格）
      */
     public FROrbRenderer(EntityRendererProvider.Context context, float red, float green, float blue, float baseScale) {
+        this(context, red, green, blue, baseScale, true, false, null);
+    }
+
+    /**
+     * 固定颜色的便捷构造。
+     *
+     * @param renderBillboard  是否绘制外层公告板（RE 的 lunar_flare / rageous_missile 传 {@code false}）
+     * @param additiveBillboard 公告板是否用加法混合（RE 的 thunderpeal / primal 传 {@code true}）
+     */
+    public FROrbRenderer(EntityRendererProvider.Context context, float red, float green, float blue, float baseScale,
+                         boolean renderBillboard, boolean additiveBillboard) {
+        this(context, red, green, blue, baseScale, renderBillboard, additiveBillboard, null);
+    }
+
+    /**
+     * 完整构造。
+     *
+     * @param renderBillboard   是否绘制外层公告板
+     * @param additiveBillboard 公告板是否用加法混合；{@code true} 时公告板与尖刺共用
+     *                          {@link RenderType#eyes(ResourceLocation)}，{@code false} 时用
+     *                          {@link RenderType#entityTranslucentEmissive(ResourceLocation)}
+     * @param colorSource       颜色来源，{@code null} 表示用固定色
+     */
+    public FROrbRenderer(EntityRendererProvider.Context context, float red, float green, float blue, float baseScale,
+                         boolean renderBillboard, boolean additiveBillboard, ToIntFunction<T> colorSource) {
         super(context);
         this.red = red;
         this.green = green;
         this.blue = blue;
         this.baseScale = baseScale;
-        this.billboardType = RenderType.entityTranslucentEmissive(TEXTURE);
+        this.renderBillboard = renderBillboard;
+        // RE 的加法公告板是 blendFunc(SRC_ALPHA, ONE) + 主渲染目标；原版 eyes() 恰好就是这个组合。
+        // 普通透明对应 RE 的 blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)，用自发光半透明实体层。
+        this.billboardType = additiveBillboard
+                ? RenderType.eyes(TEXTURE)
+                : RenderType.entityTranslucentEmissive(TEXTURE);
         this.flashType = RenderType.eyes(TEXTURE);
+        this.colorSource = colorSource;
         this.shadowRadius = 0.0F;
     }
 
@@ -103,15 +159,28 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
 
         float age = entity.tickCount + partialTicks;
-        renderBillboard(poseStack, buffers, age);
-        renderFlash(poseStack, buffers, age);
+        // 颜色：原初球按同步过来的要素索引取色（RE 的 entity.getColorIndex()），其余实体用构造时的固定色。
+        float r = this.red;
+        float g = this.green;
+        float b = this.blue;
+        if (this.colorSource != null) {
+            int rgb = this.colorSource.applyAsInt(entity);
+            r = ((rgb >> 16) & 0xFF) / 255.0F;
+            g = ((rgb >> 8) & 0xFF) / 255.0F;
+            b = (rgb & 0xFF) / 255.0F;
+        }
+
+        if (this.renderBillboard) {
+            renderBillboard(poseStack, buffers, age, r, g, b);
+        }
+        renderFlash(poseStack, buffers, age, r, g, b);
     }
 
-    /** 第 1 层：RE 的外层公告板。 */
-    private void renderBillboard(PoseStack poseStack, MultiBufferSource buffers, float age) {
+    /** 第 1 层：RE 的外层公告板（lunar_flare / rageous_missile 不画）。 */
+    private void renderBillboard(PoseStack poseStack, MultiBufferSource buffers, float age, float r, float g, float b) {
         // 原版那一圈 RenderXxxOrb 都用 sin(ticksExisted / 5) * 0.2 + 0.2 做呼吸缩放。
         float bob = Mth.sin(age / 5.0F) * 0.2F + 0.2F;
-        float scale = baseScale * (1.0F + bob);
+        float scale = this.baseScale * (1.0F + bob);
 
         poseStack.pushPose();
         // 面朝相机（标准公告板写法，纯原版 API，不依赖任何前置模组）。
@@ -119,12 +188,12 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
         poseStack.scale(scale, scale, scale);
 
         Matrix4f pose = poseStack.last().pose();
-        VertexConsumer consumer = buffers.getBuffer(billboardType);
+        VertexConsumer consumer = buffers.getBuffer(this.billboardType);
         // 顶点缠绕与 UV 顺序照抄 Thaumaturge 的 writeBillboard。
-        fullVertex(consumer, pose, -0.5F, -0.5F, 1.0F, 1.0F, red, green, blue, 1.0F);
-        fullVertex(consumer, pose, -0.5F, 0.5F, 1.0F, 0.0F, red, green, blue, 1.0F);
-        fullVertex(consumer, pose, 0.5F, 0.5F, 0.0F, 0.0F, red, green, blue, 1.0F);
-        fullVertex(consumer, pose, 0.5F, -0.5F, 0.0F, 1.0F, red, green, blue, 1.0F);
+        fullVertex(consumer, pose, -0.5F, -0.5F, 1.0F, 1.0F, r, g, b, 1.0F);
+        fullVertex(consumer, pose, -0.5F, 0.5F, 1.0F, 0.0F, r, g, b, 1.0F);
+        fullVertex(consumer, pose, 0.5F, 0.5F, 0.0F, 0.0F, r, g, b, 1.0F);
+        fullVertex(consumer, pose, 0.5F, -0.5F, 0.0F, 1.0F, r, g, b, 1.0F);
         poseStack.popPose();
     }
 
@@ -138,21 +207,21 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
      * <p>RE 用的是 {@code GL_TRIANGLE_FAN}；本渲染类型图元是四边形，所以每个三角面用
      * 「末点重复一次」的四边形表达，渲染结果一致。
      */
-    private void renderFlash(PoseStack poseStack, MultiBufferSource buffers, float age) {
+    private void renderFlash(PoseStack poseStack, MultiBufferSource buffers, float age, float r, float g, float b) {
         float ramp = Math.min(age, FLASH_RAMP_TICKS) / FLASH_RAMP_TICKS;
         if (ramp <= 0.0F) {
             // 第 0 tick RE 的 spikeScale 为无穷大，尖刺大小为 0，这里直接跳过。
             return;
         }
         // 外缘颜色 = 该法球颜色压暗 30%（RE 的 outerR/G/B）。
-        float er = red * 0.3F;
-        float eg = green * 0.3F;
-        float eb = blue * 0.3F;
+        float er = r * 0.3F;
+        float eg = g * 0.3F;
+        float eb = b * 0.3F;
         float spin = age / 80.0F * 360.0F;
 
         RandomSource random = RandomSource.create(FLASH_SEED);
         poseStack.pushPose();
-        VertexConsumer consumer = buffers.getBuffer(flashType);
+        VertexConsumer consumer = buffers.getBuffer(this.flashType);
         for (int i = 0; i < FLASH_COUNT; i++) {
             // 等价于 RE 的 6 次 glRotatef（第 6 次叠加自转）。
             poseStack.mulPose(Axis.XP.rotationDegrees(random.nextFloat() * 360.0F));

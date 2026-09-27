@@ -9,6 +9,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -81,13 +84,20 @@ import vazkii.botania.common.handler.BotaniaSounds;
  *       {@link SoundEvents#GENERIC_EXPLODE}。两者都过 {@link SoundHelper#play} 统一压低音量。</li>
  * </ul>
  *
+ * <p><b>与 Botania 现代版 {@code BabylonWeaponEntity} 的对应</b>：
+ * 六个同步字段里本实体保留 {@code variety / chargeTicks / liveTicks / delay / rotation}
+ * （渲染器 {@code client/FRBabylonWeaponRenderer} 全部要用）；唯独 {@code charging}
+ * 不保留——本项目用 {@code tickCount <= 15} 直接推得蓄力窗口，没有需要同步的独立状态。
+ * 原版 {@code rotation} 在 Apotheosis 的召唤路径里从不被写入（只在读档时恢复），
+ * 所以这里也只是同步着，默认恒为 0。
+ *
  * <p><b>与原版的偏差</b>：
  * <ol>
- *   <li>原版实体有真实的武器模型（{@code variety} 选 12 种形体），本项目不画几何体
- *       （可见形体只有 {@code client/FROrbRenderer} 的一个柔光球）。{@code variety} 于是没有形体可选，
- *       这里改用它挑 12 档暖金色调给拖尾上色；</li>
- *   <li>原版的 {@code charging / chargeTicks / rotation} 三个同步字段只服务于客户端渲染：
- *       蓄力状态这里由 {@code tickCount} 直接推得，{@code rotation} 没有几何体可摆，均不保留；</li>
+ *   <li>武器形体现在由 {@code client/FRBabylonWeaponRenderer} 画：用 Botania 的
+ *       {@code MiscellaneousModels.INSTANCE.kingKeyWeaponModels[variety]} 模型 + 光晕 quad。
+ *       模型不可用时（未烘焙 / 索引越界）退回本模组的金色公告板光球；</li>
+ *   <li>拖尾仍用 {@code variety} 的 12 档暖金色调上色（见 {@link #VARIETY_COLORS}），
+ *       作为模型之外的额外汇聚视觉区分；</li>
  *   <li>原版实体碰撞箱是 0；本项目实体按约定 0.25×0.25。直击扫掠盒与爆炸范围仍用
  *       {@code inflate(2)} / {@code inflate(3)} 近似，半径误差约 0.125 格；</li>
  *   <li>原版那 40 颗 wisp 是自定义网络包定点生成、各自带 ±0.125 的初速；这里用
@@ -141,17 +151,30 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
     };
 
     private static final String TAG_VARIETY = "variety";
+    private static final String TAG_CHARGE_TICKS = "chargeTicks";
     private static final String TAG_LIVE_TICKS = "liveTicks";
     private static final String TAG_DELAY = "delay";
+    private static final String TAG_ROTATION = "rotation";
 
-    /** 原版 {@code variety}，0~11。服务端决定拖尾色调，不需要同步。 */
-    private int variety;
+    /** 原版 {@code variety}（服务端随机 0~11，客户端渲染要读它挑武器模型）。 */
+    private static final EntityDataAccessor<Integer> DATA_VARIETY =
+            SynchedEntityData.defineId(EntityBabylonWeapon.class, EntityDataSerializers.INT);
+
+    /** 原版 {@code chargeTicks}：蓄力期间累加，客户端用它算发光强度。 */
+    private static final EntityDataAccessor<Integer> DATA_CHARGE_TICKS =
+            SynchedEntityData.defineId(EntityBabylonWeapon.class, EntityDataSerializers.INT);
 
     /** 原版 {@code liveTicks}：蓄力结束之后才开始累加。 */
-    private int liveTicks;
+    private static final EntityDataAccessor<Integer> DATA_LIVE_TICKS =
+            SynchedEntityData.defineId(EntityBabylonWeapon.class, EntityDataSerializers.INT);
 
     /** 原版 {@code delay}：蓄力结束后还要悬停多久才发射；神化传 0。 */
-    private int delay;
+    private static final EntityDataAccessor<Integer> DATA_DELAY =
+            SynchedEntityData.defineId(EntityBabylonWeapon.class, EntityDataSerializers.INT);
+
+    /** 原版 {@code rotation}：绕 Y 轴的朝向；神化/RE 的召唤路径不设置它，保持 0。 */
+    private static final EntityDataAccessor<Float> DATA_ROTATION =
+            SynchedEntityData.defineId(EntityBabylonWeapon.class, EntityDataSerializers.FLOAT);
 
     /** 是否已经完成锁定发射。 */
     private boolean launched;
@@ -169,12 +192,60 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
         setOwner(shooter);
     }
 
+    /**
+     * 同步字段（对应 Botania {@code BabylonWeaponEntity#defineSynchedData}）：
+     * {@code charging / variety / chargeTicks / liveTicks / delay / rotation} 六个里，
+     * 本实体用 {@code tickCount <= 15} 直接推得蓄力状态，不需要 {@code charging}，
+     * 其余五个全部保留——客户端渲染要读。
+     */
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIETY, 0);
+        builder.define(DATA_CHARGE_TICKS, 0);
+        builder.define(DATA_LIVE_TICKS, 0);
+        builder.define(DATA_DELAY, 0);
+        builder.define(DATA_ROTATION, 0.0F);
+    }
+
+    public int getVariety() {
+        return entityData.get(DATA_VARIETY);
+    }
+
     public void setVariety(int variety) {
-        this.variety = variety;
+        entityData.set(DATA_VARIETY, variety);
+    }
+
+    public int getChargeTicks() {
+        return entityData.get(DATA_CHARGE_TICKS);
+    }
+
+    public void setChargeTicks(int ticks) {
+        entityData.set(DATA_CHARGE_TICKS, ticks);
+    }
+
+    public int getLiveTicks() {
+        return entityData.get(DATA_LIVE_TICKS);
+    }
+
+    public void setLiveTicks(int ticks) {
+        entityData.set(DATA_LIVE_TICKS, ticks);
+    }
+
+    public int getDelay() {
+        return entityData.get(DATA_DELAY);
     }
 
     public void setDelay(int delay) {
-        this.delay = delay;
+        entityData.set(DATA_DELAY, delay);
+    }
+
+    public float getRotation() {
+        return entityData.get(DATA_ROTATION);
+    }
+
+    public void setRotation(float rotation) {
+        entityData.set(DATA_ROTATION, rotation);
     }
 
     /** 原版没有基类那种「生存时限」概念，时限由 {@link #tick()} 自己按 {@code liveTicks} 判。 */
@@ -201,10 +272,13 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
             return;
         }
 
-        int liveTime = liveTicks;
+        int liveTime = getLiveTicks();
+        int delay = getDelay();
         if (tickCount <= CHARGE_TICKS) {
             // 原版 ticksExisted <= 15：原地滞空蓄力。
             setDeltaMovement(Vec3.ZERO);
+            // Botania 在这一支里 setChargeTicks(chargeTime + 1)；同步给客户端算发光强度。
+            setChargeTicks(getChargeTicks() + 1);
             if (random.nextInt(CHARGE_SOUND_INTERVAL) == 0) {
                 SoundHelper.play(level(), getX(), getY(), getZ(),
                         BotaniaSounds.TREASURE_WEAPON_SPAWN, SoundSource.PLAYERS, 0.1F,
@@ -220,7 +294,7 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
             if (launched) {
                 setDeltaMovement(launchVelocity);
             }
-            liveTicks = liveTime + 1;
+            setLiveTicks(liveTime + 1);
             // 原版每 tick 的直击扫掠；命中并爆炸时本轮结束。
             if (sweepDirectHit()) {
                 return;
@@ -383,7 +457,7 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
         if (!(level() instanceof ServerLevel server)) {
             return;
         }
-        int color = VARIETY_COLORS[Math.floorMod(variety, VARIETY_COLORS.length)];
+        int color = VARIETY_COLORS[Math.floorMod(getVariety(), VARIETY_COLORS.length)];
         server.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, color),
                 getX(), getY(), getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
     }
@@ -424,20 +498,25 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
         return entity.position().add(0.0D, entity.getBbHeight() / 2.0D, 0.0D);
     }
 
+    /** {@link SynchedEntityData} 不随存档持久化，和 Botania 一样把这些渲染字段手动写进 NBT。 */
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt(TAG_VARIETY, variety);
-        tag.putInt(TAG_LIVE_TICKS, liveTicks);
-        tag.putInt(TAG_DELAY, delay);
+        tag.putInt(TAG_VARIETY, getVariety());
+        tag.putInt(TAG_CHARGE_TICKS, getChargeTicks());
+        tag.putInt(TAG_LIVE_TICKS, getLiveTicks());
+        tag.putInt(TAG_DELAY, getDelay());
+        tag.putFloat(TAG_ROTATION, getRotation());
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        variety = tag.getInt(TAG_VARIETY);
-        liveTicks = tag.getInt(TAG_LIVE_TICKS);
-        delay = tag.getInt(TAG_DELAY);
+        setVariety(tag.getInt(TAG_VARIETY));
+        setChargeTicks(tag.getInt(TAG_CHARGE_TICKS));
+        setLiveTicks(tag.getInt(TAG_LIVE_TICKS));
+        setDelay(tag.getInt(TAG_DELAY));
+        setRotation(tag.getFloat(TAG_ROTATION));
     }
 
     /**
