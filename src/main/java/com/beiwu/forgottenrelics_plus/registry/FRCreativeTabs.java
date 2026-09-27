@@ -67,6 +67,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.NUCLEAR_FURY.get());
                         // 第七波：千咒之诫。
                         output.accept(FRItems.SOUL_TOME.get());
+                        // 第七波：永恒放逐之诫。
+                        output.accept(FRItems.EDICT_OF_BANISHMENT.get());
                     })
                     .build());
 

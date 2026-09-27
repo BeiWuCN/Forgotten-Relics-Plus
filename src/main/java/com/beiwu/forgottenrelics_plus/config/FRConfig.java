@@ -389,6 +389,18 @@ public final class FRConfig {
     /** 千咒之诫：附带的扭曲值（原版 {@code getWarp} 返回 3）。 */
     public static final ModConfigSpec.IntValue SOUL_TOME_WARP;
 
+    // ---- 永恒放逐之诫 / Edict of Eternal Banishment ----
+    /** 永恒放逐之诫：引导时每秒的 Vis 基础消耗（原版每 tick 18 厘 = 3.6 点/秒，整数取 4）。 */
+    public static final ModConfigSpec.IntValue EDICT_OF_BANISHMENT_VIS_COST;
+    /** 永恒放逐之诫：Vis 消耗倍率（原版配置 key 是 overthrowerVisMult，语义就是倍率）。 */
+    public static final ModConfigSpec.DoubleValue EDICT_OF_BANISHMENT_VIS_MULT;
+    /** 永恒放逐之诫：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue EDICT_OF_BANISHMENT_MAX_CHARGE;
+    /** 永恒放逐之诫：完整引导时长（tick，原版 150）。 */
+    public static final ModConfigSpec.IntValue EDICT_OF_BANISHMENT_CHANNEL_DURATION;
+    /** 永恒放逐之诫：附带的扭曲值（原版 {@code getWarp} 返回 2）。 */
+    public static final ModConfigSpec.IntValue EDICT_OF_BANISHMENT_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -1075,6 +1087,35 @@ public final class FRConfig {
                 .comment("Warp granted by the Edict of a Thousand Damned Souls. Original getWarp returns 3.",
                          "千咒之诫附带的扭曲值。原版 getWarp 返回 3。")
                 .defineInRange("soulTomeWarp", 3, 0, 32768);
+        builder.pop();
+
+        builder.comment("永恒放逐之诫（第七波：拉弓引导把目标放逐到下界）").push("edict_of_banishment");
+        EDICT_OF_BANISHMENT_VIS_COST = builder
+                .comment("Base Vis cost per second while channelling the Edict of Eternal Banishment."
+                                 + " Original: Fire 8 + Order 5 + Entropy 5 centivis per tick = 0.18 vis/tick,"
+                                 + " i.e. 3.6 vis per second, rounded up to 4 since the item charge is an integer.",
+                         "引导永恒放逐之诫时每秒的 Vis 基础消耗。原版是每 tick 火（Ignis）8 + 秩序（Ordo）5"
+                                 + " + 混沌（Perditio）5 厘 Vis = 0.18 点/tick，即 3.6 点/秒；充能是整数，"
+                                 + "故按核子之怒的先例向上取整为 4。")
+                .defineInRange("edictOfBanishmentVisCost", 4, 0, 32768);
+        EDICT_OF_BANISHMENT_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Edict of Eternal Banishment. Original key: overthrowerVisMult.",
+                         "永恒放逐之诫的 Vis 消耗倍率。原版配置 key 就是 overthrowerVisMult，默认 1.0。")
+                .defineInRange("edictOfBanishmentVisMult", 1.0D, 0.0D, 1024.0D);
+        EDICT_OF_BANISHMENT_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Edict of Eternal Banishment."
+                                 + " One full 150-tick channel costs 8 x 4 = 32 vis, so 100 is a little over three channels.",
+                         "永恒放逐之诫的最大 Vis 储量。一次完整引导（150 tick）扣 8 次 × 4 = 32 点，"
+                                 + "100 点可支撑三次多一点。")
+                .defineInRange("edictOfBanishmentMaxCharge", 100, 0, 32768);
+        EDICT_OF_BANISHMENT_CHANNEL_DURATION = builder
+                .comment("Full channel duration in ticks. Original getMaxItemUseDuration returns 150.",
+                         "完整引导时长（tick）。原版 getMaxItemUseDuration 返回 150，即 7.5 秒。")
+                .defineInRange("edictOfBanishmentChannelDuration", 150, 1, 32768);
+        EDICT_OF_BANISHMENT_WARP = builder
+                .comment("Warp granted by the Edict of Eternal Banishment. Original getWarp returns 2.",
+                         "永恒放逐之诫附带的扭曲值。原版 ItemOverthrower#getWarp 返回 2。")
+                .defineInRange("edictOfBanishmentWarp", 2, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

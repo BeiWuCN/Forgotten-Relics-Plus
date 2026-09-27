@@ -19,6 +19,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemMiningCharm;
 import com.beiwu.forgottenrelics_plus.items.ItemNuclearFury;
 import com.beiwu.forgottenrelics_plus.items.ItemOmegaCore;
 import com.beiwu.forgottenrelics_plus.items.ItemOblivionAmulet;
+import com.beiwu.forgottenrelics_plus.items.ItemOverthrower;
 import com.beiwu.forgottenrelics_plus.items.ItemParadox;
 import com.beiwu.forgottenrelics_plus.items.ItemRingOfDiscord;
 import com.beiwu.forgottenrelics_plus.items.ItemShinyStone;
@@ -299,6 +300,20 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemSoulTome> SOUL_TOME =
             ITEMS.registerItem("soul_tome", ItemSoulTome::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 永恒放逐之诫（Edict of Eternal Banishment），注册名 {@code edict_of_banishment}。
+     *
+     * <p>1.7.10 原版类名就是 {@code ItemOverthrower}（1.7.10 的 Main 里注册的是它，同目录那份
+     * {@code ItemOverthrowerLegacy} 只是没被任何地方引用的备用实现，详见提交说明）。
+     * 原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
+     *
+     * <p>右键锁定准星指向的活体后拉弓引导 150 tick，结束时把目标放逐到下界并劈下真雷；
+     * 引导期间每秒消耗物品自身的 Vis 充能。详见 {@link ItemOverthrower}。
+     */
+    public static final DeferredItem<ItemOverthrower> EDICT_OF_BANISHMENT =
+            ITEMS.registerItem("edict_of_banishment", ItemOverthrower::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

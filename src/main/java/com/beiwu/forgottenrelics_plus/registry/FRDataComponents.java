@@ -65,6 +65,17 @@ public final class FRDataComponents {
             DATA_COMPONENTS.registerComponentType("devourer_target",
                     builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC));
 
+    /**
+     * 永恒放逐之诫：右键时锁定的目标实体 id。
+     *
+     * <p>对应原版 {@code ItemOverthrower} 里那张以玩家为键的静态 map {@code targetList}
+     *（放逐的引导期间要一直盯着同一个目标）。实体 id 只在同一个服务端会话内有效，正好符合
+     *「引导结束即失效」的用途；不用实体对象做键是为了避免长期持有已移除实体的引用。
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> EDICT_TARGET =
+            DATA_COMPONENTS.registerComponentType("edict_target",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     public static void register(IEventBus modBus) {
         DATA_COMPONENTS.register(modBus);
     }
