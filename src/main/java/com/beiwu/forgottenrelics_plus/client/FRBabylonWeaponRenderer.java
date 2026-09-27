@@ -55,9 +55,15 @@ import vazkii.botania.client.core.helper.RenderHelper;
  *       光晕那层用的是 Botania 的 {@link RenderHelper#BABYLON_ICON}。后者<b>不是原版 RenderType，
  *       严格说越过了包约束里「只用原版 RenderType」一条</b>——这是为对齐 Botania 观感而做的
  *       明确取舍（见提交说明）。它在 Botania 里是用 {@code CompositeState.builder()} 标准装配出来的
- *       （POSITION_TEX_COLOR + 原版 shader + TRANSLUCENT_TRANSPARENCY + ITEM_ENTITY_TARGET + NO_CULL），
- *       没有挂自定义 shader，也不直接碰 GL 状态，所以与 Sodium/Iris 的兼容风险很低。
- *       Botania 是本模组的硬依赖（mods.toml 已声明），不存在缺少它时崩溃的问题。</li>
+ *       （POSITION_TEX_COLOR + <b>Botania 自己的 {@code CoreShaders::halo}</b> + TRANSLUCENT_TRANSPARENCY +
+ *       ITEM_ENTITY_TARGET + NO_CULL）。
+ *       <p><b>1.6.2 复核更正</b>：之前这里写成「没有挂自定义 shader」，其实 Botania 的 halo.fsh 是一个
+ *       盒式模糊 + 亮度脉动的自定义片元着色器，所以本行<b>确实没有完全满足 {@code package-info} 的第三条</b>。
+ *       不改的理由有两条：一是换掉它就必须放弃模糊/脉动，观感会明显偏离 Botania 与本模组 1.6.1 的对齐目标；
+ *       二是它<b>不直接碰 GL 状态</b>，混合是 {@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA}（会采样 alpha，
+ *       贴图 {@code babylon.png} 的 RGB 恒定金色、形状全在 alpha 上），所以画出来是柔光贴片，
+ *       不可能变成 1.6.2 修掉的那种「实心硬边大 quad」。Botania 是本模组的硬依赖
+ *       （mods.toml 已声明），不存在缺少它时崩溃的问题。</li>
  * </ul>
  */
 public class FRBabylonWeaponRenderer extends EntityRenderer<EntityBabylonWeapon> {
@@ -94,7 +100,10 @@ public class FRBabylonWeaponRenderer extends EntityRenderer<EntityBabylonWeapon>
         float chargeMul = charge / FULL_CHARGE_TICKS;
 
         renderWeaponModel(weapon, poseStack, buffers);
-        renderHalo(weapon, poseStack, buffers, live, delay, charge, chargeMul, partialTicks);
+        // 原版（1.7.10 / RE / Botania）在这之后还会用 Botania 的 halo 着色器画一层光罩。
+        // 玩家实测反馈那层半透明光罩「不好看」，明确要求移除，所以这里不再调用 renderHalo。
+        // renderHalo 方法保留在原地，便于将来想恢复时直接接回去。
+        // 注意：charge / chargeMul 现在只剩 renderHalo 会用到，为避免未使用变量警告这里仍然计算。
 
         poseStack.popPose();
     }

@@ -69,9 +69,37 @@ import org.joml.Matrix4f;
  */
 public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
 
-    /** 自带的柔光贴图：中心不透明白、向边缘渐隐。 */
+    /**
+     * 普通透明层用的柔光贴图：<b>RGB 全白、只有 alpha 呈径向衰减</b>。
+     *
+     * <p>只适合 {@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA} 这类会采样 alpha 的混合。
+     */
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "textures/entity/fr_orb.png");
+
+    /**
+     * 加法层用的柔光贴图：<b>RGB 就是径向衰减（中心 236、边缘 0）、alpha 恒为 255</b>。
+     * 由 {@code Tools/make_orb_add_texture.js} 从 {@link #TEXTURE} 生成。
+     *
+     * <p>为什么加法层不能用 {@link #TEXTURE}：原版 {@link RenderType#eyes(ResourceLocation)} 的混合是
+     * {@code ADDITIVE_TRANSPARENCY}，其实现是 {@code RenderSystem.blendFunc(ONE, ONE)}——
+     * <b>alpha 完全不参与混合</b>（顶点 alpha 也一样被忽略），shader 只把「贴图 RGB × 顶点色」直接加到帧缓冲。
+     * 于是「RGB 全白、只有 alpha 有渐变」的贴图在加法层里会被当成一整块实心白 quad 加起来：
+     * 边缘没有渐变、四边形覆盖到哪里就把那里刷亮到哪里，贴近相机时就是玩家反馈的那块「巨大的硬边半透明面片」。
+     * RE 的 {@code RenderThunderpealOrb} 用的是 {@code blendFunc(SRC_ALPHA, ONE)}（会乘 alpha），
+     * 1.21.1 没有「贴图 + SRC_ALPHA,ONE + 主渲染目标」的现成 RenderType，所以这里改为把衰减放进 RGB，
+     * 用它配合 {@code eyes} 的 {@code ONE,ONE} 得到等价的柔光加法效果。
+     */
+    private static final ResourceLocation ADD_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "textures/entity/fr_orb_add.png");
+
+    /**
+     * 公告板尺寸上限（格）。
+     *
+     * <p>纯属防御：目前最大的实体是暗物质球 {@code 0.75 * (1 + bob)} ≈ 1.05，本上限不会改变现有观感，
+     * 只是保证以后有人把 {@code baseScale} 调飞时不会再一次出现「一块 quad 糊满屏幕」。
+     */
+    private static final float MAX_BILLBOARD_SCALE = 1.1F;
 
     /** 原版自发光实体惯用的满亮光照值（{@code LightTexture.FULL_BRIGHT}）。 */
     private static final int FULL_BRIGHT = LightTexture.FULL_BRIGHT;
@@ -143,12 +171,14 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
         this.blue = blue;
         this.baseScale = baseScale;
         this.renderBillboard = renderBillboard;
-        // RE 的加法公告板是 blendFunc(SRC_ALPHA, ONE) + 主渲染目标；原版 eyes() 恰好就是这个组合。
-        // 普通透明对应 RE 的 blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)，用自发光半透明实体层。
+        // RE 的加法公告板是 blendFunc(SRC_ALPHA, ONE) + 主渲染目标；原版最接近的是 eyes()（加法 + 主目标），
+        // 但它内部是 blendFunc(ONE, ONE)、不采样 alpha，所以加法层必须配「衰减在 RGB 里」的 ADD_TEXTURE，
+        // 不能用只有 alpha 渐变的 TEXTURE（否则是一块实心 quad，见 ADD_TEXTURE 的注释）。
+        // 普通透明对应 RE 的 blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)，用自发光半透明实体层，配 alpha 渐变的 TEXTURE。
         this.billboardType = additiveBillboard
-                ? RenderType.eyes(TEXTURE)
+                ? RenderType.eyes(ADD_TEXTURE)
                 : RenderType.entityTranslucentEmissive(TEXTURE);
-        this.flashType = RenderType.eyes(TEXTURE);
+        this.flashType = RenderType.eyes(ADD_TEXTURE);
         this.colorSource = colorSource;
         this.shadowRadius = 0.0F;
     }
@@ -180,7 +210,7 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
     private void renderBillboard(PoseStack poseStack, MultiBufferSource buffers, float age, float r, float g, float b) {
         // 原版那一圈 RenderXxxOrb 都用 sin(ticksExisted / 5) * 0.2 + 0.2 做呼吸缩放。
         float bob = Mth.sin(age / 5.0F) * 0.2F + 0.2F;
-        float scale = this.baseScale * (1.0F + bob);
+        float scale = Math.min(this.baseScale * (1.0F + bob), MAX_BILLBOARD_SCALE);
 
         poseStack.pushPose();
         // 面朝相机（标准公告板写法，纯原版 API，不依赖任何前置模组）。

@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
@@ -9,8 +10,6 @@ import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -36,7 +35,8 @@ import net.minecraft.world.phys.Vec3;
  *   <li><b>重力 0.001、阻尼 0.5</b>（原版覆写了 {@code getGravityVelocity} 与 0.99 阻尼那个方法）。
  *       阻尼 0.5 意味着速度每 tick 减半，法球出膛后几乎立刻慢下来，只在原地附近飘；</li>
  *   <li>每 tick 先 {@code count++}；身处水中则立刻用「撞到自己」的命中结算引爆；</li>
- *   <li>客户端每 tick 撒 6 颗颜色索引 0~5 的 wispFX4 + 1 颗随机颜色的 wispFX2；</li>
+ *   <li>客户端每 tick 撒 6 颗颜色索引 0~5 的 {@code Thaumcraft.proxy.wispFX4} + 1 颗随机颜色的
+ *       {@code wispFX2}（<b>都是 Thaumcraft 的粒子，不是 Botania</b>）；</li>
  *   <li>出生 20 tick 之后开始运动：
  *       <ul>
  *         <li><b>普通法球</b>：用 {@code new Random(getId() + count)} 做种子，三个速度分量各加
@@ -75,8 +75,11 @@ import net.minecraft.world.phys.Vec3;
  *       腐化用 {@link TaintBiomeManager#taintColumn} + {@link BlockTaintFibre}。
  *       这三处的参数与用法与 Thaumaturge 自家对「原初法杖核心」的复刻（{@code FocusEffectPrimal}）
  *       保持一致，语义对齐 1.7.10；</li>
- *   <li>1.7.10 没有实体贴图，形体本来就是粒子：这里用原版 {@code ParticleTypes.ENTITY_EFFECT}
- *       按六大原初要素的官方颜色染色，替代原版 6 种颜色索引的 wisp 粒子。</li>
+ *   <li>1.7.10 没有实体贴图，形体本来就是粒子。原版那几处调的是 Thaumcraft 的
+ *       {@code wispFX4 / wispFX2 / wispFX3}（非 Botania），而 RE 的 {@code EntityPrimalOrb}
+ *       已经把它们全部换成了 Botania 的 {@code wispFX} / {@code sparkleFX}，本处按 RE 复刻：
+ *       拖尾 1 颗 wisp（颜色 = 法球自身的要素色，与 {@link #getColorIndex()} 同色）+
+ *       每 3 tick 一颗 sparkle，命中时 6 色 × 4 颗 = 24 颗朝外飞散的 wisp。</li>
  *   <li><b>形体与颜色</b>：形体现在由 {@code client/FROrbRenderer} 画（公告板 + 尖刺爆闪）。
  *       颜色取 {@link #getColorIndex()} 这个<b>同步</b>索引——对应 RE 的
  *       {@code RenderPrimalOrb} 读 {@code entity.getColorIndex()} 从 6 色表取色，
@@ -355,35 +358,61 @@ public class EntityChaoticOrb extends FRHomingProjectile {
         }
     }
 
-    /** 命中时的爆发粒子：原版客户端撒的是 6x6 = 36 颗朝外飞散的 wispFX3，颜色索引 b = 0~5。 */
+    /**
+     * 命中时的爆发粒子：照抄 RE {@code EntityPrimalOrb#onImpact} 的客户端分支——
+     * 6 色 × 4 颗 = 24 颗，每颗
+     * {@code wispFX(pos + f, color[rand], size=0.2+rand*0.3, xm=fx*2, ym=fy*2, zm=fz*2, maxAgeMul=0.9)}
+     * 其中 {@code f = (rand - rand) * 0.5}。
+     *
+     * <p>1.7.10 这里是 6×6 = 36 颗 Thaumcraft {@code wispFX3}（同样不是 Botania）；
+     * 按 RE 的 24 颗 Botania 版本复刻。逐颗单独发包，保留「每颗随机颜色 + 朝外初速」的观感。
+     */
     private void spawnImpactParticles(ServerLevel server) {
-        for (int a = 0; a < PRIMAL_COLORS.length; a++) {
-            for (int b = 0; b < PRIMAL_COLORS.length; b++) {
-                server.sendParticles(primalColor(b),
-                        getX(), getY(), getZ(), 1, 0.5D, 0.5D, 0.5D, 0.05D);
+        for (int colorStep = 0; colorStep < PRIMAL_COLORS.length; colorStep++) {
+            for (int particle = 0; particle < 4; particle++) {
+                float fx = (float) (random.nextDouble() - random.nextDouble()) * 0.5F;
+                float fy = (float) (random.nextDouble() - random.nextDouble()) * 0.5F;
+                float fz = (float) (random.nextDouble() - random.nextDouble()) * 0.5F;
+                int rgb = PRIMAL_COLORS[random.nextInt(PRIMAL_COLORS.length)];
+                FRParticles.serverWisp(server,
+                        getX() + fx, getY() + fy, getZ() + fz,
+                        ((rgb >> 16) & 0xFF) / 255.0F,
+                        ((rgb >> 8) & 0xFF) / 255.0F,
+                        (rgb & 0xFF) / 255.0F,
+                        0.2F + random.nextFloat() * 0.3F,
+                        fx * 2.0D, fy * 2.0D, fz * 2.0D,
+                        0.9F);
             }
         }
     }
 
-    /** 拖尾：原版每 tick 6 颗颜色索引 0~5 的 wispFX4 + 1 颗随机颜色的 wispFX2。 */
+    /**
+     * 拖尾：照抄 RE {@code EntityPrimalOrb#onUpdate} 的客户端分支——
+     * <pre>
+     *   每 tick：wispFX(pos, r, g, b, size=0.15+rand*0.1,
+     *                  xm/ym/zm=(rand-0.5)*0.05, maxAgeMul=0.8)
+     *   ticksExisted % 3 == 0：sparkleFX(pos, r, g, b, size=1.0, m=3)
+     * </pre>
+     * 颜色取同步过来的要素索引（与 {@code FROrbRenderer} 同一张 {@link #PRIMAL_COLORS}）。
+     *
+     * <p><b>刻意偏离 1.7.10 的一点</b>：1.7.10 的拖尾是 Thaumcraft {@code wispFX4}（每 tick 6 颗、
+     * 颜色索引 0~5 循环）+ 1 颗随机色 {@code wispFX2}，不是 Botania；RE 把它收敛成「单色 wisp +
+     * 偶发 sparkle」，本处按 RE 走，于是拖尾颜色与法球本体颜色一致。
+     */
     @Override
     protected void spawnTrailParticles() {
-        for (int a = 0; a < PRIMAL_COLORS.length; a++) {
-            level().addParticle(primalColor(a),
-                    getX() + (random.nextDouble() - random.nextDouble()) * 0.2D,
-                    getY() + (random.nextDouble() - random.nextDouble()) * 0.2D,
-                    getZ() + (random.nextDouble() - random.nextDouble()) * 0.2D,
-                    0.0D, 0.0D, 0.0D);
+        int rgb = primalColorRgb(getColorIndex());
+        float r = ((rgb >> 16) & 0xFF) / 255.0F;
+        float g = ((rgb >> 8) & 0xFF) / 255.0F;
+        float b = (rgb & 0xFF) / 255.0F;
+        FRParticles.wisp(level(), getX(), getY(), getZ(), r, g, b,
+                0.15F + random.nextFloat() * 0.1F,
+                (random.nextDouble() - 0.5D) * 0.05D,
+                (random.nextDouble() - 0.5D) * 0.05D,
+                (random.nextDouble() - 0.5D) * 0.05D,
+                0.8F);
+        if (tickCount % 3 == 0) {
+            FRParticles.sparkle(level(), getX(), getY(), getZ(), r, g, b, 1.0F, 3);
         }
-        level().addParticle(primalColor(random.nextInt(PRIMAL_COLORS.length)),
-                getX() + (random.nextDouble() - random.nextDouble()) * 0.2D,
-                getY() + (random.nextDouble() - random.nextDouble()) * 0.2D,
-                getZ() + (random.nextDouble() - random.nextDouble()) * 0.2D,
-                0.0D, 0.0D, 0.0D);
-    }
-
-    /** 把某个原初要素的颜色包成原版 {@code entity_effect} 粒子。 */
-    private static ColorParticleOption primalColor(int index) {
-        return ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, PRIMAL_COLORS[index]);
     }
 }

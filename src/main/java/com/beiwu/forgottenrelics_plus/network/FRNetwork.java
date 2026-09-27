@@ -22,6 +22,9 @@ public final class FRNetwork {
     public static void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
         registrar.playToServer(ToggleDiscordPayload.TYPE, ToggleDiscordPayload.CODEC, ToggleDiscordPayload::handle);
+        // 预言之典的左键：点空气/点方块只会在客户端产生事件，需要自己报到服务端（见 payload 的类注释）。
+        registrar.playToServer(TelekinesisLeftClickPayload.TYPE, TelekinesisLeftClickPayload.CODEC,
+                TelekinesisLeftClickPayload::handle);
     }
 
     private FRNetwork() {

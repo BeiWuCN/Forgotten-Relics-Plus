@@ -2,7 +2,9 @@ package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
 import com.beiwu.forgottenrelics_plus.api.WeaponAttackBehaviour;
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
+import com.beiwu.forgottenrelics_plus.particle.FRBoltParticleData;
 import com.beiwu.forgottenrelics_plus.utils.CooldownHelper;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
@@ -14,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -105,17 +106,30 @@ import vazkii.botania.common.entity.GaiaGuardianEntity;
  *       {@code Map<UUID, TomeState>}（1.21.1 的 {@code Player} 实例会在维度切换/重登时被替换，
  *       用 UUID 更稳，与 {@link CooldownHelper} 同一考虑）；</li>
  *   <li>原版 {@code SuperpositionHandler} 的共用施法冷却 → {@link CooldownHelper}；</li>
- *   <li><b>不写任何自定义网络包</b>：{@code TelekinesisParticleMessage} 改为服务端
- *       {@link ServerLevel#sendParticles}；{@code LightningMessage} 改为服务端沿
- *       玩家→目标撒 {@link ParticleTypes#ELECTRIC_SPARK} 电弧（与千咒之诫同一方案）；
+ *   <li><b>不写任何自定义网络包</b>：{@code TelekinesisParticleMessage} 的紫色 wisp 改为服务端
+ *       {@link FRParticles}（原版就是 Botania wispFX），portalstuff 本来就是原版
+ *       {@code EntityPortalFX}、继续用 {@link ParticleTypes#PORTAL}；
  *       {@code PlayerMotionUpdateMessage} 改为改完速度后置 {@code hurtMarked}，靠原版同步；</li>
+ *   <li><b>左键闪电（1.6.2 重做）</b>：原版 {@code imposeLightning(player, ..., player.x, player.y + 1.0,
+ *       player.z, TVec.x, TVec.y, TVec.z, 20, curve, speed, 0, 0.225 + distSq / 2000)} 被
+ *       {@code for (counter = 0; counter <= 3; ++counter)} 连调 4 次，客户端用 Thaumcraft
+ *       {@code FXLightningBolt} 画成锯齿电弧。本项目改成 {@link FRBoltParticleData#broadcast}
+ *       走原版粒子包把两端送到客户端，再由 {@code client/FRBolts} 交给 Botania 的
+ *       {@code BoltRenderer} 画真正的折线闪电；宽度沿用原版公式（注意它比霹雳咒书的 0.075 粗得多，
+ *       是 1.7.10 自己的取值）；</li>
  *   <li>音效 {@code thaumcraft:zap} → 原版等价物 {@link SoundEvents#FIREWORK_ROCKET_BLAST}
  *       （与千咒之诫的 {@code zap} 替代方案一致），并过 {@link SoundHelper#play} 统一压低音量；</li>
- *   <li>左键「闪电 / 抛开」在原版是客户端按下攻击键后发的 {@code TelekinesisAttackMessage}。
- *       1.21.1 不写自定义包，改用 NeoForge 的 {@code AttackEntityEvent}（经
- *       {@link WeaponAttackBehaviour} 派发）—— 也就是「左键点到实体」才触发。
- *       这是本件与 1.7.10 的一处<b>已知偏差</b>：原版朝空气挥空拳也能打锁定目标，
- *       这里必须真的点到实体（通常是正在被念力控制的那个）。详见类尾「与 1.7.10 的偏差」。</li>
+ *   <li>左键「闪电 / 抛开」在原版是客户端在 {@code onUpdate} 里检测攻击键<b>按下的边沿</b>后
+ *       发 {@code TelekinesisAttackMessage}，服务端 {@code leftClick(player)} 只看「有没有锁定目标」，
+ *       与这次左键有没有点到实体<b>无关</b>。1.21.1 对应成两条互补的入口：
+ *     <ul>
+ *       <li>左键点到<b>实体</b>：服务端 {@code AttackEntityEvent}（经 {@link WeaponAttackBehaviour} 派发）；</li>
+ *       <li>左键点<b>空气或方块</b>：只有客户端的 {@code PlayerInteractEvent.LeftClickEmpty} /
+ *           {@code LeftClickBlock} 会触发，所以补了一个空载荷
+ *           {@code TelekinesisLeftClickPayload}，由 {@code client/FRClientEvents} 发出（见其类注释）。</li>
+ *     </ul>
+ *     两条路最终都汇到 {@link #leftClick(Player, ItemStack)}，冷却/锁定/充能校验只有那一个副本。
+ *     <b>1.6.2 修正</b>：上一版只有第一条路，于是「点空气完全没反应」，与 1.7.10 不一致。</li>
  * </ul>
  *
  * <p><b>使用姿态的取舍</b>：原版默认（{@code altTelekinesisAlgorithm = false}）右键<b>不进入</b>
@@ -131,7 +145,8 @@ import vazkii.botania.common.entity.GaiaGuardianEntity;
  *
  * <p><b>与 1.7.10 的偏差</b>：
  * <ol>
- *   <li>左键触发从「按下攻击键」收紧成「左键点到实体」（原因见上）；</li>
+ *   <li><s>左键触发从「按下攻击键」收紧成「左键点到实体」</s>——<b>1.6.2 已取消这条偏差</b>：
+ *       现在点实体、点空气、点方块三条路都能触发，语义回到 1.7.10 的「按下左键就打锁定目标」；</li>
  *   <li>念力的 Vis 从「每 tick 抽一次、抽不出来当 tick 不动」改成「每秒扣一次、
  *       扣不出来才中断引导」，节奏与其它引导型遗物统一；</li>
  *   <li>原版搜索目标时把 {@code target} 累加（既加 {@code look × distance} 又累加 {@code y += 0.5}），
@@ -163,9 +178,6 @@ public class ItemTelekinesisTome extends FRItem
 
     /** 折算后的念力扣费节奏：每 1 秒（20 tick）扣一次，且扣在这一秒的第一 tick。 */
     private static final int VIS_INTERVAL = 20;
-
-    /** 原版 {@code PacketTelekinesisParticleMessage} 里 wisp 的颜色（r≈0.35 / g=0 / b≈0.6）。 */
-    private static final int WISP_COLOR = 0x590099;
 
     /** 玩家 UUID -> 念力状态。对应原版 {@code globalTomeMap}（以玩家对象为键）。 */
     private static final Map<UUID, TomeState> TOME_STATES = new HashMap<>();
@@ -263,11 +275,7 @@ public class ItemTelekinesisTome extends FRItem
     }
 
     /**
-     * 左键攻击入口，对应原版 {@code leftClick(player) -> lightningAttack(player, item, ..)}。
-     *
-     * <p>1.21.1 没有「按下攻击键」的服务端事件，用 NeoForge 的
-     * {@code AttackEntityEvent}（{@link WeaponAttackBehaviour} 派发）代替：左键点到实体时，
-     * 只要这个实体是<b>已锁定</b>且仍能从视线前方找到的目标，就打一发闪电。
+     * 左键点到<b>实体</b>的入口：NeoForge 的 {@code AttackEntityEvent}（{@link WeaponAttackBehaviour} 派发）。
      *
      * <p><b>不取消事件</b>：原版的左键闪电是独立于普通攻击的一条包，普通挥击照常结算，
      * 这里保持同样行为。
@@ -278,22 +286,46 @@ public class ItemTelekinesisTome extends FRItem
         if (attacker.getMainHandItem() != stack) {
             return;
         }
-        Level level = attacker.level();
+        leftClick(attacker, stack);
+    }
+
+    /**
+     * 左键点到<b>空气 / 方块</b>的入口，由 {@code TelekinesisLeftClickPayload} 在服务端调用。
+     *
+     * <p>只认主手是不是预言之典，其余判定与 {@link #onAttackEntity} 完全共用。
+     */
+    public static void onServerLeftClick(Player player) {
+        if (player.getMainHandItem().getItem() instanceof ItemTelekinesisTome tome) {
+            tome.leftClick(player, player.getMainHandItem());
+        }
+    }
+
+    /**
+     * 对应原版 {@code leftClick(player) -> lightningAttack(player, item, ..)}：不管这次左键
+     * 有没有点到东西，只要身上锁着目标、目标还在视线前方，就打一发闪电（潜行时改为抛开）。
+     *
+     * <p>这就是原版「按下左键就朝已锁定目标打闪电」的语义，两条入口（点实体 / 点空气或方块）
+     * 共用这一份实现，冷却、锁定与充能校验因此不会出现两个副本。
+     */
+    private void leftClick(Player player, ItemStack stack) {
+        Level level = player.level();
         if (level.isClientSide()) {
             return;
         }
-        TomeState state = state(attacker);
+        TomeState state = state(player);
+        // 原版 targetID == -1 直接返回（没有锁定目标时按左键什么都不发生）。
         if (state.target == -1) {
             return;
         }
+        // 原版 getEntityByID + getExistingTarget(.., 6.0) 双重确认目标还在视线前方。
         if (level.getEntity(state.target) == null) {
             return;
         }
-        LivingEntity target = getExistingTarget(attacker, level, state.target, EXISTING_RANGE);
+        LivingEntity target = getExistingTarget(player, level, state.target, EXISTING_RANGE);
         if (target == null) {
             return;
         }
-        lightningAttack(attacker, target, stack, level);
+        lightningAttack(player, target, stack, level);
     }
 
     // ------------------------------------------------------------------
@@ -464,18 +496,21 @@ public class ItemTelekinesisTome extends FRItem
      * 对应原版 {@code TelekinesisParticleMessage(x, y, z, 1.0f)} 的客户端渲染
      * （Botania wispFX + Thaumcraft portalstuff）。
      *
-     * <p>{@code modifier = 1.0} 时：{@code wisps = 1}，循环 {@code i <= 1} 即 2 颗紫色 wisp
-     * （位置带 ±0.075 的随机初速）；{@code supers = 3}，循环 {@code i <= 3} 即 4 颗传送门粒子
-     * （初速 ±1.5）。{@code sendParticles} 在 {@code count == 0} 时会发一颗「位置不动、
-     * 初速 = 给定向量 × speed」的粒子，正好复刻这个带初速的单粒子。
+     * <p>{@code modifier = 1.0} 时：{@code wisps = 1}，循环 {@code i <= 1} 即 2 颗紫色 wisp，
+     * 每颗 {@code wispFX(中心, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.2+rand*0.1,
+     * xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=1.0)}；{@code supers = 3}，循环 {@code i <= 3}
+     * 即 4 颗传送门粒子（原版就是 {@code EntityPortalFX}，初速 ±1.5）。
      */
     private static void telekinesisParticles(ServerLevel level, Vec3 center) {
         for (int i = 0; i <= 1; i++) {
-            level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
-                    center.x, center.y, center.z, 0,
+            FRParticles.serverWisp(level, center.x, center.y, center.z,
+                    0.2F + level.random.nextFloat() * 0.3F,
+                    0.0F,
+                    0.5F + level.random.nextFloat() * 0.2F,
+                    0.2F + level.random.nextFloat() * 0.1F,
                     (level.random.nextDouble() - 0.5D) * 0.15D,
                     (level.random.nextDouble() - 0.5D) * 0.15D,
-                    (level.random.nextDouble() - 0.5D) * 0.15D, 1.0D);
+                    (level.random.nextDouble() - 0.5D) * 0.15D);
         }
         for (int i = 0; i <= 3; i++) {
             level.sendParticles(ParticleTypes.PORTAL, center.x, center.y, center.z, 0,
@@ -503,8 +538,13 @@ public class ItemTelekinesisTome extends FRItem
         if (distance <= LIGHTNING_RANGE
                 && RechargeAccess.consumeCharge(stack, player, getLightningVisCost())) {
             if (level instanceof ServerLevel server) {
-                // 原版连画 4 道 imposeLightning：起点是玩家脚下 + 1 格，终点是目标中心。
-                drawLightningArc(server, player.position().add(0.0D, 1.0D, 0.0D), targetCenter);
+                // 原版 for (counter = 0; counter <= 3; ++counter) 连画 4 道 imposeLightning：
+                // 起点 (player.x, player.y + 1.0, player.z)、终点目标身体中心、
+                // 宽度 (float)(0.225 + player.getDistanceSq(target) / 2000.0)。
+                double width = 0.225D + player.distanceToSqr(target) / 2000.0D;
+                FRBoltParticleData.broadcast(server, player.position().add(0.0D, 1.0D, 0.0D), targetCenter,
+                        (float) width, 4,
+                        FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE);
             }
             // 原版 world.playSoundAtEntity(player, "thaumcraft:zap", 1.0F, 0.8F)。
             SoundHelper.play(level, player.getX(), player.getY(), player.getZ(),
@@ -532,33 +572,6 @@ public class ItemTelekinesisTome extends FRItem
         // 原版 SuperpositionHandler.setCasted(player, 10, true)：10 tick 共用冷却 + 挥臂。
         CooldownHelper.setCooldown(player, FRConfig.TOME_OF_PREDESTINY_COOLDOWN.get());
         player.swing(InteractionHand.MAIN_HAND, true);
-    }
-
-    /**
-     * 原版 {@code SuperpositionHandler.imposeLightning(...)} 的替身。
-     *
-     * <p>原版一次调用画一条带曲线的闪电、且被连调 4 次；这里沿起点→终点连线撒 4 遍
-     * {@link ParticleTypes#ELECTRIC_SPARK}，每遍带一点随机抖动（与千咒之诫同一方案）。
-     */
-    private static void drawLightningArc(ServerLevel server, Vec3 from, Vec3 to) {
-        Vec3 diff = to.subtract(from);
-        double length = diff.length();
-        if (length < 1.0E-4D) {
-            return;
-        }
-        int points = Math.min(16, Math.max(2, (int) (length * 6.0D)));
-        Vec3 step = diff.scale(1.0D / points);
-        for (int arc = 0; arc < 4; arc++) {
-            Vec3 pos = from;
-            for (int i = 0; i < points; i++) {
-                server.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                        pos.x + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        pos.y + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        pos.z + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        1, 0.0D, 0.0D, 0.0D, 0.0D);
-                pos = pos.add(step);
-            }
-        }
     }
 
     // ------------------------------------------------------------------

@@ -130,7 +130,9 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
             return;
         }
         Vec3 center = player.position().add(0.0D, player.getBbHeight() / 2.0D, 0.0D);
-        // 蓄力过程中持续冒末影粒子（对应原版每 tick 4 个 PORTAL 粒子）
+        // 蓄力过程中持续冒末影粒子。原版这一段是 {@code PacketVoidMessage} 风格的
+        // {@code spawnSuperParticle("portalstuff")} → 原版 {@code EntityPortalFX}，
+        // 也就是原版传送门粒子本身，所以这里继续用 PORTAL，不算「用原版粒子代替 Botania」。
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypesHolder.PORTAL, center.x, center.y, center.z, 4,
                     (Math.random() - 0.5D) * 3.0D, (Math.random() - 0.5D) * 3.0D, (Math.random() - 0.5D) * 3.0D, 0.05D);

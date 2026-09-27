@@ -27,9 +27,26 @@
  * 需要判断光影是否开启，只能通过软依赖方式（{@code ModList.get().isLoaded("iris")} 之后再取用），
  * 且不得让缺少它们时崩溃。
  *
- * <p>现阶段本包内只有 {@link com.beiwu.forgottenrelics_plus.client.CrownCurioRenderer}，
- * 它从设计上就只用了上面第二条允许的写法（{@code MultiBufferSource} +
- * {@code RenderType.armorCutoutNoCull}），整个项目没有任何一处
+ * <p>本包内的渲染器（{@code CrownCurioRenderer}、{@code FROrbRenderer}、
+ * {@code FRBabylonWeaponRenderer}、{@code FRShinyEnergyRenderer}）都只用了上面第二条允许的写法
+ * （{@code MultiBufferSource} + 原版 {@code RenderType}），整个项目没有任何一处
  * {@code GlStateManager}/{@code RenderSystem}/{@code BufferBuilder} 调用。
+ *
+ * <p>另有一个例外需要说明：{@link com.beiwu.forgottenrelics_plus.client.FRParticles} 不在三条约束的
+ * 射程内——它只是「造 Botania 的 {@code SparkleParticleData}/{@code WispParticleData} 并调用
+ * {@code Level#addParticle} / {@code ServerLevel#sendParticles}」，不碰 GL 状态、不建顶点、
+ * 不注册 {@code RenderType}，因此可以被实体 / 物品这类<b>公共端</b>代码直接调用（服务端只会用到
+ * 它的 {@code server*} 方法，且这些方法只依赖 Botania 的公共粒子数据类，不依赖任何客户端 MC 类型）。
+ *
+ * <p>第二处说明：{@link com.beiwu.forgottenrelics_plus.client.FRBolts} 是闪电弧（1.7.10
+ * {@code imposeLightning} / RE {@code LightningMessage}）的客户端落点，它本身<b>也不在</b>三条约束的
+ * 射程内——它不碰 GL 状态、不建顶点、不注册 {@code RenderType}，只是把端点转交给 Botania 的
+ * {@code vazkii.botania.client.fx.BoltRenderer}：折线几何由 Botania 的
+ * {@code BoltParticleOptions#generate()} 生成，绘制与 flush 由 Botania 自己的
+ * {@code WorldOverlays.renderWorldLast}（{@code LevelRendererMixin} 注入）负责，用的 RenderType
+ * {@code RenderHelper.LIGHTNING} 是「标准装配 + 原版 {@code POSITION_COLOR_SHADER}」、没有挂自定义
+ * 着色器。它与 {@code FRParticles} 一样，只在客户端被 {@code RegisterParticleProvidersEvent}
+ * 注册一次；服务端那半（把端点广播出去）在公共端的
+ * {@link com.beiwu.forgottenrelics_plus.particle.FRBoltParticleData} 里，走的是原版粒子包。
  */
 package com.beiwu.forgottenrelics_plus.client;

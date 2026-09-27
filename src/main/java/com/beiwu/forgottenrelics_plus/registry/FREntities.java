@@ -7,6 +7,7 @@ import com.beiwu.forgottenrelics_plus.entity.EntityCrimsonOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityDarkMatterOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityLunarFlare;
 import com.beiwu.forgottenrelics_plus.entity.EntityRageousMissile;
+import com.beiwu.forgottenrelics_plus.entity.EntityShinyEnergy;
 import com.beiwu.forgottenrelics_plus.entity.EntitySoulEnergy;
 import com.beiwu.forgottenrelics_plus.entity.EntityThunderpealOrb;
 import net.minecraft.core.registries.Registries;
@@ -23,6 +24,14 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * <p>1.12.2 原版把实体挂在 {@code EntityRegistry.registerModEntity(...)} 上，1.21.1 换成
  * {@link DeferredRegister}。尺寸一律取 0.25×0.25：这些弹射物在 1.7.10 里就是「零尺寸 + 目标判定」，
  * 碰撞由 {@code onHit} 自己处理，不靠实体体积。
+ *
+ * <p><b>updateInterval 全部取 1（1.6.2 修正）</b>：上一版沿用「投射物 10 tick 一次位置包」的惯例，
+ * 结果是弹幕在客户端每 10 tick 才被服务端位置校正一次，看起来一顿一顿（玩家反馈「像 PPT」）。
+ * 这些实体都是高速直线飞行的法球，生命只有几百 tick、同屏通常个位数，把位置包提到每 tick 一次的
+ * 增量开销很小（{@code ClientboundMoveEntityPacket} 是短整型增量编码，单包约十几个字节），
+ * 换来的是和原版 1.7.10（每 tick 更新）一致的顺滑度。
+ * 唯一例外是 {@link EntityShinyEnergy}：它的移动是确定性的、客户端会自己算（原版就是两端各自移动），
+ * 所以保持 10。
  */
 public final class FREntities {
 
@@ -35,7 +44,7 @@ public final class FREntities {
                     () -> EntityType.Builder.<EntityThunderpealOrb>of(EntityThunderpealOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
-                            .updateInterval(10));
+                            .updateInterval(1));
 
     /** 邪术之咒的暗物质法球（原版 {@code EntityDarkMatterOrb}）。 */
     public static final DeferredHolder<EntityType<?>, EntityType<EntityDarkMatterOrb>> DARK_MATTER_ORB =
@@ -43,7 +52,7 @@ public final class FREntities {
                     () -> EntityType.Builder.<EntityDarkMatterOrb>of(EntityDarkMatterOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
-                            .updateInterval(10));
+                            .updateInterval(1));
 
     /** 腥红之咒的猩红法球（原版 {@code EntityCrimsonOrb}）。 */
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCrimsonOrb>> CRIMSON_ORB =
@@ -51,7 +60,7 @@ public final class FREntities {
                     () -> EntityType.Builder.<EntityCrimsonOrb>of(EntityCrimsonOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
-                            .updateInterval(10));
+                            .updateInterval(1));
 
     /** 原初混沌之典的原初能量法球（原版 {@code EntityChaoticOrb}）。 */
     public static final DeferredHolder<EntityType<?>, EntityType<EntityChaoticOrb>> PRIMAL_ORB =
@@ -59,7 +68,7 @@ public final class FREntities {
                     () -> EntityType.Builder.<EntityChaoticOrb>of(EntityChaoticOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
-                            .updateInterval(10));
+                            .updateInterval(1));
 
     /** 核子之怒的追踪导弹（原版 {@code EntityRageousMissile}，注册名沿用 RE 的 {@code rageous_missile}）。 */
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRageousMissile>> RAGEOUS_MISSILE =
@@ -67,7 +76,7 @@ public final class FREntities {
                     () -> EntityType.Builder.<EntityRageousMissile>of(EntityRageousMissile::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
-                            .updateInterval(10));
+                            .updateInterval(1));
 
     /** 月耀咒书的耀月之辉（原版 {@code EntityLunarFlare}，注册名沿用 lang 里现成的 {@code lunar_flare}）。 */
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLunarFlare>> LUNAR_FLARE =
@@ -75,7 +84,7 @@ public final class FREntities {
                     () -> EntityType.Builder.<EntityLunarFlare>of(EntityLunarFlare::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
-                            .updateInterval(10));
+                            .updateInterval(1));
 
     /** 神化召唤的巴比伦武器（原版 {@code EntityBabylonWeaponSS}）。 */
     public static final DeferredHolder<EntityType<?>, EntityType<EntityBabylonWeapon>> BABYLON_WEAPON =
@@ -83,6 +92,16 @@ public final class FREntities {
                     () -> EntityType.Builder.<EntityBabylonWeapon>of(EntityBabylonWeapon::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
+                            .updateInterval(1));
+
+    /** 日耀石的能量体（原版 {@code EntityShinyEnergy}）：出生点与速度都由物品侧给，目标用同步数据下发。 */
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityShinyEnergy>> SHINY_ENERGY =
+            register("shiny_energy",
+                    () -> EntityType.Builder.<EntityShinyEnergy>of(EntityShinyEnergy::new, MobCategory.MISC)
+                            // 原版 setSize(0,0)；这里给 0.1 只是避免零尺寸包围盒的边界情况，它不参与任何碰撞。
+                            .sized(0.1F, 0.1F)
+                            // 客户端会照同步过来的目标自己算 sparkle 尺寸并本地移动，不需要每 tick 校正位置。
+                            .clientTrackingRange(8)
                             .updateInterval(10));
 
     /** 千咒之诫的灵魂能量（原版 {@code EntitySoulEnergy}）。 */
@@ -91,7 +110,7 @@ public final class FREntities {
                     () -> EntityType.Builder.<EntitySoulEnergy>of(EntitySoulEnergy::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
-                            .updateInterval(10));
+                            .updateInterval(1));
 
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(
             String name, java.util.function.Supplier<EntityType.Builder<T>> builder) {

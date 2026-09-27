@@ -196,8 +196,10 @@ public class ItemFateTome extends FRItem implements FRRechargable, IWarpingGear,
      * 原版在玩家处调的 {@code imposeBurst(..., 1.5f)}（Thaumcraft 爆裂特效）与
      * {@code thaumcraft:runicShieldCharge} 音效。
      *
-     * <p>爆裂特效在 1.21.1 没有等价物，这里用「一颗闪光 + 一簇淡青色 effect 粒子」近似；
-     * 音效按项目约定换成原版等价物，并过 {@link SoundHelper#play} 统一压音量。
+     * <p>这一段原版用的是 Thaumcraft 的 {@code proxy.burst}（<b>不是 Botania</b>），
+     * 1.21.1 没有等价物，按「原版本来就不是 Botania 就保持原样」的口径继续用
+     * 「一颗闪光 + 一簇淡青色 effect 粒子」近似；音效按项目约定换成原版等价物，
+     * 并过 {@link SoundHelper#play} 统一压音量。
      */
     private static void playFateFeedback(Player player) {
         if (player.level() instanceof ServerLevel server) {

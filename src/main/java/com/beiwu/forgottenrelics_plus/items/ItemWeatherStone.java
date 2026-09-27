@@ -1,11 +1,11 @@
 package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.utils.CooldownHelper;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import java.util.List;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -88,15 +88,18 @@ public class ItemWeatherStone extends FRItem implements FRRechargable {
             return;
         }
         Vec3 center = player.position().add(0.0D, player.getBbHeight() / 2.0D, 0.0D);
-        // 蓄力过程中持续冒蓝色光点（原版用 Botania 的 wispFX，这里换成原版的末影/灵魂粒子）。
+        // 蓄力过程中冒蓝色光点。原版 1.7.10 的这段在 onUsingTick 的 count == 1 分支里，
+        // 也就是「蓄力完成的那一 tick 一次性撒 25 颗」；本项目沿用既有结构放在每 tick
+        // （结构不改，只换粒子，见提交说明的偏差记录）。
+        // 原版：for (i = 0; i <= 24; i++) wispFX(vec, r=0, g=0.3+rand*0.5, b=0.8+rand*0.2,
+        //        size=0.2+rand*0.2, xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=1.0)。
         if (level instanceof ServerLevel serverLevel) {
-            for (int i = 0; i <= 24; i++) {
-                double xm = (Math.random() - 0.5D) * 0.15D;
-                double ym = (Math.random() - 0.5D) * 0.15D;
-                double zm = (Math.random() - 0.5D) * 0.15D;
-                serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
-                        center.x, center.y, center.z, 1, xm, ym, zm, 0.05D);
-            }
+            FRParticles.serverWispBurst(serverLevel, center.x, center.y, center.z,
+                    0.0F,
+                    0.3F + level.random.nextFloat() * 0.5F,
+                    0.8F + level.random.nextFloat() * 0.2F,
+                    0.2F + level.random.nextFloat() * 0.2F, 1.0F,
+                    25, 0.0D, 0.043D);
         }
         // 原版的触发条件是 count == 1，即蓄力的最后一 tick。
         if (remainingUseDuration != 1) {

@@ -6,6 +6,7 @@ import com.beiwu.forgottenrelics_plus.registry.FRCreativeTabs;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.registry.FRItems;
+import com.beiwu.forgottenrelics_plus.registry.FRParticleTypes;
 import com.beiwu.forgottenrelics_plus.registry.FRRecipeSerializers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -49,6 +50,8 @@ public final class ForgottenRelics {
         FREntities.register(modBus);
         FRArmorMaterials.register(modBus);
         FRDataComponents.register(modBus);
+        // 闪电弧的粒子类型（1.7.10 LightningMessage 的现代替身，见 FRBoltParticleData）。
+        FRParticleTypes.register(modBus);
         FRRecipeSerializers.register(modBus);
         FRCreativeTabs.register(modBus);
 

@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
@@ -11,8 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -95,7 +94,7 @@ import net.minecraft.world.phys.Vec3;
  *       {@code Entity#teleportTo(ServerLevel, x, y, z, Set, yaw, pitch)}（内部会换维度并重建实体）；
  *       玩家目标用 {@code ServerPlayer#teleportTo(ServerLevel, x, y, z, yaw, pitch)}；</li>
  *   <li><b>不写任何自定义网络包</b>：{@code BanishmentCastingMessage} / {@code InfernalParticleMessage}
- *       的 wisp 粒子改为服务端 {@code ServerLevel#sendParticles}；{@code LightningBoltMessage}
+ *       的 wisp 粒子改为服务端 {@link FRParticles}（颜色 / 尺寸 / 初速逐字对齐原版）；{@code LightningBoltMessage}
  *       改为直接生成真正的 {@link LightningBolt} 实体（原版服务端本来就生成了，网络包只是给客户端的
  *       冗余副本）；{@code OverthrowChatMessage} 改为原版 {@code Component} +
  *       {@code PlayerList#broadcastSystemMessage} 全服广播；</li>
@@ -152,9 +151,6 @@ public class ItemOverthrower extends FRItem implements FRRechargable, IWarpingGe
 
     /** 原版实体消失时最多在周围点 12 次火。 */
     private static final int IGNITE_ATTEMPTS = 12;
-
-    /** 原版 wisp / 地狱粒子的颜色范围（r 0.9~1.0、g 0.1~0.25、b 0）取一个代表色。 */
-    private static final int PARTICLE_COLOR = 0xFF3300;
 
     public ItemOverthrower(Properties properties) {
         super(properties.stacksTo(1));
@@ -455,29 +451,48 @@ public class ItemOverthrower extends FRItem implements FRRechargable, IWarpingGe
 
     /**
      * 对应原版 {@code BanishmentCastingMessage} 的客户端渲染（Botania wispFX）：
-     * 在目标中心 ±4 内随机取 5 个点，初速 = (中心 - 取点) × 0.08，让粒子向内收束。
-     *
-     * <p>{@code sendParticles} 在 {@code count == 0} 时会发一颗「位置 + 0.5 抖动、初速为
-     * (xd, yd, zd) × speed」的粒子，正好用来复刻这个带初速的单粒子。
+     * <pre>
+     *   BanishmentCastingMessage(x, y, z, 5)
+     *   for (i = 0; i &lt; 5; i++):
+     *     p = 中心 + (rand-0.5)*8 的三轴偏移
+     *     wispFX(p, r=0.9+rand*0.1, g=0.1+rand*0.15, b=0,
+     *            size=0.2+rand*0.2, 初速=(中心-p)*0.08, maxAgeMul=0.5)
+     * </pre>
+     * 每颗粒子颜色 / 尺寸 / 初速都不同，所以逐颗单独发包（{@link FRParticles#serverWisp} 的
+     * {@code count == 0} 分支正好能精确指定初速）。
      */
     private static void banishingParticles(ServerLevel level, Vec3 center) {
         for (int i = 0; i < 5; i++) {
             double px = center.x + (level.random.nextDouble() - 0.5D) * 8.0D;
             double py = center.y + (level.random.nextDouble() - 0.5D) * 8.0D;
             double pz = center.z + (level.random.nextDouble() - 0.5D) * 8.0D;
-            level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, PARTICLE_COLOR),
-                    px, py, pz, 0,
-                    (center.x - px) * 0.08D, (center.y - py) * 0.08D, (center.z - pz) * 0.08D, 1.0D);
+            FRParticles.serverWisp(level, px, py, pz,
+                    0.9F + level.random.nextFloat() * 0.1F,
+                    0.1F + level.random.nextFloat() * 0.15F,
+                    0.0F,
+                    0.2F + level.random.nextFloat() * 0.2F,
+                    (center.x - px) * 0.08D,
+                    (center.y - py) * 0.08D,
+                    (center.z - pz) * 0.08D,
+                    0.5F);
         }
     }
 
     /**
-     * 对应原版 {@code InfernalParticleMessage(x, y, z, 128)}：循环 {@code i <= 128}，
-     * 即 129 颗粒子全部从中心原地炸开（初速 ±0.25）。
+     * 对应原版 {@code InfernalParticleMessage(x, y, z, 128)}：
+     * {@code for (i = 0; i <= 128; i++)} 即 129 颗从中心原地炸开，
+     * {@code wispFX(中心, r=0.9+rand*0.1, g=0.1+rand*0.15, b=0, size=0.4+rand*0.4,
+     * xm/ym/zm=(rand-0.5)*0.5, maxAgeMul=1.0)}。
+     *
+     * <p>颜色 / 尺寸各抽一次（原版逐颗随机），初速幅度按 {@code 0.5/√12 ≈ 0.144} 折算。
      */
     private static void infernalBurst(ServerLevel level, Vec3 center) {
-        level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, PARTICLE_COLOR),
-                center.x, center.y, center.z, 129, 0.0D, 0.0D, 0.0D, 0.25D);
+        FRParticles.serverWispBurst(level, center.x, center.y, center.z,
+                0.9F + level.random.nextFloat() * 0.1F,
+                0.1F + level.random.nextFloat() * 0.15F,
+                0.0F,
+                0.4F + level.random.nextFloat() * 0.4F, 1.0F,
+                129, 0.0D, 0.144D);
     }
 
     /**

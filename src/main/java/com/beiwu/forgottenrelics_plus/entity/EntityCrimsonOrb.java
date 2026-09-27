@@ -1,11 +1,11 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import java.util.List;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -51,8 +51,11 @@ import net.minecraft.world.phys.Vec3;
  *       在 1.21.1 由基类的 {@code SynchedEntityData} 承担，两端都能解析出目标实体，
  *       不必自己写生成包，所以这里没有构造器同步字段；</li>
  *   <li>原版命中时调的 {@code SuperpositionHandler.imposeBurst} 是<b>纯客户端粒子爆发</b>
- *       （自定义网络包 → {@code Thaumcraft.proxy.burst}），<b>没有任何范围伤害</b>；
- *       1.21.1 用原版粒子 {@code ParticleTypes.CRIMSON_SPORE} + 一发 {@code FLASH} 代替；</li>
+ *       （自定义网络包 → {@code Thaumcraft.proxy.burst}），<b>没有任何范围伤害</b>。
+ *       1.7.10 这一段不是 Botania 粒子，但 RE 的 {@code EntityCrimsonOrb#spawnHitParticles}
+ *       已经把它换成了 Botania：<b>15 颗猩红 wisp + 1 颗 sparkle</b>，本项目照 RE 复刻；</li>
+ *   <li>拖尾：1.7.10 这个实体没有拖尾粒子（形体由 {@code RenderCrimsonOrb} 画），
+ *       是 RE 在客户端 {@code onUpdate} 里补的 Botania sparkle 轨迹，本项目同样照 RE 复刻；</li>
  *   <li>原版放电音 {@code thaumcraft:shock} 换成原版等价物 {@link SoundEvents#LIGHTNING_BOLT_IMPACT}
  *       （与霹雳咒书命中音同一替代方案），反弹音 {@code thaumcraft:zap} 换成
  *       {@link SoundEvents#FIREWORK_ROCKET_BLAST}（与霹雳咒书发射音同一替代方案）；</li>
@@ -147,14 +150,40 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
         // 一个都没搜到时，原版保持原目标不变；这里同样什么都不做。
     }
 
-    /** 拖尾：原版渲染器本就用粒子贴片画出红色球体，这里用同为猩红色的原版粒子代替。 */
+    /**
+     * 拖尾：照抄 RE {@code EntityCrimsonOrb#onUpdate} 客户端分支——
+     * 从上一 tick 位置到当前位置按 0.05 格采样，每一步一颗 sparkle
+     * （{@code r=0.8+rand*0.2、g=0.1+rand*0.2、b=rand*0.1、size=0.8、m=2}），
+     * 另有 {@code 1/steps} 的概率在 ±0.4 的偏移处再补一颗同参数 sparkle。
+     *
+     * <p>对应 {@link FRParticles#sparkle}（纯客户端 addParticle，无网络开销）。
+     */
     @Override
     protected void spawnTrailParticles() {
-        level().addParticle(ParticleTypes.CRIMSON_SPORE,
-                getX() + (random.nextDouble() - 0.5D) * 0.3D,
-                getY() + (random.nextDouble() - 0.5D) * 0.3D,
-                getZ() + (random.nextDouble() - 0.5D) * 0.3D,
-                0.0D, 0.0D, 0.0D);
+        Vec3 from = new Vec3(xo, yo, zo);
+        Vec3 to = position();
+        Vec3 diff = to.subtract(from);
+        double length = diff.length();
+        if (length < TRAIL_STEP) {
+            return;
+        }
+        int steps = (int) (length / TRAIL_STEP);
+        Vec3 step = diff.scale(TRAIL_STEP / length);
+        Vec3 pos = from;
+        for (int i = 0; i < steps; i++) {
+            float r = 0.8F + random.nextFloat() * 0.2F;
+            float g = 0.1F + random.nextFloat() * 0.2F;
+            float b = random.nextFloat() * 0.1F;
+            FRParticles.sparkle(level(), pos.x, pos.y, pos.z, r, g, b, 0.8F, 2);
+            if (random.nextInt(steps) <= 1) {
+                FRParticles.sparkle(level(),
+                        pos.x + (random.nextDouble() - 0.5D) * 0.4D,
+                        pos.y + (random.nextDouble() - 0.5D) * 0.4D,
+                        pos.z + (random.nextDouble() - 0.5D) * 0.4D,
+                        r, g, b, 0.8F, 2);
+            }
+            pos = pos.add(step);
+        }
     }
 
     /**
@@ -199,8 +228,23 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
         SoundHelper.play(level(), getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.PLAYERS,
                 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
         if (level() instanceof ServerLevel server) {
-            server.sendParticles(ParticleTypes.CRIMSON_SPORE, getX(), getY(), getZ(), 40, 0.5D, 0.5D, 0.5D, 0.05D);
-            server.sendParticles(ParticleTypes.FLASH, getX(), getY(), getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            // RE #spawnHitParticles 的 15 颗猩红 wisp：
+            // wispFX(hx, hy, hz, 0.8+rand*0.2, 0.1+rand*0.2, rand*0.1,
+            //        size=0.1+rand*0.3, xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=0.9)。
+            // 逐颗单独发包以保留「每颗颜色/尺寸都不同」的原版观感（旧版同样是一颗一颗 addParticle）。
+            for (int i = 0; i < 15; i++) {
+                FRParticles.serverWisp(server, getX(), getY(), getZ(),
+                        0.8F + random.nextFloat() * 0.2F,
+                        0.1F + random.nextFloat() * 0.2F,
+                        random.nextFloat() * 0.1F,
+                        0.1F + random.nextFloat() * 0.3F,
+                        (random.nextDouble() - 0.5D) * 0.15D,
+                        (random.nextDouble() - 0.5D) * 0.15D,
+                        (random.nextDouble() - 0.5D) * 0.15D,
+                        0.9F);
+            }
+            // RE 末尾那一颗 sparkleFX(hx, hy, hz, 1.0, 0.2, 0.1, size=2.0, m=4)。
+            FRParticles.serverSparkle(server, getX(), getY(), getZ(), 1.0F, 0.2F, 0.1F, 2.0F, 4);
         }
     }
 
@@ -223,6 +267,9 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
                 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
         return true;
     }
+
+    /** RE 拖尾的采样步长：{@code diff.normalize().multiply(0.05)}。 */
+    private static final double TRAIL_STEP = 0.05D;
 
     /** 原版 {@code BlockBush || BlockLeaves || BlockLiquid} 三类放行。 */
     private static boolean isPenetrable(BlockState state) {
