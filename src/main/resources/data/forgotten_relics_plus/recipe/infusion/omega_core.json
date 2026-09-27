@@ -3,18 +3,24 @@
     { "type": "neoforge:mod_loaded", "modid": "avaritia" }
   ],
   "type": "thaumaturge:infusion",
-    "aspects": [
+      "aspects": [
     { "aspect": "thaumaturge:aer", "amount": 256 },
     { "aspect": "thaumaturge:aqua", "amount": 256 },
     { "aspect": "thaumaturge:ignis", "amount": 256 },
     { "aspect": "thaumaturge:terra", "amount": 256 },
     { "aspect": "thaumaturge:ordo", "amount": 256 },
-    { "aspect": "thaumaturge:perditio", "amount": 256 }
+    { "aspect": "thaumaturge:perditio", "amount": 256 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 192 },
+    { "aspect": "thaumaturge:auram", "amount": 192 },
+    { "aspect": "thaumaturge:vacuos", "amount": 192 },
+    { "aspect": "thaumaturge:alienis", "amount": 128 },
+    { "aspect": "thaumaturge:cognitio", "amount": 128 }
   ],
   "catalyst": { "item": "avaritia:enhancement_core" },
   "components": [
     { "item": "forgotten_relics_plus:soul_tome" },
     { "item": "forgotten_relics_plus:tome_of_broken_fates" },
+    { "item": "avaritia:infinity_totem" },
     { "item": "thaumaturge:primordial_pearl" },
     { "item": "thaumaturge:primordial_pearl" },
     { "item": "thaumaturge:primordial_pearl" },
