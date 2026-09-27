@@ -44,6 +44,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.ARCANUM.get());
                         output.accept(FRItems.DORMANT_ARCANUM.get());
                         output.accept(FRItems.DISCORD_RING.get());
+                        // 原创补完物品，排在最后。
+                        output.accept(FRItems.GHASTLY_SKULL.get());
                     })
                     .build());
 

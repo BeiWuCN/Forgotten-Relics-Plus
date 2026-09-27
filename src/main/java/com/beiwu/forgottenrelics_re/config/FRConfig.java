@@ -196,6 +196,31 @@ public final class FRConfig {
     /** 恐惧之冠附带的扭曲值。 */
     public static final ModConfigSpec.IntValue TERROR_CROWN_WARP;
 
+    /** 食尸鬼之颅：允许献祭所需的最低生命值。 */
+    public static final ModConfigSpec.IntValue GHASTLY_SKULL_MIN_HEALTH;
+    /** 食尸鬼之颅：怨魂冲击沿视线能到达的最大距离（格）。 */
+    public static final ModConfigSpec.IntValue GHASTLY_SKULL_BURST_RANGE;
+    /** 食尸鬼之颅：怨魂冲击的作用半径（格）。 */
+    public static final ModConfigSpec.DoubleValue GHASTLY_SKULL_BURST_RADIUS;
+    /** 食尸鬼之颅：每献祭 1 点生命造成的伤害。 */
+    public static final ModConfigSpec.DoubleValue GHASTLY_SKULL_DAMAGE_MULT;
+    /** 食尸鬼之颅：单次冲击的伤害上限。 */
+    public static final ModConfigSpec.DoubleValue GHASTLY_SKULL_MAX_DAMAGE;
+    /** 食尸鬼之颅：每命中一个目标回复的生命值。 */
+    public static final ModConfigSpec.DoubleValue GHASTLY_SKULL_HEAL_PER_TARGET;
+    /** 食尸鬼之颅：命中目标的凋零持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue GHASTLY_SKULL_WITHER_DURATION;
+    /** 食尸鬼之颅：命中目标的凋零等级。 */
+    public static final ModConfigSpec.IntValue GHASTLY_SKULL_WITHER_LEVEL;
+    /** 食尸鬼之颅：每次发动消耗的 Vis。 */
+    public static final ModConfigSpec.IntValue GHASTLY_SKULL_VIS_COST;
+    /** 食尸鬼之颅：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue GHASTLY_SKULL_MAX_CHARGE;
+    /** 食尸鬼之颅：发动后的冷却（tick）。 */
+    public static final ModConfigSpec.IntValue GHASTLY_SKULL_COOLDOWN;
+    /** 食尸鬼之颅：附带的扭曲值。 */
+    public static final ModConfigSpec.IntValue GHASTLY_SKULL_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -513,6 +538,48 @@ public final class FRConfig {
         TERROR_CROWN_WARP = builder
                 .comment("Warp granted by Crown of Terror.", "恐惧之冠附带的扭曲值。")
                 .defineInRange("terrorCrownWarp", 3, 0, 32768);
+        builder.pop();
+
+        builder.comment("食尸鬼之颅（原创补完物品：1.7.10 原版只有未写完的骨架）").push("ghastly_skull");
+        GHASTLY_SKULL_MIN_HEALTH = builder
+                .comment("Minimum health required to sacrifice. Below this the skull refuses to fire.",
+                         "允许献祭所需的最低生命值，低于此值则拒绝发动（避免变成自杀）。")
+                .defineInRange("ghastlySkullMinHealth", 6, 2, 32768);
+        GHASTLY_SKULL_BURST_RANGE = builder
+                .comment("Maximum distance in blocks the spectral burst reaches along the line of sight.",
+                         "怨魂冲击沿视线能到达的最大距离（格）。原版那段残代码里写死的是 16。")
+                .defineInRange("ghastlySkullBurstRange", 16, 1, 256);
+        GHASTLY_SKULL_BURST_RADIUS = builder
+                .comment("Radius in blocks of the spectral burst.", "怨魂冲击的作用半径（格）。")
+                .defineInRange("ghastlySkullBurstRadius", 5.0D, 0.0D, 64.0D);
+        GHASTLY_SKULL_DAMAGE_MULT = builder
+                .comment("Damage dealt per point of sacrificed health.", "每献祭 1 点生命造成的伤害。")
+                .defineInRange("ghastlySkullDamageMult", 1.5D, 0.0D, 1024.0D);
+        GHASTLY_SKULL_MAX_DAMAGE = builder
+                .comment("Upper limit of a single burst's damage.", "单次怨魂冲击的伤害上限。")
+                .defineInRange("ghastlySkullMaxDamage", 30.0D, 0.0D, 32768.0D);
+        GHASTLY_SKULL_HEAL_PER_TARGET = builder
+                .comment("Health restored per entity hit. The total never exceeds the health sacrificed.",
+                         "每命中一个目标回复的生命值；总量不会超过献祭掉的生命。")
+                .defineInRange("ghastlySkullHealPerTarget", 2.0D, 0.0D, 32768.0D);
+        GHASTLY_SKULL_WITHER_DURATION = builder
+                .comment("Wither duration in ticks applied to hit entities.", "命中目标的凋零持续时间（tick）。")
+                .defineInRange("ghastlySkullWitherDuration", 100, 0, 32768);
+        GHASTLY_SKULL_WITHER_LEVEL = builder
+                .comment("Wither amplifier applied to hit entities.", "命中目标的凋零等级。")
+                .defineInRange("ghastlySkullWitherLevel", 1, 0, 255);
+        GHASTLY_SKULL_VIS_COST = builder
+                .comment("Vis consumed per use.", "每次发动消耗的 Vis。")
+                .defineInRange("ghastlySkullVisCost", 100, 0, 32768);
+        GHASTLY_SKULL_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Ghastly Skull.", "食尸鬼之颅的最大 Vis 储量。")
+                .defineInRange("ghastlySkullMaxCharge", 300, 0, 32768);
+        GHASTLY_SKULL_COOLDOWN = builder
+                .comment("Cooldown in ticks after each use.", "每次发动后的冷却（tick）。")
+                .defineInRange("ghastlySkullCooldown", 200, 0, 32768);
+        GHASTLY_SKULL_WARP = builder
+                .comment("Warp granted by the Ghastly Skull.", "食尸鬼之颅附带的扭曲值。")
+                .defineInRange("ghastlySkullWarp", 3, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

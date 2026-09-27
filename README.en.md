@@ -1,4 +1,4 @@
-# Forgotten Relics: Unofficial — high-version port
+# Forgotten Relics + — high-version port
 
 **English** | [简体中文](README.md)
 
@@ -26,7 +26,7 @@ Licence chain:
 | --- | --- | --- | --- |
 | Forgotten Relics (original) | 1.7.10 | Integral / Extegral / VictorShadow | [WTFPL](https://github.com/jss2a98aj/Forgotten-Relics/blob/master/LICENSE) |
 | Forgotten Relics RE (1.12.2 port) | 1.12.2 | NNYYOONNIIOO et al. | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) (**no code from it is used here**) |
-| **Forgotten Relics: Unofficial (this project)** | 1.21.1 | beiwu, gali2009 et al. | **[MIT](https://opensource.org/license/mit)** |
+| **Forgotten Relics + (this project)** | 1.21.1 | beiwu, gali2009 et al. | **[MIT](https://opensource.org/license/mit)** |
 
 ### Code provenance
 
@@ -35,6 +35,11 @@ All code is written independently against the 1.21.1 / NeoForge APIs and **conta
 port (RE)**. That port is licensed CC BY-NC-SA 4.0, so building on its code would drag in both the
 non-commercial and the share-alike restrictions — which is exactly why this project moved to MIT.
 RE is used only to compare in-game behaviour; item textures and text come straight from the 1.7.10 original.
+
+> **About the name**: this project ports the original **Forgotten Relics**, so it keeps the original's name.
+> The 1.12.2 port rebranded its Chinese name to "失落遗物学：重现"; that name belongs to that port's author
+> and is deliberately not used here. The "+" is this project's own suffix, marking this 1.21.1 branch only —
+> it does not imply any endorsement by either upstream author.
 
 ### You are free to
 

@@ -19,7 +19,7 @@ import top.theillusivec4.curios.api.SlotContext;
  *
  * <p>1.12.2 原版行为（见 {@code ItemMiningCharm} 与 {@code RelicsEventHandler.miningStuff}）：
  * <ul>
- *   <li>占用 Baubles 的 CHARM 槽；</li>
+ *   <li>占用 Baubles 的 RING 槽（实测原版 {@code getBaubleType} 返回 {@code BaubleType.RING}）；</li>
  *   <li>装备时给玩家加一条 {@code REACH_DISTANCE} 属性修饰符，数值取自配置
  *       {@code miningCharmReach}（默认 2）；</li>
  *   <li>挖掘速度不是属性，而是在 {@code PlayerEvent.BreakSpeed} 里按倍率乘上去，
@@ -28,7 +28,7 @@ import top.theillusivec4.curios.api.SlotContext;
  *
  * <p>1.21.1 对应关系：
  * <ul>
- *   <li>Baubles 的 CHARM 槽 → Curios 的 {@code charm} 槽（由数据包 {@code data/curios/tags/item/charm.json} 指定）；</li>
+ *   <li>Baubles 的 RING 槽 → Curios 的 {@code ring} 槽（由数据包 {@code data/curios/tags/item/ring.json} 指定）；</li>
  *   <li>{@code REACH_DISTANCE} → {@code Attributes.BLOCK_INTERACTION_RANGE}；</li>
  *   <li>{@code PlayerEvent.BreakSpeed} 在 NeoForge 中同名保留，见 {@code FRCommonEvents#onBreakSpeed}。</li>
  * </ul>

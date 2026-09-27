@@ -30,7 +30,7 @@ public final class ForgottenRelics {
     public static final String MOD_ID = "forgotten_relics";
 
     /** 模组名称。 */
-    public static final String MOD_NAME = "Forgotten Relics: Unofficial";
+    public static final String MOD_NAME = "Forgotten Relics Plus";
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 

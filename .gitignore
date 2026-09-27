@@ -22,6 +22,8 @@ docs/
 # 运行目录
 run/
 runs/
+# IDEA 共享运行配置：按约定只放本地，不入库（用 gradlew runClient/runServer/runData 即可）
+.run/
 
 # 本机开发用的前置 jar（体积大，不入库；见 libs/README.md）
 libs/*.jar
