@@ -16,41 +16,33 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 「一道闪电弧」的数据载体，对应 1.7.10 原版 {@code SuperpositionHandler.imposeLightning} /
- * {@code imposeArcLightning} 打包进 {@code LightningMessage} / {@code ArcLightningMessage} 的那几个字段。
+ * {@code imposeArcLightning} 打包进 {@code LightningMessage} / {@code ArcLightningMessage} 的字段。
  *
- * <h2>为什么是一个 {@link ParticleOptions}，而不是网络包</h2>
- *
+ * <h2>为什么是 {@link ParticleOptions}，而不是网络包</h2>
  * <p>1.7.10 与 1.12.2 移植版（RE）都自己写了 {@code LightningMessage}（客户端收到后调 Thaumcraft 的
- * {@code FXDispatcher.arcBolt} 画电弧）。1.21.1 的 Botania（{@code libs/botania-neoforge-1.21.1-457.jar}）
- * 已经带了现成的闪电几何生成器与渲染器（见 {@code client/FRBolts} 的类注释），缺的只是「把端点送到客户端」
- * 这一步。本项目<b>不新写自定义网络包</b>：把这几个字段塞进一个自定义 {@link ParticleOptions}，
- * 走原版 {@code ClientboundLevelParticlesPacket}（{@code ServerLevel#sendParticles}）广播——
- * 这就是原版自带的「服务端广播」通道，客户端在对应的 {@code ParticleProvider} 里再转交给 Botania。
- *
- * <p>也就是说：<b>网络上传输的仍然是一个原版粒子包</b>，只是这个「粒子」自己不画任何东西
- * （provider 返回 {@code null}），真正画闪电的是 Botania 的 {@code BoltRenderer}。
+ * {@code arcBolt} 画电弧）。1.21.1 的 Botania 已带现成的闪电几何生成器与渲染器（见 {@code client/FRBolts}），
+ * 缺的只是「把端点送到客户端」。本移植<b>不新写自定义网络包</b>：把这几个字段塞进自定义
+ * {@link ParticleOptions}，走原版 {@code ClientboundLevelParticlesPacket}（{@code ServerLevel#sendParticles}）
+ * 广播。网络上传输的仍是原版粒子包，只是这个「粒子」自己不画东西（provider 返回 {@code null}），
+ * 真正画闪电的是 Botania 的 {@code BoltRenderer}。
  *
  * <h2>字段与原版的对应</h2>
  * <ul>
- *   <li>{@code from} / {@code to}：闪电两端。对应 {@code LightningMessage(x,y,z,destx,desty,destz)}；</li>
- *   <li>{@code width}：电弧粗细。对应 {@code imposeLightning(..., width)} /
- *       {@code ArcLightningMessage(..., h)}，落到 Botania 是
- *       {@code BoltParticleOptions#size(float)}（四边带的半宽，与 Thaumcraft {@code setWidth} 同义）；</li>
- *   <li>{@code count}：一次画几股。1.7.10 里 {@code for (counter = 0; counter <= 3; ++counter)}
- *       那种「同一处连画 4 次」的写法换算成 Botania 的 {@code BoltParticleOptions#count(int)}，
- *       一次广播就是 4 股随机折线，省掉 4 个粒子包；</li>
- *   <li>{@code color}：{@code 0xRRGGBB}。对应 {@code ArcLightningMessage} 的 r/g/b；
- *       {@code imposeLightning} 没有颜色参数，统一用 RE 客户端 {@code arcBolt(..., 0.4, 0.6, 1.0)}
- *       的那抹电蓝。</li>
+ *   <li>{@code from} / {@code to}：闪电两端，对应 {@code LightningMessage(x,y,z,destx,desty,destz)}；</li>
+ *   <li>{@code width}：电弧粗细，对应 {@code imposeLightning(..., width)} / {@code ArcLightningMessage(..., h)}，
+ *       落到 Botania 是 {@code BoltParticleOptions#size(float)}（四边带半宽，与 Thaumcraft {@code setWidth} 同义）；</li>
+ *   <li>{@code count}：一次画几股。原版 {@code for (counter = 0; counter <= 3; ++counter)} 的「同一处连画 4 次」
+ *       换算成 {@code BoltParticleOptions#count(int)}，一次广播就是 4 股随机折线，省掉 4 个粒子包；</li>
+ *   <li>{@code color}：{@code 0xRRGGBB}，对应 {@code ArcLightningMessage} 的 r/g/b；{@code imposeLightning}
+ *       没有颜色参数，统一用 RE 客户端 {@code arcBolt(..., 0.4, 0.6, 1.0)} 的电蓝。</li>
  * </ul>
  *
- * <p>原版 {@code imposeLightning} 还有一个 {@code duration}（20 或 40 tick）、{@code curve}、
- * {@code speed}、{@code type}。前三者决定折线的抖动与存活时长，在 Botania 里分别由
- * {@code BoltRenderInfo}（默认 {@code spreadFactor = 0.1}）与 {@code lifespan}（默认 30 tick）承担，
- * 这里沿用 Botania 的默认值——与 Botania 自己的 {@code Proxy#lightningFX} 完全一致；
- * {@code type} 是 Thaumcraft 的闪电变体编号，1.21.1 没有对应物，忽略。
+ * <p>原版还有 {@code duration} / {@code curve} / {@code speed} / {@code type}：前三者由 Botania 的
+ * {@code BoltRenderInfo}（{@code spreadFactor} 默认 0.1）与 {@code lifespan}（默认 30 tick）承担，
+ * 这里沿用 Botania 默认值（与 Botania 自己的 {@code Proxy#lightningFX} 一致）；{@code type} 是 Thaumcraft
+ * 的闪电变体编号，1.21.1 无对应物，忽略。
  *
- * <p>本类只做「打包 + 服务端广播」，不碰任何客户端类型，因此可以被物品 / 实体这类公共端代码直接调用。
+ * <p>本类只做「打包 + 服务端广播」，不碰任何客户端类型，可被物品 / 实体这类公共端代码直接调用。
  */
 public record FRBoltParticleData(Vec3 from, Vec3 to, float width, int count, int color) implements ParticleOptions {
 
@@ -152,7 +144,7 @@ public record FRBoltParticleData(Vec3 from, Vec3 to, float width, int count, int
         if (from.distanceToSqr(to) < 1.0E-6D) {
             return;
         }
-        FRBoltParticleData data = new FRBoltParticleData(from, to, width, Math.max(1, count), packColor(red, green, blue));
+        var data = new FRBoltParticleData(from, to, width, Math.max(1, count), packColor(red, green, blue));
         List<ServerPlayer> players = level.players();
         for (ServerPlayer player : players) {
             if (player.position().distanceToSqr(from) <= BROADCAST_RADIUS * BROADCAST_RADIUS) {

@@ -4,27 +4,26 @@ import java.util.function.Consumer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 
 /**
  * 「玩家身上带着的东西」的遍历入口。
  *
- * <p>与 {@link FRWornItems} 的分工要分清楚，两者语义不同，用错会直接改变游戏行为：
+ * <p>与 {@link FRWornItems} 的分工必须分清，两者语义不同，用错会直接改变游戏行为：
  *
  * <ul>
- *   <li>{@link FRWornItems} 是<b>穿戴着</b>的东西（Curios 饰品栏 + 护甲槽）。所有「佩戴时生效」的
+ *   <li>{@link FRWornItems} 是「穿戴着」的东西（Curios 饰品栏 + 护甲槽）。所有「佩戴时生效」的
  *       遗物都必须用它——否则把湮灭护符塞进背包也会开始吸收伤害。</li>
- *   <li>本类是<b>带着</b>的东西（整个物品栏 + 饰品栏），对应原版用
+ *   <li>本类是「带着」的东西（整个物品栏 + 饰品栏），对应原版用
  *       {@code player.inventory.hasItem(...)} 判断的那类效果。</li>
  * </ul>
  *
- * <p>原版里这一类效果分两种落地方式，现代写法也分两种：
+ * <p>这一类效果在原版里分两种落地方式，现代写法也分两种：
  * <ul>
- *   <li><b>每 tick 生效</b>的（混沌之核、欧米伽之核、破碎的命运巨著）：原版写在
+ *   <li>每 tick 生效的（混沌之核、欧米伽之核、破碎的命运巨著）：原版写在
  *       {@code Item#onUpdate} 里，1.21.1 的对应物就是原生的 {@code Item#inventoryTick}，
- *       <b>不需要经过本类</b>；</li>
- *   <li><b>由事件触发</b>的（致死免死等）：原版写在 {@code RelicsEventHandler} 里翻背包，
+ *       不需要经过本类；</li>
+ *   <li>由事件触发的（致死免死等）：原版写在 {@code RelicsEventHandler} 里翻背包，
  *       1.21.1 由 {@code FRCommonEvents} 用本类派发。</li>
  * </ul>
  */
@@ -48,7 +47,7 @@ public final class FRCarriedItems {
             }
         }
         CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
-            IItemHandlerModifiable equipped = handler.getEquippedCurios();
+            var equipped = handler.getEquippedCurios();
             for (int slot = 0; slot < equipped.getSlots(); slot++) {
                 ItemStack stack = equipped.getStackInSlot(slot);
                 if (!stack.isEmpty()) {

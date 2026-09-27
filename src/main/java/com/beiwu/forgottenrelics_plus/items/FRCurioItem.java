@@ -12,12 +12,12 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 /**
  * 饰品基类。
  *
- * <p>对应 1.12.2 原版 {@code ItemBaubleBase}（它继承了 Botania 的同类，带一整套「右键装备、
+ * <p>对应 1.12.2 移植版（RE）的 {@code ItemBaubleBase}（它继承了 Botania 的同类，带一整套「右键装备、
  * 外观物品、幻影墨水、死亡自动卸下」）。1.21.1 的 Curios 已内置这些通用行为，因此这里只保留：
  *
  * <ul>
- *   <li>堆叠上限固定为 1（对应原版构造器里的 {@code setMaxStackSize(1)}）；</li>
- *   <li>属性修饰符钩子 —— 原版是在装备/卸下时手动往属性表加加减减，Curios 改成由框架统一
+ *   <li>堆叠上限固定为 1（对应 RE 构造器里的 {@code setMaxStackSize(1)}）；</li>
+ *   <li>属性修饰符钩子 —— RE 是在装备/卸下时手动往属性表加加减减，Curios 改成由框架统一
  *       施加与撤销，子类只要往 multimap 里填；</li>
  *   <li>「拿在手上右键即可装备」。</li>
  * </ul>
@@ -51,7 +51,7 @@ public abstract class FRCurioItem extends FRItem implements ICurioItem {
 
     @Override
     public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        // 与原版一致：拿在手上右键即可装备。
+        // 与 RE 一致：拿在手上右键即可装备。
         return true;
     }
 }

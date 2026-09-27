@@ -3,14 +3,13 @@ package com.beiwu.forgottenrelics_plus.utils;
 import java.util.function.Consumer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 
 /**
  * 「玩家身上所有被穿戴的东西」的统一入口。
  *
- * <p>取代原版到处出现的 {@code BaublesApi.getBaublesHandler(player).getStackInSlot(i)} +
- * {@code player.getItemStackFromSlot(...)} 两套写法：饰品栏与原版护甲槽在这里合并成一条序列，
+ * <p>取代 RE 到处出现的 {@code BaublesApi.getBaublesHandler(player).getStackInSlot(i)} +
+ * {@code player.getItemStackFromSlot(...)} 两套写法：饰品栏与护甲槽在这里合并成一条序列，
  * 行为派发只认「谁被穿着」，不关心它挂在哪个系统里。
  *
  * <p>刻意只提供 {@link #forEach} 这种回调式遍历，不返回 List —— 每 tick 派发时不会产生额外分配。
@@ -28,7 +27,7 @@ public final class FRWornItems {
      */
     public static void forEach(Player player, Consumer<ItemStack> action) {
         CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
-            IItemHandlerModifiable equipped = handler.getEquippedCurios();
+            var equipped = handler.getEquippedCurios();
             for (int slot = 0; slot < equipped.getSlots(); slot++) {
                 ItemStack stack = equipped.getStackInSlot(slot);
                 if (!stack.isEmpty()) {

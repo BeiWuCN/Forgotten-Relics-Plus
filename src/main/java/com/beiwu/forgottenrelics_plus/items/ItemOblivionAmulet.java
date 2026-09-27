@@ -21,14 +21,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * 湮灭护符（Amulet of The Oblivion），1.12.2 原版 {@code ItemOblivionAmulet}，护身符槽。
+ * 湮灭护符（Amulet of The Oblivion），RE 的 {@code ItemOblivionAmulet}，护身符槽。
  *
  * <p>原版行为：
  * <ul>
- *   <li>佩戴期间吸收<b>所有</b>对佩戴者造成的伤害，代价是按 {@code 伤害 × 8 × oblivionAmuletVisMult}
+ *   <li>佩戴期间吸收所有对佩戴者造成的伤害，代价是按 {@code 伤害 × 8 × oblivionAmuletVisMult}
  *       扣 Vis；吸收下来的伤害累计存在物品上（原版存 NBT 字段 {@code IDamageStored}）；</li>
  *   <li>每 tick 有 {@code oblivionAmuletDamageReleaseChance}（默认 0.0008）的概率把储存的伤害
- *       随机释放一部分回佩戴者身上——这是它的代价，故伤害来源用模组自有的「湮灭」类型，
+ *       随机释放一部分回佩戴者身上——这是它的代价，故伤害来源用本移植自有的「湮灭」类型，
  *       以免被自身再次吸收形成死循环；</li>
  *   <li>另有 {@code oblivionAmuletPotionChance}（默认 0.0004）的概率施加随机负面效果；</li>
  *   <li>附带 {@code oblivionAmuletWarp}（默认 4）点扭曲。</li>
@@ -65,7 +65,6 @@ public class ItemOblivionAmulet extends FRCurioItem
         return stack.getOrDefault(FRDataComponents.STORED_DAMAGE.get(), 0.0F);
     }
 
-    /** 写回累计储存的伤害。 */
     public static void setStoredDamage(ItemStack stack, float value) {
         stack.set(FRDataComponents.STORED_DAMAGE.get(), Math.max(0.0F, value));
     }

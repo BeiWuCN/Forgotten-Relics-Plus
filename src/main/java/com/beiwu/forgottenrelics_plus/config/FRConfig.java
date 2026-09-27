@@ -3,14 +3,14 @@ package com.beiwu.forgottenrelics_plus.config;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
- * 模组配置。
+ * 本移植的配置。
  *
- * <p>对应 1.12.2 原版的 {@code RelicsConfigHandler}。原版用的是 Forge 的 {@code Configuration}
+ * <p>对应 RE 的 {@code RelicsConfigHandler}。它用的是 Forge 的 {@code Configuration}
  * 加一堆静态字段，NeoForge 1.21.1 换成了 {@link ModConfigSpec}：字段本身是「值的包装」，
  * 读取时要调用 {@code get()}。
  *
  * <p>键名与默认值都照抄原版，默认值后面的注释里标出原版所在的分类，方便对照老配置文件。
- * 原版按物品分了很多分类，这里按同样的思路 push 出子分类。
+ * 原版按物品分成多个分类，这里按同样的思路 push 出子分类。
  */
 public final class FRConfig {
 
@@ -39,21 +39,15 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue SUPERPOSITION_RING_SPLIT_MAX;
 
     // ---- 经验之书 / XP Tome ----
-    /** 每 tick 转移的经验点数。 */
     public static final ModConfigSpec.IntValue XP_TOME_TRANSFER_RATE;
 
     // ---- 符文天象石 / Weather Stone ----
-    /** 每次施法的 Vis 基础消耗。 */
     public static final ModConfigSpec.IntValue WEATHER_STONE_VIS_COST;
-    /** Vis 消耗倍率。 */
     public static final ModConfigSpec.DoubleValue WEATHER_STONE_VIS_MULT;
-    /** 引导时长（tick）。 */
     public static final ModConfigSpec.IntValue WEATHER_STONE_CHANNEL_DURATION;
-    /** 使用后的冷却（tick）。 */
     public static final ModConfigSpec.IntValue WEATHER_STONE_COOLDOWN;
 
     // ---- 空间魔镜 / Dimensional Mirror ----
-    /** 引导时长（tick）。 */
     public static final ModConfigSpec.IntValue DIMENSIONAL_MIRROR_CHANNEL_DURATION;
 
     // ---- 音效 / Sound ----
@@ -61,17 +55,13 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue SOUND_VOLUME_MULTIPLIER;
 
     // ---- Vis 上限 / Vis ----
-    /** 符文天象石的最大 Vis 储量。 */
     public static final ModConfigSpec.IntValue WEATHER_STONE_MAX_CHARGE;
-    /** 空间魔镜的最大 Vis 储量。 */
     public static final ModConfigSpec.IntValue DIMENSIONAL_MIRROR_MAX_CHARGE;
 
     // ---- 远古之庇护 / Ancient Aegis ----
     /** 佩戴者受到的伤害减免比例，0.25 表示 25%。 */
     public static final ModConfigSpec.DoubleValue ANCIENT_AEGIS_DAMAGE_REDUCTION;
-    /** 每次治疗回复的生命值。 */
     public static final ModConfigSpec.DoubleValue ANCIENT_AEGIS_HEAL_AMOUNT;
-    /** 治疗判定间隔（tick）。 */
     public static final ModConfigSpec.IntValue ANCIENT_AEGIS_HEAL_INTERVAL;
     /** 击退抗性加成（1.0 表示完全免疫击退）。 */
     public static final ModConfigSpec.DoubleValue ANCIENT_AEGIS_KNOCKBACK_RESISTANCE;
@@ -79,69 +69,46 @@ public final class FRConfig {
     // ---- 七阳之戒 / Ring of The Seven Suns ----
     /** 超过该数值的伤害会被完全抵消。 */
     public static final ModConfigSpec.DoubleValue DARK_SUN_RING_DAMAGE_CAP;
-    /** 把攻击反弹给攻击者的概率。 */
     public static final ModConfigSpec.DoubleValue DARK_SUN_RING_DEFLECT_CHANCE;
     /** 是否给「火焰伤害转化为治疗」加上冷却限制。 */
     public static final ModConfigSpec.BooleanValue DARK_SUN_RING_HEAL_LIMIT;
-    /** 七阳之戒的最大 Vis 储量。 */
     public static final ModConfigSpec.IntValue DARK_SUN_RING_MAX_CHARGE;
 
     // ---- 神圣护身符 / Deific Amulet ----
-    /** 是否免疫状态效果。 */
     public static final ModConfigSpec.BooleanValue DEIFIC_AMULET_EFFECT_IMMUNITY;
     /** 免疫状态效果时是否只清除减益、保留增益。 */
     public static final ModConfigSpec.BooleanValue DEIFIC_AMULET_ONLY_NEGATES_DEBUFFS;
-    /** 是否延长无敌帧。 */
     public static final ModConfigSpec.BooleanValue DEIFIC_AMULET_INVINCIBILITY;
-    /** 延长后的无敌帧时长（tick）。 */
     public static final ModConfigSpec.IntValue DEIFIC_AMULET_INVINCIBILITY_EXTENSION;
-    /** 无敌帧延长效果的冷却（tick）。 */
     public static final ModConfigSpec.IntValue DEIFIC_AMULET_INVINCIBILITY_COOLDOWN;
     /** 窒息时补充的氧气量（tick）。 */
     public static final ModConfigSpec.IntValue DEIFIC_AMULET_AIR_SUPPLY;
     /** 每次补充氧气的 Vis 基础消耗。 */
     public static final ModConfigSpec.IntValue DEIFIC_AMULET_VIS_COST;
-    /** Vis 消耗倍率。 */
     public static final ModConfigSpec.DoubleValue DEIFIC_AMULET_VIS_MULT;
-    /** 神圣护身符的最大 Vis 储量。 */
     public static final ModConfigSpec.IntValue DEIFIC_AMULET_MAX_CHARGE;
 
     // ---- 湮灭护符 / Amulet of The Oblivion ----
-    /** 每 tick 释放已储存伤害的概率。 */
     public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_DAMAGE_RELEASE_CHANCE;
-    /** 单次释放伤害的上限。 */
     public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_DAMAGE_CAP;
-    /** 释放伤害超过上限时，改为按上限随机取值的概率。 */
     public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_HIGH_DAMAGE_REDUCTION_CHANCE;
-    /** 每 tick 施加随机负面效果的概率。 */
     public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_POTION_CHANCE;
-    /** 随机负面效果的最短持续时间（tick）。 */
     public static final ModConfigSpec.IntValue OBLIVION_AMULET_POTION_DURATION_MIN;
-    /** 随机负面效果的最长持续时间（tick）。 */
     public static final ModConfigSpec.IntValue OBLIVION_AMULET_POTION_DURATION_MAX;
-    /** 随机负面效果的最低等级（0 表示 I 级）。 */
     public static final ModConfigSpec.IntValue OBLIVION_AMULET_POTION_LEVEL_MIN;
-    /** 随机负面效果的最高等级。 */
     public static final ModConfigSpec.IntValue OBLIVION_AMULET_POTION_LEVEL_MAX;
-    /** 湮灭护符附带的扭曲值。 */
     public static final ModConfigSpec.IntValue OBLIVION_AMULET_WARP;
     /** 储存伤害时的 Vis 消耗倍率。 */
     public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_VIS_MULT;
-    /** 湮灭护符的最大 Vis 储量。 */
     public static final ModConfigSpec.IntValue OBLIVION_AMULET_MAX_CHARGE;
 
     // ---- 日耀石 / Shiny Stone ----
-    /** 静止判定间隔（tick）。 */
     public static final ModConfigSpec.IntValue SHINY_STONE_CHECK_RATE;
-    /** 静止累计达到该值时进入第 2 档回血速度。 */
     public static final ModConfigSpec.IntValue SHINY_STONE_THRESHOLD_2;
-    /** 静止累计达到该值时进入第 3 档回血速度。 */
     public static final ModConfigSpec.IntValue SHINY_STONE_THRESHOLD_3;
-    /** 静止累计达到该值时进入第 4 档回血速度。 */
     public static final ModConfigSpec.IntValue SHINY_STONE_THRESHOLD_4;
     /** 每次判定静止时累计值的增量。 */
     public static final ModConfigSpec.IntValue SHINY_STONE_STILL_INCREMENT;
-    /** 每次回血回复的生命值。 */
     public static final ModConfigSpec.DoubleValue SHINY_STONE_HEAL_AMOUNT;
 
     // ---- 浑浊之核 / Nebulous Core（注册名 arcanum）----
@@ -149,9 +116,7 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue ARCANUM_GEN_RATE;
     /** 每 tick 随机传送的概率。 */
     public static final ModConfigSpec.DoubleValue ARCANUM_TELEPORT_CHANCE;
-    /** 随机传送的最大距离（格）。 */
     public static final ModConfigSpec.IntValue ARCANUM_TELEPORT_RANGE;
-    /** 每 tick 转化为休眠态的概率。 */
     public static final ModConfigSpec.DoubleValue ARCANUM_DORMANT_TRANSFORM_CHANCE;
     /** 休眠态寿命的最小值。 */
     public static final ModConfigSpec.IntValue ARCANUM_DORMANT_LIFE_MIN;
@@ -356,7 +321,7 @@ public final class FRConfig {
      * 核子之怒：导弹的目标搜索半径。
      *
      * <p>key 照抄 RE 的 {@code nuclearFuryClearRange}（RE 用它做「左键清除 32 格内导弹」的范围）；
-     * 1.7.10 的 {@code ItemMissileTome} 没有清弹功能，而同为 32 的这个数字在那边的实体里是
+     * 原版的 {@code ItemMissileTome} 没有清弹功能，而同为 32 的这个数字在原版实体里是
      * <b>目标搜索半径</b>（{@code double range = 32.0}），所以这里就把它用作搜索半径。
      */
     public static final ModConfigSpec.DoubleValue NUCLEAR_FURY_CLEAR_RANGE;
@@ -499,7 +464,7 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue TOME_OF_BROKEN_FATES_BIG_EXPLOSION_RADIUS;
     /** 破碎的命运巨著：免死时施加增益（而非减益）的概率（原版 fateTomeBuffChance，默认 0.75）。 */
     public static final ModConfigSpec.DoubleValue TOME_OF_BROKEN_FATES_BUFF_CHANCE;
-    /** 破碎的命运巨著：附带的扭曲值（原版 {@code getWarp} 返回 7，全模组第二高）。 */
+    /** 破碎的命运巨著：附带的扭曲值（原版 {@code getWarp} 返回 7，本移植中第二高）。 */
     public static final ModConfigSpec.IntValue TOME_OF_BROKEN_FATES_WARP;
 
     // ---- 湮灭之钥 / Keystone of The Oblivion ----
@@ -588,8 +553,8 @@ public final class FRConfig {
                 .defineInRange("dimensionalMirrorChannelDuration", 80, 1, 32768);
         builder.pop();
 
-        // 原版没有这一项：1.12.2 各处音量是写死的，最响的几处到了 8.0F，听感很吵。
-        // 这里新增一个总开关，把所有音效（含以后补的物品）统一压低。
+        // RE 没有这一项：各处音量写死，最响的几处达到 8.0F，明显高于需要。
+        // 这里新增一个总开关，把所有音效（含新增物品）统一压低。
         builder.comment("音效（原版无此配置，为本模组新增）").push("sound");
         SOUND_VOLUME_MULTIPLIER = builder
                 .comment("Global volume multiplier applied to every Forgotten Relics sound effect.",

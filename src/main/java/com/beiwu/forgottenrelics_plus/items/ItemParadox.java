@@ -16,14 +16,14 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 
 /**
- * 悖论之刃（The Paradox），1.7.10 原版 {@code ItemParadox}。
+ * 悖论之刃（The Paradox），原版 {@code ItemParadox}。
  *
  * <p>它是一把剑，材质参数取自原版 {@code RelicsMaterialHandler.materialParadoxicalStuff}
  * （见 {@code FRToolTiers#PARADOX}）：攻击力加成是 <b>-4</b>，也就是说本体几乎打不出伤害，
  * 全部威力来自它的悖论效果。
  *
  * <p>原版 {@code onLeftClickEntity}：每次命中时取一个
- * {@code 0 ~ paradoxDamageCap} 的随机数给目标，再把 <b>剩余的那部分</b>打回自己身上。
+ * {@code 0 ~ paradoxDamageCap} 的随机数给目标，再把剩余的那部分打回自己身上。
  * 于是不论随机数是多少，双方承受的总和恒等于上限——这就是「悖论」：
  * 打得越狠，自己挨得越重。
  *
@@ -31,14 +31,14 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
  * 它同样在伤害结算之前触发且可取消，取消即等价于原版返回 {@code true}（由物品自己结算这次攻击）。
  *
  * <p>另外原版实现 {@code IRepairable} 并每 20 tick 自修 1 点耐久（{@code Item#onUpdate}），
- * 这里落在 {@code inventoryTick} 上。附带 {@code paradoxWarp}（原版 8，是全模组最高的一档）。
+ * 这里落在 {@code inventoryTick} 上。附带 {@code paradoxWarp}（原版 8，是本移植最高的一档）。
  *
  * <p>因为必须继承 {@link SwordItem}，本类无法再继承 {@code FRItem}，所以 Shift 展开式 tooltip
  * 复用的是 {@link FRItem#appendShift} 这个静态入口（恐惧之冠同理）。
  */
 public class ItemParadox extends SwordItem implements IWarpingGear, WeaponAttackBehaviour {
 
-    /** 每 20 tick 自修 1 点耐久，与 1.7.10 一致。 */
+    /** 每 20 tick 自修 1 点耐久，与原版一致。 */
     private static final int REPAIR_INTERVAL = 20;
 
     public ItemParadox(Tier tier, Properties properties) {

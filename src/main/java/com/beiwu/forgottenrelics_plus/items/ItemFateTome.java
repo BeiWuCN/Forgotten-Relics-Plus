@@ -34,56 +34,38 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
 /**
  * 破碎的命运巨著（Tome of Broken Fates），注册名 {@code tome_of_broken_fates}，
- * 1.7.10 原版 {@code ItemFateTome}。
- *
- * <p>原版行为分散在三处，整件物品都是「随身携带生效」：
+ * 1.7.10 原版 {@code ItemFateTome}。整件物品都是「随身携带生效」，效果分三处：
  *
  * <ol>
- *   <li><b>致死免死</b>（{@code RelicsEventHandler#onPlayerDeath}，{@code LivingDeathEvent}，HIGHEST 优先级）：
- *       主背包里第一本冷却为 0 的巨著，先从背包法杖抽<b>六大原初要素各 10000 厘（各 100 点，合计 600 点）</b>的
- *       Vis，抽得出来就取消死亡、把生命回满，再按 {@code fateTomeBuffChance}（0.75）二选一施加效果：
- *       75% 施加抗性提升 II/生命恢复 II/抗火 I，否则施加虚弱 III/失明 I/凋零 II。
- *       随后把冷却设为 {@code [MIN, MAX] * 20} tick 内的一个随机值（默认 30~90 秒），
- *       并在玩家处播 Thaumcraft 的爆裂特效与 {@code thaumcraft:runicShieldCharge} 音效；</li>
- *   <li><b>冷却递减与通知</b>（{@code ItemFateTome#func_77663_a}）：每服务端 tick 把 {@code IFateCooldown}
- *       减 1，减到 0 时发一条 HUD 通知（{@code notification.fate_cooldown_over}）；</li>
- *   <li><b>携带惩罚</b>（同一个 {@code onUpdate}）：每 tick 有 {@code fateTomeMultiHeldChance}
- *       （默认 1.6E-5，即约六万分之一）的概率在「主背包里不止一本」时引爆自己
- *       {@code insanelyDisastrousConsequences}——清空所有巨著，对以玩家为中心 ±64 格内的<b>所有活体</b>
- *       （含玩家本人）各造成 {@code fateTomeDamage}（40000）点命运伤害并在原处引爆 16 半径的爆炸，
+ *   <li>致死免死（原版 {@code RelicsEventHandler#onPlayerDeath}）：主背包里第一本冷却为 0 的巨著，
+ *       先抽六大原初要素各 100 点（合计 600）的 Vis，成功就取消死亡、回满血，再按
+ *       {@code fateTomeBuffChance}（0.75）二选一施加效果——抗性提升 II / 生命恢复 II / 抗火 I，
+ *       否则虚弱 III / 失明 I / 凋零 II；最后把冷却设成 {@code [MIN, MAX] * 20} tick 内的随机值
+ *       （默认 30~90 秒），并在玩家处播爆裂特效与充能音效；</li>
+ *   <li>冷却递减与通知（同一个 {@code onUpdate}）：每服务端 tick 把 {@code IFateCooldown} 减 1，
+ *       减到 0 时发一条 HUD 通知；</li>
+ *   <li>携带惩罚：每 tick 有 {@code fateTomeMultiHeldChance}（默认 1.6E-5，约六万分之一）的概率，
+ *       在主背包里不止一本时引爆自己——清空所有巨著，对以玩家为中心 ±64 格内的所有活体（含玩家本人）
+ *       各造成 {@code fateTomeDamage}（40000）点命运伤害并各爆一次 16 半径的爆炸，
  *       最后在玩家处再爆一发 100 半径的。</li>
  * </ol>
  *
- * <p>原版这两处「每 tick」逻辑都是 {@code Item#onUpdate}，1.21.1 的对应物就是原生的
- * {@link net.minecraft.world.item.Item#inventoryTick}，不必经过行为派发器。
+ * <p>1.21.1 对应：致死拦截 → {@link DeathPreventionBehaviour}（原版是欧米伽之核 if、命运巨著 else if，
+ * 所以 {@link #priority()} 必须排在欧米伽之核之后）；「从背包法杖抽 Vis」没有对应 API，
+ * 按本移植的统一约定改成 {@link FRRechargable} 物品自身充能；原版 {@code IFateCooldown} → 数据组件
+ * {@link FRDataComponents#FATE_COOLDOWN}；爆裂特效改服务端 {@code sendParticles}，
+ * 音效换成 {@link SoundEvents#RESPAWN_ANCHOR_CHARGE}。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>致死拦截 → {@link DeathPreventionBehaviour}，由 {@code FRCommonEvents} 从随身携带物派发。
- *       原版是 if / else if：欧米伽之核在前、命运巨著在后，所以这里的 {@link #priority()} 排在欧米伽之核之后；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>，本模组统一改成 {@link FRRechargable}
- *       的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge} 扣费（与霹雳咒书、错位之典同一条路）；</li>
- *   <li>原版 {@code IFateCooldown} 存在物品 NBT 上，这里换成数据组件 {@link FRDataComponents#FATE_COOLDOWN}，
- *       语义不变；</li>
- *   <li>原版的爆裂特效（{@code SuperpositionHandler.imposeBurst}，纯客户端网络包）改成服务端
- *       {@code ServerLevel#sendParticles}；音效从 {@code thaumcraft:runicShieldCharge} 换成音色相近的
- *       {@link SoundEvents#RESPAWN_ANCHOR_CHARGE}；</li>
- *   <li>原版 {@code func_72885_a(..., isFlaming=true, isSmoking=true)} 的两处爆炸 →
- *       {@link Level#explode(net.minecraft.world.entity.Entity, double, double, double, float, boolean,
- *       net.minecraft.world.level.Level.ExplosionInteraction)}。这里<b>刻意偏离原版</b>：
- *       {@code fire = false}、{@code ExplosionInteraction.NONE}，即保留爆炸的威力、对实体的伤害与击退，
- *       但不破坏方块、不引燃——玩家反馈「爆炸破坏地形是 bug」。</li>
- * </ul>
+ * <p><b>刻意偏离原版</b>：{@code func_72885_a(..., true, true)} 的两处爆炸改成 {@code fire = false}、
+ * {@code ExplosionInteraction.NONE}——保留威力、对实体的伤害与击退，但不破坏方块、不引燃；
+ * 破坏地形属于 bug，不要打开。
  *
- * <p><b>与任务口径的一处偏差（已上报）</b>：任务说明要求「冷却用共用 {@code CooldownHelper}
- * （原版 SuperpositionHandler）」，但 1.7.10 与 1.12.2 移植版的命运巨著冷却都<b>不是</b>那套共用施法冷却，
- * 而是物品自己的 {@code IFateCooldown}：每一本各自记账，且 tooltip 要显示剩余秒数、冷却结束时还要发通知。
- * 若改用 {@code CooldownHelper}，会让命运巨著与霹雳咒书、错位之典等共享同一个计时器——
- * 施放别的遗物会把免死一起锁住，反之一次免死也会锁住所有施法遗物，这是明显的行为回归。
- * 因此这里按原版做成物品自身的冷却，与神圣护符的 {@code ICooldown}
- * （{@link FRDataComponents#INVINCIBILITY_COOLDOWN}）同一处理。
+ * <p>冷却不用共用 {@code CooldownHelper}：1.7.10 与 RE 的巨著冷却
+ * 都是物品自己的 {@code IFateCooldown}，每本各自记账，tooltip 要显示剩余秒数、冷却结束还要发通知；
+ * 改用共用冷却会让一次免死锁住所有施法遗物，是明显的行为回归。因此与神圣护符的 {@code ICooldown}
+ *（{@link FRDataComponents#INVINCIBILITY_COOLDOWN}）同一处理。
  *
- * <p>附带 7 点扭曲（{@code getWarp} 返回 7，全模组第二高，仅次于悖论之刃的 8）。
+ * <p>附带 7 点扭曲（全移植第二高，仅次于悖论之刃的 8）。
  */
 public class ItemFateTome extends FRItem implements FRRechargable, IWarpingGear, DeathPreventionBehaviour {
 
@@ -199,14 +181,14 @@ public class ItemFateTome extends FRItem implements FRRechargable, IWarpingGear,
      *
      * <p>这一段原版用的是 Thaumcraft 的 {@code proxy.burst}（<b>不是 Botania</b>），
      * 1.21.1 没有等价物，按「原版本来就不是 Botania 就保持原样」的口径继续用
-     * 「一颗闪光 + 一簇淡青色 effect 粒子」近似；音效按项目约定换成原版等价物，
+     * 「一颗闪光 + 一簇淡青色 effect 粒子」近似；音效按本移植约定换成原版等价物，
      * 并过 {@link SoundHelper#play} 统一压音量。
      */
     private static void playFateFeedback(Player player) {
         if (player.level() instanceof ServerLevel server) {
             double y = player.getY() + 1.0D;
-            // 原版同样是 imposeBurst（SuperpositionHandler:335/344，size 1.25）→ 模组自带的 FXBurst。
-            // 此前用 ParticleTypes.FLASH（巨大白色方片）顶替，现换成同一族的青绿柔光精灵。
+            // 原版同样是 imposeBurst（SuperpositionHandler:335/344，size 1.25）→ 本移植自带的 FXBurst。
+            // 不要用 ParticleTypes.FLASH（巨大白色方片）：这里用同一族的青绿柔光精灵。
             FRParticles.serverWispBurst(server, player.getX(), y, player.getZ(),
                     0.0F,
                     (float) (0.8D + server.random.nextDouble() * 0.2D),
@@ -249,8 +231,8 @@ public class ItemFateTome extends FRItem implements FRRechargable, IWarpingGear,
                 player.getX() + range, player.getY() + range, player.getZ() + range);
         float damage = FRConfig.TOME_OF_BROKEN_FATES_DAMAGE.get().floatValue();
         float radius = FRConfig.TOME_OF_BROKEN_FATES_EXPLOSION_RADIUS.get().floatValue();
-        // 原版 newExplosion(..., isFlaming=true, isSmoking=true) 会炸方块并引燃；玩家指出破坏地形是 bug，
-        // 所以这里**刻意偏离原版**：只保留爆炸对实体的伤害与击退，方块破坏与引燃都关掉。
+        // 原版 newExplosion(..., isFlaming=true, isSmoking=true) 会炸方块并引燃。这里刻意偏离原版：
+        // 只保留爆炸对实体的伤害与击退，方块破坏与引燃都关掉——破坏地形属于 bug。
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area)) {
             target.hurt(FRDamageTypes.source(level, FRDamageTypes.FATE), damage);
             level.explode(player, target.getX(), target.getY(), target.getZ(), radius, false, Level.ExplosionInteraction.NONE);
@@ -277,10 +259,10 @@ public class ItemFateTome extends FRItem implements FRRechargable, IWarpingGear,
      * 原版 Shift 展开的那几行。
      *
      * <p>原版的冷却范围那行拆成了 {@code ItemFateTome5_1} / {@code ItemFateTome5_2} 两个键，
-     * 1.12.2 移植版（即现成 lang 的来源）把它们并成了带 {@code %1$s-%2$s} 占位的
+     * RE（即现成 lang 的来源）把它们并成了带 {@code %1$s-%2$s} 占位的
      * {@code item.FateTome5.lore}；这里沿用合并后的键，数值实时取自配置。
      *
-     * <p>原版还有一个 Ctrl 分支（{@code FRVisPerCast} + 逐要素成本），本项目共享基类 {@code FRItem}
+     * <p>原版还有一个 Ctrl 分支（{@code FRVisPerCast} + 逐要素成本），本移植共享基类 {@code FRItem}
      * 只实现 Shift 展开，且「按要素抽 Vis」已改成物品自身充能，该分支没有意义，故不实现
      * （与霹雳咒书、核子之怒、月耀咒书一致）；现成的 {@code item.FateTomeVisCost.lore} 因此不被引用。
      */

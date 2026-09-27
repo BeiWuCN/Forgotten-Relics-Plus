@@ -27,58 +27,32 @@ import net.minecraft.world.level.Level;
  * 湮灭之钥（Keystone of The Oblivion），注册名 {@code oblivion_stone}，
  * 1.7.10 原版 {@code ItemOblivionStone}（研究键 {@code OblivionStone}）。
  *
- * <p><b>1.7.10 原版行为（唯一行为参照）</b>：
- * <ol>
- *   <li>它的全部状态都压在物品 metadata（damage）上：{@code 0/1/2} 是启用中的三种模式
- *       （0 完全吸收 / 1 保留一组 / 2 超额吸收），{@code 100/101/102} 是同一模式的停用态；
- *       堆叠上限 1、稀有度 epic、附带 2 点扭曲；</li>
- *   <li>右键（不潜行）：{@code 0→1→2→0} 循环切换模式（停用态在 {@code 100/101/102} 之间同样循环），
- *       播放 {@code random.orb} 音效（音调 {@code 0.8 + random*0.2}）；</li>
- *   <li>潜行 + 右键：在「启用」与「停用」之间切换（{@code ±100}），播放
- *       {@code dftoolkit:sound.hhoff}（停用）/ {@code dftoolkit:sound.hhon}（启用）；</li>
- *   <li>两种右键最后都会 {@code player.swingItem()}；</li>
- *   <li>{@code onUpdate}（背包内每 tick，仅在 {@code ticksExisted % 10 == 0} 时）：
- *       若为启用态且物品带 NBT，就调用 {@code consumeStuff} 按模式吞噬已绑定的物品；</li>
- *   <li>{@code consumeStuff} 只处理主背包（{@code inventory.mainInventory}，1.7.10 为 36 格）：
- *       <ul>
- *         <li>把「除钥匙石外」的所有非空栈记进一张 slot→stack 表；</li>
- *         <li><b>模式 0（完全吸收）</b>：按绑定顺序，把背包里所有匹配的栈全部清空；</li>
- *         <li><b>模式 1（保留一组）</b>：按绑定顺序，每类只留「数量最大的一栈」，其余全部清空
- *             （数量相同则留下标号最小的那一栈）；</li>
- *         <li><b>模式 2（超额吸收）</b>：只有在主背包<b>没有任何空槽</b>时才生效；按绑定顺序找到第一个
- *             存在的类型，只清掉其中「数量最小的一栈」（数量相同则清标号最大的那一栈），
- *             然后本次结束（每次判定最多吞一栈）。</li>
- *       </ul>
- *   </li>
- *   <li>合成：把钥匙石与「任意一件物品」放进合成栏 → 那件物品被登记进可吞噬清单；
- *       只放钥匙石 → 清空整个清单（原版 {@code RecipeOblivionStone}，见
- *       {@link com.beiwu.forgottenrelics_plus.recipes.RecipeOblivionStone}）；</li>
- *   <li>tooltip：Shift 展开 15 行说明；Ctrl 展开已绑定物品清单（超过 softCap 时随机显示 softCap 条）；
- *       默认显示「Shift/Ctrl 提示 + 当前模式」。</li>
- * </ol>
+ * <p>行为：状态全部压在物品 metadata 上——{@code 0/1/2} 是三种启用模式（完全吸收 / 保留一组 /
+ * 超额吸收），{@code 100/101/102} 是同一模式的停用态。右键不潜行时 {@code 0→1→2→0} 循环切换并播
+ * {@code random.orb}，潜行 + 右键在启用/停用之间 {@code ±100} 切换，两者最后都挥臂。
+ * {@code onUpdate} 每 10 tick 一次，启用态且有绑定时才 {@code consumeStuff} 吞噬主背包里命中的物品：
+ * 模式 0 全清；模式 1 每类只留数量最大的一栈（相同则留下标号最小）；模式 2 只在主背包没有任何空槽时生效，
+ * 按绑定顺序找到第一个存在的类型，只清数量最小的一栈（相同则清标号最大），每次最多一栈。
+ * 合成：放进一件物品即登记，只放钥匙石则清空清单；附带 2 点扭曲。
  *
- * <p><b>1.21.1 对应关系与取舍</b>：
+ * <p>1.21.1 对应：metadata → 数据组件 {@link FRDataComponents#OBLIVION_MODE}，取值口径原样照抄
+ * （{@code 0..2} 启用、{@code +100} 停用），方便与 1.7.10 逐行对照。原版两个平行 NBT 数组
+ * {@code SupersolidID} / {@code SupersolidMetaID} → {@link FRDataComponents#OBLIVION_BOUND_ITEMS}：
+ * 1.21.1 没有数值物品 id、也没有 metadata 变体，所以直接存整份样本 {@link ItemStack}，
+ * 匹配语义按原版映射——<b>可损毁物品按物品类型通配</b>（原版 meta = -1），其余按「物品 + 组件」精确匹配。
+ *
+ * <p>偏差与坑：
  * <ul>
- *   <li>物品 metadata → 数据组件 {@link FRDataComponents#OBLIVION_MODE}，
- *       <b>取值口径原样照抄</b>（{@code 0..2} 启用、{@code +100} 停用），方便与 1.7.10 逐行对照；</li>
- *   <li>原版两个平行 NBT 数组 {@code SupersolidID}（数值物品 id）/ {@code SupersolidMetaID}（metadata）
- *       → 数据组件 {@link FRDataComponents#OBLIVION_BOUND_ITEMS}。1.21.1 没有数值物品 id，
- *       也没有「metadata 表示变体」的概念，所以直接存整份样本 {@link ItemStack}（自带组件）。
- *       匹配语义按原版对照映射：<b>可损毁物品按物品类型通配</b>（原版 meta = -1），
- *       <b>其余按「物品 + 组件」精确匹配</b>（原版按「物品 + metadata」精确匹配）；</li>
- *   <li>{@code onUpdate} → {@code Item#inventoryTick}；原版在客户端也会跑（改的是客户端本地背包），
+ *   <li>{@code onUpdate} → {@code inventoryTick}：原版客户端也跑（改的是本地背包），
  *       这里只在服务端执行，避免客户端自行改背包导致不同步；</li>
  *   <li>{@code random.orb} → {@link SoundEvents#EXPERIENCE_ORB_PICKUP}；
- *       {@code dftoolkit:sound.hhoff} / {@code hhon}（来自 DFToolkit，1.21.1 没有对应物）
+ *       {@code dftoolkit:sound.hhoff} / {@code hhon}（DFToolkit，1.21.1 无对应物）
  *       → {@link SoundEvents#STONE_BUTTON_CLICK_OFF} / {@link SoundEvents#STONE_BUTTON_CLICK_ON}，
- *       用一对原版开/关音效保留「启用 / 停用」的听感区分，并经 {@link SoundHelper} 统一压低音量；</li>
- *   <li>合成栏登记 / 清空保留为真正的<b>自定义合成配方</b>（不是右键 GUI），见配方类注释；</li>
- *   <li>这件物品<b>不消耗也不储存 Vis</b>，原版从头到尾没有 Vis 逻辑，所以不实现 {@code FRRechargable}。</li>
+ *       保留「停用 / 启用」的听感区分，并经 {@link SoundHelper} 统一压低音量；</li>
+ *   <li>这件物品不消耗也不储存 Vis，原版从头到尾没有 Vis 逻辑，所以不实现 {@code FRRechargable}。</li>
  * </ul>
  *
- * <p><b>与 1.12.2 移植版（RE）的关系</b>：RE 的行为与 1.7.10 一致（只是把 metadata 读写换成了 1.12.2 的
- * {@code setItemDamage}），本件的 lang 文案（{@code item.OblivionStone*.lore} 等）与 1.7.10 逐条一致，
- * 无需改写。
+ * <p>与 1.12.2 移植版（RE）行为一致，lang 文案与 1.7.10 逐条一致，无需改写。
  */
 public class ItemOblivionStone extends FRItem implements IWarpingGear {
 

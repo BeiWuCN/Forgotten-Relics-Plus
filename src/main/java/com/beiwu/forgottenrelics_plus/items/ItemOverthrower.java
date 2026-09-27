@@ -43,82 +43,37 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 永恒放逐之诫（Edict of Eternal Banishment），注册名 {@code edict_of_banishment}，
- * 1.7.10 原版 {@code ItemOverthrower}。
+ * 1.7.10 原版 {@code ItemOverthrower}。堆叠上限 1、Warp 2，原版没有施法冷却。
  *
- * <p>原版逻辑：
+ * <p>行为：右键锁定准星指向的活体（射线 64 格、搜索盒外扩 3 格），进入 150 tick 拉弓引导；
+ * 引导期间每 tick 向目标喷 5 颗向内收束的红橙 wisp、施加 30 tick / amplifier 2 的缓慢，每 10 tick
+ * 在玩家与目标处各播一次火焰音效；最后一 tick 最多重试 9 次把目标丢进下界（随机 X/Z ±10001，
+ * 从 y=124 往下找落脚点），9 次都失败且目标不是玩家时直接抹除，并在原地劈 3 道真雷 + 129 颗地狱粒子。
+ * 身处下界时右键完全无效。
+ *
+ * <p>1.21.1 对应：{@code onItemRightClick} / {@code onUsingTick} / {@code EnumAction.bow} →
+ * {@code use} / {@code onUseTick} / {@link UseAnim#BOW}。原版「从背包法杖抽 Vis」没有对应 API，
+ * 按本移植统一约定改成 {@link FRRechargable} 的物品自身充能；以玩家为键的静态 map {@code targetList} →
+ * {@link FRDataComponents#EDICT_TARGET} 存实体 id（与虚空吞噬者锁定方尖碑坐标同源）；原版写 NBT
+ * 重建实体 → {@code Entity#teleportTo(ServerLevel, ...)}；不写任何自定义网络包，粒子走服务端
+ * {@link FRParticles}、真雷直接生成 {@link LightningBolt} 实体、全服公告走原版 {@code Component} +
+ * {@code PlayerList#broadcastSystemMessage}；{@code thaumcraft:fireloop} → {@link SoundEvents#FIRE_AMBIENT}
+ * 并过 {@link SoundHelper#play} 统一压低音量。
+ *
+ * <p>Vis 折算：原版每 tick 抽 18 厘 Vis = 3.6 点/秒，充能是整数，按核子之怒的先例向上取整为
+ * 4 点/秒，扣在每一秒的第一 tick（一次完整引导 150 tick 共扣 8 次 = 32 点，原版 27 点）。
+ *
+ * <p>与原版的偏差：
  * <ol>
- *   <li>{@code onItemRightClick}：若玩家<b>身处下界</b>直接返回（不能再把人放逐到下界）；否则用
- *       {@code EntityUtils.getPointedEntity(world, player, 0.0, 64.0, 3.0F)} 沿视线找活体
- *       （射线 64 格、搜索盒外扩 3 格），找到就把它记进以玩家为键的静态 map
- *       {@code targetList} 并 {@code setItemInUse(stack, 150)}（{@code EnumAction.bow}）；
- *       找不到就什么都不做；</li>
- *   <li>{@code onUsingTick}：<b>客户端第一行就 return</b>，整套逻辑只在服务端跑。
- *       每 tick 先尝试从背包法杖抽 Vis（火 8 + 秩序 5 + 混沌 5 厘 Vis = 18 厘，各项乘
- *       {@code overthrowerVisMult}），抽不出来立刻 {@code stopUsingItem}；随后
- *       每 10 tick（且不是第一个 tick）在玩家与目标处各播一次 {@code thaumcraft:fireloop}；
- *       每 tick 向目标周围广播 {@code BanishmentCastingMessage}（目标中心附近 5 颗向内收束的
- *       红橙 wisp），并对目标施加 30 tick、amplifier 2 的<b>缓慢</b>（{@code Potion.field_76421_d}
- *       = 移动缓慢）；</li>
- *   <li>{@code count == 1}（引导 150 tick 的最后一 tick）结算：
- *     <ul>
- *       <li>若目标不在下界：最多重试 <b>9 次</b> {@code overthrow}，任一成功即停；
- *           9 次都失败且目标不是玩家时，把目标搬到 (0,0,0) 再杀死；</li>
- *       <li>无论成功与否，都在目标原地劈 3 道真雷（{@code EntityLightningBolt}），
- *           并各广播一次 {@code LightningBoltMessage} 与 {@code InfernalParticleMessage}
- *           （129 颗原地炸开的地狱粒子）。</li>
- *     </ul>
- *   </li>
- *   <li>{@code overthrow(entity, overthrower)}：在下界随机取 X/Z（各 ±10001）、先加载该区块，
- *       再从 y=124 往下找第一个「下方是不透明实心方块、本格与上一格为空气」的位置；
- *       找到后（{@code y != 124}）：
- *     <ul>
- *       <li><b>玩家目标</b>：{@code transferPlayerToDimension(-1)} 后 {@code setLocationAndAngles(x, y, z)}，
- *           再向全服广播 {@code OverthrowChatMessage(type 0)}；</li>
- *       <li><b>非玩家目标</b>：写 NBT 后在下界重建实体、{@code setDimension(-1)}、{@code setLocationAndAngles}、
- *           生成，然后杀死原实体，并在原位置周围随机点最多 12 次火。</li>
- *     </ul>
- *   </li>
- *   <li>物品堆叠上限 1、稀有度 EPIC，{@code getWarp} 返回 <b>2</b>。<b>原版没有施法冷却</b>。</li>
- * </ol>
- *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>{@code onItemRightClick} → {@code Item#use}；{@code onUsingTick} → {@code Item#onUseTick}；
- *       {@code getMaxItemUseDuration} → {@code Item#getUseDuration}；{@code EnumAction.bow} → {@link UseAnim#BOW}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>（见
- *       {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1）。按本模组统一约定改成
- *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge} 扣除；</li>
- *   <li>原版「以玩家为键的静态 map」→ 物品数据组件 {@link FRDataComponents#EDICT_TARGET}
- *       （存目标实体 id，与虚空吞噬者锁定方尖碑坐标的做法同源）；</li>
- *   <li>原版用 {@code EntityList.createEntityFromNBT} 把非玩家实体搬进下界 → 1.21.1 用
- *       {@code Entity#teleportTo(ServerLevel, x, y, z, Set, yaw, pitch)}（内部会换维度并重建实体）；
- *       玩家目标用 {@code ServerPlayer#teleportTo(ServerLevel, x, y, z, yaw, pitch)}；</li>
- *   <li><b>不写任何自定义网络包</b>：{@code BanishmentCastingMessage} / {@code InfernalParticleMessage}
- *       的 wisp 粒子改为服务端 {@link FRParticles}（颜色 / 尺寸 / 初速逐字对齐原版）；{@code LightningBoltMessage}
- *       改为直接生成真正的 {@link LightningBolt} 实体（原版服务端本来就生成了，网络包只是给客户端的
- *       冗余副本）；{@code OverthrowChatMessage} 改为原版 {@code Component} +
- *       {@code PlayerList#broadcastSystemMessage} 全服广播；</li>
- *   <li>{@code thaumcraft:fireloop} → 原版等价物 {@link SoundEvents#FIRE_AMBIENT}（本模组对
- *       Thaumcraft 音效一律换原版等价物，且都过 {@link SoundHelper#play} 统一压低音量）。</li>
- * </ul>
- *
- * <p><b>Vis 折算</b>：原版每 tick 抽 18 厘 Vis = 0.18 点/tick，即 <b>3.6 点/秒</b>；充能是整数，
- * 故按核子之怒的先例<b>向上取整为 4 点/秒</b>，在每一秒的第一 tick 扣一次（每秒首扣放在最前面，
- * 避免「0 充能先白嫖半秒」）。一次完整引导（150 tick）合计扣 8 次 = 32 点（原版 27 点）。
- *
- * <p><b>与 1.7.10 的偏差</b>：
- * <ol>
- *   <li>落点搜索的 {@code y == 124} 哨兵<b>逐字保留</b>：原版从 124 往下找，若最高点 124 本身就合法，
- *       {@code y} 仍是 124、被当成「没找到落点」而返回 false。这是原版自身的怪癖，这里不修正；</li>
- *   <li>非玩家目标的落点从原版的整格 {@code (x, y, z)} 改为 {@code (x + 0.5, y, z + 0.5)}，
- *       否则实体会卡在方块角上（玩家目标同理）；</li>
- *   <li>目标锁定改用实体 id。若目标在引导途中跨维度离开（原版保留对象引用、仍会结算），
- *       这里 {@code ServerLevel#getEntity(id)} 会取不到，引导提前中止——单人放逐场景不可辨；</li>
- *   <li>原版 3 道真雷与 129 颗地狱粒子是「服务端生成 + 网络包通知」，这里是纯服务端生成，
- *       观感一致；微粒的传播半径由 {@code sendParticles} 决定（默认 32 格，原版约 64~128 格）；</li>
+ *   <li>落点搜索的 {@code y == 124} 哨兵逐字保留：原版从 124 往下找，若 124 本身合法也仍被当成
+ *       「没找到落点」——原版自身的怪癖，不修正；</li>
+ *   <li>落点由整格 {@code (x, y, z)} 改为 {@code (x + 0.5, y, z + 0.5)}，否则实体会卡在方块角上；</li>
+ *   <li>目标锁定改用实体 id：目标若在引导途中跨维度离开，{@code ServerLevel#getEntity(id)} 取不到，
+ *       引导会提前中止（原版保留对象引用、仍会结算；单人放逐场景不可辨）；</li>
+ *   <li>真雷与地狱粒子是纯服务端生成（原版为服务端生成 + 网络包通知），观感一致；微粒传播半径由
+ *       {@code sendParticles} 决定（默认 32 格，原版约 64~128 格）；</li>
  *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerTick.lore} + 各要素成本）依赖
- *       {@code GuiScreen.isCtrlKeyDown}，而共享基类 {@code FRItem} 只实现 Shift 展开，
- *       近几件施法物品同样没有该行，这里保持一致。</li>
+ *       {@code GuiScreen.isCtrlKeyDown}，共享基类 {@code FRItem} 只实现 Shift 展开，这里保持一致。</li>
  * </ol>
  */
 public class ItemOverthrower extends FRItem implements FRRechargable, IWarpingGear {
@@ -517,7 +472,7 @@ public class ItemOverthrower extends FRItem implements FRRechargable, IWarpingGe
      * 对应原版 {@code OverthrowChatMessage(type 0)} 的全服广播：
      * {@code <施法者> has overthrown <目标> into the Nether.}
      *
-     * <p>本项目<b>不写自定义网络包</b>，改用原版 {@link Component} + {@code PlayerList#broadcastSystemMessage}
+     * <p>本移植不写自定义网络包，改用原版 {@link Component} + {@code PlayerList#broadcastSystemMessage}
      *（等价于原版的 {@code sendToAll}）。
      */
     private static void broadcastOverthrow(Player overthrower, ServerPlayer victim) {

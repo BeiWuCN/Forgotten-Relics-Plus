@@ -10,16 +10,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 /**
- * 不和谐之戒（Ring of Discord，注册名 {@code discord_ring}），1.12.2 原版 {@code ItemRingOfDiscord}，戒指槽。
+ * 不和谐之戒（Ring of Discord，注册名 {@code discord_ring}），RE 的 {@code ItemRingOfDiscord}，戒指槽。
  *
- * <p>它本身不产生任何效果，只保存一个「是否开启不和谐模式」的开关，
- * 供后续的《错位之典》读取（原版 {@code isDiscordActive}）。开关由默认 X 键切换：
- * 客户端按键 → 发一个空载荷到服务端 → 服务端改写开关并回一条状态提示。
+ * <p>它本身不产生任何效果，只在按键（默认 X）时替玩家<b>远程施放背包里的《错位之典》</b>：
+ * 客户端按键 → 发一个空载荷到服务端 → 服务端调 {@link #triggerTome}，由它对那本书执行一次右键。
+ * 书本身的行为一字不改。
  *
- * <p>1.12.2 用的是 {@code SimpleNetworkWrapper} 加 {@code IMessage}；1.21.1 换成了
+ * <p>RE（1.12.2）用的是 {@code SimpleNetworkWrapper} 加 {@code IMessage}；1.21.1 换成了
  * {@code CustomPacketPayload} + {@code RegisterPayloadHandlersEvent}，见 {@code network} 包。
  *
- * <p>注意：{@code ItemDiscordRing} 是原版的遗留类，注册表里用的是 {@code ItemRingOfDiscord}，
+ * <p>注意：{@code ItemDiscordRing} 是 RE 的遗留类，注册表里用的是 {@code ItemRingOfDiscord}，
  * 这里只移植后者。
  */
 public class ItemRingOfDiscord extends FRCurioItem {
@@ -27,7 +27,7 @@ public class ItemRingOfDiscord extends FRCurioItem {
     /**
      * 键位提示文案。
      *
-     * <p>键位是客户端概念，服务端没有 {@code KeyMapping}。原版靠 {@code @SideOnly(CLIENT)} 规避，
+     * <p>键位是客户端概念，服务端没有 {@code KeyMapping}。RE 靠 {@code @SideOnly(CLIENT)} 规避，
      * 1.21.1 没有这个注解，改成由客户端在初始化时把显示名注入进来；服务端保留 "X" 兜底，
      * 这样 tooltip 在两端都不会因为没有客户端类而崩。
      */
@@ -48,8 +48,8 @@ public class ItemRingOfDiscord extends FRCurioItem {
      * <p>对应 1.7.10 {@code DiscordKeybindMessage.Handler}（{@code :46-52}）：戒指只负责
      * 「找到书并调用它的右键」，书本身的行为一字不改。
      *
-     * <p>注意：1.7.10 <b>没有</b>「不谐模式」这种开关——那是 1.12.2 移植版（RE）的设计。
-     * 本项目以 1.7.10 为准：按键就是一次远程施放。
+     * <p>注意：1.7.10 没有「不谐模式」这种开关，那是 RE 的设计；本移植以 1.7.10 为准，
+     * 按键就是一次远程施放。
      *
      * @return 没戴着戒指、或背包里没有那本书时返回 {@code false}
      */
@@ -82,7 +82,7 @@ public class ItemRingOfDiscord extends FRCurioItem {
         tooltip.add(Component.translatable("item.ItemDiscordRing2.lore"));
         tooltip.add(Component.translatable("item.ItemDiscordRing3.lore"));
         tooltip.add(Component.translatable("item.FREmpty.lore"));
-        // 原版 ItemDiscordRing.java:67：一行「Current Keybind:」+ 实际键位名。
+        // RE 的 ItemDiscordRing.java:67：一行「Current Keybind:」+ 实际键位名。
         tooltip.add(Component.translatable("item.ItemDiscordRing4.lore")
                 .append(" ")
                 .append(keyHint.get()));

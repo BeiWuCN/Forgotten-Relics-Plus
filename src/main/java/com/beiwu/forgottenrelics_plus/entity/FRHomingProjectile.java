@@ -11,26 +11,15 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * 本模组弹射物的共同基类。
+ * 本移植弹射物的共同基类（对应 1.7.10 的 {@code EntityAIProjectileBase} 与各个 {@code EntityXxxOrb}）：
+ * 无重力直线飞行、可选目标追踪、生存时限、命中结算钩子。
  *
- * <p>对应 1.7.10 的 {@code EntityAIProjectileBase} 与各个 {@code EntityXxxOrb}：
- * <ul>
- *   <li><b>无重力</b>直线飞行（原版 {@code EntityThrowable#getGravityVelocity} 返回 0）；</li>
- *   <li>可以锁定一个目标并持续向它加速——原版 {@code EntityAIProjectileBase} 的追踪逻辑，
- *       为了兼容 {@code IEntityAdditionalSpawnData} 的写法，这里改用
- *       {@link SynchedEntityData} 同步目标 id，两端都能解析出实体，不必自己写生成包；</li>
- *   <li>有生存时限（原版 200 / 500 / 1000 tick 不等）。</li>
- * </ul>
+ * <p>原版用 {@code IEntityAdditionalSpawnData} 把目标 id 写进生成包；这里改用
+ * {@link SynchedEntityData} 同步，两端都能解析出实体，不必自己写生成包。
  *
- * <h2>视觉</h2>
- *
- * <p>1.7.10 的 jar 里没有实体贴图，那些球体当时是用 {@code ParticleEngine} 的粒子面片画出来的。
- * 现在的做法是：<b>逻辑照旧，形体交给 {@code client/FROrbRenderer}</b>——它用一张自带的柔光贴图
- * 按相机朝向画一个公告板四边形，颜色与大小按法球种类给，同时保留各类法球自己的粒子拖尾。
- *
- * <p>这样既让法球真正可见，又满足 {@code client/package-info.java} 的三条硬约束：
- * 只用 {@code MultiBufferSource} 拿 {@code VertexConsumer}、只用原版 {@code RenderType}，
- * 不碰 GL 状态，也就没有 Sodium / Iris 兼容问题。
+ * <p>1.7.10 没有实体贴图（形体是 {@code ParticleEngine} 的粒子面片）。现在形体交给
+ * {@code client/FROrbRenderer}：只用 {@code MultiBufferSource} + 原版 {@code RenderType}、
+ * 不碰 GL 状态，满足 {@code client/package-info.java} 的三条硬约束，无 Sodium / Iris 兼容问题。
  */
 public abstract class FRHomingProjectile extends ThrowableProjectile {
 
@@ -95,10 +84,9 @@ public abstract class FRHomingProjectile extends ThrowableProjectile {
             discard();
             return;
         }
-        // 追踪在**两端都算**（1.6.2 修正）：上一版只在服务端加加速度，客户端的速度只会每 tick 衰减，
-        // 于是客户端位置一路落后、每 10 tick 被服务端的位置包硬拉一次——玩家看到的「弹幕像 PPT」。
-        // 目标 id 本来就通过 SynchedEntityData 下发，客户端完全可以算出同一份加速度；
-        // 加上 updateInterval 改成 1（见 FREntities），位置包只做轻微校正，弹道于是连续。
+        // 追踪必须在两端都算。只在服务端加加速度的话，客户端速度每 tick 只衰减不补，
+        // 位置一路落后、每 10 tick 被位置包硬拉一次，弹幕看起来像 PPT。
+        // 目标 id 已通过 SynchedEntityData 下发，客户端能算出同一份加速度。
         applyHoming();
         if (level().isClientSide()) {
             spawnTrailParticles();
@@ -111,11 +99,10 @@ public abstract class FRHomingProjectile extends ThrowableProjectile {
         if (strength <= 0.0D) {
             return;
         }
-        LivingEntity target = resolvedTarget();
+        var target = resolvedTarget();
         if (target == null) {
             return;
         }
-        // 原版是「朝目标中心加速」，这里同样取目标身高的 60% 处作为瞄准点。
         Vec3 toTarget = new Vec3(
                 target.getX() - getX(),
                 target.getY() + target.getBbHeight() * 0.6D - getY(),

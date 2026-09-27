@@ -12,9 +12,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * 创造模式标签页。
  *
- * <p>图标以 1.7.10 为准：原版 {@code Main} 里那个匿名 {@code CreativeTabs("tabForgottenRelics")}
+ * <p>图标以原版为准：原版 {@code Main} 里那个匿名 {@code CreativeTabs("tabForgottenRelics")}
  * 返回的是 {@code itemApotheosis}（「神化」，{@code Main.java:363-369}）；
- * 改成「恐惧之冠」的是 1.12.2 移植版（RE），本项目不沿用。
+ * 改成「恐惧之冠」的是 RE，本移植不沿用。
  * 1.21.1 的标签页是数据驱动的注册对象，图标通过 {@code CreativeModeTab.builder()} 指定。
  *
  * <p>注意：翻译键沿用原版的 {@code itemGroup.tabForgottenRelics}。
@@ -27,7 +27,7 @@ public final class FRCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FORGOTTEN_RELICS =
             TABS.register("forgotten_relics_plus", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.tabForgottenRelics"))
-                    // 1.7.10 原版的标签页图标是「神化」(itemApotheosis)，不是恐惧之冠。
+                    // 原版的标签页图标是「神化」(itemApotheosis)，不是恐惧之冠。
                     .icon(() -> new ItemStack(FRItems.APOTHEOSIS.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(FRItems.MINING_CHARM.get());
@@ -47,40 +47,24 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.DISCORD_RING.get());
                         // 原创补完物品，排在最后。
                         output.accept(FRItems.GHASTLY_SKULL.get());
-                        // 第四波：核心类与武器。
                         output.accept(FRItems.CHAOS_CORE.get());
                         output.accept(FRItems.OMEGA_CORE.get());
                         output.accept(FRItems.PARADOX.get());
                         output.accept(FRItems.FALSE_JUSTICE.get());
-                        // 第六波：弹射物书籍。
                         output.accept(FRItems.THUNDERPEAL.get());
-                        // 第七波：错位之典。
                         output.accept(FRItems.TELEPORTATION_TOME.get());
-                        // 第七波：虚空吞噬者。
                         output.accept(FRItems.DEVOURER_OF_THE_VOID.get());
-                        // 第七波：邪术之咒。
                         output.accept(FRItems.ELDRITCH_SPELL.get());
-                        // 第七波：腥红之咒。
                         output.accept(FRItems.CRIMSON_SPELL.get());
-                        // 第七波：原初混沌之典。
                         output.accept(FRItems.TOME_OF_PRIMAL_CHAOS.get());
-                        // 第六波：核子之怒。
                         output.accept(FRItems.NUCLEAR_FURY.get());
-                        // 第七波：千咒之诫。
                         output.accept(FRItems.SOUL_TOME.get());
-                        // 第七波：永恒放逐之诫。
                         output.accept(FRItems.EDICT_OF_BANISHMENT.get());
-                        // 第七波：深渊魔典。
                         output.accept(FRItems.VOID_GRIMOIRE.get());
-                        // 第七波：预言之典。
                         output.accept(FRItems.TOME_OF_PREDESTINY.get());
-                        // 第七波：月耀咒书。
                         output.accept(FRItems.TOME_OF_LUNAR_FLARES.get());
-                        // 第七波：神化。
                         output.accept(FRItems.APOTHEOSIS.get());
-                        // 第七波：破碎的命运巨著。
                         output.accept(FRItems.TOME_OF_BROKEN_FATES.get());
-                        // 第七波：湮灭之钥。
                         output.accept(FRItems.OBLIVION_STONE.get());
                     })
                     .build());

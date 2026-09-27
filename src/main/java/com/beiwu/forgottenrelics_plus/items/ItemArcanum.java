@@ -25,9 +25,9 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import top.theillusivec4.curios.api.CuriosApi;
 
 /**
- * 浑浊之核（Nebulous Core，注册名 {@code arcanum}），1.12.2 原版 {@code ItemArcanum}，护符槽。
+ * 浑浊之核（Nebulous Core，注册名 {@code arcanum}），1.12.2 移植版（RE）的 {@code ItemArcanum}，护符槽。
  *
- * <p>原版行为：
+ * <p>RE 行为：
  * <ul>
  *   <li>每 tick 有 2.5% × {@code arcanumGenRate} 的概率，给快捷栏 / 饰品栏 / 护甲上的物品补 1 点 Vis；</li>
  *   <li>有 {@code arcanumTeleportChance}（默认 0.000208）的概率把佩戴者随机传送走；</li>
@@ -37,16 +37,16 @@ import top.theillusivec4.curios.api.CuriosApi;
  *   <li>受击时有 {@code nebulousCoreDodgeChance}（默认 40%）的概率闪避并随机传送，见 {@link #onIncomingDamage}。</li>
  * </ul>
  *
- * <p>与原版的两点差异：
+ * <p>与 RE 的两点差异：
  * <ul>
- *   <li>原版补 Vis 的顺序是「快捷栏 → 饰品栏 → 护甲」，找到第一个能充的就停，这里保持一致；</li>
- *   <li>原版转化休眠态时写死塞进饰品槽 6，槽位一变就会换错东西；这里改为遍历找到浑浊之核真正所在的槽位再替换。</li>
+ *   <li>RE 补 Vis 的顺序是「快捷栏 → 饰品栏 → 护甲」，找到第一个能充的就停，这里保持一致；</li>
+ *   <li>RE 转化休眠态时写死塞进饰品槽 6，槽位一变就会换错东西；这里改为遍历找到浑浊之核真正所在的槽位再替换。</li>
  * </ul>
  */
 public class ItemArcanum extends FRCurioItem
         implements FRRechargable, IVisDiscountGear, WearerTickBehaviour, IncomingDamageBehaviour {
 
-    /** 原版硬编码的基础生成概率：每 tick 2.5%。 */
+    /** RE 硬编码的基础生成概率：每 tick 2.5%。 */
     private static final double BASE_GEN_CHANCE = 0.025D;
 
     public ItemArcanum(Properties properties) {
@@ -75,7 +75,7 @@ public class ItemArcanum extends FRCurioItem
             }
         }
 
-        // 原版这两个分支是 if / else if：同一 tick 只会发生一件。
+        // RE 这两个分支是 if / else if：同一 tick 只会发生一件。
         if (player.getRandom().nextDouble() <= FRConfig.ARCANUM_TELEPORT_CHANCE.get()) {
             randomTeleport(player, FRConfig.ARCANUM_TELEPORT_RANGE.get());
             return;
@@ -96,7 +96,7 @@ public class ItemArcanum extends FRCurioItem
     /**
      * 受击闪避时用的随机传送。
      *
-     * <p>原版这段写死的半径是 16 格（与自身被动触发时用的 {@code arcanumTeleportRange} 不同），
+     * <p>RE 这段写死的半径是 16 格（与自身被动触发时用的 {@code arcanumTeleportRange} 不同），
      * 这里保持原样。
      *
      * @return 成功传送才返回 true
@@ -105,7 +105,6 @@ public class ItemArcanum extends FRCurioItem
         return randomTeleport(player, 16);
     }
 
-    /** 按「快捷栏 → 饰品栏 → 护甲」的顺序，给第一个能充能的物品补 1 点 Vis。 */
     private static boolean rechargeOne(ServerPlayer player) {
         for (int slot = 0; slot < 9; slot++) {
             if (tryRecharge(player, player.getInventory().items.get(slot))) {
@@ -139,7 +138,7 @@ public class ItemArcanum extends FRCurioItem
     /**
      * 随机传送。
      *
-     * <p>1.12.2 用的是 {@code SuperpositionHandler.validTeleportRandomly}：在半径内随机取点、
+     * <p>RE 用的是 {@code SuperpositionHandler.validTeleportRandomly}：在半径内随机取点、
      * 校验落点安全后再传送。1.21.1 没有现成的对应工具（{@code Entity#randomTeleport} 在这个版本不存在），
      * 所以这里自己实现：随机取 XZ 与 Y 偏移，往下/往上找一小段，挑一个「脚下有实体方块、
      * 身上两格是空的」位置落下去，最多试 32 轮。
@@ -169,7 +168,6 @@ public class ItemArcanum extends FRCurioItem
         return false;
     }
 
-    /** 落点判定：脚下要是实体方块，脚部与头部都要没有碰撞体积。 */
     private static boolean isSafeSpot(ServerLevel level, BlockPos feet) {
         if (!level.isLoaded(feet)) {
             return false;
@@ -185,9 +183,9 @@ public class ItemArcanum extends FRCurioItem
     /**
      * 紧跟无敌帧延长之后。
      *
-     * <p>原版的闪避写在 {@code onEntityAttacked}（{@code LivingAttackEvent}）里、位于七阳之戒之前，
-     * 也就是所有穿戴物里<b>最早</b>的一段（{@code RelicsEventHandler:196}）。
-     * 之前我按猜测给了它 500（最后），与原版相反，这里改正。
+     * <p>RE 的闪避写在 {@code onEntityAttacked}（{@code LivingAttackEvent}）里、位于七阳之戒之前，
+     * 也就是所有穿戴物里最早的一段（{@code RelicsEventHandler:196}）。
+     * <b>不要改成 500</b>：那会排到最后，与 RE 的次序相反。
      */
     @Override
     public int priority() {
@@ -197,7 +195,7 @@ public class ItemArcanum extends FRCurioItem
     /**
      * 受击时按概率闪避，并随机传送走。
      *
-     * <p>原版最多尝试 32 次随机传送（半径写死 16 格），成功一次就把这次伤害整个取消掉，
+     * <p>RE 最多尝试 32 次随机传送（半径写死 16 格），成功一次就把这次伤害整个取消掉，
      * 并给 20 tick 无敌。
      */
     @Override
@@ -215,8 +213,9 @@ public class ItemArcanum extends FRCurioItem
     }
 
     /**
-     * 原版 {@code ItemArcanum.java:72}：<b>常驻</b>一行 {@code item.ItemArcanum1.lore} + 实际折扣 + "%"，
-     * 后面跟一个空行，之后才是按住 Shift 才显示的正文。此前这一行整条没做，语言键也不存在。
+     * 对应 RE 的 {@code ItemArcanum.java:72}：<b>常驻</b>一行 {@code item.ItemArcanum1.lore} + 实际折扣 + "%"，
+     * 后面跟一个空行，之后才是按住 Shift 才显示的正文。
+     * 注意这一行始终显示，不要挪进 Shift 分支。
      */
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {

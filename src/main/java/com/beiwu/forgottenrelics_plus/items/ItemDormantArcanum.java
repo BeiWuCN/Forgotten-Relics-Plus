@@ -16,14 +16,14 @@ import net.minecraft.world.item.TooltipFlag;
 
 /**
  * 休眠浑浊之核（Dormant Nebulous Core，注册名 {@code dormant_arcanum}），
- * 1.12.2 原版 {@code ItemDormantArcanum}，护符槽。
+ * 1.12.2 移植版（RE）的 {@code ItemDormantArcanum}，护符槽。
  *
  * <p>浑浊之核陷入休眠后的形态，所有效果失效。佩戴期间每 tick 消耗
  * {@code dormantArcanumVisCostPerTick}（默认 3）点 Vis 来递减剩余寿命；
- * 寿命归零就自动变回浑浊之核。寿命每次 tick 反而会「唤醒」得更快，
- * 与原版一致——它消耗的是物品自身的 Vis 储量。
+ * 寿命归零就自动变回浑浊之核。每 tick 消耗 Vis 反而会让它更快「唤醒」，
+ * 与 RE 一致——消耗的是物品自身的 Vis 储量。
  *
- * <p>它没有独立的研究词条：原版里只能由浑浊之核转化而来，配方也是没有的。
+ * <p>它没有独立的研究词条：RE 里只能由浑浊之核转化而来，配方也是没有的。
  */
 public class ItemDormantArcanum extends FRCurioItem implements FRRechargable, WearerTickBehaviour {
 
@@ -43,13 +43,12 @@ public class ItemDormantArcanum extends FRCurioItem implements FRRechargable, We
         }
         int lifetime = stack.getOrDefault(FRDataComponents.DORMANT_LIFETIME.get(), 0);
         if (lifetime > 0) {
-            // 有 Vis 就扣一点、寿命减一；没 Vis 就维持休眠，等灵气慢慢补。
+            // 没 Vis 就维持休眠，等灵气慢慢补回来。
             if (RechargeAccess.consumeCharge(stack, player, FRConfig.DORMANT_ARCANUM_VIS_COST_PER_TICK.get())) {
                 stack.set(FRDataComponents.DORMANT_LIFETIME.get(), lifetime - 1);
             }
             return;
         }
-        // 寿命耗尽：原地变回浑浊之核。
         CurioHelper.replaceFirst(player, FRItems.DORMANT_ARCANUM.get(), new ItemStack(FRItems.ARCANUM.get()));
     }
 
@@ -63,7 +62,7 @@ public class ItemDormantArcanum extends FRCurioItem implements FRRechargable, We
         super.appendHoverText(stack, context, tooltip, flag);
         int lifetime = stack.getOrDefault(FRDataComponents.DORMANT_LIFETIME.get(), 0);
         if (lifetime > 0) {
-            // 原版把寿命乘以 2 当作秒数显示，前面接一段「剩余时间」前缀、后面接单位。
+            // RE 把寿命乘以 2 当作秒数显示，前面接「剩余时间」前缀、后面接单位。
             tooltip.add(Component.translatable("item.FRCode6.lore")
                     .append(String.valueOf(lifetime * 2))
                     .append(Component.translatable("item.ItemDormantArcanum2.lore")));

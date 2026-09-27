@@ -24,44 +24,21 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * 腥红之咒的猩红法球（Crimson Orb），1.7.10 原版 {@code EntityCrimsonOrb}。
+ * 腥红之咒的猩红法球（Crimson Orb），原版 {@code EntityCrimsonOrb}。
  *
- * <p>原版逻辑（{@code EntityThrowable} 子类，{@code getGravityVelocity} 返回 0）：
- * <ul>
- *   <li>无重力飞行，每 tick 做 0.99 的速度衰减；</li>
- *   <li><b>追踪</b>：若已有目标，就朝目标（瞄准点取目标身高的 60% 处）每 tick 叠加
- *       一个单位向量的 0.3 倍加速度，然后把速度的三个分量各自夹到 ±0.25；
- *       发射后的前 5 tick 里若竖直速度为负，强制取绝对值（先向上抬一下再追）；
- *       若目标为空（初始就没锁定，或目标已死 / 已卸载）则重新在 32 格内搜一个「能看见法球」的活体，
- *       且这一 tick 不做加速与限速；</li>
- *   <li>生存时限 1000 tick（原版 {@code ticksExisted > 1000} 移除），另有 {@code red} 开关控制是否
- *       立即消失——那个字段只有物品发射时传 {@code true} 一种取值，这里直接省掉；</li>
- *   <li>命中实体（且发射者非空）时造成 <b>MIN ~ MAX 之间随机</b>的遗落魔法伤害（原版 42~100），
- *       命中实心方块时同样放一次「放电」表现，随后消失；</li>
- *   <li>撞到草丛（{@code BlockBush}）、树叶（{@code BlockLeaves}）、液体（{@code BlockLiquid}）时
- *       <b>直接穿过去</b>，不结算也不消失；</li>
- *   <li>被玩家攻击时可以「反弹」：速度被改成攻击者视线方向 × 0.9，并播放 {@code thaumcraft:zap}。</li>
- * </ul>
+ * <p>原版（{@code EntityThrowable}，无重力 + 0.99 阻尼）：有目标时瞄准其身高 60% 处，每 tick 叠加
+ * 单位向量的 0.3 倍加速度，再把速度三分量各夹到 ±0.25；发射前 5 tick 若竖直速度为负则强制上抬；
+ * 目标为空时这一 tick 不加速，改在 32 格内重搜一个「能看见法球」的活体；生存 1000 tick；
+ * 命中实体（发射者非空）造成 42~100 的随机遗落魔法伤害，撞实心方块同样放一次「放电」表现后消失；
+ * 草丛 / 树叶 / 液体直接穿过；被攻击时沿攻击者视线 × 0.9 弹飞。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>基类换成 {@link FRHomingProjectile}（无重力、可追踪、生存时限、命中钩子），
- *       追踪加速度直接由 {@link FRHomingProjectile#homingStrength()} 提供；</li>
- *   <li>原版的 {@code IEntityAdditionalSpawnData}（把目标 id / 发射者 id / red 写进生成包）
- *       在 1.21.1 由基类的 {@code SynchedEntityData} 承担，两端都能解析出目标实体，
- *       不必自己写生成包，所以这里没有构造器同步字段；</li>
- *   <li>原版命中时调的 {@code SuperpositionHandler.imposeBurst} 是<b>纯客户端粒子爆发</b>
- *       （自定义网络包 → {@code Thaumcraft.proxy.burst}），<b>没有任何范围伤害</b>。
- *       1.7.10 这一段不是 Botania 粒子，但 RE 的 {@code EntityCrimsonOrb#spawnHitParticles}
- *       已经把它换成了 Botania：<b>15 颗猩红 wisp + 1 颗 sparkle</b>，本项目照 RE 复刻；</li>
- *   <li>拖尾：1.7.10 这个实体没有拖尾粒子（形体由 {@code RenderCrimsonOrb} 画），
- *       是 RE 在客户端 {@code onUpdate} 里补的 Botania sparkle 轨迹，本项目同样照 RE 复刻；</li>
- *   <li>原版放电音 {@code thaumcraft:shock} 换成原版等价物 {@link SoundEvents#LIGHTNING_BOLT_IMPACT}
- *       （与霹雳咒书命中音同一替代方案），反弹音 {@code thaumcraft:zap} 换成
- *       {@link SoundEvents#FIREWORK_ROCKET_BLAST}（与霹雳咒书发射音同一替代方案）；</li>
- *   <li>原版 {@code DamageSourceMagic} → {@link FRDamageTypes#FORGOTTEN_MAGIC}；</li>
- *   <li>原版 {@code BlockLeaves} / {@code BlockLiquid} 同样用标签与流体状态判断，语义一致。</li>
- * </ul>
+ * <p>1.21.1 对应：基类 {@link FRHomingProjectile} 提供无重力 / 追踪 / 时限 / 命中钩子，追踪加速度来自
+ * {@link FRHomingProjectile#homingStrength()}；原版 {@code IEntityAdditionalSpawnData}（目标 id / 发射者 id /
+ * red）由基类的 {@code SynchedEntityData} 承担（{@code red} 只有 {@code true} 一种取值，直接省掉）；
+ * 命中粒子与拖尾照 RE 复刻（15 颗猩红 wisp + 1 颗 sparkle、sparkle 拖尾轨迹——原版这两处分别是
+ * 纯客户端 {@code imposeBurst} 与「无拖尾」）；音效 {@code thaumcraft:shock} / {@code zap} 分别换成
+ * {@link SoundEvents#LIGHTNING_BOLT_IMPACT} / {@link SoundEvents#FIREWORK_ROCKET_BLAST}；
+ * {@code DamageSourceMagic} → {@link FRDamageTypes#FORGOTTEN_MAGIC}。
  *
  * <p><b>一处已知偏差</b>：原版在目标刚死时会立刻改追新目标（改不到就继续追那个已死目标的
  * 最后位置）；这里的 {@code resolvedTarget()} 对已死目标直接返回 {@code null}，于是那一 tick
@@ -119,11 +96,11 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
             return;
         }
         if (resolvedTarget() == null) {
-            // 原版：目标为空（初始未锁定 / 已死 / 已卸载）时只重新搜索，这一 tick 不做限速。
+            // 目标为空时这一 tick 只重搜、不限速（原版语义）。
             getNewTarget();
             return;
         }
-        Vec3 motion = getDeltaMovement();
+        var motion = getDeltaMovement();
         double x = Mth.clamp(motion.x, -MAX_SPEED, MAX_SPEED);
         double y = Mth.clamp(motion.y, -MAX_SPEED, MAX_SPEED);
         double z = Mth.clamp(motion.z, -MAX_SPEED, MAX_SPEED);
@@ -147,7 +124,6 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
         if (!candidates.isEmpty()) {
             setTarget(candidates.get(random.nextInt(candidates.size())));
         }
-        // 一个都没搜到时，原版保持原目标不变；这里同样什么都不做。
     }
 
     /**
@@ -160,7 +136,7 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
      */
     @Override
     protected void spawnTrailParticles() {
-        Vec3 from = new Vec3(xo, yo, zo);
+        var from = new Vec3(xo, yo, zo);
         Vec3 to = position();
         Vec3 diff = to.subtract(from);
         double length = diff.length();
@@ -211,7 +187,7 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
     protected void onImpact(HitResult result) {
         Entity owner = getOwner();
         if (result instanceof EntityHitResult entityHit) {
-            // 原版这段只在 getThrower() != null 时执行；本模组里发射者恒为玩家。
+            // 原版这段只在 getThrower() != null 时执行；本移植里发射者恒为玩家。
             if (owner == null) {
                 return;
             }
@@ -231,7 +207,7 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
             // RE #spawnHitParticles 的 15 颗猩红 wisp：
             // wispFX(hx, hy, hz, 0.8+rand*0.2, 0.1+rand*0.2, rand*0.1,
             //        size=0.1+rand*0.3, xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=0.9)。
-            // 逐颗单独发包以保留「每颗颜色/尺寸都不同」的原版观感（旧版同样是一颗一颗 addParticle）。
+            // 逐颗单独发包，保留原版「每颗颜色/尺寸都不同」的观感；合并成一簇会丢掉每颗的差异。
             for (int i = 0; i < 15; i++) {
                 FRParticles.serverWisp(server, getX(), getY(), getZ(),
                         0.8F + random.nextFloat() * 0.2F,

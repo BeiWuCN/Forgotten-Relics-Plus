@@ -9,16 +9,16 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * 模组<b>自带</b>的音效事件。
+ * 本移植自带的音效事件。
  *
  * <p>1.7.10 原版在 {@code assets/forgottenrelics/sounds.json} 里声明了 5 个自定义音效，
  * 对应的 ogg 就在原版 jar 的 {@code sounds/specific/} 下。这 5 个里：
  * <ul>
  *   <li>{@code lunarFlare} / {@code starfall} / {@code md_charge} 有实际调用点，见下；</li>
  *   <li>{@code directed}（原版事件名 {@code sound.meme112}）只被盖亚守护者反作弊系统使用，
- *       而该系统本移植版<b>不做</b>（见 Tools/HANDOVER.md 第 10 节）。音效仍然搬了过来并注册，
- *       一是与原版 jar 对齐，二是将来若补那套系统可以直接用；</li>
- *   <li>{@code discharge} 在原版<b>代码里从未被播放</b>（死资源），不移植。</li>
+ *       而该系统本移植不做。音效仍然搬了过来并注册，一是与原版 jar 对齐，二是将来若补那套
+ *       系统可以直接用；</li>
+ *   <li>{@code discharge} 在原版代码里从未被播放（死资源），不移植。</li>
  * </ul>
  *
  * <p>原版调用点与参数（音量会被 {@code SoundHelper} 统一缩放，见 FRConfig#SOUND_VOLUME_MULTIPLIER）：
@@ -45,7 +45,7 @@ public final class FRSounds {
     /** 深渊之魔书开始引导。 */
     public static final DeferredHolder<SoundEvent, SoundEvent> MD_CHARGE = register("md_charge");
 
-    /** 盖亚守护者反作弊（本移植版未实现，先注册备用）。原版事件名 {@code sound.meme112}。 */
+    /** 盖亚守护者反作弊（本移植未实现，先注册备用）。原版事件名 {@code sound.meme112}。 */
     public static final DeferredHolder<SoundEvent, SoundEvent> DIRECTED = register("directed");
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {

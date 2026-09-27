@@ -17,38 +17,25 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * 千咒之诫的灵魂能量（Soul Energy），1.7.10 原版 {@code EntitySoulEnergy}，
- * 本项目注册名 {@code soul_energy}。
+ * 千咒之诫的灵魂能量（Soul Energy），原版 {@code EntitySoulEnergy}，本移植注册名 {@code soul_energy}。
  *
- * <p>原版逻辑（{@code EntityThrowable} 子类，{@code getGravityVelocity} 返回 0）：
- * <ul>
- *   <li>无重力飞行，生存时限 1000 tick；</li>
- *   <li>追踪目标（施法者）：「朝目标身高 60% 处」每 tick 叠加一个单位向量的 0.3 倍加速度，
- *       再把三个速度分量各自夹到 ±0.35；目标为空时立即 {@code setDead()}；</li>
- *   <li>{@code onImpact} 是<b>空实现</b>——灵魂能量穿过途中一切方块与实体，不因碰撞消失；</li>
- *   <li>每 tick 检查自身 ±0.5 的 1×1×1 判定框，若里面出现了目标，就播 {@code random.fizz}、
- *       治疗目标 1 点、并给（必然是玩家的）目标补 1 点饥饿，然后消失；</li>
- *   <li>拖尾：客户端从上一 tick 位置到当前位置沿途每隔 0.05 格撒一颗白色 sparkle，
- *       另有约 {@code 2 / steps} 的概率在旁边补一颗；命中时再撒 7 颗白色 wisp。</li>
- * </ul>
+ * <p>原版（{@code EntityThrowable}，无重力 + 0.99 阻尼）：追施用者（瞄准其身高 60% 处）每 tick 叠加
+ * 单位向量的 0.3 倍加速度，速度三分量夹到 ±0.35；目标为空立即 {@code setDead()}；
+ * {@code onImpact} 是空实现（穿过一切方块与实体，不因碰撞消失）；每 tick 检查自身 ±0.5 的
+ * 1×1×1 判定框，里面出现目标就播 {@code random.fizz}、治疗 1 点、补 1 点饥饿，然后消失；
+ * 客户端拖尾每 0.05 格一颗白色 sparkle（另有约 {@code 2/steps} 概率补一颗），命中时再撒 7 颗白色 wisp。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>基类换成 {@link FRHomingProjectile}：无重力、生存时限、朝目标加速都由它承担，
- *       本类只补上原版额外的「速度分量限幅」与「1×1×1 距离判定」；</li>
- *   <li>原版的 {@code IEntityAdditionalSpawnData}（把目标 id 写进生成包）在 1.21.1 由基类的
- *       {@code SynchedEntityData} 承担，两端都能解析出目标，不必自己写生成包；</li>
- *   <li>粒子直接用 Botania 的现代对应物（原版本来就是 Botania，无需替代）：
- *       拖尾 {@code sparkleFX} → {@link FRParticles#sparkle}，命中七颗 {@code wispFX} →
- *       {@link FRParticles#serverWisp}；参数与原版逐一对齐，见各处注释；</li>
- *   <li>音效 {@code random.fizz} → {@link SoundEvents#FIRE_EXTINGUISH}
- *       （与邪术之咒、核子之怒同一替代方案），并按项目约定过 {@link SoundHelper#play} 压音量；
- *       发射音 {@code botania:missile} 由物品侧播放，不在本实体里。</li>
- * </ul>
+ * <p>1.21.1 对应：基类 {@link FRHomingProjectile} 承担无重力 / 生存时限 / 朝目标加速，
+ * 本类只补「速度分量限幅」与「1×1×1 距离判定」；目标 id 由基类的 {@code SynchedEntityData} 同步
+ * （原版写进 {@code IEntityAdditionalSpawnData} 生成包）；粒子直接换成 Botania 的现代对应物
+ * （原版本来就是 Botania）：{@code sparkleFX} → {@link FRParticles#sparkle}，7 颗 {@code wispFX} →
+ * {@link FRParticles#serverWisp}，参数逐一对齐；音效 {@code random.fizz} →
+ * {@link SoundEvents#FIRE_EXTINGUISH}（与邪术之咒、核子之怒同一替代方案）并过 {@link SoundHelper#play} 压音量；
+ * 发射音 {@code botania:missile} 由物品侧播放，不在本实体里。
  *
  * <p><b>与原版的两处偏差</b>：
  * <ol>
- *   <li>原版对「目标已死」的实体仍会继续追踪（只判 {@code target != null}），基类的
+ *   <li>原版对「目标已死」的实体仍继续追踪（只判 {@code target != null}），基类的
  *       {@code resolvedTarget()} 对已死目标返回 {@code null}，于是本实体会直接消失。
  *       灵魂能量的目标是施法者本人，施法者死亡时法术早已中断，实际不可辨；</li>
  *   <li>原版 {@code tick} 在客户端也会执行治疗与 {@code setDead}；1.21.1 把结算收敛到服务端，
@@ -113,24 +100,28 @@ public class EntitySoulEnergy extends FRHomingProjectile {
         if (isRemoved() || level().isClientSide()) {
             return;
         }
-        // 原版每 tick 把三个速度分量各自夹到 ±0.35（基类只叠加加速度，不夹）。
-        Vec3 motion = getDeltaMovement();
+        // 基类只叠加加速度，不夹速度；原版每 tick 会把三个分量各自夹到 ±0.35。
+        var motion = getDeltaMovement();
         setDeltaMovement(
                 Mth.clamp(motion.x, -MAX_SPEED, MAX_SPEED),
                 Mth.clamp(motion.y, -MAX_SPEED, MAX_SPEED),
                 Mth.clamp(motion.z, -MAX_SPEED, MAX_SPEED));
 
-        LivingEntity target = resolvedTarget();
+        var target = resolvedTarget();
         if (target == null) {
             // 原版 target == null 时直接 setDead()。
             discard();
             return;
         }
         // 原版 world.getEntitiesWithinAABB(EntityLivingBase.class, 自身 ±0.5 的方框).contains(target)。
+        // 这里直接判「目标是否与该方框相交」，与那次查询等价——原生的
+        // getEntitiesOfClass(Class, AABB) 过滤条件就是 EntitySelector.NO_SPECTATORS 加包围盒相交
+        //（见 EntityGetter#getEntitiesOfClass），而目标必然在本维度里。
+        // 每 tick 每颗灵魂球省下一次空间查询与一次 List 分配。
         AABB reach = new AABB(
                 getX() - REACH_BOX, getY() - REACH_BOX, getZ() - REACH_BOX,
                 getX() + REACH_BOX, getY() + REACH_BOX, getZ() + REACH_BOX);
-        if (level().getEntitiesOfClass(LivingEntity.class, reach).contains(target)) {
+        if (!target.isRemoved() && !target.isSpectator() && reach.intersects(target.getBoundingBox())) {
             reachTarget(target);
         }
     }
@@ -169,7 +160,7 @@ public class EntitySoulEnergy extends FRHomingProjectile {
      */
     @Override
     protected void spawnTrailParticles() {
-        Vec3 from = new Vec3(xOld, yOld, zOld);
+        var from = new Vec3(xOld, yOld, zOld);
         Vec3 to = position();
         Vec3 diff = to.subtract(from);
         double length = diff.length();
@@ -206,7 +197,6 @@ public class EntitySoulEnergy extends FRHomingProjectile {
      */
     @Override
     protected void onHit(HitResult result) {
-        // 空实现：既不结算也不销毁。
     }
 
     /** 本类覆写了 {@code onHit}，这里永远不会被调用；保留空实现以满足基类契约。 */

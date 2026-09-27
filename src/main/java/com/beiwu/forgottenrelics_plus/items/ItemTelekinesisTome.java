@@ -38,124 +38,50 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import vazkii.botania.common.entity.GaiaGuardianEntity;
 
 /**
- * 预言之典（Tome of Predestiny），注册名 {@code tome_of_predestiny}，
- * 1.7.10 原版 {@code ItemTelekinesisTome}。
+ * 预言之典（Tome of Predestiny），注册名 {@code tome_of_predestiny}，1.7.10 原版
+ * {@code ItemTelekinesisTome}（同目录的 {@code ItemTelekinesisTomeLegacy} 没有被任何地方引用，
+ * 不移植；依据见 {@code Main.java} 第 257 / 293 行）。堆叠上限 1、Warp 4。
  *
- * <p><b>选用依据</b>：同目录下还有一份 {@code ItemTelekinesisTomeLegacy}，但
- * 1.7.10 的 {@code Main} 里注册的是 {@code new ItemTelekinesisTome()} 并赋给
- * {@code Main.itemTelekinesisTome}（{@code Main.java} 第 257 / 293 行），
- * {@code ItemTelekinesisTomeLegacy} <b>没有被任何地方引用</b>；研究词条
- * {@code TelekinesisTome} 的图标、配方产物用的也都是 {@code Main.itemTelekinesisTome}。
- * 所以这里以「Final 版」的 {@code ItemTelekinesisTome} 为准，Legacy 不移植。
+ * <p>行为：拉弓姿态（可用时长 72000 tick），按住右键进入念力引导——沿视线逐格搜索最近的活体，
+ * 清零其坠落距离、补缓慢 IV（2 tick / amplifier 3），再把它往「玩家中心 + 视线 × 7.5，再抬高 0.5」
+ * 拉（潜行时保持上次距离不拉近）；方向长度 &gt; 1 时归一化，倍率距离 &lt; 1.5 取 0.333、否则 0.667、
+ * 距离 ≥ 8 时再按 {@code dist / 8} 放大。左键对已锁定目标打闪电：≤ 16 格且充能足够时连画 4 道折线
+ * 闪电、播一次 {@code zap}、造成 {@code 16 + 24 × 随机} 的真实闪电伤害；潜行 + 左键则把目标沿视线以
+ * {@code (3.0, 1.5, 3.0)} 抛开。Thaumcraft Boss 与 Botania 盖亚守护者不吃念力（Vis 照扣）。
  *
- * <p>原版逻辑（{@code ItemTelekinesisTome}）：
- * <ol>
- *   <li>物品堆叠上限 1、稀有度 EPIC，拉弓姿态（{@code EnumAction.bow}、可用时长 72000），
- *       {@code getWarp} 返回 <b>4</b>；</li>
- *   <li>每个玩家一份静态状态 {@code globalTomeMap}：{@code ticksTillExpire}（默认 0）、
- *       {@code ticksCooldown}（默认 0）、{@code target}（实体 id，默认 -1）、
- *       {@code dist}、{@code reDist}（默认 -1.0）。{@code onUpdate} 每 tick 递减前两者，
- *       并在 {@code ticksTillExpire == 0} 时清空目标；</li>
- *   <li><b>念力抓取</b>（{@code onUsingTickAlt}，按住右键时每 tick 执行，受
- *       {@code ticksCooldown} 门控）：
- *     <ol>
- *       <li>若旧目标仍在，先 {@code getExistingTarget(.., 6.0)} 确认它还在视线前方；
- *           找不到就 {@code searchForTarget(.., 3.0)} 沿视线方向逐格找最近的活体；
- *           两处搜索的点位都是<b>累加</b>的（每轮 {@code target += look * distance} 且
- *           {@code y += 0.5}），这是 1.7.10 自身的行为，逐字保留；</li>
- *       <li>找到目标后从背包法杖抽 <b>风 6 + 秩序 8 厘 Vis</b>（= 0.14 点，乘
- *           {@code telekinesisTomeVisMult}）；抽不出来就这一 tick 什么都不做；</li>
- *       <li>目标清零坠落距离、施加 {@code 缓慢IV}（时长 2 tick、amplifier 3，仅当身上没有）；</li>
- *       <li>把目标往「玩家身体中心 + 视线 × 7.5，再抬高 0.5」拉（潜行时改为
- *           「玩家中心 + 视线 × 上次距离」，即保持距离不拉近）；
- *           方向向量长度 &gt; 1 时归一化，再乘 {@code vectorPower}：
- *           距离 &lt; 1.5 时 0.333，否则 0.667，距离 ≥ 8 时按 {@code dist / 8} 放大；
- *           <b>被拉目标的移动归服务端</b>，原版靠 {@code PlayerMotionUpdateMessage}
- *           同步玩家目标；</li>
- *       <li>每次成功施加念力，都往目标实体中心广播一次
- *           {@code TelekinesisParticleMessage}（2 颗紫色 wisp + 4 颗传送门粒子）；</li>
- *       <li>若目标是 {@code EntityThaumcraftBoss} / {@code EntityDoppleganger}
- *           （即 {@code isEntityBlacklistedFromTelekinesis}），Vis 已扣但直接返回，不施加任何速度；</li>
- *       <li>找到目标就把 {@code ticksTillExpire} 重置为 5。</li>
- *     </ol>
- *   </li>
- *   <li><b>闪电攻击</b>（{@code lightningAttack}，由左键触发）：
- *     <ol>
- *       <li>若 {@code SuperpositionHandler.isOnCoodown(player)}（共用施法冷却）为真，整段直接返回；</li>
- *       <li>目标 &lt;= 16 格且抽到 <b>风 80 + 秩序 50 + 火 200 厘 Vis</b>（= 3.3 点）时，
- *           连画 4 道自定义闪电（{@code imposeLightning}），在玩家处播 {@code thaumcraft:zap}，
- *           对目标造成 {@code DamageSourceTLightning} 的 {@code 16 + 24 × 随机} 伤害；</li>
- *       <li>若玩家潜行且抽到 <b>风 150 + 秩序 80 厘 Vis</b>（= 2.3 点），把目标沿玩家视线
- *           以 {@code (3.0, 1.5, 3.0)} 的倍率<b>抛开</b>（直接覆写速度），并清空锁定状态、
- *           把 {@code ticksCooldown} 设为 40；</li>
- *       <li>无论如何最后都 {@code setCasted(player, 10, true)}（10 tick 共用冷却 + 挥臂）。</li>
- *     </ol>
- *   </li>
- *   <li>左键入口 {@code leftClick} 只对<b>已锁定</b>的目标生效：目标必须仍能通过
- *       {@code getExistingTarget(.., 6.0)} 找到，否则什么都不发生。</li>
- * </ol>
+ * <p>1.21.1 对应：{@code use} / {@code onUseTick} / {@link UseAnim#BOW} 一一对应；「从背包法杖抽 Vis」
+ * 在 Thaumaturge 1.21.1 API 里没有对应接口，改成 {@link FRRechargable} 的物品自身充能；原版以玩家为键的
+ * 静态 map {@code globalTomeMap} → 本类的 {@code Map<UUID, TomeState>}（Player 实例会在换维度 / 重登时
+ * 被替换，UUID 更稳，与 {@link CooldownHelper} 同一考虑）；{@code SuperpositionHandler} 的共用施法冷却
+ * → {@link CooldownHelper}。不写任何自定义网络包：紫色 wisp 走服务端 {@link FRParticles}
+ * （原版就是 Botania wispFX），portalstuff 继续用 {@link ParticleTypes#PORTAL}，玩家目标的移动改为
+ * 改完速度后置 {@code hurtMarked} 靠原版同步。左键闪电用 {@link FRBoltParticleData#broadcast} 把两端送到
+ * 客户端、由 {@code client/FRBolts} 交给 Botania 的 {@code BoltRenderer} 画折线闪电，宽度沿用原版
+ * {@code 0.225 + distSq / 2000}（比霹雳咒书的 0.075 粗得多，是 1.7.10 自己的取值）；
+ * {@code thaumcraft:zap} → {@link SoundEvents#FIREWORK_ROCKET_BLAST} 并过 {@link SoundHelper#play}。
  *
- * <p>1.21.1 的对应关系：
- * <ul>
- *   <li>{@code onItemRightClick} → {@code Item#use}；{@code onUsingTick} → {@code Item#onUseTick}；
- *       {@code getMaxItemUseDuration} → {@code Item#getUseDuration}；{@code EnumAction.bow} → {@link UseAnim#BOW}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>（见
- *       {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1）。按本模组统一约定改成
- *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge} 扣除；</li>
- *   <li>原版以玩家为键的静态 map {@code globalTomeMap} → 本类内部的
- *       {@code Map<UUID, TomeState>}（1.21.1 的 {@code Player} 实例会在维度切换/重登时被替换，
- *       用 UUID 更稳，与 {@link CooldownHelper} 同一考虑）；</li>
- *   <li>原版 {@code SuperpositionHandler} 的共用施法冷却 → {@link CooldownHelper}；</li>
- *   <li><b>不写任何自定义网络包</b>：{@code TelekinesisParticleMessage} 的紫色 wisp 改为服务端
- *       {@link FRParticles}（原版就是 Botania wispFX），portalstuff 本来就是原版
- *       {@code EntityPortalFX}、继续用 {@link ParticleTypes#PORTAL}；
- *       {@code PlayerMotionUpdateMessage} 改为改完速度后置 {@code hurtMarked}，靠原版同步；</li>
- *   <li><b>左键闪电（1.6.2 重做）</b>：原版 {@code imposeLightning(player, ..., player.x, player.y + 1.0,
- *       player.z, TVec.x, TVec.y, TVec.z, 20, curve, speed, 0, 0.225 + distSq / 2000)} 被
- *       {@code for (counter = 0; counter <= 3; ++counter)} 连调 4 次，客户端用 Thaumcraft
- *       {@code FXLightningBolt} 画成锯齿电弧。本项目改成 {@link FRBoltParticleData#broadcast}
- *       走原版粒子包把两端送到客户端，再由 {@code client/FRBolts} 交给 Botania 的
- *       {@code BoltRenderer} 画真正的折线闪电；宽度沿用原版公式（注意它比霹雳咒书的 0.075 粗得多，
- *       是 1.7.10 自己的取值）；</li>
- *   <li>音效 {@code thaumcraft:zap} → 原版等价物 {@link SoundEvents#FIREWORK_ROCKET_BLAST}
- *       （与千咒之诫的 {@code zap} 替代方案一致），并过 {@link SoundHelper#play} 统一压低音量；</li>
- *   <li>左键「闪电 / 抛开」在原版是客户端在 {@code onUpdate} 里检测攻击键<b>按下的边沿</b>后
- *       发 {@code TelekinesisAttackMessage}，服务端 {@code leftClick(player)} 只看「有没有锁定目标」，
- *       与这次左键有没有点到实体<b>无关</b>。1.21.1 对应成两条互补的入口：
- *     <ul>
- *       <li>左键点到<b>实体</b>：服务端 {@code AttackEntityEvent}（经 {@link WeaponAttackBehaviour} 派发）；</li>
- *       <li>左键点<b>空气或方块</b>：只有客户端的 {@code PlayerInteractEvent.LeftClickEmpty} /
- *           {@code LeftClickBlock} 会触发，所以补了一个空载荷
- *           {@code TelekinesisLeftClickPayload}，由 {@code client/FRClientEvents} 发出（见其类注释）。</li>
- *     </ul>
- *     两条路最终都汇到 {@link #leftClick(Player, ItemStack)}，冷却/锁定/充能校验只有那一个副本。
- *     <b>1.6.2 修正</b>：上一版只有第一条路，于是「点空气完全没反应」，与 1.7.10 不一致。</li>
- * </ul>
+ * <p>使用姿态：原版默认（{@code altTelekinesisAlgorithm = false}）右键不进入
+ * {@code setItemInUse}，而由客户端每 tick 发包驱动服务端；1.21.1 不允许自定义包，这里统一按该选项为
+ * {@code true} 的路径实现：右键进入拉弓姿态、{@code onUseTick} 里做念力控制，可见效果与打开该配置的
+ * 原版一致。
  *
- * <p><b>使用姿态的取舍</b>：原版默认（{@code altTelekinesisAlgorithm = false}）右键<b>不进入</b>
- * {@code setItemInUse}，而是由客户端每 tick 发 {@code TelekinesisUseMessage} 驱动服务端；
- * 只有把配置项打开才走 {@code onUsingTick} 的拉弓引导。1.21.1 没有「服务端驱动的手动轮询」
- * 而又不允许自定义包，所以这里<b>统一按 {@code altTelekinesisAlgorithm = true} 的路径实现</b>：
- * 右键进入拉弓姿态、{@code onUseTick} 里做念力控制。可见效果与打开该配置的原版一致。</p>
- *
- * <p><b>Vis 折算</b>：原版念力每 tick 抽 0.14 点 Vis、闪电 3.3 点、抛开 2.3 点，充能是整数。
- * 念力改为<b>每秒扣一次</b>（本模组引导型遗物的既有节奏，见核子之怒 / 永恒放逐之诫 /
- * 深渊魔典），默认值 3（0.14 × 20 = 2.8，按本项目「向上取整」的先例取 3）；
- * 闪电取 3（3.3 四舍五入）、抛开取 2（2.3 四舍五入），都是在原版数值上就近取整。</p>
+ * <p>Vis 折算：原版念力 0.14 点/tick、闪电 3.3 点、抛开 2.3 点，充能是整数。念力改为每秒扣
+ * 一次（本移植引导型遗物的既有节奏），默认 3（2.8 向上取整）；闪电取 3、抛开取 2（四舍五入）。
  *
  * <p><b>与 1.7.10 的偏差</b>：
  * <ol>
- *   <li><s>左键触发从「按下攻击键」收紧成「左键点到实体」</s>——<b>1.6.2 已取消这条偏差</b>：
- *       现在点实体、点空气、点方块三条路都能触发，语义回到 1.7.10 的「按下左键就打锁定目标」；</li>
- *   <li>念力的 Vis 从「每 tick 抽一次、抽不出来当 tick 不动」改成「每秒扣一次、
- *       扣不出来才中断引导」，节奏与其它引导型遗物统一；</li>
- *   <li>原版搜索目标时把 {@code target} 累加（既加 {@code look × distance} 又累加 {@code y += 0.5}），
- *       点会越来越偏、越来越高。这是原版自身的实现，这里<b>逐字保留</b>，未做「修正」；</li>
- *   <li>原版 {@code onUsingTickAlt} 在客户端也跑一份（本地预测），这里整套只在服务端跑，
- *       客户端完全依赖服务端同步 —— 可见结果一致；</li>
+ *   <li>原版搜索目标时把 {@code target} 既累加 {@code look × distance} 又累加 {@code y += 0.5}，
+ *       搜索点会越来越偏、越来越高——这是原版自身的实现，这里逐字保留，未做「修正」；</li>
+ *   <li>念力的 Vis 从「每 tick 抽一次、抽不出来当 tick 不动」改成「每秒扣一次、扣不出来才中断引导」，
+ *       节奏与其它引导型遗物统一；</li>
+ *   <li>原版 {@code onUsingTickAlt} 在客户端也跑一份（本地预测），这里整套只在服务端跑，客户端完全
+ *       依赖服务端同步 —— 可见结果一致；</li>
+ *   <li>左键触发：原版是「按下攻击键的边沿」，与左键有没有点到实体无关。1.21.1 拆成两条互补入口
+ *       （点实体走 {@link WeaponAttackBehaviour} / 点空气或方块走客户端补发的空载荷
+ *       {@code TelekinesisLeftClickPayload}），都汇到 {@link #leftClick(Player, ItemStack)} 这一份实现。
+ *       两条入口缺一不可：只实现点实体时，点空气或方块完全没有反应，与 1.7.10 不一致；</li>
  *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerTick.lore} + 各要素成本）依赖
- *       {@code GuiScreen.isCtrlKeyDown}，而共享基类 {@link FRItem} 只实现 Shift 展开，
- *       近几件施法物品同样没有该行，这里保持一致。</li>
+ *       {@code GuiScreen.isCtrlKeyDown}，共享基类 {@link FRItem} 只实现 Shift 展开，这里保持一致。</li>
  * </ol>
  */
 public class ItemTelekinesisTome extends FRItem
@@ -275,7 +201,7 @@ public class ItemTelekinesisTome extends FRItem
     }
 
     /**
-     * 左键点到<b>实体</b>的入口：NeoForge 的 {@code AttackEntityEvent}（{@link WeaponAttackBehaviour} 派发）。
+     * 左键点到实体的入口：NeoForge 的 {@code AttackEntityEvent}（{@link WeaponAttackBehaviour} 派发）。
      *
      * <p><b>不取消事件</b>：原版的左键闪电是独立于普通攻击的一条包，普通挥击照常结算，
      * 这里保持同样行为。
@@ -301,7 +227,7 @@ public class ItemTelekinesisTome extends FRItem
     }
 
     /**
-     * 对应原版 {@code leftClick(player) -> lightningAttack(player, item, ..)}：不管这次左键
+     * 对应原版 {@code leftClick(player) -> lightningAttack(player, item, ..)}：不管本次左键
      * 有没有点到东西，只要身上锁着目标、目标还在视线前方，就打一发闪电（潜行时改为抛开）。
      *
      * <p>这就是原版「按下左键就朝已锁定目标打闪电」的语义，两条入口（点实体 / 点空气或方块）
@@ -500,24 +426,23 @@ public class ItemTelekinesisTome extends FRItem
      * 每颗 {@code wispFX(中心, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.2+rand*0.1,
      * xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=1.0)}；{@code supers = 3}，循环 {@code i <= 3}
      * 即 4 颗传送门粒子（原版就是 {@code EntityPortalFX}，初速 ±1.5）。
+     *
+     * <p>两处都是「位置正好在中心 + 各向同性随机初速」，所以能整簇发包：原版本来就只有
+     * <b>一个</b> {@code TelekinesisParticleMessage}，这里用两个包（两种粒子类型各一个）。
+     * 逐颗发是 6 个包/tick，而引导时长上限 72000 tick——本移植的每 tick 广播热点之一。
+     * 位置不变；初速由「均匀 ±0.075 / ±1.5」换成同标准差的 gaussian
+     *（{@code 0.15/√12 ≈ 0.043} 与 {@code 3.0/√12 ≈ 0.866}）；颜色与尺寸由逐颗随机改为
+     * 整簇抽一次——与 {@link FRParticles#serverWispBurst} 的既定口径一致。
      */
     private static void telekinesisParticles(ServerLevel level, Vec3 center) {
-        for (int i = 0; i <= 1; i++) {
-            FRParticles.serverWisp(level, center.x, center.y, center.z,
-                    0.2F + level.random.nextFloat() * 0.3F,
-                    0.0F,
-                    0.5F + level.random.nextFloat() * 0.2F,
-                    0.2F + level.random.nextFloat() * 0.1F,
-                    (level.random.nextDouble() - 0.5D) * 0.15D,
-                    (level.random.nextDouble() - 0.5D) * 0.15D,
-                    (level.random.nextDouble() - 0.5D) * 0.15D);
-        }
-        for (int i = 0; i <= 3; i++) {
-            level.sendParticles(ParticleTypes.PORTAL, center.x, center.y, center.z, 0,
-                    (level.random.nextDouble() - 0.5D) * 3.0D,
-                    (level.random.nextDouble() - 0.5D) * 3.0D,
-                    (level.random.nextDouble() - 0.5D) * 3.0D, 1.0D);
-        }
+        FRParticles.serverWispBurst(level, center.x, center.y, center.z,
+                0.2F + level.random.nextFloat() * 0.3F,
+                0.0F,
+                0.5F + level.random.nextFloat() * 0.2F,
+                0.2F + level.random.nextFloat() * 0.1F, 1.0F,
+                2, 0.0D, 0.15D / Math.sqrt(12.0D));
+        level.sendParticles(ParticleTypes.PORTAL, center.x, center.y, center.z, 4,
+                0.0D, 0.0D, 0.0D, 3.0D / Math.sqrt(12.0D));
     }
 
     // ------------------------------------------------------------------

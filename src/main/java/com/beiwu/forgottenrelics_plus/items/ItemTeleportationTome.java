@@ -32,56 +32,40 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * 错位之典（Tome of Discord），注册名 {@code tome_of_discord}，1.7.10 原版
- * {@code ItemTeleportationTome}（原版注册名就是 ItemTeleportationTome，只是研究键叫 DiscordTome）。
+ * 错位之典（Tome of Discord），注册名 {@code tome_of_discord}。1.7.10 原版类名是
+ * {@code ItemTeleportationTome}（原版注册名就是 {@code ItemTeleportationTome}，只是研究键叫
+ * {@code DiscordTome}）。
  *
- * <p>原版 {@code onItemRightClick} 的逻辑：
- * <ol>
- *   <li>若玩家所在维度等于 {@code Config.dimensionOuterId}（外域 / Outer Lands），直接原样返回，
- *       <b>不消耗、不传送</b>；</li>
- *   <li>不在共用冷却里且是服务端时，先算一次「视线指向的活体实体」
- *       {@code EntityUtils.getPointedEntity(world, player, 0.0, 128.0, 4.0F)}
- *       ——射线最长 128 格、实体碰撞箱容差 4 格；</li>
- *   <li>按固定优先级试三种模式，每种都单独调用一次
- *       {@code WandManager.consumeVisFromInventory(player, AIR 160 + ORDER 240 + ENTROPY 240)}，
- *       成功才继续，并在成功后 {@code SuperpositionHandler.setCasted(player, 20, false)} 设 20 tick 共用冷却：
- *     <ol>
- *       <li><b>潜行 + 右键</b>：沿视线方向传送 16 格，无视障碍；</li>
- *       <li><b>右键且准星指向活体实体</b>：玩家与目标交换位置；</li>
- *       <li><b>右键且准星指向方块</b>：从命中方块往上最多 32 格，取第一个
- *           「下方是实心、当格与上一格可通行」的 y，落点 {@code x+0.5 / y / z+0.5}；</li>
- *     </ol>
- *   </li>
- *   <li>起止两端各播放一次 {@code mob.endermen.portal}，并用自定义网络包
- *       {@code PortalTraceMessage} 把两点之间的传送轨迹广播给周围 128 格内的玩家。</li>
- * </ol>
- *
- * <p>1.21.1 的对应关系：
+ * <p>行为：外域维度里右键完全无效——不消耗、不传送。服务端按固定优先级试三种模式，每种各扣一次
+ * Vis（原版 {@code consumeVisFromInventory(AIR 160 + ORDER 240 + ENTROPY 240)} 厘 = 6.4 点），
+ * 成功后设 20 tick 共用冷却：
  * <ul>
- *   <li>{@code onItemRightClick} → {@code Item#use}；</li>
- *   <li>{@code Config.dimensionOuterId} → Thaumaturge 的
- *       {@link OuterLands#DIMENSION}（{@code ResourceKey<Level>}，值为 {@code thaumaturge:outer_lands}）。
- *       原版只有一个 int 维度 id，1.21.1 维度改成了注册表键，所以这里直接比较 {@code level.dimension()}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>（见
- *       {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1）。本模组统一改成
- *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge}
- *       扣费，充能由周围灵气补充；</li>
- *   <li>原版的 {@code SuperpositionHandler} 冷却 → {@link CooldownHelper}（与其它遗物共用）；</li>
- *   <li>原版用 {@code PortalTraceMessage} → {@code Main.proxy.spawnSuperParticle("portalstuff")}
- *       → 原版 {@code EntityPortalFX} 画传送轨迹。<b>它本来就是原版传送门粒子</b>，
- *       所以这里继续用 {@link ParticleTypes#PORTAL} 沿起止两点的连线撒点，只是不再走自定义网络包；</li>
- *   <li>原版 {@code setPosition} → 玩家用 {@code ServerPlayer#teleportTo(ServerLevel, x, y, z, yRot, xRot)}
- *       （这样客户端才会被同步），其它实体用 {@code Entity#teleportTo(x, y, z)}。</li>
+ *   <li>潜行 + 右键：沿视线传送 16 格、无视障碍；</li>
+ *   <li>右键指向活体实体（{@code getPointedEntity(.., 128.0, 4.0F)}，射线 128 格、碰撞箱容差 4 格）：
+ *       与目标交换位置；</li>
+ *   <li>右键指向方块：从命中方块往上最多 32 格，取第一个「下方实心、当格与上一格可通行」的 y 落脚
+ *       （{@code x+0.5 / y / z+0.5}）。</li>
  * </ul>
+ * 起止两端各播一次 {@code mob.endermen.portal}，并沿两点连线撒传送轨迹。
  *
- * <p><b>一处刻意的数值取舍</b>：原版单次合计 6.4 点 Vis（风 1.60 + 秩序 2.40 + 混沌 2.40），
- * 而充能是整数，所以 {@code discordTomeVisCost} 默认取整为 6。逐字保留 6.4 需要把充能换成厘 Vis，
- * 那会让 Thaumonomicon 的「充能 X/Y」与其它物品不同量纲（与霹雳咒书同样的取舍）。
+ * <p>1.21.1 对应：{@code onItemRightClick} → {@code Item#use}；{@code Config.dimensionOuterId} →
+ * Thaumaturge 的 {@link OuterLands#DIMENSION}（{@code ResourceKey<Level>}，值为
+ * {@code thaumaturge:outer_lands}），直接比较 {@code level.dimension()}；「从背包法杖抽 Vis」没有
+ * 对应 API，按本移植统一约定改成 {@link FRRechargable} 的物品自身充能、用
+ * {@link RechargeAccess#consumeCharge} 扣除；RE {@code SuperpositionHandler} 冷却 →
+ * {@link CooldownHelper}；RE {@code PortalTraceMessage}（本来就是原版 {@code EntityPortalFX}）→
+ * 继续用 {@link ParticleTypes#PORTAL} 撒点，只是不再走自定义网络包；玩家用
+ * {@code ServerPlayer#teleportTo(ServerLevel, x, y, z, yRot, xRot)}（客户端才会被同步），其它实体
+ * 用 {@code Entity#teleportTo}。
  *
- * <p><b>换位时不碰朝向与速度</b>：原版只写了两次 {@code setPosition}，既没有改 yaw/pitch，
- * 也没有清零 or 交换速度；这里同样只搬坐标。原版对「实体中心」的取法是
- * {@code Vector3.fromEntityCenter(entity)}（{@code position + 高度/2}），且换位分支<b>没有</b>
- * 像潜行分支那样再减 0.5，所以落点会比脚底高出一截 —— 这是原版行为，这里逐字保留。
+ * <p><b>一处刻意的数值取舍</b>：原版单次合计 6.4 点 Vis（风 1.60 + 秩序 2.40 + 混沌 2.40），充能是
+ * 整数，所以 {@code discordTomeVisCost} 默认取整为 6。逐字保留 6.4 需要把充能换成厘 Vis，那会让
+ * Thaumonomicon 的「充能 X/Y」与其它物品不同量纲（与霹雳咒书同样的取舍）。
+ *
+ * <p>换位时不碰朝向与速度：原版只写了两次 {@code setPosition}，既没有改 yaw/pitch，也没有清零或
+ * 交换速度；这里同样只搬坐标。原版对「实体中心」的取法是 {@code Vector3.fromEntityCenter(entity)}
+ * （{@code position + 高度/2}），且换位分支没有再减 0.5（潜行分支会减），所以落点会比脚底高出一截
+ * —— 这是原版行为，逐字保留。
  */
 public class ItemTeleportationTome extends FRItem implements FRRechargable, IWarpingGear {
 
@@ -327,8 +311,8 @@ public class ItemTeleportationTome extends FRItem implements FRRechargable, IWar
     }
 
     /**
-     * 原版这一条是 {@code isAirBlock}。任务口径是「可通行」，1.21.1 用「碰撞形状为空」
-     * 更贴合「玩家站得进去」的本意（草丛之类的非空气方块也能站）。
+     * 原版这一条是 {@code isAirBlock}；这里改判「碰撞形状为空」，更贴合「可通行」的本意
+     * （草丛之类的非空气方块也能站进去）。
      */
     private static boolean isPassable(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);

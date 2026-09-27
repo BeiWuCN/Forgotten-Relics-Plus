@@ -17,9 +17,9 @@ import top.theillusivec4.curios.api.SlotContext;
 /**
  * 采矿护符（Mining Charm）。
  *
- * <p>1.12.2 原版行为（见 {@code ItemMiningCharm} 与 {@code RelicsEventHandler.miningStuff}）：
+ * <p>RE 行为（见 {@code ItemMiningCharm} 与 {@code RelicsEventHandler.miningStuff}）：
  * <ul>
- *   <li>占用 Baubles 的 RING 槽（实测原版 {@code getBaubleType} 返回 {@code BaubleType.RING}）；</li>
+ *   <li>占用 Baubles 的 RING 槽（RE 的 {@code getBaubleType} 返回 {@code BaubleType.RING}）；</li>
  *   <li>装备时给玩家加一条 {@code REACH_DISTANCE} 属性修饰符，数值取自配置
  *       {@code miningCharmReach}（默认 2）；</li>
  *   <li>挖掘速度不是属性，而是在 {@code PlayerEvent.BreakSpeed} 里按倍率乘上去，
@@ -53,7 +53,7 @@ public class ItemMiningCharm extends FRCurioItem implements BreakSpeedBehaviour 
 
     @Override
     protected void appendShiftTooltip(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        // 与 1.12.2 一致：显示的是「百分比整数」，1.0 显示成 100。
+        // 与 RE 一致：显示的是「百分比整数」，1.0 显示成 100。
         tooltip.add(Component.translatable("item.ItemMiningCharm1.lore", Math.round(FRConfig.MINING_CHARM_BOOST.get() * 100.0D)));
         tooltip.add(Component.translatable("item.ItemMiningCharm2.lore", FRConfig.MINING_CHARM_REACH.get()));
         tooltip.add(Component.translatable("item.FRRing.lore"));

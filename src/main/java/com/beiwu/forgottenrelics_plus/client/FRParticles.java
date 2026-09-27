@@ -6,54 +6,39 @@ import vazkii.botania.client.fx.SparkleParticleData;
 import vazkii.botania.client.fx.WispParticleData;
 
 /**
- * Botania 粒子（sparkle / wisp）在本项目里的<b>唯一</b>调用入口。
+ * Botania 粒子（sparkle / wisp）在本移植里的唯一调用入口。
  *
- * <h2>为什么要有这个类</h2>
+ * <h2>与旧版 Botania 粒子代理的对应</h2>
  *
- * <p>1.7.10 原版与 1.12.2 移植版（RE）的这些视觉特效，绝大多数都是直接调 Botania 的粒子代理：
+ * <p>1.7.10 原版与 RE 直接调 Botania 的粒子代理，本移植改用它们的现代对应物：
  * <pre>
  *   Botania.proxy.sparkleFX(world, x, y, z, r, g, b, size, m);
- *   Botania.proxy.wispFX(world, x, y, z, r, g, b, size, xm, ym, zm);            // maxAgeMul 默认 1.0
- *   Botania.proxy.wispFX(world, x, y, z, r, g, b, size, xm, ym, zm, maxAgeMul);
- *   Botania.proxy.wispFX(world, x, y, z, r, g, b, size, gravity);               // 只有 9 参时才带 gravity
+ *   Botania.proxy.wispFX(world, x, y, z, r, g, b, size, xm, ym, zm[, maxAgeMul]);
  * </pre>
- * 本项目早期把这些调用整体换成了原版粒子（ENTITY_EFFECT / END_ROD / ELECTRIC_SPARK …），
- * 玩家明确要求「和原来保持」，所以本次改回 Botania 的现代对应物。参数语义见下面的分节说明。
- *
- * <h2>Modern Botania 的对应物（已用 javap + CFR 反编译 libs/botania-neoforge-1.21.1-457.jar 核对）</h2>
- *
+ * 参数语义已用 javap + CFR 反编译 {@code libs/botania-neoforge-1.21.1-457.jar} 核对：
  * <ul>
- *   <li>{@code sparkleFX(..., size, m)} → {@link SparkleParticleData#sparkle(float, float, float, float, int)}
- *       <br>反编译 {@code vazkii.botania.client.fx.FXSparkle} 确认：
+ *   <li>{@code sparkle(..., size, m)} → {@link SparkleParticleData#sparkle(float, float, float, float, int)}：
  *       {@code quadSize = (rand*0.5+0.5) * 0.2 * size}、{@code lifetime = 3 * m}、{@code alpha = 0.75}、
- *       初速恒为 0。也就是说 <b>m 是寿命倍率（存活 3×m tick），不是速度也不是数量</b>。</li>
- *   <li>{@code wispFX(..., size, xm, ym, zm[, maxAgeMul])} →
- *       {@link WispParticleData#wisp(float, float, float, float)} /
- *       {@link WispParticleData#wisp(float, float, float, float, float)}
- *       <br>反编译 {@code vazkii.botania.client.fx.FXWisp} 确认：
+ *       初速恒为 0。<b>{@code m} 是寿命倍率（存活 3×m tick），不是速度也不是数量</b>。</li>
+ *   <li>{@code wisp(..., size, xm, ym, zm[, maxAgeMul])} → {@link WispParticleData#wisp}：
  *       {@code quadSize = (rand*0.5+0.5) * 2.0 * size}、{@code alpha = 0.375}、
  *       {@code lifetime = maxAgeMul * 28 / (rand*0.3 + 0.7)}、{@code gravity} 默认 0。
- *       <b>xm / ym / zm 是粒子的初始速度</b>，由 {@code Level#addParticle} 的第 4~6 个参数（或
- *       {@code sendParticles} 的 count==0 分支）传入。</li>
+ *       {@code xm / ym / zm} 是粒子的初始速度，由 {@code Level#addParticle} 的第 4~6 个参数
+ *       （或 {@code sendParticles} 的 count==0 分支）传入。</li>
  * </ul>
  *
- * <p>1.7.10 里成对出现的 {@code setWispFXDistanceLimit(false/true)} 与 {@code setSparkleFXCorrupt(false)}
- * 是旧版粒子代理上的<b>全局开关</b>（前者放宽粒子的渲染距离上限，后者切换 corrupt 着色器）。
- * 1.21.1 的 Botania 已把这两个开关去掉（{@code SparkleParticleData} 只有 noClip / fake / corrupt
- * 三种静态工厂，wisp 也没有渲染距离开关），粒子一律按原版渲染距离规则绘制，因此本类不提供对应方法；
- * 需要「不受距离限制」的旧语义时，观感上只剩「粒子正常显示」这一条，已经满足。
+ * <p>旧版成对出现的 {@code setWispFXDistanceLimit(false/true)} 与 {@code setSparkleFXCorrupt(false)}
+ * 是粒子代理上的全局开关；1.21.1 的 Botania 已把它们去掉，粒子一律按原版渲染距离规则绘制，
+ * 因此本类不提供对应方法。
  *
  * <h2>客户端 / 服务端</h2>
- *
- * <p>原版这些调用都发生在客户端（拖尾在 {@code onUpdate} 的 {@code world.isRemote} 分支里逐帧 addParticle；
- * 一次性爆发则由网络包送到客户端后同样只用 addParticle）。本项目沿用同样的分工：
  * <ul>
- *   <li>{@link #sparkle} / {@link #wisp} 只用于<b>客户端</b>路径（拖尾、结界环）——零网络开销；</li>
+ *   <li>{@link #sparkle} / {@link #wisp} 只用于客户端路径（拖尾、结界环），零网络开销；</li>
  *   <li>{@link #serverSparkle} / {@link #serverWisp} / {@link #serverWispBurst} 用于服务端一次性效果，
  *       由 {@code ServerLevel#sendParticles} 广播。</li>
  * </ul>
  *
- * <p><b>sendParticles 的两种模式</b>（已核 1.21.1 {@code ClientPacketListener#handleParticleEvent}）：
+ * <p>sendParticles 的两种模式（已核 1.21.1 {@code ClientPacketListener#handleParticleEvent}）：
  * {@code count == 0} 时发一颗、位置就是 (x,y,z)、初速 = {@code maxSpeed * (xDist,yDist,zDist)}；
  * {@code count > 0} 时发 count 颗，位置 = (x,y,z) + gaussian × (xDist,yDist,zDist)、
  * 初速 = gaussian × maxSpeed。本类的 {@code serverWisp} 走第一种（单颗、能精确给初速），
@@ -67,9 +52,7 @@ public final class FRParticles {
     private FRParticles() {
     }
 
-    // ------------------------------------------------------------------
-    // 客户端：逐颗、可精确指定初速
-    // ------------------------------------------------------------------
+    // ---- 客户端：逐颗、可精确指定初速 ----
 
     /**
      * 客户端 sparkle，对应 {@code Botania.proxy.sparkleFX(world, x, y, z, r, g, b, size, m)}。
@@ -94,7 +77,7 @@ public final class FRParticles {
      * 客户端 wisp，对应 {@code wispFX(world, x, y, z, r, g, b, size, xm, ym, zm, maxAgeMul)}。
      *
      * <p>{@code maxAgeMul} 就是反编译里那个字段：寿命 = {@code maxAgeMul * 28 / (rand*0.3 + 0.7)} tick。
-     * 旧代码里 0.45 / 0.5 / 0.6 / 0.8 / 0.9 / 1.0 这些取值全部是寿命倍率。
+     * 调用点里 0.45 / 0.5 / 0.6 / 0.8 / 0.9 / 1.0 这些取值全部是寿命倍率。
      */
     public static void wisp(Level level, double x, double y, double z,
                             float r, float g, float b, float size,
@@ -102,9 +85,7 @@ public final class FRParticles {
         level.addParticle(WispParticleData.wisp(size, r, g, b, maxAgeMul), x, y, z, xm, ym, zm);
     }
 
-    // ------------------------------------------------------------------
-    // 服务端：一次性爆发
-    // ------------------------------------------------------------------
+    // ---- 服务端：一次性爆发 ----
 
     /** 服务端单颗 sparkle（count == 0 分支），用于命中点的那一颗「爆闪」。 */
     public static void serverSparkle(ServerLevel level, double x, double y, double z,
@@ -116,7 +97,7 @@ public final class FRParticles {
      * 服务端单颗 wisp、带精确初速（count == 0 分支：初速 = maxSpeed(1.0) × (xm, ym, zm)）。
      *
      * <p>用于「每颗颜色 / 初速都不同」的旧客户端循环（收束型粒子、逐颗随机色），
-     * 用一次调用对应旧代码里的一次 wispFX。
+     * 一次调用对应客户端循环里的一次 wispFX。
      */
     public static void serverWisp(ServerLevel level, double x, double y, double z,
                                   float r, float g, float b, float size,
@@ -133,11 +114,11 @@ public final class FRParticles {
 
     /**
      * 服务端一簇 wisp（count &gt; 0 分支）：位置在 (x,y,z) 周围按 gaussian × spread 抖开，
-     * 初速按 gaussian × speed 抖开，<b>整簇共用同一个 ParticleOptions</b>。
+     * 初速按 gaussian × speed 抖开，整簇共用同一个 ParticleOptions。
      *
-     * <p>旧版是「一个网络包 → 客户端 for 循环、每颗各自随机颜色」，本项目改成服务端随机。
-     * 颜色 / 尺寸在调用处只抽一次（落在原版给出的随机区间内），这与原版逐颗随机的差异
-     * 已逐处写进调用点的注释——换来的是「一次爆发只发一个包」，与原版的网络开销同量级。
+     * <p>旧版是「一个网络包 → 客户端 for 循环、每颗各自随机颜色」，本移植改成服务端随机：
+     * 颜色 / 尺寸在调用处只抽一次（落在原版给出的随机区间内），逐颗随机的差异记在各调用点；
+     * 换来「一次爆发只发一个包」，与原版的网络开销同量级。
      *
      * @param count  粒子数
      * @param spread 位置抖动（gaussian 标准差）

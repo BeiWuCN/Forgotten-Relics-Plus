@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  *
  * <h2>为什么需要这个包</h2>
  *
- * <p>1.7.10 原版的左键闪电走的是 {@code TelekinesisAttackMessage}：客户端在
+ * <p>原版的左键闪电走的是 {@code TelekinesisAttackMessage}：客户端在
  * {@code onUpdate} 里检测 {@code keyBindAttack.isKeyDown()} 的「按下」边沿，然后发包；
  * 服务端 {@code leftClick(player)} 完全不管这次左键有没有点到实体——只要身上锁着目标，
  * 朝空气挥一下就能打雷。
@@ -37,7 +37,6 @@ public record TelekinesisLeftClickPayload() implements CustomPacketPayload {
             new CustomPacketPayload.Type<>(
                     ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "telekinesis_left_click"));
 
-    /** 空载荷：编码什么也不写，解码直接造一个新实例。 */
     public static final StreamCodec<RegistryFriendlyByteBuf, TelekinesisLeftClickPayload> CODEC =
             StreamCodec.of((buffer, payload) -> {
             }, buffer -> new TelekinesisLeftClickPayload());

@@ -17,13 +17,9 @@ import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 /**
  * 客户端初始化（模组总线）。
  *
- * <p>对应 1.12.2 原版 {@code ClientProxy.addRenderLayers()} 与
- * {@code RelicsKeybindHandler.registerKeybinds()}，这边合并成几件事：
- * <ol>
- *   <li>把恐惧之冠的几何描述交给 NeoForge 烘焙（{@code RegisterLayerDefinitions}）；</li>
- *   <li>把佩戴渲染器注册给 Curios；</li>
- *   <li>注册不和谐之戒的开关按键。</li>
- * </ol>
+ * <p>对应 RE 的 {@code ClientProxy.addRenderLayers()} 与
+ * {@code RelicsKeybindHandler.registerKeybinds()}：把恐惧之冠的几何交给 NeoForge 烘焙、把佩戴
+ * 渲染器注册给 Curios、注册不和谐之戒的开关按键。
  *
  * <p>{@code value = Dist.CLIENT} 保证这些类只在客户端加载，服务端不会因为缺少客户端类而崩。
  */
@@ -47,12 +43,12 @@ public final class FRClientSetup {
         // 见 FROrbRenderer 的类注释——它满足 client/package-info.java 的三条硬约束。
         //
         // 构造参数末两位 = (是否画公告板, 公告板是否加法混合)，逐条对照 RE：
-        //   thunderpeal：两层都有，公告板 blendFunc(SRC_ALPHA, ONE) → 加法；
-        //               尺寸照 RE 的 RenderThunderpealOrb 取 0.4（1.6.2 前误用 0.45）。
+        //   thunderpeal：两层都有，公告板 blendFunc(SRC_ALPHA, ONE) → 加法；尺寸照
+        //               RE 的 RenderThunderpealOrb 取 0.4，不要用 0.45。
         //   darkmatter / crimson：两层都有，公告板 blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA) → 普通透明；
         //   primal：两层都有，公告板也是 blendFunc(SRC_ALPHA, ONE) → 加法；颜色改由同步索引决定；
         //   rageous / lunar：RE 只有尖刺层，不画公告板；
-        //   soul：RE 没有对应渲染器（Thaumaturge 侧替代），沿用上一版行为（画公告板、普通透明）。
+        //   soul：RE 没有对应渲染器（Thaumaturge 侧替代），本移植仍画公告板、普通透明。
         event.registerEntityRenderer(FREntities.THUNDERPEAL_ORB.get(), ctx -> new FROrbRenderer<>(ctx, 0.40F, 0.62F, 1.00F, 0.40F, true, true));
         event.registerEntityRenderer(FREntities.DARK_MATTER_ORB.get(), ctx -> new FROrbRenderer<>(ctx, 0.16F, 0.08F, 0.34F, 0.75F, true, false));
         event.registerEntityRenderer(FREntities.CRIMSON_ORB.get(), ctx -> new FROrbRenderer<>(ctx, 0.62F, 0.06F, 0.03F, 0.45F, true, false));
@@ -77,9 +73,8 @@ public final class FRClientSetup {
     /**
      * 闪电弧的粒子 provider。
      *
-     * <p>1.7.10 / RE 是「自定义网络包 → 客户端收包后调 Thaumcraft 画电弧」；
-     * 这里换成「原版粒子包 → 客户端 provider 调 Botania 的 {@code BoltRenderer}」，
-     * 所以只需要在这一处把 provider 挂上，见 {@link FRBolts}。
+     * <p>1.7.10 / RE 是「自定义网络包 → 客户端调 Thaumcraft 画电弧」，这里换成
+     * 「原版粒子包 → 客户端 provider 调 Botania 的 {@code BoltRenderer}」，见 {@link FRBolts}。
      */
     @SubscribeEvent
     public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {

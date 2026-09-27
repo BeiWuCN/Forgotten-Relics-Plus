@@ -20,9 +20,9 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
 /**
- * 经验之书（原版叫 Tome of Ageless Wisdom，注册名 xp_tome）。
+ * 经验之书（英文名 Tome of Ageless Wisdom，注册名 xp_tome）。
  *
- * <p>1.12.2 原版（{@code ItemXPTome}）逻辑：
+ * <p>1.12.2 移植版（RE）的 {@code ItemXPTome} 逻辑：
  * <ul>
  *   <li>两个开关都记在物品 NBT 上：{@code IsActive}（总开关，默认关）与
  *       {@code AbsorptionMode}（吸收 / 提取，默认吸收）；</li>
@@ -36,22 +36,22 @@ import net.minecraft.world.level.Level;
  * <p>1.21.1 对应关系：
  * <ul>
  *   <li>{@code onUpdate}（背包内每 tick）→ {@code Item#inventoryTick}；</li>
- *   <li>物品 NBT → {@code minecraft:custom_data} 组件，键名沿用原版；</li>
+ *   <li>物品 NBT → {@code minecraft:custom_data} 组件，键名沿用 RE 的；</li>
  *   <li>{@code ExperienceHelper.getPlayerXP/drainPlayerXP/addPlayerXP}（Botania 的工具类）
  *       → 原版 {@code Player#experienceLevel / experienceProgress / totalExperience} 三个字段，
  *       按同一套换算关系自行实现，见 {@link #getPlayerXp} / {@link #drainPlayerXp} / {@link #addPlayerXp}；</li>
  *   <li>附魔光效 → 1.21.1 用 {@code minecraft:enchantment_glint_override} 组件；</li>
- *   <li>原版手动调用 {@code inventoryContainer.detectAndSendChanges()} 同步经验，
+ *   <li>RE 手动调用 {@code inventoryContainer.detectAndSendChanges()} 同步经验，
  *       1.21.1 里客户端经验条读的是服务端同步下来的字段，无需手动触发。</li>
  * </ul>
  */
 public class ItemXPTome extends FRItem {
 
-    /** 总开关，对应原版 "IsActive"。 */
+    /** 总开关，对应 RE 的 "IsActive"。 */
     private static final String TAG_ACTIVE = "IsActive";
-    /** 吸收模式开关，对应原版 "AbsorptionMode"。 */
+    /** 吸收模式开关，对应 RE 的 "AbsorptionMode"。 */
     private static final String TAG_ABSORPTION = "AbsorptionMode";
-    /** 已存经验，对应原版 "XPStored"。 */
+    /** 已存经验，对应 RE 的 "XPStored"。 */
     private static final String TAG_XP_STORED = "XPStored";
 
     public ItemXPTome(Properties properties) {
@@ -74,7 +74,7 @@ public class ItemXPTome extends FRItem {
 
     private static boolean isAbsorption(ItemStack stack) {
         CompoundTag tag = tag(stack);
-        // 原版默认值是 true：没有这个键时按吸收模式处理
+        // RE 默认值是 true：没有这个键时按吸收模式处理
         return !tag.contains(TAG_ABSORPTION) || tag.getBoolean(TAG_ABSORPTION);
     }
 
@@ -88,7 +88,7 @@ public class ItemXPTome extends FRItem {
         setTag(stack, tag);
     }
 
-    // ---- 经验换算（照抄原版 Botania ExperienceHelper 的公式） ----
+    // ---- 经验换算（照抄 Botania ExperienceHelper 的公式） ----
 
     /** 玩家当前持有的总经验点数。 */
     public static int getPlayerXp(Player player) {
@@ -115,7 +115,7 @@ public class ItemXPTome extends FRItem {
         addPlayerXp(player, -amount);
     }
 
-    /** 增加（或扣除）经验，与原版 Botania 的 addPlayerXP 行为一致。 */
+    /** 增加（或扣除）经验，与 Botania 的 addPlayerXP 行为一致。 */
     public static void addPlayerXp(Player player, int amount) {
         int total = getPlayerXp(player) + amount;
         if (total < 0) {
@@ -124,7 +124,6 @@ public class ItemXPTome extends FRItem {
         player.experienceLevel = 0;
         player.experienceProgress = 0.0F;
         player.totalExperience = 0;
-        // 逐级往上加，进度条部分单独处理
         while (total >= player.getXpNeededForNextLevel()) {
             total -= player.getXpNeededForNextLevel();
             player.experienceLevel++;
@@ -148,7 +147,6 @@ public class ItemXPTome extends FRItem {
             if (playerXp <= 0) {
                 return;
             }
-            // 一次最多转移 rate 点，不足 rate 时把剩下的转完
             int moved = Math.min(rate, playerXp);
             drainPlayerXp(player, moved);
             setStoredXp(stack, getStoredXp(stack) + moved);
@@ -168,22 +166,19 @@ public class ItemXPTome extends FRItem {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide()) {
             if (!player.isShiftKeyDown()) {
-                // 右键：切换吸收 / 提取
                 CompoundTag tag = tag(stack);
                 tag.putBoolean(TAG_ABSORPTION, !isAbsorption(stack));
                 setTag(stack, tag);
                 SoundHelper.play(level, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS,
                         1.0F, (float) (0.4D + Math.random() * 0.1D));
             } else {
-                // 潜行 + 右键：切换启用 / 停用
                 CompoundTag tag = tag(stack);
                 boolean nowActive = !isActive(stack);
                 tag.putBoolean(TAG_ACTIVE, nowActive);
                 setTag(stack, tag);
-                // 原版用的是 Thaumcraft 的飞行音效 SoundsTC.fly，这里用末影人传送音效代替
+                // RE 用的是 Thaumcraft 的飞行音效 SoundsTC.fly，这里用末影人传送音效代替
                 SoundHelper.play(level, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS,
                         1.0F, (float) (0.8D + Math.random() * 0.2D));
-                // 同步附魔光效
                 stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, nowActive);
             }
         }
@@ -192,7 +187,7 @@ public class ItemXPTome extends FRItem {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        // 原版 hasEffect 返回 IsActive
+        // RE 的 hasEffect 返回 IsActive
         return isActive(stack);
     }
 
@@ -234,7 +229,7 @@ public class ItemXPTome extends FRItem {
                 .append(Component.translatable("item.ItemXPTomeLevels.lore")));
     }
 
-    /** 由经验点数反推等级，对应原版 Botania 的 {@code ExperienceHelper.getLevelForExperience}。 */
+    /** 由经验点数反推等级，对应 Botania 的 {@code ExperienceHelper.getLevelForExperience}。 */
     public static int levelFromXp(int xp) {
         int level = 0;
         while (xp >= xpNeededForLevel(level)) {

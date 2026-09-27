@@ -31,50 +31,30 @@ import net.minecraft.world.phys.Vec3;
 /**
  * 食尸鬼之颅（Ghastly Skull），注册名 {@code ghastly_skull}。
  *
- * <p><b>这是一件原创补完物品，不是对照复刻。</b>1.7.10 原版里 {@code ItemGhastlySkull} 有类、
- * 有贴图、有注册（因此能在创造模式里看到），也分配了要素
- * （{@code DEATH 16 + SOUL 14 + DARKNESS 14 + ENTROPY 10 + VOID 8 + MAGIC 8}），
- * 但它的逻辑从未写完：
+ * <p><b>这是一件原创补完物品，不是对照复刻。</b>1.7.10 原版 {@code ItemGhastlySkull} 有类、有贴图、
+ * 有注册（创造模式里看得到），也分配了要素（{@code DEATH 16 + SOUL 14 + DARKNESS 14 + ENTROPY 10 +
+ * VOID 8 + MAGIC 8}），但逻辑从未写完：{@code onItemRightClick} 只把玩家血量设成 1、算了个落点却
+ * 没用上，客户端分支还把数组加进它自己并打调试日志；1.7.10 与 RE 的 lang 里都没有它的条目，游戏内
+ * 显示的是未翻译的键名，RE 也没有移植它。
  *
- * <pre>
- * public ItemStack onItemRightClick(...) {
- *     player.setHealth(1.0f);              // 把自己血量设成 1
- *     Vector3 look = ...multiply(16.0);    // 算了半天的落点，后面没用上
- *     if (world.isRemote) {
- *         array.add(array);                // 把数组加进它自己
- *         Main.log.info("The array: " + array);   // 打印调试日志
- *     }
- * }
- * </pre>
- *
- * <p>而且 {@code en_US.lang} 与 {@code ru_RU.lang} 里都没有它的任何条目（连名字都没有），
- * 所以它在游戏里显示的是未翻译的键名。1.12.2 移植版（RE）也没有移植它。
- *
- * <p>本实现只做两件事：<b>沿用原作者已经定下的意图</b>——那段残代码里「把生命压到 1 点」＋
- * 「向视线前方 16 格取点」两个骨架，以及上面那组倾向死亡的要素——把它补成一个能用的遗物：
- *
+ * <p>本实现沿用原作者的意图——「把生命压到 1 点」+「向视线前方 16 格取点」两个骨架，以及那组倾向死亡的
+ * 要素——把它补成能用的遗物：
  * <ul>
- *   <li>右键<b>献祭</b>：记录当前生命，然后把生命压到 1 点（血量不足
- *       {@code ghastlySkullMinHealth} 时不允许使用，免得变成自杀）；</li>
- *   <li>在视线方向最多 {@code ghastlySkullBurstRange} 格处（被方块挡住就在方块前）引爆一次
- *       <b>怨魂冲击</b>，半径 {@code ghastlySkullBurstRadius} 格内的活体生物受到
- *       {@code 献祭生命 × ghastlySkullDamageMult} 的伤害（上限 {@code ghastlySkullMaxDamage}），
- *       伤害类型是模组自有的「夺魂」（对应原版 {@code DamageSourceSoulDrain}）；</li>
+ *   <li>右键献祭：记录当前生命后压到 1 点（不足 {@code ghastlySkullMinHealth} 时不允许使用，
+ *       免得变成自杀）；</li>
+ *   <li>在视线方向最多 {@code ghastlySkullBurstRange} 格处（被方块挡住就停在方块前）引爆怨魂冲击，
+ *       半径 {@code ghastlySkullBurstRadius} 内的活体受到 {@code 献祭生命 × ghastlySkullDamageMult}
+ *       的伤害（上限 {@code ghastlySkullMaxDamage}），伤害类型是本移植自有的「夺魂」
+ *       （对应原版 {@code DamageSourceSoulDrain}）；</li>
  *   <li>被击中的目标附加凋零，时限与等级可配置；</li>
- *   <li><b>食尸</b>：每命中一个目标回复 {@code ghastlySkullHealPerTarget} 点生命，
- *       但总量不会超过献祭前的生命值，所以不会变成白赚的恢复手段；</li>
- *   <li>消耗 Vis，并有 {@code ghastlySkullCooldown} 的冷却；附带
- *       {@code ghastlySkullWarp} 点扭曲（原版就是 3）。</li>
+ *   <li>食尸：每命中一个目标回复 {@code ghastlySkullHealPerTarget} 点生命，
+ *       但总量不超过献祭前的生命值，所以不是白赚的恢复手段；</li>
+ *   <li>消耗 Vis、有冷却，附带 3 点扭曲（原版就是 3）。</li>
  * </ul>
  *
- * <p>两处刻意的设计决定：
- * <ul>
- *   <li>献祭后给 20 tick 的无敌帧。原版那段代码把血量直接写成 1，紧接着还要面向近战距离的敌人，
- *       没有这一下保护就是纯粹的送死，与「以血换力」的设计意图不符；</li>
- *   <li>夺魂伤害属于「绝对伤害」（见 {@link FRDamageTypes#isAbsolute}），与原作者那份
- *       {@code isDamageTypeAbsolute} 的分类一致——它靠的是直接夺取灵魂，不该被护甲或本模组的
- *       减伤/吸收拦下。</li>
- * </ul>
+ * <p>两处刻意设计：献祭后给 20 tick 无敌帧（原版直接写 1 点血还要贴脸打，没有这一下就是送死，
+ * 与「以血换力」的意图不符）；夺魂伤害属于「绝对伤害」（见 {@link FRDamageTypes#isAbsolute}），
+ * 与原作者那份 {@code isDamageTypeAbsolute} 的分类一致——直接夺魂，不该被护甲或本移植的减伤/吸收拦下。
  */
 public class ItemGhastlySkull extends FRItem implements FRRechargable, IWarpingGear {
 
@@ -185,8 +165,8 @@ public class ItemGhastlySkull extends FRItem implements FRRechargable, IWarpingG
         }
 
         // 鬼火由施术者脚下窜向落点，再在落点炸开一圈。
-        // 依据：1.7.10 的 {@code ItemGhastlySkull} 与 RE 的同名类里<b>没有任何粒子调用</b>
-        // （原版只做 {@code setHealth(1)}），这三发原版灵魂粒子是本项目为了表现「鬼火」自行加的，
+        // 依据：1.7.10 的 {@code ItemGhastlySkull} 与 RE 的同名类里没有任何粒子调用
+        // （原版只做 {@code setHealth(1)}），这三发灵魂粒子是本移植为了表现「鬼火」自行加的，
         // 不属于「用原版粒子代替 Botania」，按「原版本来就没有粒子就保持原样」的口径保留。
         for (double t = 0.0D; t <= 1.0D; t += 0.1D) {
             serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
