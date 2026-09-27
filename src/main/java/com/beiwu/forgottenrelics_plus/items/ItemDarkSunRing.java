@@ -54,10 +54,10 @@ public class ItemDarkSunRing extends FRCurioItem
         return FRConfig.DARK_SUN_RING_MAX_CHARGE.get();
     }
 
-    /** 杀得最快的一环，先跑。 */
+    /** 紧跟在浑浊之核的闪避之后（原版 {@code :204} / {@code :249}）。 */
     @Override
     public int priority() {
-        return 100;
+        return 20;
     }
 
     @Override

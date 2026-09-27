@@ -106,10 +106,10 @@ public class ItemAncientAegis extends FRCurioItem
         return RELAY_RADIUS;
     }
 
-    /** 放在最后：前面几件物品的免除/吸收都处理完，才轮到庇护减伤。 */
+    /** 在分摊与吸收之前（原版 {@code :256} / {@code :260}）。 */
     @Override
     public int priority() {
-        return 400;
+        return 50;
     }
 
     @Override

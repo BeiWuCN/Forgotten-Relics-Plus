@@ -49,6 +49,14 @@ public final class FRDamageTypes {
     }
 
     /**
+     * 带来源实体的版本，对应原版那些需要 owner 的 {@code DamageSource} 子类
+     * （例如由某位玩家造成的超维伤害）。
+     */
+    public static DamageSource source(Level level, ResourceKey<DamageType> type, net.minecraft.world.entity.Entity owner) {
+        return new DamageSource(level.registryAccess().holderOrThrow(type), owner);
+    }
+
+    /**
      * 判断一种伤害是否「绝对伤害」——即不该被本模组的各种减伤/转移逻辑拦截的伤害。
      *
      * <p>对应原版 {@code SuperpositionHandler.isDamageTypeAbsolute}：虚空、饥饿，以及模组自己的

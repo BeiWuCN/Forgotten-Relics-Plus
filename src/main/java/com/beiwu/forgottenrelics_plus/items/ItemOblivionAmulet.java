@@ -99,10 +99,15 @@ public class ItemOblivionAmulet extends FRCurioItem
         }
     }
 
-    /** 排在七阳之戒之后、神圣护符之前。 */
+    /**
+     * 排在最后。
+     *
+     * <p>原版的吸收写在 {@code onEntityHurt} 的最后一段（{@code RelicsEventHandler:286}），
+     * 前面已经走完庇护减伤与传送之戒的分摊，所以它吸收的是分摊后的余量。
+     */
     @Override
     public int priority() {
-        return 200;
+        return 70;
     }
 
     /**
