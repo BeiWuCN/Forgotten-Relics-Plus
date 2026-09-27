@@ -47,11 +47,6 @@ public final class FRDataComponents {
             DATA_COMPONENTS.registerComponentType("shiny_still_ticks",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
-    /** 不和谐之戒：是否开启「不和谐」模式（对应原版 NBT 字段 {@code discordEnabled}）。 */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> DISCORD_ENABLED =
-            DATA_COMPONENTS.registerComponentType("discord_enabled",
-                    builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
-
     /** 休眠浑浊之核：剩余寿命（对应原版 NBT 字段 {@code ILifetime}）。 */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> DORMANT_LIFETIME =
             DATA_COMPONENTS.registerComponentType("dormant_lifetime",

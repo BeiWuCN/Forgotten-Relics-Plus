@@ -89,8 +89,10 @@ import vazkii.botania.common.handler.BotaniaSounds;
  * 六个同步字段里本实体保留 {@code variety / chargeTicks / liveTicks / delay / rotation}
  * （渲染器 {@code client/FRBabylonWeaponRenderer} 全部要用）；唯独 {@code charging}
  * 不保留——本项目用 {@code tickCount <= 15} 直接推得蓄力窗口，没有需要同步的独立状态。
- * 原版 {@code rotation} 在 Apotheosis 的召唤路径里从不被写入（只在读档时恢复），
- * 所以这里也只是同步着，默认恒为 0。
+ * 原版 {@code rotation} 由 Apotheosis 在召唤时写入
+ * （{@code ItemApotheosis.java:150}：{@code setRotation(wrapAngleTo180_float(-player.rotationYawHead + 180))}），
+ * 渲染器用它决定武器绕 Y 轴的朝向。此前这里错误地写成「原版从不写入」，
+ * 相应地召唤路径漏了这一步，武器朝向恒为 0——1.6.3 已修正。
  *
  * <p><b>与原版的偏差</b>：
  * <ol>

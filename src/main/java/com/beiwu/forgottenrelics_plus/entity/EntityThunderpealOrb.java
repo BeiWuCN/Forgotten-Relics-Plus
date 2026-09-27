@@ -88,6 +88,16 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
     }
 
     /**
+     * 原版 {@code EntityThunderpealOrb#func_70185_h()} 返回 <b>0.05</b>——这是本模组所有弹射物里
+     * 唯一有重力的一颗（其余都返回 0，基类 {@link FRHomingProjectile} 已统一处理）。
+     * 此前这里沿用基类的 0，弹道变成了纯直线。
+     */
+    @Override
+    protected double getDefaultGravity() {
+        return 0.05D;
+    }
+
+    /**
      * 拖尾：1.7.10 的 {@code EntityThunderpealOrb} 本身没有粒子（只有自定义闪电网络包），
      * 轨迹粒子是 RE 补的（{@code EntityThunderpealOrb#onUpdate} 客户端分支）。照抄 RE：
      * <pre>
@@ -145,12 +155,18 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         Player owner = getOwner() instanceof Player player ? player : null;
         // 原版/RE 的闪电起点就是雷电球自身位置。
         Vec3 origin = position();
+        // 原版把「直接命中的那一个」从范围列表里移除（EntityThunderpealOrb.java:71-73），
+        // 所以它只吃一次直接伤害，不会再吃一次范围伤害。此前漏了这一步。
+        LivingEntity directHit = null;
         if (result instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity direct) {
             strike(direct, lightning, FRConfig.THUNDERPEAL_DIRECT_DAMAGE.get().floatValue());
+            directHit = direct;
         }
+        final LivingEntity excludeDirect = directHit;
 
         List<LivingEntity> nearby = level().getEntitiesOfClass(LivingEntity.class,
-                getBoundingBox().inflate(BLAST_RADIUS), entity -> entity != owner && entity.isAlive());
+                getBoundingBox().inflate(BLAST_RADIUS),
+                entity -> entity != owner && entity != excludeDirect && entity.isAlive());
         for (LivingEntity target : nearby) {
             // 主电弧：雷电球 → 目标身体中心（RE LightningMessage(main=true)，宽 0.075）。
             FRBoltParticleData.broadcast(server, origin, centerOf(target),

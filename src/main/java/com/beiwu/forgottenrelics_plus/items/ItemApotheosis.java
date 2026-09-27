@@ -3,6 +3,7 @@ package com.beiwu.forgottenrelics_plus.items;
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.entity.EntityBabylonWeapon;
+import net.minecraft.util.Mth;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -216,6 +217,10 @@ public class ItemApotheosis extends FRItem implements FRRechargable, IWarpingGea
         weapon.setPos(lookV.x, lookV.y, lookV.z);
         // 原版 weapon.rotationYaw = player.rotationYawHead。
         weapon.setYRot(player.getYHeadRot());
+        // 原版 ItemApotheosis.java:150：weapon.setRotation(wrapAngleTo180_float(-player.rotationYawHead + 180))。
+        // 渲染器 FRBabylonWeaponRenderer 读的就是这个 rotation；此前召唤路径从来没写过它，
+        // 导致所有巴比伦武器朝向恒为 0（只有读档才会恢复该字段）。
+        weapon.setRotation(Mth.wrapDegrees(-player.getYHeadRot() + 180.0F));
         weapon.setVariety(player.getRandom().nextInt(12));
         weapon.setDelay(0);
         level.addFreshEntity(weapon);

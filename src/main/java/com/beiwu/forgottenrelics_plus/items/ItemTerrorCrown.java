@@ -19,6 +19,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -58,6 +61,30 @@ public class ItemTerrorCrown extends ArmorItem
     public boolean showIngamePopups(ItemStack stack, LivingEntity wearer) {
         // 原版 IGoggles 返回 true：戴上就能看到灵气节点等游戏内提示。
         return true;
+    }
+
+    /**
+     * 原版 {@code ItemTerrorCrown#hasEffect} 恒为 {@code false}：恐惧之冠永远没有附魔光效。
+     * 材质附魔性是 0（禁止在附魔台上附魔），这里再兜一层显示。
+     */
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        return false;
+    }
+
+    /**
+     * 原版 {@code ItemTerrorCrown#func_77663_a}（{@code inventoryTick}）的开头：
+     * 只要物品还带着附魔，就把 {@code ench} 标签剥掉——所以即使用铁砧硬加上附魔也留不住。
+     *
+     * <p>原版这段跑在 {@code inventoryTick} 上（背包里、身上都算），因此这里也放在 {@code inventoryTick}，
+     * 而不是只在佩戴时处理的 {@link #onWearerTick}。
+     */
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (stack.isEnchanted()) {
+            stack.remove(DataComponents.ENCHANTMENTS);
+        }
     }
 
     @Override

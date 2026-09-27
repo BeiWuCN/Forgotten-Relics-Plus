@@ -125,8 +125,26 @@ public class ItemTeleportationTome extends FRItem implements FRRechargable, IWar
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
+        return cast(level, player, player.getItemInHand(hand), hand);
+    }
 
+    /**
+     * 由不和谐之戒按键触发：等价于玩家自己右键那本错位之典。
+     *
+     * <p>对应 1.7.10 {@code DiscordKeybindMessage.Handler}：戒指只负责「找到书并调用它的右键」，
+     * 书本身的行为一字不改（照常扣 Vis、走冷却、挥手）。
+     */
+    public InteractionResultHolder<ItemStack> castFromRing(Player player, ItemStack stack) {
+        return cast(player.level(), player, stack, InteractionHand.MAIN_HAND);
+    }
+
+    /**
+     * 施法主体：{@code stack} 由调用方给（手上拿着，或由戒指从背包里找出来）。
+     *
+     * <p>非静态是因为要调实例方法 {@link #getVisCost()}（那是 {@code FRRechargable} 的接口方法）。
+     */
+    private InteractionResultHolder<ItemStack> cast(Level level, Player player, ItemStack stack,
+                                                    InteractionHand hand) {
         // 原版：外域维度里直接返回，不消耗也不传送。
         if (level.dimension() == OuterLands.DIMENSION) {
             return InteractionResultHolder.fail(stack);

@@ -77,6 +77,15 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
         return FRConfig.DIMENSIONAL_MIRROR_CHANNEL_DURATION.get();
     }
 
+    /**
+     * 原版 {@code ItemDimensionalMirror.java:93} 的 {@code hasEffect}：带 NBT（即已记录过坐标）时发光。
+     * 1.21.1 对应 {@code Item#isFoil}。
+     */
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        return hasStoredLocation(stack);
+    }
+
     /** 是否已经记录过坐标。对应原版 {@code stack.hasTagCompound()}。 */
     private static boolean hasStoredLocation(ItemStack stack) {
         return stack.has(DataComponents.CUSTOM_DATA) && !stack.get(DataComponents.CUSTOM_DATA).isEmpty();

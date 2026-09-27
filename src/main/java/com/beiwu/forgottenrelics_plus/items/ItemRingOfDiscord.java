@@ -1,13 +1,11 @@
 package com.beiwu.forgottenrelics_plus.items;
 
-import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.registry.FRItems;
 import com.beiwu.forgottenrelics_plus.utils.CurioHelper;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
@@ -44,42 +42,38 @@ public class ItemRingOfDiscord extends FRCurioItem {
         keyHint = supplier;
     }
 
-    public static boolean isDiscordEnabled(ItemStack stack) {
-        return stack.getOrDefault(FRDataComponents.DISCORD_ENABLED.get(), false);
-    }
-
-    public static void setDiscordEnabled(ItemStack stack, boolean enabled) {
-        stack.set(FRDataComponents.DISCORD_ENABLED.get(), enabled);
-    }
-
-    /** 佩戴者是否戴着戒指且开关为开。对应原版 {@code ItemRingOfDiscord.isDiscordActive}。 */
-    public static boolean isDiscordActive(LivingEntity entity) {
-        return CurioHelper.findEquipped(entity, FRItems.DISCORD_RING.get())
-                .map(ItemRingOfDiscord::isDiscordEnabled)
-                .orElse(false);
-    }
-
     /**
-     * 切换开关，并把新的状态念给玩家听。
+     * 按下键时：戴着戒指且背包里有错位之典 → <b>直接施放那本书</b>。
      *
-     * @return 没戴着戒指就返回 false
+     * <p>对应 1.7.10 {@code DiscordKeybindMessage.Handler}（{@code :46-52}）：戒指只负责
+     * 「找到书并调用它的右键」，书本身的行为一字不改。
+     *
+     * <p>注意：1.7.10 <b>没有</b>「不谐模式」这种开关——那是 1.12.2 移植版（RE）的设计。
+     * 本项目以 1.7.10 为准：按键就是一次远程施放。
+     *
+     * @return 没戴着戒指、或背包里没有那本书时返回 {@code false}
      */
-    public static boolean toggle(ServerPlayer player) {
-        return CurioHelper.findEquipped(player, FRItems.DISCORD_RING.get())
-                .map(ring -> {
-                    boolean next = !isDiscordEnabled(ring);
-                    setDiscordEnabled(ring, next);
-                    player.displayClientMessage(Component.translatable(
-                            next ? "item.ItemDiscordRing5.lore" : "item.ItemDiscordRing4.lore"), false);
-                    return true;
-                })
-                .orElse(false);
+    public static boolean triggerTome(ServerPlayer player) {
+        if (CurioHelper.findEquipped(player, FRItems.DISCORD_RING.get()).isEmpty()) {
+            return false;
+        }
+        ItemStack tome = findTome(player);
+        if (tome.isEmpty()) {
+            return false;
+        }
+        FRItems.TELEPORTATION_TOME.get().castFromRing(player, tome);
+        return true;
     }
 
-    /** 开启时带附魔光效，与原版 {@code hasEffect} 一致。 */
-    @Override
-    public boolean isFoil(ItemStack stack) {
-        return isDiscordEnabled(stack);
+    /** 原版 {@code SuperpositionHandler.findFirst(player, itemTeleportationTome)}：扫主背包。 */
+    private static ItemStack findTome(ServerPlayer player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack candidate = player.getInventory().getItem(i);
+            if (candidate.is(FRItems.TELEPORTATION_TOME.get())) {
+                return candidate;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -88,11 +82,8 @@ public class ItemRingOfDiscord extends FRCurioItem {
         tooltip.add(Component.translatable("item.ItemDiscordRing2.lore"));
         tooltip.add(Component.translatable("item.ItemDiscordRing3.lore"));
         tooltip.add(Component.translatable("item.FREmpty.lore"));
-        tooltip.add(Component.translatable(isDiscordEnabled(stack)
-                ? "item.ItemDiscordRing5.lore"
-                : "item.ItemDiscordRing4.lore"));
-        tooltip.add(Component.translatable("item.FREmpty.lore"));
-        tooltip.add(Component.translatable("item.ItemDiscordRing6.lore")
+        // 原版 ItemDiscordRing.java:67：一行「Current Keybind:」+ 实际键位名。
+        tooltip.add(Component.translatable("item.ItemDiscordRing4.lore")
                 .append(" ")
                 .append(keyHint.get()));
     }
