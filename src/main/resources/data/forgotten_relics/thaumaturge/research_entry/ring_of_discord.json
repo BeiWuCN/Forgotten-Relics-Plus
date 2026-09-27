@@ -38,16 +38,16 @@
   ],
   "note_aspects": [
     {
-      "aspect": "thaumaturge:instrumentum",
-      "amount": 8
+      "aspect": "thaumaturge:perditio",
+      "amount": 6
     },
     {
-      "aspect": "thaumaturge:volatus",
-      "amount": 8
+      "aspect": "thaumaturge:aversio",
+      "amount": 5
     },
     {
       "aspect": "thaumaturge:praecantatio",
-      "amount": 8
+      "amount": 4
     }
   ],
   "complexity": 2

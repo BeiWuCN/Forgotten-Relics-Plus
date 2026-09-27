@@ -41,16 +41,12 @@
   "complexity": 2,
   "note_aspects": [
     {
-      "aspect": "thaumaturge:volatus",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 3
-    },
-    {
       "aspect": "thaumaturge:alienis",
       "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:motus",
+      "amount": 5
     },
     {
       "aspect": "thaumaturge:permutatio",

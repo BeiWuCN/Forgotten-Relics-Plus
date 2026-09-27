@@ -40,27 +40,19 @@
   "note_aspects": [
     {
       "aspect": "thaumaturge:tenebrae",
-      "amount": 12
+      "amount": 7
     },
     {
       "aspect": "thaumaturge:mortuus",
-      "amount": 10
-    },
-    {
-      "aspect": "thaumaturge:praemunio",
-      "amount": 8
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 8
+      "amount": 5
     },
     {
       "aspect": "thaumaturge:vacuos",
-      "amount": 8
+      "amount": 5
     },
     {
       "aspect": "thaumaturge:spiritus",
-      "amount": 4
+      "amount": 3
     }
   ],
   "complexity": 3

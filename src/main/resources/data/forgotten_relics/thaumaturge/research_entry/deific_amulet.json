@@ -38,23 +38,15 @@
   ],
   "note_aspects": [
     {
-      "aspect": "thaumaturge:humanus",
+      "aspect": "thaumaturge:lux",
       "amount": 6
     },
     {
       "aspect": "thaumaturge:victus",
-      "amount": 4
+      "amount": 5
     },
     {
-      "aspect": "thaumaturge:lux",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
+      "aspect": "thaumaturge:humanus",
       "amount": 4
     }
   ],

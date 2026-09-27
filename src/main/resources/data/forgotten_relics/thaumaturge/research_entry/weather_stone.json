@@ -48,14 +48,14 @@
   "note_aspects": [
     {
       "aspect": "thaumaturge:aer",
-      "amount": 12
+      "amount": 6
     },
     {
       "aspect": "thaumaturge:aqua",
-      "amount": 4
+      "amount": 5
     },
     {
-      "aspect": "thaumaturge:permutatio",
+      "aspect": "thaumaturge:ignis",
       "amount": 3
     }
   ]

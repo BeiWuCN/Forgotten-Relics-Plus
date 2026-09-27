@@ -45,18 +45,14 @@
   "note_aspects": [
     {
       "aspect": "thaumaturge:praemunio",
-      "amount": 8
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
       "amount": 6
     },
     {
       "aspect": "thaumaturge:metallum",
-      "amount": 6
+      "amount": 5
     },
     {
-      "aspect": "thaumaturge:praecantatio",
+      "aspect": "thaumaturge:permutatio",
       "amount": 4
     }
   ],

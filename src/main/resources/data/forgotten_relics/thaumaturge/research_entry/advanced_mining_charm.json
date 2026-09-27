@@ -50,19 +50,15 @@
   "complexity": 2,
   "note_aspects": [
     {
-      "aspect": "thaumaturge:instrumentum",
-      "amount": 14
+      "aspect": "thaumaturge:terra",
+      "amount": 6
     },
     {
-      "aspect": "thaumaturge:motus",
+      "aspect": "thaumaturge:instrumentum",
       "amount": 4
     },
     {
       "aspect": "thaumaturge:auram",
-      "amount": 3
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
       "amount": 4
     }
   ]
