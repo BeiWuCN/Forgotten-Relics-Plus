@@ -25,6 +25,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemRingOfDiscord;
 import com.beiwu.forgottenrelics_plus.items.ItemShinyStone;
 import com.beiwu.forgottenrelics_plus.items.ItemSoulTome;
 import com.beiwu.forgottenrelics_plus.items.ItemSuperpositionRing;
+import com.beiwu.forgottenrelics_plus.items.ItemTelekinesisTome;
 import com.beiwu.forgottenrelics_plus.items.ItemTeleportationTome;
 import com.beiwu.forgottenrelics_plus.items.ItemTerrorCrown;
 import com.beiwu.forgottenrelics_plus.items.ItemThunderpeal;
@@ -328,6 +329,19 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemVoidGrimoire> VOID_GRIMOIRE =
             ITEMS.registerItem("void_grimoire", ItemVoidGrimoire::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 预言之典（Tome of Predestiny），注册名 {@code tome_of_predestiny}。
+     *
+     * <p>1.7.10 原版类名就是 {@code ItemTelekinesisTome}（同目录的 {@code ItemTelekinesisTomeLegacy}
+     * 没有被任何地方引用，不移植）。原版稀有度 EPIC，堆叠上限 1，附带 4 点扭曲。
+     *
+     * <p>按住右键以念力控制视线前方的活体（潜行时保持距离、否则拉近），左键对锁定目标劈闪电，
+     * 潜行 + 左键则把它抛开；引导与攻击都消耗物品自身的 Vis 充能。详见 {@link ItemTelekinesisTome}。
+     */
+    public static final DeferredItem<ItemTelekinesisTome> TOME_OF_PREDESTINY =
+            ITEMS.registerItem("tome_of_predestiny", ItemTelekinesisTome::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

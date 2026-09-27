@@ -1,0 +1,28 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:motus", "amount": 32 },
+    { "aspect": "thaumaturge:vinculum", "amount": 48 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 64 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 24 },
+    { "aspect": "thaumaturge:aer", "amount": 25 },
+    { "aspect": "thaumaturge:potentia", "amount": 40 },
+    { "aspect": "thaumaturge:instrumentum", "amount": 16 }
+  ],
+  "catalyst": { "item": "minecraft:writable_book" },
+  "components": [
+    { "item": "thaumaturge:primal_charm" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:focus_2" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "botania:rod_of_the_shaded_mesa" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:focus_2" },
+    { "item": "thaumaturge:void_seed" }
+  ],
+  "instability": 8,
+  "research": { "entry": "forgotten_relics_plus:tome_of_predestiny" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:tome_of_predestiny" }
+}

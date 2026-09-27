@@ -71,6 +71,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.EDICT_OF_BANISHMENT.get());
                         // 第七波：深渊魔典。
                         output.accept(FRItems.VOID_GRIMOIRE.get());
+                        // 第七波：预言之典。
+                        output.accept(FRItems.TOME_OF_PREDESTINY.get());
                     })
                     .build());
 

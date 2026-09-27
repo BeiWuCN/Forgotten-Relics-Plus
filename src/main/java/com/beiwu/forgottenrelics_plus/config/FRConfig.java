@@ -415,6 +415,28 @@ public final class FRConfig {
     /** 深渊魔典：附带的扭曲值（原版 {@code getWarp} 返回 3）。 */
     public static final ModConfigSpec.IntValue VOID_GRIMOIRE_WARP;
 
+    // ---- 预言之典 / Tome of Predestiny ----
+    /** 预言之典：Vis 消耗倍率（原版配置 key 是 telekinesisTomeVisCost，语义却是倍率）。 */
+    public static final ModConfigSpec.DoubleValue TOME_OF_PREDESTINY_VIS_MULT;
+    /** 预言之典：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PREDESTINY_MAX_CHARGE;
+    /** 预言之典：念力引导每秒的 Vis 基础消耗（原版每 tick 风 6 + 秩序 8 = 14 厘，即 2.8 点/秒）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PREDESTINY_CONTROL_VIS_COST;
+    /** 预言之典：闪电攻击的 Vis 基础消耗（原版风 80 + 秩序 50 + 火 200 = 330 厘，即 3.3 点）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PREDESTINY_LIGHTNING_VIS_COST;
+    /** 预言之典：潜行 + 左键「抛开」的 Vis 基础消耗（原版风 150 + 秩序 80 = 230 厘，即 2.3 点）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PREDESTINY_SHOVE_VIS_COST;
+    /** 预言之典：一次左键攻击后的共用冷却（tick，原版 setCasted 10）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PREDESTINY_COOLDOWN;
+    /** 预言之典：「抛开」后不能继续念力控制的时长（tick，原版把 ticksCooldown 写成 40）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PREDESTINY_SHOVE_COOLDOWN;
+    /** 预言之典：闪电攻击伤害下限（原版 telekinesisTomeDamageMIN，默认 16）。 */
+    public static final ModConfigSpec.DoubleValue TOME_OF_PREDESTINY_DAMAGE_MIN;
+    /** 预言之典：闪电攻击伤害上限（原版 telekinesisTomeDamageMAX，默认 40）。 */
+    public static final ModConfigSpec.DoubleValue TOME_OF_PREDESTINY_DAMAGE_MAX;
+    /** 预言之典：附带的扭曲值（原版 {@code getWarp} 返回 4）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PREDESTINY_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -1163,6 +1185,59 @@ public final class FRConfig {
                 .comment("Warp granted by the Grimoire of The Abyss. Original getWarp returns 3.",
                          "深渊魔典附带的扭曲值。原版 ItemVoidGrimoire#getWarp 返回 3。")
                 .defineInRange("voidGrimoireWarp", 3, 0, 32768);
+        builder.pop();
+
+        builder.comment("预言之典（第七波：念力控制 + 闪电攻击）").push("tome_of_predestiny");
+        TOME_OF_PREDESTINY_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Tome of Predestiny. Original key: telekinesisTomeVisCost.",
+                         "预言之典的 Vis 消耗倍率。原版配置 key 就叫 telekinesisTomeVisCost（默认 1.0），"
+                                 + "语义却是倍率，属于和核子之怒 nuclearFuryVisCost 同一类命名冲突；"
+                                 + "这里按本项目惯例把 key 定为 tomeOfPredestinyVisMult。")
+                .defineInRange("tomeOfPredestinyVisMult", 1.0D, 0.0D, 1024.0D);
+        TOME_OF_PREDESTINY_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Tome of Predestiny.", "预言之典的最大 Vis 储量。")
+                .defineInRange("tomeOfPredestinyMaxCharge", 100, 0, 32768);
+        TOME_OF_PREDESTINY_CONTROL_VIS_COST = builder
+                .comment("Base Vis cost per second while telekinetically controlling a target."
+                                 + " Original: Air 6 + Order 8 centivis per tick = 0.14 vis/tick,"
+                                 + " i.e. 2.8 vis per second, rounded up to 3 since the item charge is an integer.",
+                         "念力引导每秒的 Vis 基础消耗。原版是每 tick 风（Aer）6 + 秩序（Ordo）8"
+                                 + " 厘 Vis = 0.14 点/tick，即 2.8 点/秒；充能是整数，故向上取整为 3。")
+                .defineInRange("tomeOfPredestinyControlVisCost", 3, 0, 32768);
+        TOME_OF_PREDESTINY_LIGHTNING_VIS_COST = builder
+                .comment("Base Vis cost per lightning attack."
+                                 + " Original: Air 80 + Order 50 + Fire 200 centivis = 3.3 vis, rounded to 3.",
+                         "闪电攻击的 Vis 基础消耗。原版是风（Aer）80 + 秩序（Ordo）50 + 火（Ignis）200"
+                                 + " 厘 Vis = 3.3 点，充能为整数故就近取 3。")
+                .defineInRange("tomeOfPredestinyLightningVisCost", 3, 0, 32768);
+        TOME_OF_PREDESTINY_SHOVE_VIS_COST = builder
+                .comment("Base Vis cost of the sneak + left-click shove."
+                                 + " Original: Air 150 + Order 80 centivis = 2.3 vis, rounded to 2.",
+                         "潜行 + 左键「抛开」的 Vis 基础消耗。原版是风（Aer）150 + 秩序（Ordo）80"
+                                 + " 厘 Vis = 2.3 点，充能为整数故就近取 2。")
+                .defineInRange("tomeOfPredestinyShoveVisCost", 2, 0, 32768);
+        TOME_OF_PREDESTINY_COOLDOWN = builder
+                .comment("Shared cooldown in ticks after a lightning attack."
+                                 + " Original SuperpositionHandler.setCasted(player, 10, true).",
+                         "一次闪电攻击后的共用冷却（tick）。原版 SuperpositionHandler.setCasted(player, 10, true)。")
+                .defineInRange("tomeOfPredestinyCooldown", 10, 0, 32768);
+        TOME_OF_PREDESTINY_SHOVE_COOLDOWN = builder
+                .comment("Ticks during which telekinetic control is disabled after a shove."
+                                 + " Original writes ticksCooldown = 40 in the shove branch.",
+                         "「抛开」之后不能再用念力控制的时长（tick）。原版在抛开分支里把 ticksCooldown 写成 40。")
+                .defineInRange("tomeOfPredestinyShoveCooldown", 40, 0, 32768);
+        TOME_OF_PREDESTINY_DAMAGE_MIN = builder
+                .comment("Minimal lightning attack damage. Original key: telekinesisTomeDamageMIN, default 16.",
+                         "闪电攻击的伤害下限。原版 key 是 telekinesisTomeDamageMIN，默认 16。")
+                .defineInRange("tomeOfPredestinyDamageMIN", 16.0D, 0.0D, 32768.0D);
+        TOME_OF_PREDESTINY_DAMAGE_MAX = builder
+                .comment("Maximal lightning attack damage. Original key: telekinesisTomeDamageMAX, default 40.",
+                         "闪电攻击的伤害上限。原版 key 是 telekinesisTomeDamageMAX，默认 40。")
+                .defineInRange("tomeOfPredestinyDamageMAX", 40.0D, 0.0D, 32768.0D);
+        TOME_OF_PREDESTINY_WARP = builder
+                .comment("Warp granted by the Tome of Predestiny. Original getWarp returns 4.",
+                         "预言之典附带的扭曲值。原版 ItemTelekinesisTome#getWarp 返回 4。")
+                .defineInRange("tomeOfPredestinyWarp", 4, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();
