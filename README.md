@@ -9,7 +9,7 @@
 - MC百科条目：<https://www.mcmod.cn/class/28217.html>
 - 1.7.10 原版（**唯一的行为参照与素材来源**）：<https://github.com/jss2a98aj/Forgotten-Relics>
 - 1.12.2 移植版（仅作行为对照，见下文「代码来源」）：<https://github.com/NNYYOONNIIOO/Forgotten-Relics-RE>
-- 问题反馈：<https://github.com/gali2009/Forgotten-Relics-Unofficial/issues>
+- 问题反馈：<https://github.com/beiwucn/Forgotten-Relics-Unofficial/issues>
 
 ---
 
