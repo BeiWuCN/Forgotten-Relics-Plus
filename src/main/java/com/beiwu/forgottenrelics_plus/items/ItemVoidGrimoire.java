@@ -407,7 +407,12 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
      * 一簇向外炸开的紫色 effect 粒子」近似，向外速度随 size 放大。
      */
     private static void voidBurst(ServerLevel level, Vec3 center) {
-        level.sendParticles(ParticleTypes.FLASH, center.x, center.y, center.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        // 原版 imposeBurst(.., 2.0f) → 模组自带的 FXBurst（青绿加法柔光精灵），不是白色方片。
+        FRParticles.serverWispBurst(level, center.x, center.y, center.z,
+                0.0F,
+                (float) (0.8D + level.random.nextDouble() * 0.2D),
+                (float) (0.4D + level.random.nextDouble() * 0.6D),
+                2.0F, 1.0F, 1, 0.0D, 0.0D);
         level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
                 center.x, center.y, center.z, 32, 0.5D, 0.5D, 0.5D, 0.1D);
     }

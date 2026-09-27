@@ -8,7 +8,6 @@ import com.beiwu.forgottenrelics_plus.registry.FRSounds;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -194,10 +193,6 @@ public class EntityLunarFlare extends FRHomingProjectile {
                 (float) (0.8D + random.nextDouble() * 0.2D),
                 (float) (0.4D + random.nextDouble() * 0.6D),
                 0.3F + random.nextFloat() * 0.3F, 1.0F, 49, 0.0D, 0.116D);
-        // 原版 LunarBurstMessage → Main.proxy.lunarBurst → 自定义 FXBurst（FR 自己的粒子，不是 Botania），
-        // 按「原版本来就不是 Botania 就保持原样」的口径保留这一发 FLASH。
-        server.sendParticles(ParticleTypes.FLASH,
-                lockX + 0.5D, lockY + 1.5D, lockZ + 0.5D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
         // 原版 world.playAuxSFX(2001, lockX, lockY, lockZ, blockId + meta << 12)：方块破坏粒子。
         BlockPos lockPos = new BlockPos(lockX, lockY, lockZ);
         BlockState state = level().getBlockState(lockPos);

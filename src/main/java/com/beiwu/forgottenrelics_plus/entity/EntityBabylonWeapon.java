@@ -453,9 +453,14 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
      * （与 {@code ItemVoidGrimoire#voidBurst} 同一方案）。
      */
     private static void burst(ServerLevel level, Vec3 center) {
-        // imposeBurst → Thaumcraft.proxy.burst（非 Botania），按「原版本来就不是 Botania 就保持原样」
-        // 的口径保留：一发 FLASH + 24 颗暖金色原版 effect 粒子。
-        level.sendParticles(ParticleTypes.FLASH, center.x, center.y, center.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        // 原版 imposeBurst(.., 1.5f) → BurstMessage → 模组<b>自带</b>的 FXBurst 粒子：
+        // 一颗加法混合的青绿色柔光精灵（颜色 0 / 0.8+rand*0.2 / 0.4+rand*0.6，寿命 31 tick，尺寸 ×1.5）。
+        // 此前用 ParticleTypes.FLASH 顶替——那是一张巨大的白色方片，玩家反馈「一层白色遮罩，很不好看」。
+        FRParticles.serverWispBurst(level, center.x, center.y, center.z,
+                0.0F,
+                (float) (0.8D + level.random.nextDouble() * 0.2D),
+                (float) (0.4D + level.random.nextDouble() * 0.6D),
+                1.5F, 1.0F, 1, 0.0D, 0.0D);
         level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
                 center.x, center.y, center.z, 24, 0.5D, 0.5D, 0.5D, 0.1D);
     }
