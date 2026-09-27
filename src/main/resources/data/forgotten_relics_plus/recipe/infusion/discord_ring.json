@@ -1,0 +1,24 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:instrumentum", "amount": 16 },
+    { "aspect": "thaumaturge:motus", "amount": 16 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 12 },
+    { "aspect": "thaumaturge:permutatio", "amount": 8 },
+    { "aspect": "thaumaturge:vacuos", "amount": 8 }
+  ],
+  "catalyst": { "item": "thaumaturge:ring_mundane" },
+  "components": [
+    { "item": "botania:dragonstone" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "botania:elementium_ingot" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "botania:elementium_ingot" },
+    { "item": "thaumaturge:salis_mundus" }
+  ],
+  "instability": 2,
+  "research": { "entry": "forgotten_relics_plus:ring_of_discord" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:discord_ring" }
+}

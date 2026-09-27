@@ -11,7 +11,7 @@
 - MC百科条目：<https://www.mcmod.cn/class/28217.html>
 - 1.7.10 原版（**唯一的行为参照与素材来源**）：<https://github.com/jss2a98aj/Forgotten-Relics>
 - 1.12.2 移植版（仅作行为对照，见下文「代码来源」）：<https://github.com/NNYYOONNIIOO/Forgotten-Relics-RE>
-- 问题反馈：<https://github.com/beiwucn/Forgotten-Relics-Unofficial/issues>
+- 问题反馈：<https://github.com/beiwucn/Forgotten-Relics-Plus/issues>
 
 ---
 
@@ -92,9 +92,9 @@ src/main/java/com/beiwu/forgottenrelics_re/
 └── utils/                      # 工具类（冷却、佩戴物遍历、音效、伤害类型等）
 
 src/main/resources/
-├── assets/forgotten_relics/    # 贴图、模型、语言文件
+├── assets/forgotten_relics_plus/    # 贴图、模型、语言文件
 │   └── textures/models/armor/  # 护甲层贴图
-├── data/forgotten_relics/
+├── data/forgotten_relics_plus/
 │   ├── damage_type/            # 自定义伤害类型
 │   ├── recipe/infusion/        # 灌注配方
 │   └── thaumaturge/            # 研究分类与研究词条

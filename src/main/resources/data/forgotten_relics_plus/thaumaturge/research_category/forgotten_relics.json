@@ -1,0 +1,14 @@
+{
+  "background": "thaumaturge:textures/gui/gui_research_back_5.png",
+  "overlay_background": "thaumaturge:textures/gui/gui_research_back_over.png",
+  "icon": "forgotten_relics_plus:textures/item/omega_core.png",
+  "index": 7,
+  "required_research": "thaumaturge:crimson_rites",
+  "formula": [
+    { "aspect": "thaumaturge:praecantatio", "amount": 20 },
+    { "aspect": "thaumaturge:alienis", "amount": 15 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 15 },
+    { "aspect": "thaumaturge:vitreus", "amount": 10 },
+    { "aspect": "thaumaturge:fabrico", "amount": 10 }
+  ]
+}

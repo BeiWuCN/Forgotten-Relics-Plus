@@ -1,0 +1,26 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:mortuus", "amount": 250 },
+    { "aspect": "thaumaturge:permutatio", "amount": 175 },
+    { "aspect": "thaumaturge:vacuos", "amount": 300 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 100 },
+    { "aspect": "thaumaturge:alienis", "amount": 100 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 125 },
+    { "aspect": "thaumaturge:ignis", "amount": 200 }
+  ],
+  "catalyst": { "item": "botania:tainted_blood_pendant" },
+  "components": [
+    { "item": "minecraft:nether_star" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "thaumaturge:ingot_void" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "thaumaturge:voidseer_charm" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "thaumaturge:ingot_void" },
+    { "item": "minecraft:blaze_powder" }
+  ],
+  "instability": 16,
+  "research": { "entry": "forgotten_relics_plus:oblivion_amulet" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:oblivion_amulet" }
+}

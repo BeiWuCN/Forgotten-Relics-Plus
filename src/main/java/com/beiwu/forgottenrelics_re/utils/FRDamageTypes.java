@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
  * 模组自有的伤害类型。
  *
  * <p>1.12.2 里要造一种新伤害就写一个 {@code DamageSource} 子类（原版 {@code DamageRegistryHandler}
- * 里就有七八个）；1.21.1 改成了数据包注册表：先在 {@code data/forgotten_relics/damage_type/}
+ * 里就有七八个）；1.21.1 改成了数据包注册表：先在 {@code data/forgotten_relics_plus/damage_type/}
  * 下放一个 JSON 定义伤害类型，代码里只保留一个 {@link ResourceKey}，实际取用时从世界的注册表里查。
  *
  * <p>死亡提示的翻译键由 JSON 里的 {@code message_id} 决定，所以这里的路径名刻意与

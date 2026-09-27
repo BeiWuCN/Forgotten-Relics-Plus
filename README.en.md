@@ -12,7 +12,7 @@ as closely as possible, while the code is **re-implemented** against the 1.21.1 
 - MCMod.cn entry: <https://www.mcmod.cn/class/28217.html>
 - 1.7.10 original (**the only behavioural reference and asset source**): <https://github.com/jss2a98aj/Forgotten-Relics>
 - 1.12.2 port (used for behaviour comparison only, see "Code provenance" below): <https://github.com/NNYYOONNIIOO/Forgotten-Relics-RE>
-- Issue tracker: <https://github.com/beiwucn/Forgotten-Relics-Unofficial/issues>
+- Issue tracker: <https://github.com/beiwucn/Forgotten-Relics-Plus/issues>
 
 ---
 
@@ -97,9 +97,9 @@ src/main/java/com/beiwu/forgottenrelics_re/
 └── utils/                      # helpers (cooldowns, worn-item iteration, sounds, damage types, ...)
 
 src/main/resources/
-├── assets/forgotten_relics/    # textures, models, language files
+├── assets/forgotten_relics_plus/    # textures, models, language files
 │   └── textures/models/armor/  # armour layer textures
-├── data/forgotten_relics/
+├── data/forgotten_relics_plus/
 │   ├── damage_type/            # custom damage types
 │   ├── recipe/infusion/        # infusion recipes
 │   └── thaumaturge/            # research category and entries

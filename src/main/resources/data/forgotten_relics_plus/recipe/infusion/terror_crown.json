@@ -1,0 +1,24 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:alienis", "amount": 75 },
+    { "aspect": "thaumaturge:motus", "amount": 75 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 175 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 30 },
+    { "aspect": "thaumaturge:vacuos", "amount": 30 }
+  ],
+  "catalyst": { "item": "thaumaturge:goggles_revealing" },
+  "components": [
+    { "item": "minecraft:nether_star" },
+    { "item": "botania:rune_of_pride" },
+    { "tag": "c:ingots/gold" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "minecraft:ender_eye" },
+    { "item": "botania:gaia_spirit" },
+    { "tag": "c:ingots/gold" },
+    { "item": "botania:rune_of_wrath" }
+  ],
+  "instability": 10,
+  "research": { "entry": "forgotten_relics_plus:terror_crown" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:terror_crown" }
+}

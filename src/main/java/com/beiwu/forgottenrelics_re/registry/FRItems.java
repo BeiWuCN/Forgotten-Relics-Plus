@@ -32,7 +32,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * {@link DeferredRegister}：物品在类加载时声明，注册表实例挂到模组事件总线上统一提交。
  *
  * <p>1.12.2 里每个物品的注册名写在物品构造器里（{@code setRegistryName("forgotten_relics", name)}），
- * 这里由注册键决定。注册键一律沿用原版的注册名，因此贴图、模型、语言键都不需要改路径。
+ * 这里由注册键决定。<b>物品的注册键一律沿用原版的注册名</b>（{@code mining_charm}、{@code shiny_stone} 等），
+ * 所以贴图名、模型路径与语言键的后半段都不用改；
+ * 改变的只有命名空间这一层（{@code forgotten_relics} -> {@code forgotten_relics_plus}）。
  *
  * <p>稀有度在 1.12.2 是覆写 {@code Item#getRarity}，1.21.1 改为在 {@code Item.Properties} 上声明，
  * 所以这里会看到 {@code .rarity(...)}；数值取自原版各物品的 {@code EnumRarity}。

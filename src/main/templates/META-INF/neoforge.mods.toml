@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "${loader_version_range}"
 license = "${mod_license}"
-issueTrackerURL = "https://github.com/beiwucn/Forgotten-Relics-Unofficial/issues"
+issueTrackerURL = "https://github.com/beiwucn/Forgotten-Relics-Plus/issues"
 
 [[mods]]
 modId = "${mod_id}"

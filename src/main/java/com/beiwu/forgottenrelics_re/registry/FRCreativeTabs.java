@@ -24,7 +24,7 @@ public final class FRCreativeTabs {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ForgottenRelics.MOD_ID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FORGOTTEN_RELICS =
-            TABS.register("forgotten_relics", () -> CreativeModeTab.builder()
+            TABS.register("forgotten_relics_plus", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.tabForgottenRelics"))
                     // 原版标签页图标就是恐惧之冠，移植完成后换回它。
                     .icon(() -> new ItemStack(FRItems.TERROR_CROWN.get()))

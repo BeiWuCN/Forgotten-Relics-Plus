@@ -4,6 +4,7 @@ import com.beiwu.forgottenrelics_re.api.AllyProtectionBehaviour;
 import com.beiwu.forgottenrelics_re.api.BreakSpeedBehaviour;
 import com.beiwu.forgottenrelics_re.api.IncomingDamageBehaviour;
 import com.beiwu.forgottenrelics_re.api.WearerTickBehaviour;
+import com.beiwu.forgottenrelics_re.utils.CooldownHelper;
 import com.beiwu.forgottenrelics_re.utils.FRWornItems;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,6 +45,10 @@ public final class FRCommonEvents {
         if (player.level().isClientSide()) {
             return;
         }
+        // 冷却也要往前走。这个方法此前没有任何调用者，于是 setCooldown 写进去的数字只减不动就变成了
+        // 永久冷却：食尸鬼之颅与符文天象石用过一次之后再也不能用，直到退出重进（表只存在内存里）——
+        // 也就是「只能使用一次」。冷却归这里管，和物品是否佩戴无关。
+        CooldownHelper.tick(player);
         FRWornItems.forEach(player, stack -> {
             if (stack.getItem() instanceof WearerTickBehaviour behaviour) {
                 behaviour.onWearerTick(player, stack);
