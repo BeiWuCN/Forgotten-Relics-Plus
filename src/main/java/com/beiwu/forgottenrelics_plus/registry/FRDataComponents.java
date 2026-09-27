@@ -86,6 +86,22 @@ public final class FRDataComponents {
             DATA_COMPONENTS.registerComponentType("void_grimoire_target",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
+    /**
+     * 破碎的命运巨著：免死效果的剩余冷却（对应原版 NBT 字段 {@code IFateCooldown}，单位 tick）。
+     *
+     * <p>原版把这个冷却存在物品自己的 NBT 上，而<b>不是</b>走 {@code SuperpositionHandler}
+     * 的共用施法冷却——两者是不同的东西：共用冷却是「所有施法类遗物共享一个计时」，
+     * 命运巨著则是每一本各自记账（带着两本时，只有第一本的冷却会被读取与写入）。
+     * 本项目沿用同一口径，与神圣护符的 {@link #INVINCIBILITY_COOLDOWN}（对应原版 {@code ICooldown}）
+     * 一致：物品自己的冷却存物品自己身上。详见 {@code ItemFateTome} 的类注释。
+     *
+     * <p>原版另有一个 {@code IFateID}（首次使用写一个随机 int）从头到尾没有被读过，
+     * 没有任何行为依赖它，这里不移植。
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FATE_COOLDOWN =
+            DATA_COMPONENTS.registerComponentType("fate_cooldown",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     public static void register(IEventBus modBus) {
         DATA_COMPONENTS.register(modBus);
     }

@@ -15,6 +15,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemChaosTome;
 import com.beiwu.forgottenrelics_plus.items.ItemCrimsonSpell;
 import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemFalseJustice;
+import com.beiwu.forgottenrelics_plus.items.ItemFateTome;
 import com.beiwu.forgottenrelics_plus.items.ItemGhastlySkull;
 import com.beiwu.forgottenrelics_plus.items.ItemLunarFlares;
 import com.beiwu.forgottenrelics_plus.items.ItemMiningCharm;
@@ -371,6 +372,20 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemApotheosis> APOTHEOSIS =
             ITEMS.registerItem("apotheosis", ItemApotheosis::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 破碎的命运巨著（Tome of Broken Fates），注册名 {@code tome_of_broken_fates}。
+     *
+     * <p>1.7.10 原版类名 {@code ItemFateTome}。原版稀有度 EPIC，堆叠上限 1，附带 7 点扭曲
+     * （全模组第二高，仅次于悖论之刃的 8）。
+     *
+     * <p>放在背包里就能生效：致死时消耗 600 点 Vis 充能取消死亡、回满生命、随机施加增益或减益，
+     * 随后进入 30~90 秒冷却；同时携带两本则有约六万分之一的概率触发自毁。
+     * 详见 {@link ItemFateTome}。
+     */
+    public static final DeferredItem<ItemFateTome> TOME_OF_BROKEN_FATES =
+            ITEMS.registerItem("tome_of_broken_fates", ItemFateTome::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {
