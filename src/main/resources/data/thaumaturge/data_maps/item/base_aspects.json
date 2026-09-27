@@ -1,6 +1,2146 @@
 {
   "replace": false,
   "values": {
+    "botania:white_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:orange_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:magenta_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:light_blue_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:yellow_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:lime_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:pink_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:gray_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:light_gray_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:cyan_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:purple_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:blue_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:brown_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:green_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:red_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:black_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 3
+      }
+    ],
+    "botania:white_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:orange_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:magenta_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:light_blue_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:yellow_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:lime_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:pink_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:gray_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:light_gray_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:cyan_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:purple_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:blue_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:brown_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:green_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:red_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:black_tall_mystical_flower": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 14
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 10
+      }
+    ],
+    "botania:white_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:orange_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:magenta_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:light_blue_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:yellow_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:lime_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:pink_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:gray_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:light_gray_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:cyan_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:purple_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:blue_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:brown_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:green_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:red_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:black_mystical_petal": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "minecraft:white_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:orange_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:magenta_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:light_blue_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:yellow_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:lime_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:pink_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:gray_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:light_gray_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:cyan_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:purple_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:blue_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:brown_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:green_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:red_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "minecraft:black_dye": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
+      }
+    ],
+    "botania:mana_quartz": [
+      {
+        "aspect": "thaumaturge:vitreus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:potentia",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 1
+      }
+    ],
+    "botania:will_of_ahrim": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:tenebrae",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:potentia",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:white_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:orange_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:magenta_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:light_blue_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:yellow_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:lime_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:pink_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:gray_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:light_gray_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:cyan_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:purple_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:blue_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:brown_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:green_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:red_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:black_shimmering_mushroom": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:white_floating_flower": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:volatus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:dice_of_fate": [
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 32
+      },
+      {
+        "aspect": "thaumaturge:spiritus",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 8
+      }
+    ],
+    "botania:key_of_the_kings_law": [
+      {
+        "aspect": "thaumaturge:aversio",
+        "amount": 16
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:potentia",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:the_fruit_of_grisaia": [
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:eye_of_the_flugel": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 16
+      },
+      {
+        "aspect": "thaumaturge:motus",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:volatus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:ring_of_odin": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 12
+      },
+      {
+        "aspect": "thaumaturge:ignis",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:praemunio",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:ring_of_thor": [
+      {
+        "aspect": "thaumaturge:potentia",
+        "amount": 12
+      },
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:instrumentum",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:ring_of_loki": [
+      {
+        "aspect": "thaumaturge:fabrico",
+        "amount": 12
+      },
+      {
+        "aspect": "thaumaturge:motus",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:livingwood": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:dreamwood": [
+      {
+        "aspect": "thaumaturge:volatus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:livingrock": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:managlass": [
+      {
+        "aspect": "thaumaturge:vitreus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:alfglass": [
+      {
+        "aspect": "thaumaturge:vitreus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:volatus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:force_relay": [
+      {
+        "aspect": "thaumaturge:machina",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:motus",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:mana_enchanter": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:potentia",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:auram",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 2
+      }
+    ],
+    "botania:gaia_head": [
+      {
+        "aspect": "thaumaturge:mortuus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:spiritus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:manasteel_ingot": [
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:mana_pearl": [
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:motus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 1
+      }
+    ],
+    "botania:mana_diamond": [
+      {
+        "aspect": "thaumaturge:vitreus",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:desiderium",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:livingwood_twig": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:terrasteel_ingot": [
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:gaia_spirit": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 16
+      },
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:spiritus",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:elementium_ingot": [
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:volatus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:pixie_dust": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:volatus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:dragonstone": [
+      {
+        "aspect": "thaumaturge:vitreus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:desiderium",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:ignis",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:crafting_placeholder": [
+      {
+        "aspect": "thaumaturge:fabrico",
+        "amount": 1
+      }
+    ],
+    "botania:dreamwood_twig": [
+      {
+        "aspect": "thaumaturge:volatus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:diluted_ender_essence": [
+      {
+        "aspect": "thaumaturge:aer",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 2
+      }
+    ],
+    "botania:manasteel_nugget": [
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 1
+      }
+    ],
+    "botania:terrasteel_nugget": [
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 1
+      }
+    ],
+    "botania:elementium_nugget": [
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 1
+      }
+    ],
+    "botania:manaweave_cloth": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:mana_powder": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 1
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 1
+      }
+    ],
+    "botania:rune_of_water": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:aqua",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_fire": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:ignis",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_earth": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_air": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:aer",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_spring": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:aqua",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_summer": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:lux",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:motus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_autumn": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:vinculum",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_winter": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:gelum",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:mortuus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_mana": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:rune_of_lust": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_gluttony": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_greed": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:desiderium",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_sloth": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:vinculum",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:spiritus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_wrath": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:aversio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:ignis",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_envy": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:rune_of_pride": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:vacuos",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:volatus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:biscuit_of_totality": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 8
+      }
+    ],
+    "botania:black_lotus": [
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 4
+      }
+    ],
+    "botania:blacker_lotus": [
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 32
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 8
+      }
+    ],
+    "botania:lexica_botania": [
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      }
+    ],
+    "botania:mana_in_a_bottle": [
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:aqua",
+        "amount": 1
+      }
+    ],
+    "botania:the_pinkinator": [
+      {
+        "aspect": "thaumaturge:sensus",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:instrumentum",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      }
+    ],
+    "botania:water_bowl": [
+      {
+        "aspect": "thaumaturge:aqua",
+        "amount": 1
+      }
+    ],
+    "botania:brew_vial": [
+      {
+        "aspect": "thaumaturge:aqua",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 2
+      }
+    ],
+    "botania:brew_flask": [
+      {
+        "aspect": "thaumaturge:aqua",
+        "amount": 8
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 6
+      },
+      {
+        "aspect": "thaumaturge:permutatio",
+        "amount": 4
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 4
+      }
+    ],
     "forgotten_relics_plus:superposition_ring": [
       {
         "aspect": "thaumaturge:motus",

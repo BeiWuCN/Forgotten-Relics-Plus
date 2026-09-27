@@ -1,0 +1,26 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:permutatio", "amount": 25 },
+    { "aspect": "thaumaturge:vitium", "amount": 20 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 16 },
+    { "aspect": "thaumaturge:perditio", "amount": 12 },
+    { "aspect": "thaumaturge:sensus", "amount": 8 }
+  ],
+  "catalyst": { "item": "thaumaturge:primal_charm" },
+  "components": [
+    { "item": "minecraft:emerald" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:quartz" },
+    { "item": "minecraft:ghast_tear" },
+    { "item": "minecraft:sugar" },
+    { "item": "minecraft:quartz" },
+    { "item": "minecraft:redstone" },
+    { "item": "minecraft:nether_wart" },
+    { "item": "minecraft:quartz" },
+    { "item": "minecraft:fermented_spider_eye" }
+  ],
+  "instability": 4,
+  "research": { "entry": "forgotten_relics_plus:pech_wand" },
+  "result": { "count": 1, "id": "thaumaturge:pech_wand" }
+}
