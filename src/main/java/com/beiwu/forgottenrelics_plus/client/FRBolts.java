@@ -81,6 +81,19 @@ public final class FRBolts {
      */
     private static final float ALPHA = 0.8F;
 
+    /**
+     * 电弧存活时长（tick）。
+     *
+     * <p>Botania {@code BoltParticleOptions} 的默认值是 <b>30</b>；电弧的「生长 / 抖动 / 淡出」
+     * 整套动画都按这个时长推进，所以它就是观感上的「绘制速度」。
+     * 玩家反馈「闪电出来了，但绘制速度太慢，应该加快 150%」，这里按 1.5 倍速取名
+     * {@code 30 / 1.5 = 20}。
+     *
+     * <p>注意中文「加快 150%」有歧义：本实现按「1.5 倍速」算。如果你要的是
+     * 「在现在基础上再快 150%」＝ 2.5 倍速，把这里改成 {@code 12} 即可。
+     */
+    private static final int LIFESPAN_TICKS = 20;
+
     /** 由 {@code FRClientSetup} 在模组总线上转发过来。 */
     public static void registerProvider(RegisterParticleProvidersEvent event) {
         event.registerSpecial(FRParticleTypes.BOLT.get(), FRBolts::createBolt);
@@ -103,6 +116,8 @@ public final class FRBolts {
         BoltParticleOptions options = new BoltParticleOptions(info, data.from(), data.to())
                 .count(data.count())
                 .size(data.width())
+                // 电弧动画时长，见 LIFESPAN_TICKS（玩家要求加快 150%）。
+                .lifespan(LIFESPAN_TICKS)
                 // Botania 默认的 SpawnFunction 是「60 tick 后再生」；对一次性电弧来说，
                 // 世界时间不足 60 tick 时（刚进世界那几秒）会不显示，这里显式改成无延迟。
                 .spawn(BoltParticleOptions.SpawnFunction.NO_DELAY);
