@@ -36,12 +36,5 @@
         "forgotten_relics_plus:infusion/tome_of_predestiny"
       ]
     }
-  ],
-  "note_aspects": [
-    { "aspect": "thaumaturge:motus", "amount": 6 },
-    { "aspect": "thaumaturge:volatus", "amount": 5 },
-    { "aspect": "thaumaturge:vinculum", "amount": 4 },
-    { "aspect": "thaumaturge:cognitio", "amount": 3 }
-  ],
-  "complexity": 2
+  ]
 }

@@ -44,20 +44,5 @@
         "forgotten_relics_plus:infusion/weather_stone"
       ]
     }
-  ],
-  "complexity": 1,
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:aer",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:aqua",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:ignis",
-      "amount": 3
-    }
   ]
 }

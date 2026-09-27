@@ -36,24 +36,5 @@
         "forgotten_relics_plus:infusion/tome_of_discord"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:motus",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:alienis",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 3
-    }
-  ],
-  "complexity": 2
+  ]
 }

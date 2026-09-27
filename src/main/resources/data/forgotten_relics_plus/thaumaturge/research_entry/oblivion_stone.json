@@ -36,20 +36,5 @@
         "forgotten_relics_plus:infusion/oblivion_stone"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 3
-    }
-  ],
-  "complexity": 1
+  ]
 }

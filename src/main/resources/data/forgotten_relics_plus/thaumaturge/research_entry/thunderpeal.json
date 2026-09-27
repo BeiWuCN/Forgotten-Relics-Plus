@@ -36,24 +36,5 @@
         "forgotten_relics_plus:infusion/thunderpeal"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:potentia",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:aer",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:motus",
-      "amount": 3
-    }
-  ],
-  "complexity": 2
+  ]
 }

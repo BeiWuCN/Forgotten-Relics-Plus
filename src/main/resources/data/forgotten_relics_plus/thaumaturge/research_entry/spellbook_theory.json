@@ -33,24 +33,5 @@
     {
       "text": "fr.text.SpellbookTheory.2"
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:cognitio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:fabrico",
-      "amount": 3
-    },
-    {
-      "aspect": "thaumaturge:ordo",
-      "amount": 3
-    }
-  ],
-  "complexity": 1
+  ]
 }

@@ -36,12 +36,5 @@
         "forgotten_relics_plus:infusion/tome_of_broken_fates"
       ]
     }
-  ],
-  "note_aspects": [
-    { "aspect": "thaumaturge:victus", "amount": 6 },
-    { "aspect": "thaumaturge:permutatio", "amount": 5 },
-    { "aspect": "thaumaturge:praecantatio", "amount": 4 },
-    { "aspect": "thaumaturge:cognitio", "amount": 3 }
-  ],
-  "complexity": 3
+  ]
 }

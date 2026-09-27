@@ -44,20 +44,5 @@
         "forgotten_relics_plus:infusion/dimensional_mirror"
       ]
     }
-  ],
-  "complexity": 2,
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:alienis",
-      "amount": 7
-    },
-    {
-      "aspect": "thaumaturge:motus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 4
-    }
   ]
 }

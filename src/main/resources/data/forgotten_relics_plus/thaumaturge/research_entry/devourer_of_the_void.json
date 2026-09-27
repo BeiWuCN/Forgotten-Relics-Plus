@@ -39,24 +39,5 @@
         "forgotten_relics_plus:infusion/devourer_of_the_void"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:alienis",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:victus",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

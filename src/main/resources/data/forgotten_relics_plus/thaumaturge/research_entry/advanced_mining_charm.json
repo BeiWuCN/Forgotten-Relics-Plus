@@ -46,20 +46,5 @@
         "forgotten_relics_plus:infusion/advanced_mining_charm"
       ]
     }
-  ],
-  "complexity": 2,
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:terra",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:instrumentum",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:auram",
-      "amount": 4
-    }
   ]
 }

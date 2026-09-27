@@ -45,24 +45,5 @@
         "forgotten_relics_plus:infusion/terror_crown"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:alienis",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:aversio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:mortuus",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:sensus",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

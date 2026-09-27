@@ -36,24 +36,5 @@
         "forgotten_relics_plus:infusion/edict_of_banishment"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:ignis",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:motus",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 3
-    }
-  ],
-  "complexity": 2
+  ]
 }

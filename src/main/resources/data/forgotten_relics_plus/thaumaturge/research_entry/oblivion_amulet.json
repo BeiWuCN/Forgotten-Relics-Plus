@@ -39,24 +39,5 @@
         "forgotten_relics_plus:infusion/oblivion_amulet"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 7
-    },
-    {
-      "aspect": "thaumaturge:mortuus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:spiritus",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

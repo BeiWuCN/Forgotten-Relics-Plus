@@ -39,20 +39,5 @@
         "forgotten_relics_plus:infusion/dark_sun_ring"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:ignis",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:lux",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 4
-    }
-  ],
-  "complexity": 3
+  ]
 }

@@ -49,20 +49,5 @@
         "forgotten_relics_plus:infusion/xp_tome"
       ]
     }
-  ],
-  "complexity": 2,
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:cognitio",
-      "amount": 7
-    },
-    {
-      "aspect": "thaumaturge:vacuos",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    }
   ]
 }

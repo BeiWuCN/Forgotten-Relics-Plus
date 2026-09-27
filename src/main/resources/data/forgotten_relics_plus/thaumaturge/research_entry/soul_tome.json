@@ -36,24 +36,5 @@
         "forgotten_relics_plus:infusion/soul_tome"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:spiritus",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:mortuus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:vinculum",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

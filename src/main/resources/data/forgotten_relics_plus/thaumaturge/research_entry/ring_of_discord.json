@@ -36,20 +36,5 @@
         "forgotten_relics_plus:infusion/discord_ring"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:perditio",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:aversio",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    }
-  ],
-  "complexity": 2
+  ]
 }

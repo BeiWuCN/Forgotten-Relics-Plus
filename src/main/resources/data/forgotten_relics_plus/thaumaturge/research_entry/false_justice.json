@@ -37,24 +37,5 @@
         "forgotten_relics_plus:infusion/false_justice"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:lux",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:instrumentum",
-      "amount": 3
-    }
-  ],
-  "complexity": 3
+  ]
 }

@@ -40,20 +40,5 @@
         "forgotten_relics_plus:infusion/ancient_aegis"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:praemunio",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:metallum",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 4
-    }
-  ],
-  "complexity": 1
+  ]
 }

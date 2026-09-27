@@ -35,20 +35,5 @@
         "forgotten_relics_plus:infusion/deific_amulet"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:lux",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:victus",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:humanus",
-      "amount": 4
-    }
-  ],
-  "complexity": 3
+  ]
 }

@@ -36,24 +36,5 @@
         "forgotten_relics_plus:infusion/tome_of_primal_chaos"
       ]
     }
-  ],
-  "note_aspects": [
-    {
-      "aspect": "thaumaturge:perditio",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:ordo",
-      "amount": 5
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 3
-    }
-  ],
-  "complexity": 2
+  ]
 }
