@@ -232,7 +232,7 @@
   "item.ItemChaosTome2.lore": "§5These orbs either behave chaotically, or",
   "item.ItemChaosTome3.lore": "§5try to aim at random living beings nearby.",
   "item.ItemChaosTome4.lore": "§6They might also aim at you.",
-  "item.ItemChaosTome5.lore": "§5Orbs deal §61-%s§5 damage",
+  "item.ItemChaosTome5.lore": "§5Orbs deal§6 1-%s §6damage§5 on contact and",
   "item.ItemChaosTome6.lore": "§5explode with somewhat random power.",
   "item.ItemXPTome1.lore": "§5Can store limitless amount of experience.",
   "item.ItemXPTome2.lore": "§5Press §6Shift§5+§6Right-Click§5 while holding it",

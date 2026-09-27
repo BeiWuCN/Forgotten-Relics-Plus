@@ -61,6 +61,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.ELDRITCH_SPELL.get());
                         // 第七波：腥红之咒。
                         output.accept(FRItems.CRIMSON_SPELL.get());
+                        // 第七波：原初混沌之典。
+                        output.accept(FRItems.TOME_OF_PRIMAL_CHAOS.get());
                     })
                     .build());
 

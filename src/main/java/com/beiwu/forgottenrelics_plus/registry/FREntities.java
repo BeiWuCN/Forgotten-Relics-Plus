@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus.registry;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
+import com.beiwu.forgottenrelics_plus.entity.EntityChaoticOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityCrimsonOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityDarkMatterOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityThunderpealOrb;
@@ -44,6 +45,14 @@ public final class FREntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCrimsonOrb>> CRIMSON_ORB =
             register("crimson_orb",
                     () -> EntityType.Builder.<EntityCrimsonOrb>of(EntityCrimsonOrb::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10));
+
+    /** 原初混沌之典的原初能量法球（原版 {@code EntityChaoticOrb}）。 */
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityChaoticOrb>> PRIMAL_ORB =
+            register("primal_orb",
+                    () -> EntityType.Builder.<EntityChaoticOrb>of(EntityChaoticOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
                             .updateInterval(10));

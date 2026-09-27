@@ -10,6 +10,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemDormantArcanum;
 import com.beiwu.forgottenrelics_plus.items.ItemDevourerOfTheVoid;
 import com.beiwu.forgottenrelics_plus.items.ItemEldritchSpell;
 import com.beiwu.forgottenrelics_plus.items.ItemChaosCore;
+import com.beiwu.forgottenrelics_plus.items.ItemChaosTome;
 import com.beiwu.forgottenrelics_plus.items.ItemCrimsonSpell;
 import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemFalseJustice;
@@ -258,6 +259,18 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemCrimsonSpell> CRIMSON_SPELL =
             ITEMS.registerItem("crimson_spell", ItemCrimsonSpell::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 原初混沌之典（Tome of Primal Chaos），注册名 {@code tome_of_primal_chaos}。
+     *
+     * <p>原版类名 {@code ItemChaosTome}。原版稀有度 EPIC，堆叠上限 1，附带 4 点扭曲。
+     *
+     * <p>右键拉弓持续引导，每 2 tick 生成一颗原初能量法球，消耗物品自身 Vis 充能。
+     * 详见 {@link ItemChaosTome}。
+     */
+    public static final DeferredItem<ItemChaosTome> TOME_OF_PRIMAL_CHAOS =
+            ITEMS.registerItem("tome_of_primal_chaos", ItemChaosTome::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

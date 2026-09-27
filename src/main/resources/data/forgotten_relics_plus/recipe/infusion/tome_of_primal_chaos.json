@@ -1,0 +1,94 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    {
+      "aspect": "thaumaturge:aer",
+      "amount": 100
+    },
+    {
+      "aspect": "thaumaturge:aqua",
+      "amount": 100
+    },
+    {
+      "aspect": "thaumaturge:terra",
+      "amount": 100
+    },
+    {
+      "aspect": "thaumaturge:ignis",
+      "amount": 100
+    },
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 100
+    },
+    {
+      "aspect": "thaumaturge:perditio",
+      "amount": 100
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 256
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 72
+    },
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 36
+    },
+    {
+      "aspect": "thaumaturge:tenebrae",
+      "amount": 40
+    }
+  ],
+  "catalyst": {
+    "item": "minecraft:writable_book"
+  },
+  "components": [
+    {
+      "item": "thaumaturge:focus_2"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "botania:elementium_ingot"
+    },
+    {
+      "item": "thaumaturge:focus_2"
+    },
+    {
+      "item": "botania:gaia_spirit"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "thaumaturge:focus_2"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "botania:gaia_spirit"
+    },
+    {
+      "item": "thaumaturge:focus_2"
+    },
+    {
+      "item": "botania:elementium_ingot"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    }
+  ],
+  "instability": 12,
+  "research": {
+    "entry": "forgotten_relics_plus:tome_of_primal_chaos"
+  },
+  "result": {
+    "count": 1,
+    "id": "forgotten_relics_plus:tome_of_primal_chaos"
+  }
+}

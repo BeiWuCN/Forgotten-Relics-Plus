@@ -45,6 +45,7 @@ public final class FRClientSetup {
         event.registerEntityRenderer(FREntities.THUNDERPEAL_ORB.get(), FRProjectileRenderer::new);
         event.registerEntityRenderer(FREntities.DARK_MATTER_ORB.get(), FRProjectileRenderer::new);
         event.registerEntityRenderer(FREntities.CRIMSON_ORB.get(), FRProjectileRenderer::new);
+        event.registerEntityRenderer(FREntities.PRIMAL_ORB.get(), FRProjectileRenderer::new);
     }
 
     @SubscribeEvent

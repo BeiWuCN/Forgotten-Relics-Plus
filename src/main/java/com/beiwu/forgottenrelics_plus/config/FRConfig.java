@@ -324,6 +324,20 @@ public final class FRConfig {
     /** 腥红之咒：附带的扭曲值。 */
     public static final ModConfigSpec.IntValue CRIMSON_SPELL_WARP;
 
+    // ---- 原初混沌之典 / Tome of Primal Chaos ----
+    /** 原初混沌之典：每次生成法球的 Vis 基础消耗（原版六项随机消耗的平均值 3）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PRIMAL_CHAOS_VIS_COST;
+    /** 原初混沌之典：Vis 消耗倍率。 */
+    public static final ModConfigSpec.DoubleValue TOME_OF_PRIMAL_CHAOS_VIS_MULT;
+    /** 原初混沌之典：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PRIMAL_CHAOS_MAX_CHARGE;
+    /** 原初混沌之典：连续引导时两次生成法球的间隔（tick），原版硬编码为 2。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PRIMAL_CHAOS_COOLDOWN;
+    /** 原初混沌之典：原版 {@code chaosTomeDamageCap}，法球命中伤害的上限。 */
+    public static final ModConfigSpec.DoubleValue CHAOS_TOME_DAMAGE_CAP;
+    /** 原初混沌之典：附带的扭曲值。 */
+    public static final ModConfigSpec.IntValue TOME_OF_PRIMAL_CHAOS_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -891,6 +905,34 @@ public final class FRConfig {
                 .comment("Warp granted by the Crimson Spell.",
                          "腥红之咒附带的扭曲值。原版 ItemCrimsonSpell#getWarp 返回 3。")
                 .defineInRange("crimsonSpellWarp", 3, 0, 32768);
+        builder.pop();
+
+        builder.comment("原初混沌之典（第七波：原初能量法球）").push("tome_of_primal_chaos");
+        TOME_OF_PRIMAL_CHAOS_VIS_COST = builder
+                .comment("Base Vis cost for spawning one Primal Orb.",
+                         "每生成一颗原初能量法球的 Vis 基础消耗。原版是六大原初要素各随机抽 0~100 厘 Vis，"
+                                 + "合计平均 300 厘 = 3 点，充能为整数故取 3。")
+                .defineInRange("tomeOfPrimalChaosVisCost", 3, 0, 32768);
+        TOME_OF_PRIMAL_CHAOS_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Tome of Primal Chaos.",
+                         "原初混沌之典的 Vis 消耗倍率。原版对应 chaosTomeVisMult。")
+                .defineInRange("tomeOfPrimalChaosVisMult", 1.0D, 0.0D, 1024.0D);
+        TOME_OF_PRIMAL_CHAOS_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Tome of Primal Chaos.", "原初混沌之典的最大 Vis 储量。")
+                .defineInRange("tomeOfPrimalChaosMaxCharge", 100, 0, 32768);
+        TOME_OF_PRIMAL_CHAOS_COOLDOWN = builder
+                .comment("Ticks between two Primal Orbs while channelling.",
+                         "连续引导时两次生成法球的间隔（tick）。原版硬编码 count % 2 == 0，即 2；"
+                                 + "这不是施法后的冷却（原版没有冷却）。")
+                .defineInRange("tomeOfPrimalChaosCooldown", 2, 1, 32768);
+        CHAOS_TOME_DAMAGE_CAP = builder
+                .comment("Maximal damage dealt by Primal Orbs on hit (original chaosTomeDamageCap).",
+                         "原初能量法球命中伤害的上限。原版 key 是 chaosTomeDamageCap，默认 100。")
+                .defineInRange("chaosTomeDamageCap", 100.0D, 0.0D, 32768.0D);
+        TOME_OF_PRIMAL_CHAOS_WARP = builder
+                .comment("Warp granted by the Tome of Primal Chaos.",
+                         "原初混沌之典附带的扭曲值。原版 ItemChaosTome#getWarp 返回 4。")
+                .defineInRange("tomeOfPrimalChaosWarp", 4, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();
