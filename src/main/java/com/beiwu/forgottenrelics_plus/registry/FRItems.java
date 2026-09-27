@@ -7,10 +7,13 @@ import com.beiwu.forgottenrelics_plus.items.ItemDarkSunRing;
 import com.beiwu.forgottenrelics_plus.items.ItemArcanum;
 import com.beiwu.forgottenrelics_plus.items.ItemDeificAmulet;
 import com.beiwu.forgottenrelics_plus.items.ItemDormantArcanum;
+import com.beiwu.forgottenrelics_plus.items.ItemChaosCore;
 import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemGhastlySkull;
 import com.beiwu.forgottenrelics_plus.items.ItemMiningCharm;
+import com.beiwu.forgottenrelics_plus.items.ItemOmegaCore;
 import com.beiwu.forgottenrelics_plus.items.ItemOblivionAmulet;
+import com.beiwu.forgottenrelics_plus.items.ItemParadox;
 import com.beiwu.forgottenrelics_plus.items.ItemRingOfDiscord;
 import com.beiwu.forgottenrelics_plus.items.ItemShinyStone;
 import com.beiwu.forgottenrelics_plus.items.ItemSuperpositionRing;
@@ -20,6 +23,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemXPTome;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.SwordItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -144,6 +148,35 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemGhastlySkull> GHASTLY_SKULL =
             ITEMS.registerItem("ghastly_skull", ItemGhastlySkull::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    // ---- 第四波：核心类与武器 ----
+
+    /** 混沌之核（Chaos Core）。原版稀有度 EPIC，附带 2 点扭曲。研究格子 col=8 / row=-4。 */
+    public static final DeferredItem<ItemChaosCore> CHAOS_CORE =
+            ITEMS.registerItem("chaos_core", ItemChaosCore::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 欧米伽之核（Omega Core）。原版稀有度 EPIC。
+     *
+     * <p><b>原版没有研究词条、也没有灌注配方</b>，只能创造模式获取；按「只以原版为准」的原则，
+     * 本项目同样不配配方与研究。
+     */
+    public static final DeferredItem<ItemOmegaCore> OMEGA_CORE =
+            ITEMS.registerItem("omega_core", ItemOmegaCore::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 悖论之刃（The Paradox）。原版稀有度 EPIC，附带 8 点扭曲。
+     *
+     * <p>材质数值取自原版 {@code materialParadoxicalStuff}，见 {@link FRToolTiers#PARADOX}；
+     * 攻击力附加是 -4，本体几乎没伤害，威力全在悖论效果上，所以这里的属性只给标准的剑基线。
+     */
+    public static final DeferredItem<ItemParadox> PARADOX =
+            ITEMS.registerItem("paradox",
+                    properties -> new ItemParadox(FRToolTiers.PARADOX,
+                            properties.attributes(SwordItem.createAttributes(FRToolTiers.PARADOX, 3.0F, -2.4F))),
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

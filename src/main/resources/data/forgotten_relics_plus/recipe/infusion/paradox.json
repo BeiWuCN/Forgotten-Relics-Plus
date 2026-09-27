@@ -1,0 +1,29 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:aer", "amount": 64 },
+    { "aspect": "thaumaturge:ignis", "amount": 64 },
+    { "aspect": "thaumaturge:aqua", "amount": 64 },
+    { "aspect": "thaumaturge:terra", "amount": 64 },
+    { "aspect": "thaumaturge:ordo", "amount": 64 },
+    { "aspect": "thaumaturge:perditio", "amount": 64 },
+    { "aspect": "thaumaturge:vacuos", "amount": 48 },
+    { "aspect": "thaumaturge:aversio", "amount": 32 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 24 },
+    { "aspect": "thaumaturge:permutatio", "amount": 36 }
+  ],
+  "catalyst": { "item": "thaumaturge:void_sword" },
+  "components": [
+    { "item": "forgotten_relics_plus:chaos_core" },
+    { "item": "thaumaturge:crystal_aer" },
+    { "item": "thaumaturge:crystal_ignis" },
+    { "item": "thaumaturge:crystal_aqua" },
+    { "item": "thaumaturge:primordial_pearl" },
+    { "item": "thaumaturge:crystal_terra" },
+    { "item": "thaumaturge:crystal_ordo" },
+    { "item": "thaumaturge:crystal_perditio" }
+  ],
+  "instability": 32,
+  "research": { "entry": "forgotten_relics_plus:paradox" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:paradox" }
+}

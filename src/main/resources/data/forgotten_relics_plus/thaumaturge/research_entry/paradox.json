@@ -1,0 +1,53 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "name": "fr.name.TheParadox",
+  "parents": [
+    "forgotten_relics_plus:chaos_core",
+    "thaumaturge:infusion"
+  ],
+  "column": 6,
+  "row": 0,
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics_plus:paradox"
+  ],
+  "stages": [
+    {
+      "text": "fr.text.TheParadox.1",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "fr.text.TheParadox.2",
+      "recipes": [
+        "forgotten_relics_plus:infusion/paradox"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:perditio",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:aversio",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 3
+    }
+  ],
+  "complexity": 1
+}

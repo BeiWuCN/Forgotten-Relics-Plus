@@ -221,6 +221,25 @@ public final class FRConfig {
     /** 食尸鬼之颅：附带的扭曲值。 */
     public static final ModConfigSpec.IntValue GHASTLY_SKULL_WARP;
 
+    /** 混沌之核：每 tick 触发随机状态效果的概率。 */
+    public static final ModConfigSpec.DoubleValue CHAOS_CORE_CHANCE;
+    /** 混沌之核：状态效果的最短持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue CHAOS_CORE_DURATION_MIN;
+    /** 混沌之核：在最短持续时间之上再随机叠加的区间长度（tick）。 */
+    public static final ModConfigSpec.IntValue CHAOS_CORE_DURATION_SPAN;
+    /** 混沌之核：能随机到的最高等级（0 即 I 级）。 */
+    public static final ModConfigSpec.IntValue CHAOS_CORE_MAX_AMPLIFIER;
+    /** 混沌之核：附带的扭曲值。 */
+    public static final ModConfigSpec.IntValue CHAOS_CORE_WARP;
+    /** 欧米伽之核：每 tick 给法杖的每个原初要素补充的 Vis。 */
+    public static final ModConfigSpec.IntValue OMEGA_CORE_VIS_PER_TICK;
+    /** 欧米伽之核：是否免疫致死伤害。 */
+    public static final ModConfigSpec.BooleanValue OMEGA_CORE_PREVENT_DEATH;
+    /** 悖论之刃：伤害上限（目标所受与自身所受之和）。 */
+    public static final ModConfigSpec.DoubleValue PARADOX_DAMAGE_CAP;
+    /** 悖论之刃：附带的扭曲值。 */
+    public static final ModConfigSpec.IntValue PARADOX_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -580,6 +599,49 @@ public final class FRConfig {
         GHASTLY_SKULL_WARP = builder
                 .comment("Warp granted by the Ghastly Skull.", "食尸鬼之颅附带的扭曲值。")
                 .defineInRange("ghastlySkullWarp", 3, 0, 32768);
+        builder.pop();
+
+        builder.comment("混沌之核（第四波：核心类）").push("chaos_core");
+        CHAOS_CORE_CHANCE = builder
+                .comment("Chance per tick to apply a random potion effect while carried.",
+                         "随身携带时，每 tick 施加随机状态效果的概率。原版写死 2.08E-4。")
+                .defineInRange("chaosCoreChance", 2.08E-4D, 0.0D, 1.0D);
+        CHAOS_CORE_DURATION_MIN = builder
+                .comment("Minimum effect duration in ticks.", "状态效果的最短持续时间（tick）。原版是 100。")
+                .defineInRange("chaosCoreDurationMin", 100, 0, 32768);
+        CHAOS_CORE_DURATION_SPAN = builder
+                .comment("Random span added on top of the minimum duration, in ticks.",
+                         "在最短持续时间之上再随机叠加的区间长度（tick）。原版是 2400。")
+                .defineInRange("chaosCoreDurationSpan", 2400, 0, 32768);
+        CHAOS_CORE_MAX_AMPLIFIER = builder
+                .comment("Highest amplifier that can be rolled (0 means level I).",
+                         "能随机到的最高等级（0 即 I 级）。原版是 0~2。")
+                .defineInRange("chaosCoreMaxAmplifier", 2, 0, 255);
+        CHAOS_CORE_WARP = builder
+                .comment("Warp granted by the Chaos Core.", "混沌之核附带的扭曲值。原版是 2。")
+                .defineInRange("chaosCoreWarp", 2, 0, 32768);
+        builder.pop();
+
+        builder.comment("欧米伽之核（第四波：原版无配方与研究的创造模式物品）").push("omega_core");
+        OMEGA_CORE_VIS_PER_TICK = builder
+                .comment("Vis added to each primal aspect of each wand per tick while carried.",
+                         "随身携带时，每 tick 给法杖的每个原初要素补充的 Vis。原版是 1。")
+                .defineInRange("omegaCoreVisPerTick", 1, 0, 32768);
+        OMEGA_CORE_PREVENT_DEATH = builder
+                .comment("Whether carrying the Omega Core cancels lethal damage and leaves the holder at 1 HP.",
+                         "携带欧米伽之核时是否免死并把持有者留在 1 点生命。")
+                .define("omegaCorePreventDeath", true);
+        builder.pop();
+
+        builder.comment("悖论之刃（第四波：武器）").push("paradox");
+        PARADOX_DAMAGE_CAP = builder
+                .comment("Upper bound of the Paradox's damage. The damage dealt to the target and the damage",
+                         "dealt back to the wielder always add up to this value.",
+                         "悖论之刃的伤害上限。目标所受与自身所受之和恒等于该值（原版默认 200）。")
+                .defineInRange("paradoxDamageCap", 200.0D, 0.0D, 32000.0D);
+        PARADOX_WARP = builder
+                .comment("Warp granted by the Paradox.", "悖论之刃附带的扭曲值。原版是 8，全模组最高。")
+                .defineInRange("paradoxWarp", 8, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();
