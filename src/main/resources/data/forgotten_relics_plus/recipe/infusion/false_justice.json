@@ -1,0 +1,26 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:lux", "amount": 120 },
+    { "aspect": "thaumaturge:desiderium", "amount": 24 },
+    { "aspect": "thaumaturge:aversio", "amount": 40 },
+    { "aspect": "thaumaturge:instrumentum", "amount": 36 },
+    { "aspect": "thaumaturge:humanus", "amount": 52 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 36 },
+    { "aspect": "thaumaturge:permutatio", "amount": 72 },
+    { "aspect": "thaumaturge:spiritus", "amount": 48 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 45 }
+  ],
+  "catalyst": { "item": "minecraft:writable_book" },
+  "components": [
+    { "tag": "thaumaturge:nitors" },
+    { "tag": "c:ingots/gold" },
+    { "item": "minecraft:nether_star" },
+    { "item": "thaumaturge:primordial_pearl" },
+    { "item": "minecraft:nether_star" },
+    { "tag": "c:ingots/gold" }
+  ],
+  "instability": 24,
+  "research": { "entry": "forgotten_relics_plus:false_justice" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:false_justice" }
+}

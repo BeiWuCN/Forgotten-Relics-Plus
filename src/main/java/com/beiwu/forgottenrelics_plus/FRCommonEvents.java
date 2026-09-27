@@ -218,38 +218,36 @@ public final class FRCommonEvents {
     }
 
     /**
-     * 玩家致死时派发，范围是<b>随身携带</b>的物品。
+     * 致死时派发，范围是<b>随身携带</b>的物品。
      *
      * <p>对应原版 {@code RelicsEventHandler#onPlayerDeath}：欧米伽之核与破碎的命运巨著都是
      * 「放在背包里就能救命」，所以这里<b>不能</b>只遍历佩戴物。同一件物品带多份时只触发一次，
      * 与原版「带两个不会触发两次」的意图一致。
+     *
+     * <p>与原版一样是 if / else：<b>死者是玩家</b>时只看死者身上带的东西；否则才去看<b>凶手</b>
+     * 身上带的东西（虚伪审判：被携带者打死的目标也不会死）。
      */
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
-        if (event.isCanceled() || !(event.getEntity() instanceof Player player) || player.level().isClientSide()) {
+        if (event.isCanceled() || event.getEntity().level().isClientSide()) {
             return;
         }
-        List<Guard> guards = new ArrayList<>();
-        FRCarriedItems.forEach(player, stack -> {
-            if (!(stack.getItem() instanceof DeathPreventionBehaviour behaviour)) {
-                return;
-            }
-            for (Guard existing : guards) {
-                if (existing.behaviour() == behaviour) {
+        if (event.getEntity() instanceof Player victim) {
+            for (Guard guard : sortedGuards(victim)) {
+                if (event.isCanceled()) {
                     return;
                 }
+                guard.behaviour().onLethalDamage(event, victim, guard.stack());
             }
-            guards.add(new Guard(behaviour, stack));
-        });
-        if (guards.isEmpty()) {
             return;
         }
-        guards.sort(Comparator.comparingInt(entry -> entry.behaviour().priority()));
-        for (Guard guard : guards) {
-            if (event.isCanceled()) {
-                return;
+        if (event.getSource().getEntity() instanceof Player attacker) {
+            for (Guard guard : sortedGuards(attacker)) {
+                if (event.isCanceled()) {
+                    return;
+                }
+                guard.behaviour().onLethalDamageCaused(event, attacker, guard.stack());
             }
-            guard.behaviour().onLethalDamage(event, player, guard.stack());
         }
     }
 
@@ -286,6 +284,24 @@ public final class FRCommonEvents {
         if (boost[0] != 0.0F) {
             event.setNewSpeed(event.getNewSpeed() * (1.0F + boost[0]));
         }
+    }
+
+    /** 收集玩家随身携带的致死拦截行为并去重排序。 */
+    private static List<Guard> sortedGuards(Player player) {
+        List<Guard> guards = new ArrayList<>();
+        FRCarriedItems.forEach(player, stack -> {
+            if (!(stack.getItem() instanceof DeathPreventionBehaviour behaviour)) {
+                return;
+            }
+            for (Guard existing : guards) {
+                if (existing.behaviour() == behaviour) {
+                    return;
+                }
+            }
+            guards.add(new Guard(behaviour, stack));
+        });
+        guards.sort(Comparator.comparingInt(entry -> entry.behaviour().priority()));
+        return guards;
     }
 
     /** 一次派发里「哪个行为 + 对应哪一份物品栈」。 */

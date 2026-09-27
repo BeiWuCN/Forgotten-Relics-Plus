@@ -26,9 +26,24 @@ public interface DeathPreventionBehaviour {
     }
 
     /**
+     * 携带者<b>自己</b>将要死亡时。
+     *
      * @param event  可取消（{@code LivingDeathEvent} 实现了 {@code ICancellableEvent}）
-     * @param player 将要死亡的玩家
+     * @param player 将要死亡的玩家，也就是携带者
      * @param stack  正在生效的那一份物品
      */
     void onLethalDamage(LivingDeathEvent event, Player player, ItemStack stack);
+
+    /**
+     * 携带者<b>打死了一个生物</b>、那个生物将要死亡时。
+     *
+     * <p>对应原版 {@code RelicsEventHandler:303}：虚伪审判是「无人受审」——带着它的人打死的东西
+     * 也不会死。原版这里是 if / else，所以<b>只有死者不是玩家时</b>才会走到这个钩子。
+     *
+     * @param event    可取消；{@code event.getEntity()} 是那个将死的生物
+     * @param attacker 打死它的玩家，也就是携带者
+     * @param stack    正在生效的那一份物品
+     */
+    default void onLethalDamageCaused(LivingDeathEvent event, Player attacker, ItemStack stack) {
+    }
 }

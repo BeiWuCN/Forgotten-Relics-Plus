@@ -50,6 +50,7 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.CHAOS_CORE.get());
                         output.accept(FRItems.OMEGA_CORE.get());
                         output.accept(FRItems.PARADOX.get());
+                        output.accept(FRItems.FALSE_JUSTICE.get());
                     })
                     .build());
 

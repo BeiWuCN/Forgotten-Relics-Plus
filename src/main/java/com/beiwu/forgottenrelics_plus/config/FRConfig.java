@@ -251,6 +251,12 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue PARADOX_DAMAGE_CAP;
     /** 悖论之刃：附带的扭曲值。 */
     public static final ModConfigSpec.IntValue PARADOX_WARP;
+    /** 虚伪审判：伤害转化后的倍率。 */
+    public static final ModConfigSpec.DoubleValue FALSE_JUSTICE_DAMAGE_MULTIPLIER;
+    /** 虚伪审判：是否阻止死亡（携带者与被携带者打死的目标）。 */
+    public static final ModConfigSpec.BooleanValue FALSE_JUSTICE_PREVENT_DEATH;
+    /** 虚伪审判：附带的扭曲值。 */
+    public static final ModConfigSpec.IntValue FALSE_JUSTICE_WARP;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -678,6 +684,20 @@ public final class FRConfig {
         PARADOX_WARP = builder
                 .comment("Warp granted by the Paradox.", "悖论之刃附带的扭曲值。原版是 8，全模组最高。")
                 .defineInRange("paradoxWarp", 8, 0, 32768);
+        builder.pop();
+
+        builder.comment("虚伪审判（第四波：携带生效的转化与免死）").push("false_justice");
+        FALSE_JUSTICE_DAMAGE_MULTIPLIER = builder
+                .comment("Multiplier applied when damage is converted into true damage.",
+                         "伤害转化为真实伤害时的倍率。原版是 2.0。")
+                .defineInRange("falseJusticeDamageMultiplier", 2.0D, 0.0D, 1024.0D);
+        FALSE_JUSTICE_PREVENT_DEATH = builder
+                .comment("Whether carrying False Justice prevents the carrier and their victims from dying.",
+                         "携带虚伪审判时是否阻止死亡（携带者本人，以及被携带者打死的目标）。")
+                .define("falseJusticePreventDeath", true);
+        FALSE_JUSTICE_WARP = builder
+                .comment("Warp granted by False Justice.", "虚伪审判附带的扭曲值。原版是 4。")
+                .defineInRange("falseJusticeWarp", 4, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

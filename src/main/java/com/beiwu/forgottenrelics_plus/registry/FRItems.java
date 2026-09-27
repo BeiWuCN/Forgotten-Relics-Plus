@@ -9,6 +9,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemDeificAmulet;
 import com.beiwu.forgottenrelics_plus.items.ItemDormantArcanum;
 import com.beiwu.forgottenrelics_plus.items.ItemChaosCore;
 import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
+import com.beiwu.forgottenrelics_plus.items.ItemFalseJustice;
 import com.beiwu.forgottenrelics_plus.items.ItemGhastlySkull;
 import com.beiwu.forgottenrelics_plus.items.ItemMiningCharm;
 import com.beiwu.forgottenrelics_plus.items.ItemOmegaCore;
@@ -151,6 +152,16 @@ public final class FRItems {
                     new Item.Properties().rarity(Rarity.EPIC));
 
     // ---- 第四波：核心类与武器 ----
+
+    /**
+     * 虚伪审判（False Justice）。原版稀有度 EPIC，附带 4 点扭曲。研究格子 col=-7 / row=0。
+     *
+     * <p>随身携带生效：把携带者造成与受到的伤害都转成两倍真实伤害，并且让携带者与
+     * <b>被携带者打死的目标</b>都不死。详见 {@link ItemFalseJustice}。
+     */
+    public static final DeferredItem<ItemFalseJustice> FALSE_JUSTICE =
+            ITEMS.registerItem("false_justice", ItemFalseJustice::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
 
     /** 混沌之核（Chaos Core）。原版稀有度 EPIC，附带 2 点扭曲。研究格子 col=8 / row=-4。 */
     public static final DeferredItem<ItemChaosCore> CHAOS_CORE =
