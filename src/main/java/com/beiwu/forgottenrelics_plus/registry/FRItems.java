@@ -7,6 +7,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemDarkSunRing;
 import com.beiwu.forgottenrelics_plus.items.ItemArcanum;
 import com.beiwu.forgottenrelics_plus.items.ItemDeificAmulet;
 import com.beiwu.forgottenrelics_plus.items.ItemDormantArcanum;
+import com.beiwu.forgottenrelics_plus.items.ItemDevourerOfTheVoid;
 import com.beiwu.forgottenrelics_plus.items.ItemChaosCore;
 import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemFalseJustice;
@@ -218,6 +219,19 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemTeleportationTome> TELEPORTATION_TOME =
             ITEMS.registerItem("tome_of_discord", ItemTeleportationTome::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 虚空吞噬者（Devourer of The Void），注册名 {@code devourer_of_the_void}。
+     *
+     * <p>原版类名是 {@code ItemObeliskDrainer}（本项目的注册名按第 7 波口径统一改成
+     * {@code devourer_of_the_void}）。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
+     *
+     * <p>手持右键可锁定 16 格内的神秘方尖碑并拉弓引导：每 30 tick 抽取一次，
+     * 回复 4 点生命、补 2 点饥饿。详见 {@link ItemDevourerOfTheVoid}。
+     */
+    public static final DeferredItem<ItemDevourerOfTheVoid> DEVOURER_OF_THE_VOID =
+            ITEMS.registerItem("devourer_of_the_void", ItemDevourerOfTheVoid::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

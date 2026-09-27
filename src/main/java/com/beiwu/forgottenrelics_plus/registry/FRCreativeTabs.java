@@ -55,6 +55,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.THUNDERPEAL.get());
                         // 第七波：错位之典。
                         output.accept(FRItems.TELEPORTATION_TOME.get());
+                        // 第七波：虚空吞噬者。
+                        output.accept(FRItems.DEVOURER_OF_THE_VOID.get());
                     })
                     .build());
 

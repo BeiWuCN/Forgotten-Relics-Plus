@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_plus.registry;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
 import com.mojang.serialization.Codec;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
@@ -53,6 +54,16 @@ public final class FRDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> DORMANT_LIFETIME =
             DATA_COMPONENTS.registerComponentType("dormant_lifetime",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
+    /**
+     * 虚空吞噬者：右键时锁定的神秘方尖碑坐标。
+     *
+     * <p>对应原版 {@code ItemObeliskDrainer} 往物品上写的三个 NBT 字段
+     * {@code IDetectedX / IDetectedY / IDetectedZ}（都是 double），这里合并成一个 {@code BlockPos}。
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> DEVOURER_TARGET =
+            DATA_COMPONENTS.registerComponentType("devourer_target",
+                    builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC));
 
     public static void register(IEventBus modBus) {
         DATA_COMPONENTS.register(modBus);
