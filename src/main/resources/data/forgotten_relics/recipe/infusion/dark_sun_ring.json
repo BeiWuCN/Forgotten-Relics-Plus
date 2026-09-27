@@ -1,0 +1,26 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:ignis", "amount": 200 },
+    { "aspect": "thaumaturge:praemunio", "amount": 185 },
+    { "aspect": "thaumaturge:permutatio", "amount": 140 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 150 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 100 }
+  ],
+  "catalyst": { "item": "thaumaturge:ring_mundane" },
+  "components": [
+    { "item": "botania:pyroclast_pendant" },
+    { "item": "botania:elementium_ingot" },
+    { "item": "minecraft:blaze_rod" },
+    { "item": "thaumaturge:cinderpearl" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:nitor_white" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:cinderpearl" },
+    { "item": "minecraft:blaze_rod" },
+    { "item": "botania:elementium_ingot" }
+  ],
+  "instability": 8,
+  "research": { "entry": "forgotten_relics:dark_sun_ring" },
+  "result": { "count": 1, "id": "forgotten_relics:dark_sun_ring" }
+}

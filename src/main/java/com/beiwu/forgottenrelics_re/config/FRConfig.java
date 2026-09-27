@@ -62,6 +62,98 @@ public final class FRConfig {
     /** 空间魔镜的最大 Vis 储量。 */
     public static final ModConfigSpec.IntValue DIMENSIONAL_MIRROR_MAX_CHARGE;
 
+    // ---- 远古之庇护 / Ancient Aegis ----
+    /** 佩戴者受到的伤害减免比例，0.25 表示 25%。 */
+    public static final ModConfigSpec.DoubleValue ANCIENT_AEGIS_DAMAGE_REDUCTION;
+    /** 每次治疗回复的生命值。 */
+    public static final ModConfigSpec.DoubleValue ANCIENT_AEGIS_HEAL_AMOUNT;
+    /** 治疗判定间隔（tick）。 */
+    public static final ModConfigSpec.IntValue ANCIENT_AEGIS_HEAL_INTERVAL;
+    /** 击退抗性加成（1.0 表示完全免疫击退）。 */
+    public static final ModConfigSpec.DoubleValue ANCIENT_AEGIS_KNOCKBACK_RESISTANCE;
+
+    // ---- 七阳之戒 / Ring of The Seven Suns ----
+    /** 超过该数值的伤害会被完全抵消。 */
+    public static final ModConfigSpec.DoubleValue DARK_SUN_RING_DAMAGE_CAP;
+    /** 把攻击反弹给攻击者的概率。 */
+    public static final ModConfigSpec.DoubleValue DARK_SUN_RING_DEFLECT_CHANCE;
+    /** 是否给「火焰伤害转化为治疗」加上冷却限制。 */
+    public static final ModConfigSpec.BooleanValue DARK_SUN_RING_HEAL_LIMIT;
+    /** 七阳之戒的最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue DARK_SUN_RING_MAX_CHARGE;
+
+    // ---- 神圣护身符 / Deific Amulet ----
+    /** 是否免疫状态效果。 */
+    public static final ModConfigSpec.BooleanValue DEIFIC_AMULET_EFFECT_IMMUNITY;
+    /** 免疫状态效果时是否只清除减益、保留增益。 */
+    public static final ModConfigSpec.BooleanValue DEIFIC_AMULET_ONLY_NEGATES_DEBUFFS;
+    /** 是否延长无敌帧。 */
+    public static final ModConfigSpec.BooleanValue DEIFIC_AMULET_INVINCIBILITY;
+    /** 延长后的无敌帧时长（tick）。 */
+    public static final ModConfigSpec.IntValue DEIFIC_AMULET_INVINCIBILITY_EXTENSION;
+    /** 无敌帧延长效果的冷却（tick）。 */
+    public static final ModConfigSpec.IntValue DEIFIC_AMULET_INVINCIBILITY_COOLDOWN;
+    /** 窒息时补充的氧气量（tick）。 */
+    public static final ModConfigSpec.IntValue DEIFIC_AMULET_AIR_SUPPLY;
+    /** 每次补充氧气的 Vis 基础消耗。 */
+    public static final ModConfigSpec.IntValue DEIFIC_AMULET_VIS_COST;
+    /** Vis 消耗倍率。 */
+    public static final ModConfigSpec.DoubleValue DEIFIC_AMULET_VIS_MULT;
+    /** 神圣护身符的最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue DEIFIC_AMULET_MAX_CHARGE;
+
+    // ---- 湮灭护符 / Amulet of The Oblivion ----
+    /** 每 tick 释放已储存伤害的概率。 */
+    public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_DAMAGE_RELEASE_CHANCE;
+    /** 单次释放伤害的上限。 */
+    public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_DAMAGE_CAP;
+    /** 释放伤害超过上限时，改为按上限随机取值的概率。 */
+    public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_HIGH_DAMAGE_REDUCTION_CHANCE;
+    /** 每 tick 施加随机负面效果的概率。 */
+    public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_POTION_CHANCE;
+    /** 随机负面效果的最短持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue OBLIVION_AMULET_POTION_DURATION_MIN;
+    /** 随机负面效果的最长持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue OBLIVION_AMULET_POTION_DURATION_MAX;
+    /** 随机负面效果的最低等级（0 表示 I 级）。 */
+    public static final ModConfigSpec.IntValue OBLIVION_AMULET_POTION_LEVEL_MIN;
+    /** 随机负面效果的最高等级。 */
+    public static final ModConfigSpec.IntValue OBLIVION_AMULET_POTION_LEVEL_MAX;
+    /** 湮灭护符附带的扭曲值。 */
+    public static final ModConfigSpec.IntValue OBLIVION_AMULET_WARP;
+    /** 储存伤害时的 Vis 消耗倍率。 */
+    public static final ModConfigSpec.DoubleValue OBLIVION_AMULET_VIS_MULT;
+    /** 湮灭护符的最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue OBLIVION_AMULET_MAX_CHARGE;
+
+    // ---- 恐惧之冠 / Crown of Terror ----
+    /** 挑拨怪物互相攻击的作用半径（格）。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_HAVOC_RANGE;
+    /** 注视目标的最大距离（格）。 */
+    public static final ModConfigSpec.DoubleValue TERROR_CROWN_SCAN_RANGE;
+    /** 失明持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_BLINDNESS_DURATION;
+    /** 凋零持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_WITHER_DURATION;
+    /** 凋零等级。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_WITHER_LEVEL;
+    /** 反胃持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_NAUSEA_DURATION;
+    /** 反胃等级。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_NAUSEA_LEVEL;
+    /** 缓慢持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_SLOWNESS_DURATION;
+    /** 缓慢等级。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_SLOWNESS_LEVEL;
+    /** 虚弱持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_WEAKNESS_DURATION;
+    /** 虚弱等级。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_WEAKNESS_LEVEL;
+    /** 每修复 1 点耐久消耗的魔力。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_MANA_COST;
+    /** 恐惧之冠附带的扭曲值。 */
+    public static final ModConfigSpec.IntValue TERROR_CROWN_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -148,6 +240,165 @@ public final class FRConfig {
         DIMENSIONAL_MIRROR_MAX_CHARGE = builder
                 .comment("Max Vis charge for Dimensional Mirror.", "空间魔镜的最大 Vis 储量。")
                 .defineInRange("dimensionalMirrorMaxCharge", 100, 0, 32768);
+        builder.pop();
+
+        builder.comment("远古之庇护（原版分类 Generic Config / Ancient Aegis）").push("ancient_aegis");
+        ANCIENT_AEGIS_DAMAGE_REDUCTION = builder
+                .comment("Damage reduction for Ancient Aegis. 1.0 equals 100% reduction.",
+                         "远古之庇护为佩戴者提供的伤害减免比例。0.25 表示 25%。")
+                .defineInRange("ancientAegisDamageReduction", 0.25D, 0.0D, 1.0D);
+        ANCIENT_AEGIS_HEAL_AMOUNT = builder
+                .comment("Heal amount per interval for Ancient Aegis.",
+                         "远古之庇护每次治疗回复的生命值。")
+                .defineInRange("ancientAegisHealAmount", 1.0D, 0.0D, 32768.0D);
+        ANCIENT_AEGIS_HEAL_INTERVAL = builder
+                .comment("Heal interval in ticks for Ancient Aegis.",
+                         "远古之庇护的治疗判定间隔（tick）。")
+                .defineInRange("ancientAegisHealInterval", 20, 1, 32768);
+        ANCIENT_AEGIS_KNOCKBACK_RESISTANCE = builder
+                .comment("Knockback resistance granted by Ancient Aegis.",
+                         "远古之庇护提供的击退抗性。1.0 表示完全免疫击退。")
+                .defineInRange("ancientAegisKnockbackResistance", 1.0D, 0.0D, 1.0D);
+        builder.pop();
+
+        builder.comment("七阳之戒（原版分类 Generic Config / Dark Sun Ring）").push("dark_sun_ring");
+        DARK_SUN_RING_DAMAGE_CAP = builder
+                .comment("Damage cap for Ring of The Seven Suns. Attacks exceeding this are negated.",
+                         "七阳之戒的伤害上限。超过该数值的攻击会被完全抵消。")
+                .defineInRange("darkSunRingDamageCap", 100.0D, 0.0D, 32768.0D);
+        DARK_SUN_RING_DEFLECT_CHANCE = builder
+                .comment("Chance to deflect an attack back to its source.",
+                         "把攻击反弹给攻击者的概率。")
+                .defineInRange("darkSunRingDeflectChance", 0.2D, 0.0D, 1.0D);
+        DARK_SUN_RING_HEAL_LIMIT = builder
+                .comment("Enables a cooldown on the fire-damage-to-healing conversion.",
+                         "是否给「火焰伤害转化为治疗」加上冷却限制，避免站在火里瞬间回满血。")
+                .define("darkSunRingHealLimit", false);
+        DARK_SUN_RING_MAX_CHARGE = builder
+                .comment("Max Vis charge for Ring of The Seven Suns.", "七阳之戒的最大 Vis 储量。")
+                .defineInRange("darkSunRingMaxCharge", 500, 0, 32768);
+        builder.pop();
+
+        builder.comment("神圣护身符（原版分类 Deific Amulet）").push("deific_amulet");
+        DEIFIC_AMULET_EFFECT_IMMUNITY = builder
+                .comment("Whether Deific Amulet grants immunity to status effects.",
+                         "神圣护身符是否免疫状态效果。")
+                .define("deificAmuletEffectImmunity", true);
+        DEIFIC_AMULET_ONLY_NEGATES_DEBUFFS = builder
+                .comment("When true, only debuffs are removed and buffs are kept.",
+                         "开启后只清除减益效果，保留增益效果。")
+                .define("deificAmuletOnlyNegatesDebuffs", false);
+        DEIFIC_AMULET_INVINCIBILITY = builder
+                .comment("Whether Deific Amulet extends invincibility frames.",
+                         "神圣护身符是否延长无敌帧。")
+                .define("deificAmuletInvincibility", true);
+        DEIFIC_AMULET_INVINCIBILITY_EXTENSION = builder
+                .comment("Invincibility frame extension in ticks.",
+                         "延长后的无敌帧时长（tick）。")
+                .defineInRange("deificAmuletInvincibilityExtension", 40, 0, 32768);
+        DEIFIC_AMULET_INVINCIBILITY_COOLDOWN = builder
+                .comment("Cooldown in ticks for the invincibility frame extension.",
+                         "无敌帧延长效果的冷却（tick）。")
+                .defineInRange("deificAmuletInvincibilityCooldown", 32, 0, 32768);
+        DEIFIC_AMULET_AIR_SUPPLY = builder
+                .comment("Air supply in ticks restored when the wearer is suffocating.",
+                         "佩戴者窒息时补充的氧气量（tick），原版换算自 deificAmuletFireDuration。")
+                .defineInRange("deificAmuletAirSupply", 300, 0, 32768);
+        DEIFIC_AMULET_VIS_COST = builder
+                .comment("Base Vis cost for Deific Amulet suffocation prevention.",
+                         "神圣护身符补充氧气的 Vis 基础消耗。")
+                .defineInRange("deificAmuletFireVisCost", 10, 0, 32768);
+        DEIFIC_AMULET_VIS_MULT = builder
+                .comment("Vis cost multiplier for Deific Amulet.", "神圣护身符的 Vis 消耗倍率。")
+                .defineInRange("deificAmuletVisCost", 1.0D, 0.0D, 1024.0D);
+        DEIFIC_AMULET_MAX_CHARGE = builder
+                .comment("Max Vis charge for Deific Amulet.", "神圣护身符的最大 Vis 储量。")
+                .defineInRange("deificAmuletMaxCharge", 200, 0, 32768);
+        builder.pop();
+
+        builder.comment("湮灭护符（原版分类 Oblivion Amulet）").push("oblivion_amulet");
+        OBLIVION_AMULET_DAMAGE_RELEASE_CHANCE = builder
+                .comment("Chance per tick to release stored damage.",
+                         "湮灭护符每 tick 释放已储存伤害的概率。")
+                .defineInRange("oblivionAmuletDamageReleaseChance", 0.0008D, 0.0D, 1.0D);
+        OBLIVION_AMULET_DAMAGE_CAP = builder
+                .comment("Upper bound for a single damage release.",
+                         "单次释放伤害的上限。")
+                .defineInRange("oblivionAmuletDamageCap", 100.0D, 0.0D, 32768.0D);
+        OBLIVION_AMULET_HIGH_DAMAGE_REDUCTION_CHANCE = builder
+                .comment("Chance to clamp an over-cap release to a random value below the cap.",
+                         "释放伤害超过上限时，改为按上限随机取值的概率。")
+                .defineInRange("oblivionAmuletHighDamageReductionChance", 0.9D, 0.0D, 1.0D);
+        OBLIVION_AMULET_POTION_CHANCE = builder
+                .comment("Chance per tick to apply a random debuff.",
+                         "湮灭护符每 tick 施加随机负面效果的概率。")
+                .defineInRange("oblivionAmuletPotionChance", 0.0004D, 0.0D, 1.0D);
+        OBLIVION_AMULET_POTION_DURATION_MIN = builder
+                .comment("Minimum duration of the random debuff.", "随机负面效果的最短持续时间（tick）。")
+                .defineInRange("oblivionAmuletPotionDurationMin", 100, 0, 32768);
+        OBLIVION_AMULET_POTION_DURATION_MAX = builder
+                .comment("Maximum duration of the random debuff.", "随机负面效果的最长持续时间（tick）。")
+                .defineInRange("oblivionAmuletPotionDurationMax", 2100, 0, 32768);
+        OBLIVION_AMULET_POTION_LEVEL_MIN = builder
+                .comment("Minimum amplifier of the random debuff.", "随机负面效果的最低等级（0 表示 I 级）。")
+                .defineInRange("oblivionAmuletPotionLevelMin", 0, 0, 255);
+        OBLIVION_AMULET_POTION_LEVEL_MAX = builder
+                .comment("Maximum amplifier of the random debuff.", "随机负面效果的最高等级。")
+                .defineInRange("oblivionAmuletPotionLevelMax", 3, 0, 255);
+        OBLIVION_AMULET_WARP = builder
+                .comment("Warp granted by Amulet of The Oblivion.", "湮灭护符附带的扭曲值。")
+                .defineInRange("oblivionAmuletWarp", 4, 0, 32768);
+        OBLIVION_AMULET_VIS_MULT = builder
+                .comment("Vis cost multiplier for Amulet of The Oblivion.", "湮灭护符储存伤害的 Vis 消耗倍率。")
+                .defineInRange("oblivionAmuletVisCost", 1.0D, 0.0D, 1024.0D);
+        OBLIVION_AMULET_MAX_CHARGE = builder
+                .comment("Max Vis charge for Amulet of The Oblivion.", "湮灭护符的最大 Vis 储量。")
+                .defineInRange("oblivionAmuletMaxCharge", 400, 0, 32768);
+        builder.pop();
+
+        builder.comment("恐惧之冠（原版分类 Crown of Terror）").push("terror_crown");
+        TERROR_CROWN_HAVOC_RANGE = builder
+                .comment("Radius in blocks for Crown of Terror to turn mobs against each other.",
+                         "恐惧之冠挑拨怪物互相攻击的作用半径（格）。")
+                .defineInRange("terrorCrownHavocRange", 24, 0, 256);
+        TERROR_CROWN_SCAN_RANGE = builder
+                .comment("Maximum distance in blocks for the gaze debuff.",
+                         "恐惧之冠注视目标的最大距离（格）。")
+                .defineInRange("terrorCrownScanRange", 32.0D, 0.0D, 256.0D);
+        TERROR_CROWN_BLINDNESS_DURATION = builder
+                .comment("Blindness duration in ticks.", "注视目标的失明持续时间（tick）。")
+                .defineInRange("terrorCrownBlindnessDuration", 100, 0, 32768);
+        TERROR_CROWN_WITHER_DURATION = builder
+                .comment("Wither duration in ticks.", "凋零持续时间（tick）。")
+                .defineInRange("terrorCrownWitherDuration", 40, 0, 32768);
+        TERROR_CROWN_WITHER_LEVEL = builder
+                .comment("Wither amplifier.", "凋零等级。")
+                .defineInRange("terrorCrownWitherLevel", 0, 0, 255);
+        TERROR_CROWN_NAUSEA_DURATION = builder
+                .comment("Nausea duration in ticks.", "反胃持续时间（tick）。")
+                .defineInRange("terrorCrownNauseaDuration", 100, 0, 32768);
+        TERROR_CROWN_NAUSEA_LEVEL = builder
+                .comment("Nausea amplifier.", "反胃等级。")
+                .defineInRange("terrorCrownNauseaLevel", 1, 0, 255);
+        TERROR_CROWN_SLOWNESS_DURATION = builder
+                .comment("Slowness duration in ticks.", "缓慢持续时间（tick）。")
+                .defineInRange("terrorCrownSlownessDuration", 30, 0, 32768);
+        TERROR_CROWN_SLOWNESS_LEVEL = builder
+                .comment("Slowness amplifier.", "缓慢等级。")
+                .defineInRange("terrorCrownSlownessLevel", 1, 0, 255);
+        TERROR_CROWN_WEAKNESS_DURATION = builder
+                .comment("Weakness duration in ticks.", "虚弱持续时间（tick）。")
+                .defineInRange("terrorCrownWeaknessDuration", 80, 0, 32768);
+        TERROR_CROWN_WEAKNESS_LEVEL = builder
+                .comment("Weakness amplifier.", "虚弱等级。")
+                .defineInRange("terrorCrownWeaknessLevel", 2, 0, 255);
+        TERROR_CROWN_MANA_COST = builder
+                .comment("Mana consumed per point of durability repaired.",
+                         "恐惧之冠每修复 1 点耐久消耗的魔力。")
+                .defineInRange("terrorCrownManaCost", 200, 0, 32768);
+        TERROR_CROWN_WARP = builder
+                .comment("Warp granted by Crown of Terror.", "恐惧之冠附带的扭曲值。")
+                .defineInRange("terrorCrownWarp", 3, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();
