@@ -1,27 +1,70 @@
 {
   "category": "forgotten_relics:forgotten_relics",
   "name": "fr.name.DarkSunRing",
-  "parents": [ "forgotten_relics:generic_theory", "thaumaturge:infusion" ],
+  "parents": [
+    "forgotten_relics:generic_theory",
+    "thaumaturge:infusion"
+  ],
   "column": -2,
   "row": 2,
-  "meta": [ "hidden" ],
-  "icons": [ "forgotten_relics:dark_sun_ring" ],
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics:dark_sun_ring"
+  ],
   "stages": [
     {
       "text": "fr.text.DarkSunRing.1",
       "required_knowledge": [
-        { "type": "theory", "category": "thaumaturge:auromancy", "amount": 1 },
-        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 }
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
       ]
     },
     {
       "text": "fr.text.DarkSunRing.2",
-      "recipes": [ "forgotten_relics:infusion/dark_sun_ring" ]
+      "recipes": [
+        "forgotten_relics:infusion/dark_sun_ring"
+      ]
     }
   ],
   "note_aspects": [
-    { "aspect": "thaumaturge:ignis", "amount": 3 },
-    { "aspect": "thaumaturge:tenebrae", "amount": 3 }
+    {
+      "aspect": "thaumaturge:ignis",
+      "amount": 7
+    },
+    {
+      "aspect": "thaumaturge:tenebrae",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:potentia",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:praemunio",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 2
+    },
+    {
+      "aspect": "thaumaturge:lux",
+      "amount": 1
+    }
   ],
-  "complexity": 2
+  "complexity": 3
 }

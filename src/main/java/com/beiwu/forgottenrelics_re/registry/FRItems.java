@@ -4,10 +4,14 @@ import com.beiwu.forgottenrelics_re.ForgottenRelics;
 import com.beiwu.forgottenrelics_re.items.ItemAdvancedMiningCharm;
 import com.beiwu.forgottenrelics_re.items.ItemAncientAegis;
 import com.beiwu.forgottenrelics_re.items.ItemDarkSunRing;
+import com.beiwu.forgottenrelics_re.items.ItemArcanum;
 import com.beiwu.forgottenrelics_re.items.ItemDeificAmulet;
+import com.beiwu.forgottenrelics_re.items.ItemDormantArcanum;
 import com.beiwu.forgottenrelics_re.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_re.items.ItemMiningCharm;
 import com.beiwu.forgottenrelics_re.items.ItemOblivionAmulet;
+import com.beiwu.forgottenrelics_re.items.ItemRingOfDiscord;
+import com.beiwu.forgottenrelics_re.items.ItemShinyStone;
 import com.beiwu.forgottenrelics_re.items.ItemSuperpositionRing;
 import com.beiwu.forgottenrelics_re.items.ItemTerrorCrown;
 import com.beiwu.forgottenrelics_re.items.ItemWeatherStone;
@@ -102,6 +106,28 @@ public final class FRItems {
             ITEMS.registerItem("terror_crown",
                     properties -> new ItemTerrorCrown(FRArmorMaterials.TERROR_CROWN, ArmorItem.Type.HELMET,
                             properties.durability(1000)),
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    // ---- 第三波：剩余的饰品 ----
+
+    /** 日耀石（Shiny Stone）。原版稀有度 EPIC，CHARM 槽。 */
+    public static final DeferredItem<ItemShinyStone> SHINY_STONE =
+            ITEMS.registerItem("shiny_stone", ItemShinyStone::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /** 浑浊之核（Nebulous Core，注册名 arcanum）。原版稀有度 EPIC，CHARM 槽。 */
+    public static final DeferredItem<ItemArcanum> ARCANUM =
+            ITEMS.registerItem("arcanum", ItemArcanum::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /** 休眠浑浊之核（Dormant Nebulous Core）。由浑浊之核转化而来，没有独立配方与研究词条。 */
+    public static final DeferredItem<ItemDormantArcanum> DORMANT_ARCANUM =
+            ITEMS.registerItem("dormant_arcanum", ItemDormantArcanum::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /** 不和谐之戒（Ring of Discord，注册名 discord_ring）。原版稀有度 EPIC，RING 槽。 */
+    public static final DeferredItem<ItemRingOfDiscord> DISCORD_RING =
+            ITEMS.registerItem("discord_ring", ItemRingOfDiscord::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

@@ -1,23 +1,60 @@
 {
   "category": "forgotten_relics:forgotten_relics",
   "name": "fr.name.SuperpositionRing",
-  "parents": [ "forgotten_relics:generic_theory", "thaumaturge:infusion" ],
+  "parents": [
+    "forgotten_relics:generic_theory",
+    "thaumaturge:infusion"
+  ],
   "column": 3,
   "row": -3,
-  "icons": [ "forgotten_relics:superposition_ring" ],
+  "icons": [
+    "forgotten_relics:superposition_ring"
+  ],
   "stages": [
     {
       "text": "fr.text.SuperpositionRing.1",
       "required_knowledge": [
-        { "type": "theory", "category": "thaumaturge:auromancy", "amount": 1 },
-        { "type": "theory", "category": "thaumaturge:artifice", "amount": 1 },
-        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 }
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
       ]
     },
     {
       "text": "fr.text.SuperpositionRing.2",
-      "recipes": [ "forgotten_relics:infusion/superposition_ring" ]
+      "recipes": [
+        "forgotten_relics:infusion/superposition_ring"
+      ]
     }
   ],
-  "complexity": 2
+  "complexity": 2,
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:volatus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:tenebrae",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 4
+    }
+  ]
 }

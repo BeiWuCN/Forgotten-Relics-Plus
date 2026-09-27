@@ -1,45 +1,46 @@
 {
   "type": "thaumaturge:infusion",
   "aspects": [
-    { "aspect": "thaumaturge:instrumentum", "amount": 425 },
-    { "aspect": "thaumaturge:auram", "amount": 150 },
-    { "aspect": "thaumaturge:vitreus", "amount": 185 },
-    { "aspect": "thaumaturge:permutatio", "amount": 150 },
-    { "aspect": "thaumaturge:motus", "amount": 125 },
-    { "aspect": "thaumaturge:praecantatio", "amount": 140 }
+    { "aspect": "thaumaturge:auram", "amount": 80 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 500 },
+    { "aspect": "thaumaturge:vacuos", "amount": 125 },
+    { "aspect": "thaumaturge:alienis", "amount": 175 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 150 },
+    { "aspect": "thaumaturge:motus", "amount": 100 },
+    { "aspect": "thaumaturge:permutatio", "amount": 185 }
   ],
-  "catalyst": { "item": "forgotten_relics:mining_charm" },
+  "catalyst": { "item": "thaumaturge:primordial_pearl" },
   "components": [
-    { "item": "thaumaturge:vis_resonator" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    },
-    { "item": "botania:elementium_ingot" },
-    { "item": "botania:dragonstone" },
-    { "item": "botania:gaia_spirit" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    },
-    { "item": "thaumaturge:void_pickaxe" },
+    { "item": "thaumaturge:amulet_vis" },
     {
       "type": "neoforge:components",
       "items": "thaumaturge:essentia_crystal",
       "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
     },
     { "item": "botania:gaia_spirit" },
-    { "item": "botania:dragonstone" },
-    { "item": "botania:elementium_ingot" },
+    { "tag": "c:ingots/thaumium" },
+    { "item": "botania:mana_diamond" },
+    {
+      "type": "neoforge:components",
+      "items": "thaumaturge:essentia_crystal",
+      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
+    },
+    { "item": "forgotten_relics:superposition_ring" },
+    {
+      "type": "neoforge:components",
+      "items": "thaumaturge:essentia_crystal",
+      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
+    },
+    { "item": "botania:mana_diamond" },
+    { "tag": "c:ingots/thaumium" },
+    { "item": "botania:gaia_spirit" },
     {
       "type": "neoforge:components",
       "items": "thaumaturge:essentia_crystal",
       "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
     }
   ],
-  "instability": 8,
-  "research": { "entry": "forgotten_relics:advanced_mining_charm" },
-  "result": { "count": 1, "id": "forgotten_relics:advanced_mining_charm" }
+  "instability": 12,
+  "research": { "entry": "forgotten_relics:arcanum" },
+  "result": { "count": 1, "id": "forgotten_relics:arcanum" }
 }

@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "forgotten_relics:superposition_ring"
+    "forgotten_relics:mining_charm",
+    "forgotten_relics:advanced_mining_charm",
+    "forgotten_relics:superposition_ring",
+    "forgotten_relics:dark_sun_ring",
+    "forgotten_relics:discord_ring"
   ]
 }

@@ -1,7 +1,10 @@
 {
   "replace": false,
   "values": [
-    "forgotten_relics:mining_charm",
-    "forgotten_relics:advanced_mining_charm"
+    "forgotten_relics:shiny_stone",
+    "forgotten_relics:arcanum",
+    "forgotten_relics:dormant_arcanum",
+    "forgotten_relics:deific_amulet",
+    "forgotten_relics:oblivion_amulet"
   ]
 }

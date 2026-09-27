@@ -1,21 +1,21 @@
 {
   "category": "forgotten_relics:forgotten_relics",
-  "name": "fr.name.DeificAmulet",
+  "name": "fr.name.ShinyStone",
   "parents": [
-    "forgotten_relics:generic_theory",
+    "forgotten_relics:deific_amulet",
     "thaumaturge:infusion"
   ],
-  "column": 0,
-  "row": 2,
+  "column": 4,
+  "row": -6,
   "meta": [
-    "round"
+    "hidden"
   ],
   "icons": [
-    "forgotten_relics:deific_amulet"
+    "forgotten_relics:shiny_stone"
   ],
   "stages": [
     {
-      "text": "fr.text.DeificAmulet.1",
+      "text": "fr.text.ShinyStone.1",
       "required_knowledge": [
         {
           "type": "observation",
@@ -30,27 +30,23 @@
       ]
     },
     {
-      "text": "fr.text.DeificAmulet.2",
+      "text": "fr.text.ShinyStone.2",
       "recipes": [
-        "forgotten_relics:infusion/deific_amulet"
+        "forgotten_relics:infusion/shiny_stone"
       ]
     }
   ],
   "note_aspects": [
     {
-      "aspect": "thaumaturge:humanus",
-      "amount": 6
-    },
-    {
       "aspect": "thaumaturge:victus",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:lux",
-      "amount": 4
+      "amount": 8
     },
     {
       "aspect": "thaumaturge:permutatio",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:vitreus",
       "amount": 4
     },
     {
@@ -58,5 +54,5 @@
       "amount": 4
     }
   ],
-  "complexity": 3
+  "complexity": 2
 }

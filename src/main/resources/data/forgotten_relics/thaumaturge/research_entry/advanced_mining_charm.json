@@ -1,29 +1,69 @@
 {
   "category": "forgotten_relics:forgotten_relics",
   "name": "fr.name.AdvancedMiningCharm",
-  "parents": [ "forgotten_relics:mining_charm" ],
+  "parents": [
+    "forgotten_relics:mining_charm"
+  ],
   "column": 3,
   "row": 4,
-  "meta": [ "hidden" ],
-  "icons": [ "forgotten_relics:advanced_mining_charm" ],
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics:advanced_mining_charm"
+  ],
   "stages": [
     {
       "text": "fr.text.AdvancedMiningCharm.1",
       "required_knowledge": [
-        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 },
-        { "type": "theory", "category": "thaumaturge:artifice", "amount": 1 }
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        }
       ],
       "obtain": [
-        { "items": "thaumaturge:void_pickaxe", "amount": 1 }
+        {
+          "items": "thaumaturge:void_pickaxe",
+          "amount": 1
+        }
       ],
       "craft": [
-        { "items": "forgotten_relics:mining_charm", "amount": 1 }
+        {
+          "items": "forgotten_relics:mining_charm",
+          "amount": 1
+        }
       ]
     },
     {
       "text": "fr.text.AdvancedMiningCharm.2",
-      "recipes": [ "forgotten_relics:infusion/advanced_mining_charm" ]
+      "recipes": [
+        "forgotten_relics:infusion/advanced_mining_charm"
+      ]
     }
   ],
-  "complexity": 2
+  "complexity": 2,
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:instrumentum",
+      "amount": 14
+    },
+    {
+      "aspect": "thaumaturge:motus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:auram",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 4
+    }
+  ]
 }
