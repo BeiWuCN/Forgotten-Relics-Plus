@@ -43,6 +43,20 @@ public final class FRDamageTypes {
     /** 真雷伤害（原版 {@code DamageSourceTLightning}），霹雳咒书使用。 */
     public static final ResourceKey<DamageType> TRUE_LIGHTNING = key("true_lightning");
 
+    /**
+     * 暗物质伤害（原版 {@code DamageRegistryHandler.DamageSourceDarkMatter}，message_id = {@code attackDarkMatter}），
+     * 邪术之咒的暗物质法球使用。
+     *
+     * <p>原版这个伤害源构造时调了 {@code setDamageBypassesArmor()} 与 {@code setExplosion}；
+     * 1.21.1 里这两件事由 {@code tags/damage_type/*.json} 表达，本项目<b>暂不补任何 tag</b>
+     * （是否补 armor bypass 待用户拍板，见 {@code Tools/HANDOVER.md} 第 5 节），
+     * 所以这里的实际效果与原版有偏差：既不穿甲、也不带爆炸判定。
+     *
+     * <p>注意：原版 {@code SuperpositionHandler.isDamageTypeAbsolute} 的名单里<b>没有</b>暗物质，
+     * 也就是它可以被七阳之戒、神圣护符等拦截或转嫁；这里同样不把它加进 {@link #isAbsolute}。
+     */
+    public static final ResourceKey<DamageType> DARK_MATTER = key("dark_matter");
+
     private static ResourceKey<DamageType> key(String path) {
         return ResourceKey.create(Registries.DAMAGE_TYPE,
                 ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, path));

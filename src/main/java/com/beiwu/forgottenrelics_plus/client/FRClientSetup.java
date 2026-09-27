@@ -43,6 +43,7 @@ public final class FRClientSetup {
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         // 弹射物不画几何体，形体交给原版粒子，见 FRProjectileRenderer 的类注释。
         event.registerEntityRenderer(FREntities.THUNDERPEAL_ORB.get(), FRProjectileRenderer::new);
+        event.registerEntityRenderer(FREntities.DARK_MATTER_ORB.get(), FRProjectileRenderer::new);
     }
 
     @SubscribeEvent

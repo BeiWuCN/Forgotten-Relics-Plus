@@ -57,6 +57,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.TELEPORTATION_TOME.get());
                         // 第七波：虚空吞噬者。
                         output.accept(FRItems.DEVOURER_OF_THE_VOID.get());
+                        // 第七波：邪术之咒。
+                        output.accept(FRItems.ELDRITCH_SPELL.get());
                     })
                     .build());
 

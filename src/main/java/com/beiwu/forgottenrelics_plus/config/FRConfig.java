@@ -294,6 +294,20 @@ public final class FRConfig {
     /** 虚空吞噬者：附带的扭曲值。 */
     public static final ModConfigSpec.IntValue DEVOURER_OF_THE_VOID_WARP;
 
+    // ---- 邪术之咒 / Eldritch Spell ----
+    /** 邪术之咒：每次施法的 Vis 基础消耗。 */
+    public static final ModConfigSpec.IntValue ELDRITCH_SPELL_VIS_COST;
+    /** 邪术之咒：Vis 消耗倍率。 */
+    public static final ModConfigSpec.DoubleValue ELDRITCH_SPELL_VIS_MULT;
+    /** 邪术之咒：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue ELDRITCH_SPELL_MAX_CHARGE;
+    /** 邪术之咒：使用后的冷却（tick）。 */
+    public static final ModConfigSpec.IntValue ELDRITCH_SPELL_COOLDOWN;
+    /** 邪术之咒：普通维度下暗物质法球造成的伤害。 */
+    public static final ModConfigSpec.DoubleValue ELDRITCH_SPELL_DAMAGE;
+    /** 邪术之咒：外域（Outer Lands）中暗物质法球造成的伤害。 */
+    public static final ModConfigSpec.DoubleValue ELDRITCH_SPELL_DAMAGE_EX;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -805,6 +819,32 @@ public final class FRConfig {
                 .comment("Warp granted by the Devourer of The Void.",
                          "虚空吞噬者附带的扭曲值。原版 ItemObeliskDrainer#getWarp 返回 4。")
                 .defineInRange("devourerOfTheVoidWarp", 4, 0, 32768);
+        builder.pop();
+
+        builder.comment("邪术之咒（第七波：暗物质法球）").push("eldritch_spell");
+        ELDRITCH_SPELL_VIS_COST = builder
+                .comment("Base Vis cost per cast for the Eldritch Spell.",
+                         "邪术之咒每次施法的 Vis 基础消耗。原版是混沌（Perditio）400 厘 Vis，即 4 点。")
+                .defineInRange("eldritchSpellVisCost", 4, 0, 32768);
+        ELDRITCH_SPELL_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Eldritch Spell.",
+                         "邪术之咒的 Vis 消耗倍率。")
+                .defineInRange("eldritchSpellVisMult", 1.0D, 0.0D, 1024.0D);
+        ELDRITCH_SPELL_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Eldritch Spell.", "邪术之咒的最大 Vis 储量。")
+                .defineInRange("eldritchSpellMaxCharge", 100, 0, 32768);
+        ELDRITCH_SPELL_COOLDOWN = builder
+                .comment("Cooldown in ticks after casting the Eldritch Spell.",
+                         "邪术之咒使用后的冷却（tick）。原版是 20。")
+                .defineInRange("eldritchSpellCooldown", 20, 0, 32768);
+        ELDRITCH_SPELL_DAMAGE = builder
+                .comment("Damage dealt by the Dark Matter Orb outside the Outer Lands.",
+                         "暗物质法球在普通维度造成的伤害。原版是 eldritchSpellDamage，默认 32.5。")
+                .defineInRange("eldritchSpellDamage", 32.5D, 0.0D, 32768.0D);
+        ELDRITCH_SPELL_DAMAGE_EX = builder
+                .comment("Damage dealt by the Dark Matter Orb inside the Outer Lands.",
+                         "暗物质法球在外域（Outer Lands）造成的伤害。原版是 eldritchSpellDamageEx，默认 100。")
+                .defineInRange("eldritchSpellDamageEx", 100.0D, 0.0D, 32768.0D);
         builder.pop();
 
         SPEC = builder.build();

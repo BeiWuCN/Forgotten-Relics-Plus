@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus.registry;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
+import com.beiwu.forgottenrelics_plus.entity.EntityDarkMatterOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityThunderpealOrb;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
@@ -26,6 +27,14 @@ public final class FREntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityThunderpealOrb>> THUNDERPEAL_ORB =
             register("thunderpeal_orb",
                     () -> EntityType.Builder.<EntityThunderpealOrb>of(EntityThunderpealOrb::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10));
+
+    /** 邪术之咒的暗物质法球（原版 {@code EntityDarkMatterOrb}）。 */
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityDarkMatterOrb>> DARK_MATTER_ORB =
+            register("dark_matter_orb",
+                    () -> EntityType.Builder.<EntityDarkMatterOrb>of(EntityDarkMatterOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
                             .updateInterval(10));

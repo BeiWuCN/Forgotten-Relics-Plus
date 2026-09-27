@@ -8,6 +8,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemArcanum;
 import com.beiwu.forgottenrelics_plus.items.ItemDeificAmulet;
 import com.beiwu.forgottenrelics_plus.items.ItemDormantArcanum;
 import com.beiwu.forgottenrelics_plus.items.ItemDevourerOfTheVoid;
+import com.beiwu.forgottenrelics_plus.items.ItemEldritchSpell;
 import com.beiwu.forgottenrelics_plus.items.ItemChaosCore;
 import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemFalseJustice;
@@ -232,6 +233,18 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemDevourerOfTheVoid> DEVOURER_OF_THE_VOID =
             ITEMS.registerItem("devourer_of_the_void", ItemDevourerOfTheVoid::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 邪术之咒（Eldritch Spell），注册名 {@code eldritch_spell}。
+     *
+     * <p>原版类名 {@code ItemEldritchSpell}。原版稀有度 EPIC，堆叠上限 1，附带 4 点扭曲。
+     *
+     * <p>右键发射暗物质法球，消耗物品自身 Vis 充能，并有 20 tick 共用冷却。
+     * 详见 {@link ItemEldritchSpell}。
+     */
+    public static final DeferredItem<ItemEldritchSpell> ELDRITCH_SPELL =
+            ITEMS.registerItem("eldritch_spell", ItemEldritchSpell::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {
