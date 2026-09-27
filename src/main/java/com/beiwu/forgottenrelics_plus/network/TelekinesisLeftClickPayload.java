@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus.network;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
+import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemTelekinesisTome;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -46,12 +47,14 @@ public record TelekinesisLeftClickPayload() implements CustomPacketPayload {
         return TYPE;
     }
 
-    /** 服务端处理：交给预言之典自己做目标/冷却/充能校验。 */
+    /** 服务端处理：分发给各个关心左键的物品（预言之典、空间魔镜），由它们自行校验条件。 */
     public static void handle(TelekinesisLeftClickPayload payload, IPayloadContext context) {
         // 网络线程不能直接碰世界状态，挪到主线程执行。
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) {
                 ItemTelekinesisTome.onServerLeftClick(player);
+                // 同一条左键通道：空间魔镜的"潜行+左键清空坐标"也走这里。
+                ItemDimensionalMirror.onServerLeftClick(player);
             }
         });
     }
