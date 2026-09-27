@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus.client;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
+import com.beiwu.forgottenrelics_plus.entity.FRHomingProjectile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -200,17 +201,21 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
             b = (rgb & 0xFF) / 255.0F;
         }
 
+        // 淡出：目前只有 EntityChaoticOrb 会覆写 renderScale（从未锁定目标的球 7 秒后缩小消失）。
+        float fade = entity instanceof FRHomingProjectile projectile ? projectile.renderScale() : 1.0F;
+
         if (this.renderBillboard) {
-            renderBillboard(poseStack, buffers, age, r, g, b);
+            renderBillboard(poseStack, buffers, age, r, g, b, fade);
         }
         renderFlash(poseStack, buffers, age, r, g, b);
     }
 
     /** 第 1 层：RE 的外层公告板（lunar_flare / rageous_missile 不画）。 */
-    private void renderBillboard(PoseStack poseStack, MultiBufferSource buffers, float age, float r, float g, float b) {
+    private void renderBillboard(PoseStack poseStack, MultiBufferSource buffers, float age, float r, float g, float b,
+                                 float fade) {
         // 原版那一圈 RenderXxxOrb 都用 sin(ticksExisted / 5) * 0.2 + 0.2 做呼吸缩放。
         float bob = Mth.sin(age / 5.0F) * 0.2F + 0.2F;
-        float scale = Math.min(this.baseScale * (1.0F + bob), MAX_BILLBOARD_SCALE);
+        float scale = Math.min(this.baseScale * (1.0F + bob), MAX_BILLBOARD_SCALE) * fade;
 
         poseStack.pushPose();
         // 面朝相机（标准公告板写法，纯原版 API，不依赖任何前置模组）。
