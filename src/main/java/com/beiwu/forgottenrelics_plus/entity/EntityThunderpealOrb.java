@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_plus.entity;
 
 import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
+import com.beiwu.forgottenrelics_plus.particle.FRBoltParticleData;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
@@ -11,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -32,13 +34,24 @@ import net.minecraft.world.phys.Vec3;
  *   <li>所有伤害都带「真雷」类型，并各自清空无敌帧，保证同一次落雷里的每一跳都能打实。</li>
  * </ul>
  *
- * <p>与原版的两处差异：
+ * <p><b>闪电怎么画（1.6.2 重做）</b>：
  * <ul>
- *   <li>原版的闪电是自定义网络包画出来的（{@code imposeLightning} / {@code imposeArcLightning}，
- *       客户端画的是 Thaumcraft 的 {@code FXLightningBolt}）；1.21.1 里改成原版粒子
- *       {@code ELECTRIC_SPARK} 组成的电弧。这一处原版<b>不是</b> Botania 粒子，按「原版本来就不是
- *       Botania 就保持原样」的口径保留，不改成 Botania；</li>
- *   <li>原版用裸字段算落点，这里用 {@code Vec3} 运算，语义一致。</li>
+ *   <li>1.7.10 用 {@code SuperpositionHandler.imposeLightning(...)} 把「雷电球 → 目标中心」
+ *       打包成 {@code LightningMessage}，客户端用 Thaumcraft 的 {@code FXLightningBolt}
+ *       画成一道深蓝锯齿电弧；链式那一跳用 {@code main = false}，宽度从 0.075 收窄到 0.04；
+ *       1.12.2 移植版（RE）的 {@code EntityThunderpealOrb} 是同一套（{@code LightningMessage}
+ *       + 客户端 {@code FXDispatcher.arcBolt(..., 0.4, 0.6, 1.0, width)}）；</li>
+ *   <li>本项目改成：{@code FRBoltParticleData.broadcast(...)} 走原版粒子包把两端送到客户端，
+ *       客户端的 {@code client/FRBolts} 再交给 Botania 的 {@code BoltRenderer} 画折线
+ *       （几何由 {@code BoltParticleOptions.generate()} 生成）。端点、宽度与颜色逐一对齐 RE：
+ *       主电弧「雷电球位置 → 目标身体中心」宽 {@link FRBoltParticleData#WIDTH_MAIN}，
+ *       链式电弧「主目标中心 → 次目标中心」宽 {@link FRBoltParticleData#WIDTH_CHAIN}，
+ *       颜色都是 RE {@code arcBolt} 的 {@code 0.4/0.6/1.0}；</li>
+ *   <li>1.7.10 的 {@code shootLightning} 起点其实是「雷电球沿连线前移 0.5 格」，
+ *       RE 直接用了雷电球自身坐标。这里按 RE 走（球心即起点），差异只有半格；</li>
+ *   <li><b>不再</b>在命中点撒 60 颗 {@code ELECTRIC_SPARK} 冒充电弧——那是本项目上一版自行加的，
+ *       原版与 RE 都没有，而且正是玩家抱怨的「散点」。命中处的两发
+ *       {@code imposeBurst}（Thaumcraft {@code FXBurst}，非 Botania）仍按既有口径用 {@code FLASH} 近似。</li>
  * </ul>
  */
 public class EntityThunderpealOrb extends FRHomingProjectile {
@@ -107,6 +120,8 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         }
         DamageSource lightning = FRDamageTypes.source(level(), FRDamageTypes.TRUE_LIGHTNING, this);
         Player owner = getOwner() instanceof Player player ? player : null;
+        // 原版/RE 的闪电起点就是雷电球自身位置。
+        Vec3 origin = position();
         if (result instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity direct) {
             strike(direct, lightning, FRConfig.THUNDERPEAL_DIRECT_DAMAGE.get().floatValue());
         }
@@ -114,6 +129,10 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         List<LivingEntity> nearby = level().getEntitiesOfClass(LivingEntity.class,
                 getBoundingBox().inflate(BLAST_RADIUS), entity -> entity != owner && entity.isAlive());
         for (LivingEntity target : nearby) {
+            // 主电弧：雷电球 → 目标身体中心（RE LightningMessage(main=true)，宽 0.075）。
+            FRBoltParticleData.broadcast(server, origin, centerOf(target),
+                    FRBoltParticleData.WIDTH_MAIN, 1,
+                    FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE);
             strike(target, lightning, FRConfig.THUNDERPEAL_BOLT_DAMAGE.get().floatValue());
             // 链式：从被击中者再向它附近最多 3 个目标打出一半伤害。
             List<LivingEntity> chained = level().getEntitiesOfClass(LivingEntity.class,
@@ -123,17 +142,24 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
                 chained.remove(random.nextInt(chained.size()));
             }
             for (LivingEntity secondary : chained) {
+                // 链式电弧：主目标中心 → 次目标中心（RE LightningMessage(main=false)，宽 0.04）。
+                FRBoltParticleData.broadcast(server, centerOf(target), centerOf(secondary),
+                        FRBoltParticleData.WIDTH_CHAIN, 1,
+                        FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE);
                 strike(secondary, lightning, FRConfig.THUNDERPEAL_BOLT_DAMAGE.get().floatValue() / 2.0F);
             }
         }
         // 爆发粒子 + 音效，对应原版两发 imposeBurst 与 thaumcraft:shock。
-        // 注意：imposeBurst 走的是 Thaumcraft 的 proxy.burst（1.7.10）/ BurstMessage（RE），
-        // 不是 Botania 粒子，所以这里的两发 FLASH 与 ELECTRIC_SPARK 按「原版本来就不是 Botania」
-        // 的口径保留，不改成 wisp。
-        server.sendParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(), 60, 1.5D, 1.5D, 1.5D, 0.2D);
+        // imposeBurst 走的是 Thaumcraft 的 proxy.burst（1.7.10）/ BurstMessage（RE），
+        // 不是 Botania 粒子，所以这里仍按既有口径用原版 FLASH 近似。
         server.sendParticles(ParticleTypes.FLASH, getX(), getY(), getZ(), 3, 0.2D, 0.2D, 0.2D, 0.0D);
         SoundHelper.play(level(), getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT,
                 SoundSource.PLAYERS, 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
+    }
+
+    /** 实体身体中心，对应原版 {@code Vector3.fromEntityCenter} / RE 的 {@code posY + height / 2}。 */
+    private static Vec3 centerOf(Entity entity) {
+        return entity.position().add(0.0D, entity.getBbHeight() * 0.5D, 0.0D);
     }
 
     /** 打一次真雷，并清空无敌帧——原版对每一跳都这么做。 */

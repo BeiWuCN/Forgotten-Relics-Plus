@@ -11,6 +11,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 /**
@@ -71,6 +72,18 @@ public final class FRClientSetup {
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(FRKeybinds.DISCORD_RING);
+    }
+
+    /**
+     * 闪电弧的粒子 provider。
+     *
+     * <p>1.7.10 / RE 是「自定义网络包 → 客户端收包后调 Thaumcraft 画电弧」；
+     * 这里换成「原版粒子包 → 客户端 provider 调 Botania 的 {@code BoltRenderer}」，
+     * 所以只需要在这一处把 provider 挂上，见 {@link FRBolts}。
+     */
+    @SubscribeEvent
+    public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
+        FRBolts.registerProvider(event);
     }
 
     @SubscribeEvent

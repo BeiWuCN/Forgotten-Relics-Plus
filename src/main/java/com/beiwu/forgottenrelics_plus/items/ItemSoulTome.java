@@ -4,12 +4,12 @@ import com.beiwu.forgottenrelics_plus.api.FRRechargable;
 import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.entity.EntitySoulEnergy;
+import com.beiwu.forgottenrelics_plus.particle.FRBoltParticleData;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import java.util.List;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -61,9 +61,12 @@ import vazkii.botania.common.handler.BotaniaSounds;
  *     <li>灵魂抽取每次 1 点（原版 1.30 取整）；</li>
  *     <li>击退每命中一个实体 2 点（原版 2.70，与 RE 的取值一致）。</li>
  *   </ul>
- *   <li>原版画闪电用的是 {@code Main.proxy.lightning} 自定义渲染（客户端是 Thaumcraft 的
- *       {@code FXLightningBolt}，<b>不是 Botania</b>）；1.21.1 改成沿玩家→目标连线的原版粒子
- *       {@link ParticleTypes#ELECTRIC_SPARK}，按「原版本来就不是 Botania 就保持原样」的口径保留；</li>
+ *   <li><b>击退闪电（1.6.2 重做）</b>：原版 {@code Main.proxy.lightning(...)} 在
+ *       {@code for (counterZ = 0; counterZ <= 3; ++counterZ)} 里连画 4 道（客户端是 Thaumcraft
+ *       {@code FXLightningBolt}），起点 {@code (player.x, player.y + 1.0, player.z)}、
+ *       终点目标身体中心、宽度 0.075。本项目改成 {@link FRBoltParticleData#broadcast}
+ *       走原版粒子包把两端送到客户端，再由 {@code client/FRBolts} 交给 Botania 的
+ *       {@code BoltRenderer} 画真正的折线闪电；</li>
  *   <li><b>领域结界环</b>（1.6.2 新增）：1.7.10 原版<b>没有</b>这个视觉，是 RE 补的
  *       （{@code ItemSoulTome#renderAuraBoundary}，客户端 {@code onUpdate} 里画两圈白色粒子，
  *       模仿 Botania 盖亚守护者的竞技场边界）。本项目此前完全没实现，玩家反馈「领域展开没有结界」，
@@ -230,8 +233,11 @@ public class ItemSoulTome extends FRItem implements FRRechargable, IWarpingGear 
         Vec3 diff = entityVec.subtract(playerVec).scale(1.0D / distance * 3.0D);
 
         if (level instanceof ServerLevel server) {
-            // 原版 Main.proxy.lightning(...) 连画 4 道自定义闪电：这里沿玩家→目标撒粒子电弧。
-            drawLightningArc(server, player.position().add(0.0D, 1.0D, 0.0D), entityVec);
+            // 原版 for (counterZ = 0; counterZ <= 3; ++counterZ) 连画 4 道 Main.proxy.lightning：
+            // 起点 (player.x, player.y + 1.0, player.z)、终点目标身体中心、宽度 0.075。
+            FRBoltParticleData.broadcast(server, player.position().add(0.0D, 1.0D, 0.0D), entityVec,
+                    FRBoltParticleData.WIDTH_MAIN, 4,
+                    FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE);
             // 原版 world.playSoundAtEntity(player, "thaumcraft:zap", 1.0F, 0.8F)。
             SoundHelper.play(level, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.FIREWORK_ROCKET_BLAST, SoundSource.PLAYERS, 1.0F, 0.8F);
@@ -336,34 +342,6 @@ public class ItemSoulTome extends FRItem implements FRRechargable, IWarpingGear 
                     player.getZ() - Math.sin(rad) * KNOCKBACK_RANGE,
                     BOUNDARY_INNER_RED, BOUNDARY_INNER_GREEN, BOUNDARY_INNER_BLUE,
                     BOUNDARY_INNER_SIZE, 4);
-        }
-    }
-
-    /**
-     * 原版 {@code Main.proxy.lightning(...)} 的自定义闪电替身。
-     *
-     * <p>原版一次调用会画一条带曲线的闪电，且被连调 4 次；这里沿起点→终点连线撒 4 遍
-     * {@link ParticleTypes#ELECTRIC_SPARK}，每遍带一点随机抖动，做出同样的电弧质感。
-     */
-    private static void drawLightningArc(ServerLevel server, Vec3 from, Vec3 to) {
-        Vec3 diff = to.subtract(from);
-        double length = diff.length();
-        if (length < 1.0E-4D) {
-            return;
-        }
-        // 原版点数取 (int)(dist * 6)，上限 40；这里封顶 16，避免每 tick 太多粒子包。
-        int points = Math.min(16, Math.max(2, (int) (length * 6.0D)));
-        Vec3 step = diff.scale(1.0D / points);
-        for (int arc = 0; arc < 4; arc++) {
-            Vec3 pos = from;
-            for (int i = 0; i < points; i++) {
-                server.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                        pos.x + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        pos.y + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        pos.z + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        1, 0.0D, 0.0D, 0.0D, 0.0D);
-                pos = pos.add(step);
-            }
         }
     }
 

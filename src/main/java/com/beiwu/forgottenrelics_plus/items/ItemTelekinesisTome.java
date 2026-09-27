@@ -4,6 +4,7 @@ import com.beiwu.forgottenrelics_plus.api.FRRechargable;
 import com.beiwu.forgottenrelics_plus.api.WeaponAttackBehaviour;
 import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
+import com.beiwu.forgottenrelics_plus.particle.FRBoltParticleData;
 import com.beiwu.forgottenrelics_plus.utils.CooldownHelper;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
@@ -107,10 +108,15 @@ import vazkii.botania.common.entity.GaiaGuardianEntity;
  *   <li>原版 {@code SuperpositionHandler} 的共用施法冷却 → {@link CooldownHelper}；</li>
  *   <li><b>不写任何自定义网络包</b>：{@code TelekinesisParticleMessage} 的紫色 wisp 改为服务端
  *       {@link FRParticles}（原版就是 Botania wispFX），portalstuff 本来就是原版
- *       {@code EntityPortalFX}、继续用 {@link ParticleTypes#PORTAL}；{@code LightningMessage}
- *       走的是 Thaumcraft {@code FXLightningBolt}（非 Botania），改为服务端沿
- *       玩家→目标撒 {@link ParticleTypes#ELECTRIC_SPARK} 电弧（与千咒之诫同一方案，按口径保留）；
+ *       {@code EntityPortalFX}、继续用 {@link ParticleTypes#PORTAL}；
  *       {@code PlayerMotionUpdateMessage} 改为改完速度后置 {@code hurtMarked}，靠原版同步；</li>
+ *   <li><b>左键闪电（1.6.2 重做）</b>：原版 {@code imposeLightning(player, ..., player.x, player.y + 1.0,
+ *       player.z, TVec.x, TVec.y, TVec.z, 20, curve, speed, 0, 0.225 + distSq / 2000)} 被
+ *       {@code for (counter = 0; counter <= 3; ++counter)} 连调 4 次，客户端用 Thaumcraft
+ *       {@code FXLightningBolt} 画成锯齿电弧。本项目改成 {@link FRBoltParticleData#broadcast}
+ *       走原版粒子包把两端送到客户端，再由 {@code client/FRBolts} 交给 Botania 的
+ *       {@code BoltRenderer} 画真正的折线闪电；宽度沿用原版公式（注意它比霹雳咒书的 0.075 粗得多，
+ *       是 1.7.10 自己的取值）；</li>
  *   <li>音效 {@code thaumcraft:zap} → 原版等价物 {@link SoundEvents#FIREWORK_ROCKET_BLAST}
  *       （与千咒之诫的 {@code zap} 替代方案一致），并过 {@link SoundHelper#play} 统一压低音量；</li>
  *   <li>左键「闪电 / 抛开」在原版是客户端在 {@code onUpdate} 里检测攻击键<b>按下的边沿</b>后
@@ -532,8 +538,13 @@ public class ItemTelekinesisTome extends FRItem
         if (distance <= LIGHTNING_RANGE
                 && RechargeAccess.consumeCharge(stack, player, getLightningVisCost())) {
             if (level instanceof ServerLevel server) {
-                // 原版连画 4 道 imposeLightning：起点是玩家脚下 + 1 格，终点是目标中心。
-                drawLightningArc(server, player.position().add(0.0D, 1.0D, 0.0D), targetCenter);
+                // 原版 for (counter = 0; counter <= 3; ++counter) 连画 4 道 imposeLightning：
+                // 起点 (player.x, player.y + 1.0, player.z)、终点目标身体中心、
+                // 宽度 (float)(0.225 + player.getDistanceSq(target) / 2000.0)。
+                double width = 0.225D + player.distanceToSqr(target) / 2000.0D;
+                FRBoltParticleData.broadcast(server, player.position().add(0.0D, 1.0D, 0.0D), targetCenter,
+                        (float) width, 4,
+                        FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE);
             }
             // 原版 world.playSoundAtEntity(player, "thaumcraft:zap", 1.0F, 0.8F)。
             SoundHelper.play(level, player.getX(), player.getY(), player.getZ(),
@@ -561,33 +572,6 @@ public class ItemTelekinesisTome extends FRItem
         // 原版 SuperpositionHandler.setCasted(player, 10, true)：10 tick 共用冷却 + 挥臂。
         CooldownHelper.setCooldown(player, FRConfig.TOME_OF_PREDESTINY_COOLDOWN.get());
         player.swing(InteractionHand.MAIN_HAND, true);
-    }
-
-    /**
-     * 原版 {@code SuperpositionHandler.imposeLightning(...)} 的替身。
-     *
-     * <p>原版一次调用画一条带曲线的闪电、且被连调 4 次；这里沿起点→终点连线撒 4 遍
-     * {@link ParticleTypes#ELECTRIC_SPARK}，每遍带一点随机抖动（与千咒之诫同一方案）。
-     */
-    private static void drawLightningArc(ServerLevel server, Vec3 from, Vec3 to) {
-        Vec3 diff = to.subtract(from);
-        double length = diff.length();
-        if (length < 1.0E-4D) {
-            return;
-        }
-        int points = Math.min(16, Math.max(2, (int) (length * 6.0D)));
-        Vec3 step = diff.scale(1.0D / points);
-        for (int arc = 0; arc < 4; arc++) {
-            Vec3 pos = from;
-            for (int i = 0; i < points; i++) {
-                server.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                        pos.x + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        pos.y + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        pos.z + (server.random.nextDouble() - 0.5D) * 0.15D,
-                        1, 0.0D, 0.0D, 0.0D, 0.0D);
-                pos = pos.add(step);
-            }
-        }
     }
 
     // ------------------------------------------------------------------
