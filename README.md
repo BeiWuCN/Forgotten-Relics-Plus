@@ -4,11 +4,11 @@
 
 失落遗物学是由 **Integral**（又名 Extegral / VictorShadow）创作、围绕**神秘时代（Thaumcraft）**与**植物魔法（Botania）**展开的附属模组，
 以「发现并使用强力遗物」为核心。本仓库做的是把它搬到高版本（1.21.1 + NeoForge），
-改动之处尽量沿用原版的数值、配方与研究结构，只做必要的 API 适配。
+数值、配方与研究结构尽量沿用 1.7.10 原版，代码则按 1.21.1 的 API 与习惯**重新实现**，不做逐行搬运。
 
 - MC百科条目：<https://www.mcmod.cn/class/28217.html>
-- 1.12.2 移植版（本项目的直接参考与素材来源）：<https://github.com/NNYYOONNIIOO/Forgotten-Relics-RE>
-- 1.7.10 原版：<https://github.com/jss2a98aj/Forgotten-Relics>
+- 1.7.10 原版（**唯一的行为参照与素材来源**）：<https://github.com/jss2a98aj/Forgotten-Relics>
+- 1.12.2 移植版（仅作行为对照，见下文「代码来源」）：<https://github.com/NNYYOONNIIOO/Forgotten-Relics-RE>
 - 问题反馈：<https://github.com/gali2009/Forgotten-Relics-Unofficial/issues>
 
 ---
@@ -24,6 +24,13 @@
 | Forgotten Relics（原版） | 1.7.10 | Integral / Extegral / VictorShadow | [WTFPL](https://github.com/jss2a98aj/Forgotten-Relics/blob/master/LICENSE) |
 | Forgotten Relics RE（1.12.2 移植） | 1.12.2 | NNYYOONNIIOO 等 | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) |
 | **Forgotten Relics: Unofficial（本项目）** | 1.21.1 | beiwu、gali2009 等 | **[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)** |
+
+### 代码来源
+
+本项目的**唯一行为参照是 1.7.10 原版**（WTFPL），全部代码针对 1.21.1 / NeoForge 重新实现，
+不复制 1.12.2 移植版（Forgotten Relics RE）的代码：那一版采用 CC BY-NC-SA 4.0，
+带上它就会把「禁止商用」「必须同协议共享」一并继承过来。RE 版只用来对照行为，
+物品纹理直接取自 1.7.10 原版。
 
 也就是说，在遵守协议的前提下你可以自由：
 

@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.BreakSpeedBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.google.common.collect.Multimap;
 import java.util.List;
@@ -32,7 +33,7 @@ import top.theillusivec4.curios.api.SlotContext;
  *   <li>{@code PlayerEvent.BreakSpeed} 在 NeoForge 中同名保留，见 {@code FRCommonEvents#onBreakSpeed}。</li>
  * </ul>
  */
-public class ItemMiningCharm extends FRCurioItem {
+public class ItemMiningCharm extends FRCurioItem implements BreakSpeedBehaviour {
 
     public ItemMiningCharm(Properties properties) {
         super(properties);
@@ -43,6 +44,11 @@ public class ItemMiningCharm extends FRCurioItem {
                                           SlotContext slotContext, ItemStack stack, ResourceLocation id) {
         modifiers.put(Attributes.BLOCK_INTERACTION_RANGE,
                 new AttributeModifier(id, FRConfig.MINING_CHARM_REACH.get(), AttributeModifier.Operation.ADD_VALUE));
+    }
+
+    @Override
+    public float breakSpeedBoost(net.minecraft.world.entity.player.Player player, ItemStack stack) {
+        return FRConfig.MINING_CHARM_BOOST.get().floatValue();
     }
 
     @Override

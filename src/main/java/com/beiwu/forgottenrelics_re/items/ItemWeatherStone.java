@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.FRRechargable;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.utils.CooldownHelper;
 import com.beiwu.forgottenrelics_re.utils.SoundHelper;
@@ -44,7 +45,7 @@ import net.minecraft.world.phys.Vec3;
  *       正好对应原版「停雨 + 重设降雨时间」两句话。</li>
  * </ul>
  */
-public class ItemWeatherStone extends FRRechargableItem {
+public class ItemWeatherStone extends FRItem implements FRRechargable {
 
     public ItemWeatherStone(Properties properties) {
         super(properties);

@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.BreakSpeedBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.google.common.collect.Multimap;
 import java.util.List;
@@ -24,7 +25,7 @@ import top.theillusivec4.curios.api.SlotContext;
  * <p>两个护符同时装备时，挖掘速度加成按原版 {@code RelicsEventHandler.miningStuff} 的写法
  * <b>相加</b>（{@code 1.0 + 3.0 + 1.0 = 5.0}，即 +400%），不是相乘。
  */
-public class ItemAdvancedMiningCharm extends FRCurioItem {
+public class ItemAdvancedMiningCharm extends FRCurioItem implements BreakSpeedBehaviour {
 
     public ItemAdvancedMiningCharm(Properties properties) {
         super(properties);
@@ -35,6 +36,11 @@ public class ItemAdvancedMiningCharm extends FRCurioItem {
                                           SlotContext slotContext, ItemStack stack, ResourceLocation id) {
         modifiers.put(Attributes.BLOCK_INTERACTION_RANGE,
                 new AttributeModifier(id, FRConfig.ADVANCED_MINING_CHARM_REACH.get(), AttributeModifier.Operation.ADD_VALUE));
+    }
+
+    @Override
+    public float breakSpeedBoost(net.minecraft.world.entity.player.Player player, ItemStack stack) {
+        return FRConfig.ADVANCED_MINING_CHARM_BOOST.get().floatValue();
     }
 
     @Override

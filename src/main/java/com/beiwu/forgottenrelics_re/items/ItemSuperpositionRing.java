@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.WearerTickBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.registry.FRItems;
 import com.beiwu.forgottenrelics_re.utils.SoundHelper;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
-import top.theillusivec4.curios.api.SlotContext;
 
 /**
  * 叠加之戒（Ring of Superposition）。
@@ -31,7 +31,7 @@ import top.theillusivec4.curios.api.SlotContext;
  * <p>1.21.1 对应关系：
  * <ul>
  *   <li>Baubles 的 RING 槽 → Curios 的 {@code ring} 槽；</li>
- *   <li>{@code onWornTick} → Curios 的 {@code curioTick}；</li>
+ *   <li>{@code onWornTick} → 派发器 {@code FRCommonEvents#onPlayerTick}，饰品栏与护甲槽统一处理；</li>
  *   <li>跨维度换位：原版用 {@code transferPlayerToDimension}，
  *       1.21.1 用 {@code ServerPlayer#teleportTo(ServerLevel, x, y, z, yRot, xRot)}，
  *       该方法在目标维度不同时会走完整的换维度流程，等价于原版行为。</li>
@@ -41,21 +41,15 @@ import top.theillusivec4.curios.api.SlotContext;
  * {@code Math.random() <= chance} 为真时才会去取佩戴者列表，
  * 因此即使世界上只有一名佩戴者，也会照常消耗随机数，行为保持一致。
  */
-public class ItemSuperpositionRing extends FRCurioItem {
+public class ItemSuperpositionRing extends FRCurioItem implements WearerTickBehaviour {
 
     public ItemSuperpositionRing(Properties properties) {
         super(properties);
     }
 
     @Override
-    public void curioTick(SlotContext slotContext, ItemStack stack) {
-        if (!(slotContext.entity() instanceof LivingEntity wearer)) {
-            return;
-        }
-        // 只在服务端判定：换位要改位置、要跨维度，客户端自己做会立刻被服务端纠正。
-        if (wearer.level().isClientSide()) {
-            return;
-        }
+    public void onWearerTick(LivingEntity wearer, ItemStack stack) {
+        // 换位要改位置、要跨维度，只放在服务端做；派发器本身也只在服务端调用。
         if (wearer.tickCount % FRConfig.SUPERPOSITION_RING_CHECK_INTERVAL.get() != 0) {
             return;
         }

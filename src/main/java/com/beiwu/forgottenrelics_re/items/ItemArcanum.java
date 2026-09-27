@@ -1,9 +1,13 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.FRRechargable;
+import com.beiwu.forgottenrelics_re.api.IncomingDamageBehaviour;
+import com.beiwu.forgottenrelics_re.api.WearerTickBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_re.registry.FRItems;
 import com.beiwu.forgottenrelics_re.utils.CurioHelper;
+import com.beiwu.forgottenrelics_re.utils.FRDamageTypes;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import java.util.List;
@@ -13,11 +17,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.SlotContext;
 
 /**
  * 浑浊之核（Nebulous Core，注册名 {@code arcanum}），1.12.2 原版 {@code ItemArcanum}，护符槽。
@@ -29,7 +34,7 @@ import top.theillusivec4.curios.api.SlotContext;
  *   <li>有 {@code arcanumDormantTransformChance}（默认 0.000027）的概率陷入休眠，变成休眠浑浊之核，
  *       寿命取 {@code arcanumDormantLifeMin}～{@code arcanumDormantLifeMax} 的随机值；</li>
  *   <li>提供 {@code arcanumVisDiscount}（默认 35%）的 Vis 折扣；</li>
- *   <li>受击时有 {@code nebulousCoreDodgeChance}（默认 40%）的概率闪避并随机传送，见 {@code FRDamageEvents}。</li>
+ *   <li>受击时有 {@code nebulousCoreDodgeChance}（默认 40%）的概率闪避并随机传送，见 {@link #onIncomingDamage}。</li>
  * </ul>
  *
  * <p>与原版的两点差异：
@@ -38,7 +43,8 @@ import top.theillusivec4.curios.api.SlotContext;
  *   <li>原版转化休眠态时写死塞进饰品槽 6，槽位一变就会换错东西；这里改为遍历找到浑浊之核真正所在的槽位再替换。</li>
  * </ul>
  */
-public class ItemArcanum extends FRRechargableCurioItem implements IVisDiscountGear {
+public class ItemArcanum extends FRCurioItem
+        implements FRRechargable, IVisDiscountGear, WearerTickBehaviour, IncomingDamageBehaviour {
 
     /** 原版硬编码的基础生成概率：每 tick 2.5%。 */
     private static final double BASE_GEN_CHANCE = 0.025D;
@@ -58,8 +64,8 @@ public class ItemArcanum extends FRRechargableCurioItem implements IVisDiscountG
     }
 
     @Override
-    public void curioTick(SlotContext slotContext, ItemStack stack) {
-        if (!(slotContext.entity() instanceof ServerPlayer player)) {
+    public void onWearerTick(LivingEntity wearer, ItemStack stack) {
+        if (!(wearer instanceof ServerPlayer player)) {
             return;
         }
 
@@ -174,6 +180,32 @@ public class ItemArcanum extends FRRechargableCurioItem implements IVisDiscountG
         }
         return level.getBlockState(feet).getCollisionShape(level, feet).isEmpty()
                 && level.getBlockState(feet.above()).getCollisionShape(level, feet.above()).isEmpty();
+    }
+
+    /** 放在最后：前面的免除/吸收/无敌帧都处理完，才轮到「闪避掉这次伤害」。 */
+    @Override
+    public int priority() {
+        return 500;
+    }
+
+    /**
+     * 受击时按概率闪避，并随机传送走。
+     *
+     * <p>原版最多尝试 32 次随机传送（半径写死 16 格），成功一次就把这次伤害整个取消掉，
+     * 并给 20 tick 无敌。
+     */
+    @Override
+    public void onIncomingDamage(LivingIncomingDamageEvent event, Player wearer, ItemStack stack) {
+        if (FRDamageTypes.isAbsolute(event.getSource())) {
+            return;
+        }
+        if (wearer.getRandom().nextDouble() >= FRConfig.NEBULOUS_CORE_DODGE_CHANCE.get()) {
+            return;
+        }
+        if (wearer instanceof ServerPlayer serverPlayer && tryDodgeTeleport(serverPlayer)) {
+            event.setInvulnerabilityTicks(20);
+            event.setCanceled(true);
+        }
     }
 
     @Override

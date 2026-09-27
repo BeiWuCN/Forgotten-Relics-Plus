@@ -1,5 +1,8 @@
 package com.beiwu.forgottenrelics_re.items;
 
+import com.beiwu.forgottenrelics_re.api.FRRechargable;
+import com.beiwu.forgottenrelics_re.api.IncomingDamageBehaviour;
+import com.beiwu.forgottenrelics_re.api.WearerTickBehaviour;
 import com.beiwu.forgottenrelics_re.config.FRConfig;
 import com.beiwu.forgottenrelics_re.registry.FRDataComponents;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -10,9 +13,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import top.theillusivec4.curios.api.SlotContext;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
  * 神圣护身符（Deific Amulet），1.12.2 原版 {@code ItemDeificAmulet}，护身符槽。
@@ -31,7 +35,8 @@ import top.theillusivec4.curios.api.SlotContext;
  * 配置注释也写的是「prevents suffocation」。据此判断原版是笔误，这里按<b>补氧气</b>实现，
  * 配置项改用 {@code deificAmuletAirSupply}（默认 300 tick，即一管氧气）。
  */
-public class ItemDeificAmulet extends FRRechargableCurioItem {
+public class ItemDeificAmulet extends FRCurioItem
+        implements FRRechargable, WearerTickBehaviour, IncomingDamageBehaviour {
 
     public ItemDeificAmulet(Properties properties) {
         super(properties);
@@ -43,11 +48,7 @@ public class ItemDeificAmulet extends FRRechargableCurioItem {
     }
 
     @Override
-    public void curioTick(SlotContext slotContext, ItemStack stack) {
-        if (!(slotContext.entity() instanceof LivingEntity wearer) || wearer.level().isClientSide()) {
-            return;
-        }
-
+    public void onWearerTick(LivingEntity wearer, ItemStack stack) {
         if (FRConfig.DEIFIC_AMULET_EFFECT_IMMUNITY.get()) {
             clearEffects(wearer);
         }
@@ -95,7 +96,7 @@ public class ItemDeificAmulet extends FRRechargableCurioItem {
      * （无敌时间大于 10 tick）时把无敌帧拉长到 {@code deificAmuletInvincibilityExtension}，
      * 并写下 {@code deificAmuletInvincibilityCooldown} 的冷却，冷却期间不再触发。
      * 1.21.1 里这个字段叫 {@code invulnerableTime} 且是只读的，所以改用
-     * {@code LivingIncomingDamageEvent#setInvulnerabilityTicks}，见 {@code FRDamageEvents}；
+     * {@code LivingIncomingDamageEvent#setInvulnerabilityTicks}，见 {@link #onIncomingDamage}；
      * 这里只负责递减冷却。
      */
     private void tickInvincibility(ItemStack stack, LivingEntity wearer) {
@@ -103,6 +104,26 @@ public class ItemDeificAmulet extends FRRechargableCurioItem {
         if (cooldown > 0) {
             stack.set(FRDataComponents.INVINCIBILITY_COOLDOWN.get(), cooldown - 1);
         }
+    }
+
+    /** 排在湮灭护符之后：吸收类的先处理，无敌帧延长是「已经挨了这一下」之后的事。 */
+    @Override
+    public int priority() {
+        return 300;
+    }
+
+    /** 延长无敌帧。冷却记在物品数据组件上，冷却没到就不延长。 */
+    @Override
+    public void onIncomingDamage(LivingIncomingDamageEvent event, Player wearer, ItemStack stack) {
+        if (!FRConfig.DEIFIC_AMULET_INVINCIBILITY.get()) {
+            return;
+        }
+        if (stack.getOrDefault(FRDataComponents.INVINCIBILITY_COOLDOWN.get(), 0) > 0) {
+            return;
+        }
+        event.setInvulnerabilityTicks(FRConfig.DEIFIC_AMULET_INVINCIBILITY_EXTENSION.get());
+        stack.set(FRDataComponents.INVINCIBILITY_COOLDOWN.get(),
+                FRConfig.DEIFIC_AMULET_INVINCIBILITY_COOLDOWN.get());
     }
 
     @Override
