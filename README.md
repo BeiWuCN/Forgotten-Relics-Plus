@@ -15,38 +15,35 @@
 
 ## 协议
 
-**本项目使用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)（署名—非商业性使用—相同方式共享 4.0 国际）协议。**
+**本项目使用 [MIT](https://opensource.org/license/mit) 协议。**
 
-协议沿链条继承而来，各环节授权情况如下：
+各环节授权情况如下：
 
 | 项目 | 版本 | 作者 | 协议 |
 | --- | --- | --- | --- |
 | Forgotten Relics（原版） | 1.7.10 | Integral / Extegral / VictorShadow | [WTFPL](https://github.com/jss2a98aj/Forgotten-Relics/blob/master/LICENSE) |
-| Forgotten Relics RE（1.12.2 移植） | 1.12.2 | NNYYOONNIIOO 等 | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) |
-| **Forgotten Relics: Unofficial（本项目）** | 1.21.1 | beiwu、gali2009 等 | **[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)** |
+| Forgotten Relics RE（1.12.2 移植） | 1.12.2 | NNYYOONNIIOO 等 | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)（**本项目未使用其代码**） |
+| **Forgotten Relics: Unofficial（本项目）** | 1.21.1 | beiwu、gali2009 等 | **[MIT](https://opensource.org/license/mit)** |
 
 ### 代码来源
 
-本项目的**唯一行为参照是 1.7.10 原版**（WTFPL），全部代码针对 1.21.1 / NeoForge 重新实现，
-不复制 1.12.2 移植版（Forgotten Relics RE）的代码：那一版采用 CC BY-NC-SA 4.0，
-带上它就会把「禁止商用」「必须同协议共享」一并继承过来。RE 版只用来对照行为，
-物品纹理直接取自 1.7.10 原版。
+本项目的**唯一行为参照是 1.7.10 原版**（WTFPL，不附加任何条件），全部代码针对
+1.21.1 / NeoForge 的 API 独立实现，**不含 1.12.2 移植版（RE）的代码**。
+RE 版采用 CC BY-NC-SA 4.0，参考其代码会一并继承「禁止商用」与「必须同协议共享」两项限制，
+这正是本项目改用 MIT 的原因。RE 版只用于对照行为表现；物品纹理与文本直接取自 1.7.10 原版。
 
-也就是说，在遵守协议的前提下你可以自由：
+### 你可以自由地
 
-- **分享** —— 以任何媒介或格式复制、发行本模组；
-- **演绎** —— 修改、转换或以本模组为基础进行创作。
+- 用于**任何用途，包括商业用途**（付费整合包、收费服务器等）；
+- 修改、再发布、闭源分发，甚至换用别的协议；
+- 唯一的义务是保留版权声明与协议文本。
 
-但必须遵守以下条件：
+### 注意
 
-- **署名** —— 必须给出适当的署名，提供协议链接，并**注明是否作出了修改**，
-  且不得以任何方式暗示原作者为你或你的使用背书；
-- **非商业性使用** —— **不得将本模组用于商业目的**（包括但不限于付费整合包、付费下载、以本模组为卖点收费的服务器）；
-- **相同方式共享** —— 若你修改、转换或以本模组为基础进行创作，
-  你的贡献必须基于**相同的协议**分发。
-
-> 本模组是**非官方**移植，与原版作者及 1.12.2 移植版作者**无隶属关系**，也未获得其背书。
-> 原版的美术素材、研究文本与设计版权归原作者所有。
+- MIT 只覆盖**本项目的代码与文档**。Minecraft 本体、以及 Thaumaturge、Curios、Botania 等前置
+  各有自己的协议，请分别遵守。
+- 本模组是**非官方**移植，与原版作者及 1.12.2 移植版作者**无隶属关系**，也未获得其背书。
+- 原版的美术素材、研究文本与游戏设计的著作权归原作者所有。
 
 ---
 
