@@ -67,10 +67,11 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
  *   <li>原版的爆裂特效（{@code SuperpositionHandler.imposeBurst}，纯客户端网络包）改成服务端
  *       {@code ServerLevel#sendParticles}；音效从 {@code thaumcraft:runicShieldCharge} 换成音色相近的
  *       {@link SoundEvents#RESPAWN_ANCHOR_CHARGE}；</li>
- *   <li>原版 {@code func_72885_a(..., isSmoking=true, isDestroying=true)} 的两处爆炸 →
+ *   <li>原版 {@code func_72885_a(..., isFlaming=true, isSmoking=true)} 的两处爆炸 →
  *       {@link Level#explode(net.minecraft.world.entity.Entity, double, double, double, float, boolean,
- *       net.minecraft.world.level.Level.ExplosionInteraction)}，{@code fire = true}、
- *       {@code BLOCK} 破坏方块，逐字对应。</li>
+ *       net.minecraft.world.level.Level.ExplosionInteraction)}。这里<b>刻意偏离原版</b>：
+ *       {@code fire = false}、{@code ExplosionInteraction.NONE}，即保留爆炸的威力、对实体的伤害与击退，
+ *       但不破坏方块、不引燃——玩家反馈「爆炸破坏地形是 bug」。</li>
  * </ul>
  *
  * <p><b>与任务口径的一处偏差（已上报）</b>：任务说明要求「冷却用共用 {@code CooldownHelper}
