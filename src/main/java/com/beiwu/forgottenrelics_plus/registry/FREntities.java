@@ -4,6 +4,7 @@ import com.beiwu.forgottenrelics_plus.ForgottenRelics;
 import com.beiwu.forgottenrelics_plus.entity.EntityChaoticOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityCrimsonOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityDarkMatterOrb;
+import com.beiwu.forgottenrelics_plus.entity.EntityLunarFlare;
 import com.beiwu.forgottenrelics_plus.entity.EntityRageousMissile;
 import com.beiwu.forgottenrelics_plus.entity.EntitySoulEnergy;
 import com.beiwu.forgottenrelics_plus.entity.EntityThunderpealOrb;
@@ -63,6 +64,14 @@ public final class FREntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRageousMissile>> RAGEOUS_MISSILE =
             register("rageous_missile",
                     () -> EntityType.Builder.<EntityRageousMissile>of(EntityRageousMissile::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10));
+
+    /** 月耀咒书的耀月之辉（原版 {@code EntityLunarFlare}，注册名沿用 lang 里现成的 {@code lunar_flare}）。 */
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityLunarFlare>> LUNAR_FLARE =
+            register("lunar_flare",
+                    () -> EntityType.Builder.<EntityLunarFlare>of(EntityLunarFlare::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
                             .updateInterval(10));

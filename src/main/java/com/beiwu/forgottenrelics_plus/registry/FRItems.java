@@ -15,6 +15,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemCrimsonSpell;
 import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemFalseJustice;
 import com.beiwu.forgottenrelics_plus.items.ItemGhastlySkull;
+import com.beiwu.forgottenrelics_plus.items.ItemLunarFlares;
 import com.beiwu.forgottenrelics_plus.items.ItemMiningCharm;
 import com.beiwu.forgottenrelics_plus.items.ItemNuclearFury;
 import com.beiwu.forgottenrelics_plus.items.ItemOmegaCore;
@@ -342,6 +343,19 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemTelekinesisTome> TOME_OF_PREDESTINY =
             ITEMS.registerItem("tome_of_predestiny", ItemTelekinesisTome::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 月耀咒书（Tome of Lunar Flares），注册名 {@code tome_of_lunar_flares}。
+     *
+     * <p>1.7.10 原版类名就是 {@code ItemLunarFlares}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
+     *
+     * <p>右键拉弓持续引导，每 2 tick 对准星指向的方块降下一颗耀月之辉，消耗物品自身 Vis 充能；
+     * 耀月之辉击中锁定方块时爆炸，对 5×5×5 格内的活体造成范围伤害并把它们推开。
+     * 详见 {@link ItemLunarFlares} 与 {@link com.beiwu.forgottenrelics_plus.entity.EntityLunarFlare}。
+     */
+    public static final DeferredItem<ItemLunarFlares> TOME_OF_LUNAR_FLARES =
+            ITEMS.registerItem("tome_of_lunar_flares", ItemLunarFlares::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

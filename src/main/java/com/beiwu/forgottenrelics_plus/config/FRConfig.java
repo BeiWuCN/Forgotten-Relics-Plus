@@ -437,6 +437,22 @@ public final class FRConfig {
     /** 预言之典：附带的扭曲值（原版 {@code getWarp} 返回 4）。 */
     public static final ModConfigSpec.IntValue TOME_OF_PREDESTINY_WARP;
 
+    // ---- 月耀咒书 / Tome of Lunar Flares ----
+    /** 月耀咒书：每发一颗耀月之辉的 Vis 基础消耗（原版 35 + 50 + 65 = 150 厘 = 1.5 点，就近取 2）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_LUNAR_FLARES_VIS_COST;
+    /** 月耀咒书：Vis 消耗倍率（原版配置 key 是 lunarFlaresVisCost，语义就是倍率）。 */
+    public static final ModConfigSpec.DoubleValue TOME_OF_LUNAR_FLARES_VIS_MULT;
+    /** 月耀咒书：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue TOME_OF_LUNAR_FLARES_MAX_CHARGE;
+    /** 月耀咒书：连续引导时两次发射之间的间隔（tick），原版硬编码为 2。 */
+    public static final ModConfigSpec.IntValue TOME_OF_LUNAR_FLARES_COOLDOWN;
+    /** 月耀咒书：耀月之辉直击命中的伤害（原版配置 damageLunarFlareDirect，默认 72）。 */
+    public static final ModConfigSpec.DoubleValue TOME_OF_LUNAR_FLARES_DIRECT_DAMAGE;
+    /** 月耀咒书：耀月之辉爆发的范围伤害（原版配置 damageLunarFlareImpact，默认 40）。 */
+    public static final ModConfigSpec.DoubleValue TOME_OF_LUNAR_FLARES_IMPACT_DAMAGE;
+    /** 月耀咒书：附带的扭曲值（原版 {@code getWarp} 返回 3）。 */
+    public static final ModConfigSpec.IntValue TOME_OF_LUNAR_FLARES_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -1238,6 +1254,47 @@ public final class FRConfig {
                 .comment("Warp granted by the Tome of Predestiny. Original getWarp returns 4.",
                          "预言之典附带的扭曲值。原版 ItemTelekinesisTome#getWarp 返回 4。")
                 .defineInRange("tomeOfPredestinyWarp", 4, 0, 32768);
+        builder.pop();
+
+        builder.comment("月耀咒书（第七波：从天而降的耀月之辉）").push("tome_of_lunar_flares");
+        TOME_OF_LUNAR_FLARES_VIS_COST = builder
+                .comment("Base Vis cost per Lunar Flare."
+                                 + " Original: Air 35 + Fire 50 + Order 65 centivis = 1.5 vis, rounded to 2.",
+                         "每发一颗耀月之辉的 Vis 基础消耗。原版是风（Aer）35 + 火（Ignis）50 + 秩序（Ordo）65"
+                                 + " 厘 Vis = 1.5 点，充能为整数故就近取 2。")
+                .defineInRange("tomeOfLunarFlaresVisCost", 2, 0, 32768);
+        TOME_OF_LUNAR_FLARES_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Tome of Lunar Flares. Original key: lunarFlaresVisCost.",
+                         "月耀咒书的 Vis 消耗倍率。原版配置 key 就叫 lunarFlaresVisCost（默认 1.0），"
+                                 + "语义却是倍率，属于和核子之怒 nuclearFuryVisCost 同一类命名冲突；"
+                                 + "这里按本项目惯例把 key 定为 tomeOfLunarFlaresVisMult。")
+                .defineInRange("tomeOfLunarFlaresVisMult", 1.0D, 0.0D, 1024.0D);
+        TOME_OF_LUNAR_FLARES_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Tome of Lunar Flares."
+                                 + " 300 = 150 flares (one full wand's worth of the bottleneck Order aspect).",
+                         "月耀咒书的最大 Vis 储量。原版三项消耗里秩序（Ordo）是瓶颈，一本标准满 Vis 的"
+                                 + "法杖约能支撑 150 发，故取 150 x 2 = 300。")
+                .defineInRange("tomeOfLunarFlaresMaxCharge", 300, 0, 32768);
+        TOME_OF_LUNAR_FLARES_COOLDOWN = builder
+                .comment("Interval in ticks between two Lunar Flares while channelling."
+                                 + " Original writes count % 2 == 0 in onUsingTick; the item has no post-cast cooldown.",
+                         "连续引导时两次发射之间的间隔（tick）。原版在 onUsingTick 里写的是 count % 2 == 0，"
+                                 + "物品本身没有任何施法后冷却，所以这一项不接 CooldownHelper。")
+                .defineInRange("tomeOfLunarFlaresCooldown", 2, 1, 32768);
+        TOME_OF_LUNAR_FLARES_DIRECT_DAMAGE = builder
+                .comment("Damage of a direct hit by a Lunar Flare."
+                                 + " Original key: damageLunarFlareDirect, default 72.",
+                         "耀月之辉直击命中的伤害。原版 key 是 damageLunarFlareDirect，默认 72。")
+                .defineInRange("tomeOfLunarFlaresDirectDamage", 72.0D, 0.0D, 32768.0D);
+        TOME_OF_LUNAR_FLARES_IMPACT_DAMAGE = builder
+                .comment("Damage taken by entities inside the impact zone."
+                                 + " Original key: damageLunarFlareImpact, default 40.",
+                         "耀月之辉爆发的范围伤害。原版 key 是 damageLunarFlareImpact，默认 40。")
+                .defineInRange("tomeOfLunarFlaresImpactDamage", 40.0D, 0.0D, 32768.0D);
+        TOME_OF_LUNAR_FLARES_WARP = builder
+                .comment("Warp granted by the Tome of Lunar Flares. Original getWarp returns 3.",
+                         "月耀咒书附带的扭曲值。原版 ItemLunarFlares#getWarp 返回 3。")
+                .defineInRange("tomeOfLunarFlaresWarp", 3, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

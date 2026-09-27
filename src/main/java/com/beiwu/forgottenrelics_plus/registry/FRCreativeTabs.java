@@ -73,6 +73,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.VOID_GRIMOIRE.get());
                         // 第七波：预言之典。
                         output.accept(FRItems.TOME_OF_PREDESTINY.get());
+                        // 第七波：月耀咒书。
+                        output.accept(FRItems.TOME_OF_LUNAR_FLARES.get());
                     })
                     .build());
 
