@@ -28,6 +28,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemSuperpositionRing;
 import com.beiwu.forgottenrelics_plus.items.ItemTeleportationTome;
 import com.beiwu.forgottenrelics_plus.items.ItemTerrorCrown;
 import com.beiwu.forgottenrelics_plus.items.ItemThunderpeal;
+import com.beiwu.forgottenrelics_plus.items.ItemVoidGrimoire;
 import com.beiwu.forgottenrelics_plus.items.ItemWeatherStone;
 import com.beiwu.forgottenrelics_plus.items.ItemXPTome;
 import net.minecraft.world.item.ArmorItem;
@@ -314,6 +315,19 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemOverthrower> EDICT_OF_BANISHMENT =
             ITEMS.registerItem("edict_of_banishment", ItemOverthrower::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 深渊魔典（Grimoire of The Abyss），注册名 {@code void_grimoire}。
+     *
+     * <p>1.7.10 原版类名就是 {@code ItemVoidGrimoire}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
+     *
+     * <p>右键锁定准星指向的活体后拉弓引导 100 tick：每 tick 把目标定身并缓缓上浮，
+     * 引导结束时把目标直接丢进本维度的虚空（{@code y ≈ -100000}）；引导期间每秒消耗物品自身的
+     * Vis 充能，结束后有 30 tick 共用冷却。详见 {@link ItemVoidGrimoire}。
+     */
+    public static final DeferredItem<ItemVoidGrimoire> VOID_GRIMOIRE =
+            ITEMS.registerItem("void_grimoire", ItemVoidGrimoire::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

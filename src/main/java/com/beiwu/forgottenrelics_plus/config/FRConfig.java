@@ -401,6 +401,20 @@ public final class FRConfig {
     /** 永恒放逐之诫：附带的扭曲值（原版 {@code getWarp} 返回 2）。 */
     public static final ModConfigSpec.IntValue EDICT_OF_BANISHMENT_WARP;
 
+    // ---- 深渊魔典 / Grimoire of The Abyss ----
+    /** 深渊魔典：引导时每秒的 Vis 基础消耗（原版每 tick 秩序 9 + 混沌 16 = 25 厘 = 5 点/秒）。 */
+    public static final ModConfigSpec.IntValue VOID_GRIMOIRE_VIS_COST;
+    /** 深渊魔典：Vis 消耗倍率（原版配置 key 就是 voidGrimoireVisMult，默认 1.0）。 */
+    public static final ModConfigSpec.DoubleValue VOID_GRIMOIRE_VIS_MULT;
+    /** 深渊魔典：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue VOID_GRIMOIRE_MAX_CHARGE;
+    /** 深渊魔典：完整引导时长（tick，原版 getMaxItemUseDuration 返回 100）。 */
+    public static final ModConfigSpec.IntValue VOID_GRIMOIRE_CHANNEL_DURATION;
+    /** 深渊魔典：引导结束后的共用冷却（tick，原版 setCasted 30）。 */
+    public static final ModConfigSpec.IntValue VOID_GRIMOIRE_COOLDOWN;
+    /** 深渊魔典：附带的扭曲值（原版 {@code getWarp} 返回 3）。 */
+    public static final ModConfigSpec.IntValue VOID_GRIMOIRE_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -1116,6 +1130,39 @@ public final class FRConfig {
                 .comment("Warp granted by the Edict of Eternal Banishment. Original getWarp returns 2.",
                          "永恒放逐之诫附带的扭曲值。原版 ItemOverthrower#getWarp 返回 2。")
                 .defineInRange("edictOfBanishmentWarp", 2, 0, 32768);
+        builder.pop();
+
+        builder.comment("深渊魔典（第七波：拉弓引导把目标放逐进虚空）").push("void_grimoire");
+        VOID_GRIMOIRE_VIS_COST = builder
+                .comment("Base Vis cost per second while channelling the Grimoire of The Abyss."
+                                 + " Original: Order 9 + Entropy 16 centivis per tick = 0.25 vis/tick,"
+                                 + " i.e. exactly 5 vis per second.",
+                         "引导深渊魔典时每秒的 Vis 基础消耗。原版是每 tick 秩序（Ordo）9 + 混沌（Perditio）16"
+                                 + " 厘 Vis = 0.25 点/tick，即恰好 5 点/秒。")
+                .defineInRange("voidGrimoireVisCost", 5, 0, 32768);
+        VOID_GRIMOIRE_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Grimoire of The Abyss. Original key: voidGrimoireVisMult.",
+                         "深渊魔典的 Vis 消耗倍率。原版配置 key 就是 voidGrimoireVisMult，默认 1.0。")
+                .defineInRange("voidGrimoireVisMult", 1.0D, 0.0D, 1024.0D);
+        VOID_GRIMOIRE_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Grimoire of The Abyss."
+                                 + " One full 100-tick channel costs 5 x 5 = 25 vis, so 100 is exactly four channels.",
+                         "深渊魔典的最大 Vis 储量。一次完整引导（100 tick）扣 5 次 × 5 = 25 点，"
+                                 + "100 点正好够四次。")
+                .defineInRange("voidGrimoireMaxCharge", 100, 0, 32768);
+        VOID_GRIMOIRE_CHANNEL_DURATION = builder
+                .comment("Full channel duration in ticks. Original getMaxItemUseDuration returns 100.",
+                         "完整引导时长（tick）。原版 getMaxItemUseDuration 返回 100，即 5 秒。")
+                .defineInRange("voidGrimoireChannelDuration", 100, 1, 32768);
+        VOID_GRIMOIRE_COOLDOWN = builder
+                .comment("Shared cooldown in ticks after a completed channel."
+                                 + " Original SuperpositionHandler.setCasted(player, 30, false).",
+                         "一次完整引导结束后的共用冷却（tick）。原版 SuperpositionHandler.setCasted(player, 30, false)。")
+                .defineInRange("voidGrimoireCooldown", 30, 0, 32768);
+        VOID_GRIMOIRE_WARP = builder
+                .comment("Warp granted by the Grimoire of The Abyss. Original getWarp returns 3.",
+                         "深渊魔典附带的扭曲值。原版 ItemVoidGrimoire#getWarp 返回 3。")
+                .defineInRange("voidGrimoireWarp", 3, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

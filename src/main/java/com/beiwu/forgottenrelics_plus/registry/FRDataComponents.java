@@ -76,6 +76,16 @@ public final class FRDataComponents {
             DATA_COMPONENTS.registerComponentType("edict_target",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
+    /**
+     * 深渊魔典：右键时锁定的目标实体 id。
+     *
+     * <p>对应原版 {@code ItemVoidGrimoire} 里那张以玩家为键的静态 map {@code targetList}
+     *（引导期间要一直盯着同一个目标）。与 {@link #EDICT_TARGET} 同源，只是各物品一份、语义清晰。
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> VOID_GRIMOIRE_TARGET =
+            DATA_COMPONENTS.registerComponentType("void_grimoire_target",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     public static void register(IEventBus modBus) {
         DATA_COMPONENTS.register(modBus);
     }
