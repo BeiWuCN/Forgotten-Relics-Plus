@@ -28,11 +28,10 @@
     { "item": "botania:gaia_spirit" },
     { "item": "botania:dragonstone" },
     { "item": "thaumaturge:salis_mundus" },
-    { "item": "thaumaturge:primal_charm" },
     { "item": "thaumaturge:amulet_vis" },
+    { "item": "thaumaturge:causality_collapser" },
     { "item": "thaumaturge:ingot_void" },
     { "item": "minecraft:nether_star" },
-    { "item": "minecraft:enchanted_golden_apple" },
     { "item": "thaumaturge:jar_node" },
     { "item": "botania:terrasteel_ingot" }
   ],
