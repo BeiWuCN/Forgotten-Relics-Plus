@@ -25,7 +25,7 @@
 | --- | --- | --- | --- |
 | Forgotten Relics（原版） | 1.7.10 | Integral / Extegral / VictorShadow | [WTFPL](https://github.com/jss2a98aj/Forgotten-Relics/blob/master/LICENSE) |
 | Forgotten Relics RE（1.12.2 移植） | 1.12.2 | NNYYOONNIIOO 等 | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)（**本项目未使用其代码**） |
-| **Forgotten Relics +（本项目）** | 1.21.1 | beiwu、gali2009 等 | **[MIT](https://opensource.org/license/mit)** |
+| **Forgotten Relics +（本项目）** | 1.21.1 | BeiWu_Arctic | **[MIT](https://opensource.org/license/mit)** |
 
 ### 代码来源
 

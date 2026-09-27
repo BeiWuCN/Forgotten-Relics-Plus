@@ -26,7 +26,7 @@ Licence chain:
 | --- | --- | --- | --- |
 | Forgotten Relics (original) | 1.7.10 | Integral / Extegral / VictorShadow | [WTFPL](https://github.com/jss2a98aj/Forgotten-Relics/blob/master/LICENSE) |
 | Forgotten Relics RE (1.12.2 port) | 1.12.2 | NNYYOONNIIOO et al. | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) (**no code from it is used here**) |
-| **Forgotten Relics + (this project)** | 1.21.1 | beiwu, gali2009 et al. | **[MIT](https://opensource.org/license/mit)** |
+| **Forgotten Relics + (this project)** | 1.21.1 | BeiWu_Arctic | **[MIT](https://opensource.org/license/mit)** |
 
 ### Code provenance
 
