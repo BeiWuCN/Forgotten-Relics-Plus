@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
+import com.beiwu.forgottenrelics_plus.registry.FRItems;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -84,6 +85,30 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
     @Override
     public boolean isFoil(ItemStack stack) {
         return hasStoredLocation(stack);
+    }
+
+    /**
+     * 潜行 + 左键：清空已记录的坐标。
+     *
+     * <p><b>本项目新增</b>（1.7.10 没有这个操作）：原版只能靠"再记录一次"覆盖，想彻底回到
+     * "未记录"状态没有办法。按玩家要求补上。
+     *
+     * <p>左键由客户端 {@code PlayerInteractEvent.LeftClickEmpty/LeftClickBlock} 经
+     * {@code TelekinesisLeftClickPayload} 送到服务端（与预言之典共用同一条通道，不新增网络包），
+     * 这里再自行校验"潜行 + 主手持镜 + 确实有记录"。
+     */
+    public static void onServerLeftClick(ServerPlayer player) {
+        if (!player.isShiftKeyDown()) {
+            return;
+        }
+        ItemStack stack = player.getMainHandItem();
+        if (!stack.is(FRItems.DIMENSIONAL_MIRROR.get()) || !hasStoredLocation(stack)) {
+            return;
+        }
+        stack.remove(DataComponents.CUSTOM_DATA);
+        SoundHelper.play(player.level(), player.getX(), player.getY(), player.getZ(),
+                SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.PLAYERS, 1.0F, 0.6F);
+        player.displayClientMessage(Component.translatable("message.mirror_cleared"), true);
     }
 
     /** 是否已经记录过坐标。对应原版 {@code stack.hasTagCompound()}。 */
@@ -197,6 +222,8 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
         tooltip.add(Component.translatable("item.ItemDimensionalMirror3.lore"));
         tooltip.add(Component.translatable("item.FREmpty.lore"));
         tooltip.add(Component.translatable("item.ItemDimensionalMirror4.lore"));
+        // 1.6.5 新增：潜行 + 左键清空已记录的坐标。
+        tooltip.add(Component.translatable("item.ItemDimensionalMirror5.lore"));
     }
 
     /** 单独抽出来只是为了让上面的方法短一点。 */
