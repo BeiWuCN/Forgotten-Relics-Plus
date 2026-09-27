@@ -12,9 +12,9 @@
     { "item": "thaumaturge:void_seed" },
     { "item": "minecraft:wither_skeleton_skull" },
     { "item": "botania:gaia_spirit" },
-    { "item": "thaumaturge:nitor_white" },
+    { "tag": "thaumaturge:nitors" },
     { "item": "minecraft:soul_lantern" },
-    { "item": "thaumaturge:nitor_white" },
+    { "tag": "thaumaturge:nitors" },
     { "item": "botania:gaia_spirit" },
     { "item": "minecraft:wither_skeleton_skull" }
   ],

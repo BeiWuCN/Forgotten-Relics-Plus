@@ -12,9 +12,9 @@
     { "item": "thaumaturge:vis_resonator" },
     { "tag": "c:ingots/gold" },
     { "item": "botania:gaia_spirit" },
-    { "item": "thaumaturge:nitor_white" },
+    { "tag": "thaumaturge:nitors" },
     { "item": "minecraft:enchanted_golden_apple" },
-    { "item": "thaumaturge:nitor_white" },
+    { "tag": "thaumaturge:nitors" },
     { "item": "botania:gaia_spirit" },
     { "tag": "c:ingots/gold" }
   ],

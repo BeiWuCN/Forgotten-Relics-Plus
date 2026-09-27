@@ -85,7 +85,7 @@ All of these are **required**:
 ## Project layout
 
 ```
-src/main/java/com/beiwu/forgottenrelics_re/
+src/main/java/com/beiwu/forgottenrelics_plus/
 ├── ForgottenRelics.java        # main mod class
 ├── FRCommonEvents.java         # behaviour dispatcher: knows no concrete item, just forwards events
 ├── api/                        # behaviour interfaces (wearer tick, incoming damage, break speed, ally protection, rechargeable)

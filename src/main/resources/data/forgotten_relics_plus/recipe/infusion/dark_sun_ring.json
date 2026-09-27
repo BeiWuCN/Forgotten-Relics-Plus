@@ -14,7 +14,7 @@
     { "item": "minecraft:blaze_rod" },
     { "item": "thaumaturge:cinderpearl" },
     { "item": "thaumaturge:void_seed" },
-    { "item": "thaumaturge:nitor_white" },
+    { "tag": "thaumaturge:nitors" },
     { "item": "thaumaturge:void_seed" },
     { "item": "thaumaturge:cinderpearl" },
     { "item": "minecraft:blaze_rod" },

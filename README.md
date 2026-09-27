@@ -80,7 +80,7 @@ RE 版采用 CC BY-NC-SA 4.0，参考其代码会一并继承「禁止商用」�
 ## 目录结构
 
 ```
-src/main/java/com/beiwu/forgottenrelics_re/
+src/main/java/com/beiwu/forgottenrelics_plus/
 ├── ForgottenRelics.java        # 模组主类
 ├── FRCommonEvents.java         # 行为派发器：不认识具体物品，只把事件转给实现了行为接口的物品
 ├── api/                        # 行为接口（佩戴 tick、受击、挖掘速度、替人承伤、可充能）

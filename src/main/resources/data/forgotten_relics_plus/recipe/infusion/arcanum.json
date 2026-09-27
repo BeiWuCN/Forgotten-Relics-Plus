@@ -12,33 +12,17 @@
   "catalyst": { "item": "thaumaturge:primordial_pearl" },
   "components": [
     { "item": "thaumaturge:amulet_vis" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    },
+    { "item": "thaumaturge:crystal_perditio" },
     { "item": "botania:gaia_spirit" },
     { "tag": "c:ingots/thaumium" },
     { "item": "botania:mana_diamond" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    },
+    { "item": "thaumaturge:crystal_perditio" },
     { "item": "forgotten_relics_plus:superposition_ring" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    },
+    { "item": "thaumaturge:crystal_perditio" },
     { "item": "botania:mana_diamond" },
     { "tag": "c:ingots/thaumium" },
     { "item": "botania:gaia_spirit" },
-    {
-      "type": "neoforge:components",
-      "items": "thaumaturge:essentia_crystal",
-      "components": { "thaumaturge:crystal_aspect": { "aspect": "thaumaturge:aer", "amount": 1 } }
-    }
+    { "item": "thaumaturge:crystal_perditio" }
   ],
   "instability": 12,
   "research": { "entry": "forgotten_relics_plus:arcanum" },

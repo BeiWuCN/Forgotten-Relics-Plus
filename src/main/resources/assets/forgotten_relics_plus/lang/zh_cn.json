@@ -1,6 +1,6 @@
 {
-  "key.categories.ForgottenRelicsRE": "失落遗物学 +",
-  "itemGroup.tabForgottenRelics": "失落遗物学 +",
+  "key.categories.ForgottenRelicsRE": "失落遗物学+",
+  "itemGroup.tabForgottenRelics": "失落遗物学+",
   "death.attack.trueDamage": "%1$s被%2$s审判致死。",
   "death.attack.trueDamageUndef": "%1$s被审判致死。",
   "death.attack.attackOblivion": "%1$s的灵魂被湮灭吞噬。",
