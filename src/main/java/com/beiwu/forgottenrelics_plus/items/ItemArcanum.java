@@ -182,10 +182,16 @@ public class ItemArcanum extends FRCurioItem
                 && level.getBlockState(feet.above()).getCollisionShape(level, feet.above()).isEmpty();
     }
 
-    /** 放在最后：前面的免除/吸收/无敌帧都处理完，才轮到「闪避掉这次伤害」。 */
+    /**
+     * 紧跟无敌帧延长之后。
+     *
+     * <p>原版的闪避写在 {@code onEntityAttacked}（{@code LivingAttackEvent}）里、位于七阳之戒之前，
+     * 也就是所有穿戴物里<b>最早</b>的一段（{@code RelicsEventHandler:196}）。
+     * 之前我按猜测给了它 500（最后），与原版相反，这里改正。
+     */
     @Override
     public int priority() {
-        return 500;
+        return 10;
     }
 
     /**

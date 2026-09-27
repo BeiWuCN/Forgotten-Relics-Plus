@@ -106,10 +106,17 @@ public class ItemDeificAmulet extends FRCurioItem
         }
     }
 
-    /** 排在湮灭护符之后：吸收类的先处理，无敌帧延长是「已经挨了这一下」之后的事。 */
+    /**
+     * 排在最前。
+     *
+     * <p>原版把无敌帧延长写在 {@code ItemDeificAmulet.onWornTick} 里、按 tick 直接设置
+     * {@code hurtResistantTime}，与其它物品的伤害处理<b>互相独立</b>，谁取消都不影响它。
+     * 我们的派发器会在事件被取消时停止后续派发，所以这里必须给它一个比谁都小的优先级，
+     * 才能保住「独立生效」这个语义。
+     */
     @Override
     public int priority() {
-        return 300;
+        return 5;
     }
 
     /** 延长无敌帧。冷却记在物品数据组件上，冷却没到就不延长。 */

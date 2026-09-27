@@ -33,6 +33,10 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue SUPERPOSITION_RING_SWAP_CHANCE;
     /** 交换判定的间隔（tick）。 */
     public static final ModConfigSpec.IntValue SUPERPOSITION_RING_CHECK_INTERVAL;
+    /** 传送之戒：伤害分摊比例的下限。 */
+    public static final ModConfigSpec.DoubleValue SUPERPOSITION_RING_SPLIT_MIN;
+    /** 传送之戒：伤害分摊比例的上限。 */
+    public static final ModConfigSpec.DoubleValue SUPERPOSITION_RING_SPLIT_MAX;
 
     // ---- 经验之书 / XP Tome ----
     /** 每 tick 转移的经验点数。 */
@@ -283,6 +287,14 @@ public final class FRConfig {
                 .comment("Check interval in ticks for Ring of Superposition.",
                          "叠加之戒的交换判定间隔（tick）。")
                 .defineInRange("superpositionRingCheckInterval", 600, 1, 32768);
+        SUPERPOSITION_RING_SPLIT_MIN = builder
+                .comment("Lower bound of the fraction of incoming damage split among other wearers.",
+                         "受到伤害时，分摊给其他佩戴者的比例下限。原版是 0.12。")
+                .defineInRange("superpositionRingSplitMin", 0.12D, 0.0D, 1.0D);
+        SUPERPOSITION_RING_SPLIT_MAX = builder
+                .comment("Upper bound of the fraction of incoming damage split among other wearers.",
+                         "分摊比例的上限。原版是 0.74（即 0.12 + 随机 0.62）。")
+                .defineInRange("superpositionRingSplitMax", 0.74D, 0.0D, 1.0D);
         builder.pop();
 
         builder.comment("经验之书（原版分类 XP Tome）").push("xp_tome");

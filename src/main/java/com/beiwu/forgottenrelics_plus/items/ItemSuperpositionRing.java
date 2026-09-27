@@ -1,8 +1,11 @@
 package com.beiwu.forgottenrelics_plus.items;
 
+import com.beiwu.forgottenrelics_plus.api.IncomingDamageBehaviour;
 import com.beiwu.forgottenrelics_plus.api.WearerTickBehaviour;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FRItems;
+import com.beiwu.forgottenrelics_plus.utils.CurioHelper;
+import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +14,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
  * 叠加之戒（Ring of Superposition）。
@@ -41,10 +47,63 @@ import net.minecraft.world.phys.Vec3;
  * {@code Math.random() <= chance} 为真时才会去取佩戴者列表，
  * 因此即使世界上只有一名佩戴者，也会照常消耗随机数，行为保持一致。
  */
-public class ItemSuperpositionRing extends FRCurioItem implements WearerTickBehaviour {
+public class ItemSuperpositionRing extends FRCurioItem implements WearerTickBehaviour, IncomingDamageBehaviour {
 
     public ItemSuperpositionRing(Properties properties) {
         super(properties);
+    }
+
+    /**
+     * 夹在远古之庇护（50）与湮灭护符（70）之间。
+     *
+     * <p>原版的次序是「庇护减伤 → 分摊 → 湮灭吸收」（{@code RelicsEventHandler:256 -> 263 -> 286}），
+     * 湮灭护符吸收的必须是分摊<b>之后</b>的余量，所以这个位置不能随便放。
+     */
+    @Override
+    public int priority() {
+        return 60;
+    }
+
+    /**
+     * 伤害分摊：把 12%~74% 的伤害平均分给服务端上所有<b>其他</b>佩戴者，自己少挨那一部分。
+     *
+     * <p>范围是整个服务端（跨维度），与原版 {@code getBaubleOwnersList} 取的
+     * {@code MinecraftServer.getPlayerList().getPlayers()} 一致。
+     *
+     * <p>递归保护靠伤害类型本身：分摊出去的那一份用模组自有的「超维」类型，而本方法开头会跳过
+     * 超维类型，因此不会二次分摊。这正是原版要多造两个 {@code DamageSourceSuperposition*} 的原因，
+     * 也是我们 {@code FRDamageTypes.isAbsolute} 里包含它们的原因。
+     */
+    @Override
+    public void onIncomingDamage(LivingIncomingDamageEvent event, Player wearer, ItemStack stack) {
+        DamageSource source = event.getSource();
+        if (source.is(FRDamageTypes.SUPERPOSITION) || source.is(FRDamageTypes.SUPERPOSITION_DEFINED)) {
+            return;
+        }
+        if (!(wearer.level() instanceof ServerLevel level)) {
+            return;
+        }
+        List<Player> others = new ArrayList<>();
+        for (ServerPlayer candidate : level.getServer().getPlayerList().getPlayers()) {
+            if (candidate != wearer && CurioHelper.isEquipped(candidate, FRItems.SUPERPOSITION_RING.get())) {
+                others.add(candidate);
+            }
+        }
+        if (others.isEmpty()) {
+            return;
+        }
+        double min = FRConfig.SUPERPOSITION_RING_SPLIT_MIN.get();
+        double max = FRConfig.SUPERPOSITION_RING_SPLIT_MAX.get();
+        float split = (float) (event.getAmount()
+                * (min + wearer.getRandom().nextDouble() * Math.max(0.0D, max - min)));
+        // 原版把来源实体的信息一并带过去，这里同样区分「有来源」与「无来源」两种超维类型。
+        DamageSource shared = source.getEntity() == null
+                ? FRDamageTypes.source(level, FRDamageTypes.SUPERPOSITION)
+                : FRDamageTypes.source(level, FRDamageTypes.SUPERPOSITION_DEFINED, source.getEntity());
+        for (Player other : others) {
+            other.hurt(shared, split / others.size());
+        }
+        event.setAmount(event.getAmount() - split);
     }
 
     @Override
