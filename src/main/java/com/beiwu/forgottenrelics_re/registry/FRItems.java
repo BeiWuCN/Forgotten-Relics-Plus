@@ -8,6 +8,7 @@ import com.beiwu.forgottenrelics_re.items.ItemArcanum;
 import com.beiwu.forgottenrelics_re.items.ItemDeificAmulet;
 import com.beiwu.forgottenrelics_re.items.ItemDormantArcanum;
 import com.beiwu.forgottenrelics_re.items.ItemDimensionalMirror;
+import com.beiwu.forgottenrelics_re.items.ItemGhastlySkull;
 import com.beiwu.forgottenrelics_re.items.ItemMiningCharm;
 import com.beiwu.forgottenrelics_re.items.ItemOblivionAmulet;
 import com.beiwu.forgottenrelics_re.items.ItemRingOfDiscord;
@@ -43,12 +44,12 @@ public final class FRItems {
 
     // ---- 原版起始研究解锁的 5 件物品 ----
 
-    /** 采矿护符（Mining Charm）。原版稀有度 UNCOMMON，CHARM 槽。 */
+    /** 采矿护符（Mining Charm）。原版稀有度 UNCOMMON，RING 槽（戒指）。 */
     public static final DeferredItem<ItemMiningCharm> MINING_CHARM =
             ITEMS.registerItem("mining_charm", ItemMiningCharm::new,
                     new Item.Properties().rarity(Rarity.UNCOMMON));
 
-    /** 以太采矿护符（Ethereal Mining Charm）。原版稀有度 EPIC，CHARM 槽，由采矿护符灌注升级而来。 */
+    /** 以太采矿护符（Ethereal Mining Charm）。原版稀有度 EPIC，RING 槽，由采矿护符灌注升级而来。 */
     public static final DeferredItem<ItemAdvancedMiningCharm> ADVANCED_MINING_CHARM =
             ITEMS.registerItem("advanced_mining_charm", ItemAdvancedMiningCharm::new,
                     new Item.Properties().rarity(Rarity.EPIC));
@@ -128,6 +129,19 @@ public final class FRItems {
     /** 不和谐之戒（Ring of Discord，注册名 discord_ring）。原版稀有度 EPIC，RING 槽。 */
     public static final DeferredItem<ItemRingOfDiscord> DISCORD_RING =
             ITEMS.registerItem("discord_ring", ItemRingOfDiscord::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    // ---- 第四波：原创补完 ----
+
+    /**
+     * 食尸鬼之颅（Ghastly Skull）。
+     *
+     * <p>1.7.10 原版注册了它但逻辑没写完（详见 {@link ItemGhastlySkull} 的类注释），
+     * 1.12.2 移植版也没做。这一件是按原作者留下的意图与要素分配补完的**原创设计**，
+     * 不是对照复刻。原版稀有度 EPIC，附带 3 点扭曲。
+     */
+    public static final DeferredItem<ItemGhastlySkull> GHASTLY_SKULL =
+            ITEMS.registerItem("ghastly_skull", ItemGhastlySkull::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {
