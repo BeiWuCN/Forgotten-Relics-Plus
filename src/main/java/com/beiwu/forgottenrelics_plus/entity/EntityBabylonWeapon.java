@@ -1,5 +1,6 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
@@ -100,8 +101,11 @@ import vazkii.botania.common.handler.BotaniaSounds;
  *       作为模型之外的额外汇聚视觉区分；</li>
  *   <li>原版实体碰撞箱是 0；本项目实体按约定 0.25×0.25。直击扫掠盒与爆炸范围仍用
  *       {@code inflate(2)} / {@code inflate(3)} 近似，半径误差约 0.125 格；</li>
- *   <li>原版那 40 颗 wisp 是自定义网络包定点生成、各自带 ±0.125 的初速；这里用
- *       {@code sendParticles} 的扩散参数近似同样的落点云。</li>
+ *   <li>原版那 40 颗 wisp 是自定义网络包定点生成、各自带 ±0.125 的初速
+ *       （{@code ApotheosisParticleMessage(x, y, z, 40)}，每颗
+ *       {@code wispFX(pos, 0.8+rand*0.2, 0.8+rand*0.2, 0, size=0.3+rand*0.3, xm/ym/zm=(rand-0.5)*0.25, 1.0)}）；
+ *       这里用一次 {@link FRParticles#serverWispBurst}（定点 + gaussian 初速）发同一簇，
+ *       颜色/尺寸各抽一次，位置不变、初速幅度按 {@code 0.25/√12 ≈ 0.072} 折算。</li>
  * </ol>
  */
 public class EntityBabylonWeapon extends FRHomingProjectile {
@@ -421,9 +425,14 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
         // 原版 world.playSoundEffect(x, y, z, "random.explode", 8.0F, 0.8F + random * 0.2F)。
         SoundHelper.play(level(), getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE.value(),
                 SoundSource.PLAYERS, 8.0F, 0.8F + random.nextFloat() * 0.2F);
-        // 原版 ApotheosisParticleMessage(x, y, z, 40)：40 颗 (0.8~1.0, 0.8~1.0, 0) 的 wisp。
-        server.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
-                getX(), getY(), getZ(), IMPACT_PARTICLES, 0.25D, 0.25D, 0.25D, 0.02D);
+        // 原版 ApotheosisParticleMessage(x, y, z, 40)：40 颗 (0.8~1.0, 0.8~1.0, 0) 的 wisp，
+        // 尺寸 0.3+rand*0.3，初速 (rand-0.5)*0.25，maxAgeMul=1.0。
+        FRParticles.serverWispBurst(server, getX(), getY(), getZ(),
+                0.8F + random.nextFloat() * 0.2F,
+                0.8F + random.nextFloat() * 0.2F,
+                0.0F,
+                0.3F + random.nextFloat() * 0.3F, 1.0F,
+                IMPACT_PARTICLES, 0.0D, 0.072D);
         discard();
     }
 
@@ -442,13 +451,17 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
      * （与 {@code ItemVoidGrimoire#voidBurst} 同一方案）。
      */
     private static void burst(ServerLevel level, Vec3 center) {
+        // imposeBurst → Thaumcraft.proxy.burst（非 Botania），按「原版本来就不是 Botania 就保持原样」
+        // 的口径保留：一发 FLASH + 24 颗暖金色原版 effect 粒子。
         level.sendParticles(ParticleTypes.FLASH, center.x, center.y, center.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
         level.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, WISP_COLOR),
                 center.x, center.y, center.z, 24, 0.5D, 0.5D, 0.5D, 0.1D);
     }
 
     /**
-     * 原版每 tick 的黄色 wisp 拖尾：{@code wispFX(world, x, y, z, 1.0, 1.0, 0.0, 0.3, 0.0)}。
+     * 原版每 tick 的黄色 wisp 拖尾：{@code wispFX(world, x, y, z, 1.0, 1.0, 0.0, size=0.3, gravity=0.0)}
+     *（9 参重载里第 8 个是 size、第 9 个是 gravity），对应
+     * {@link FRParticles#serverWisp}（maxAgeMul 默认 1.0、gravity 默认 0）。
      *
      * <p>没有几何体之后，用 {@code variety} 的 12 档暖金色调给整排武器做区分（见
      * {@link #VARIETY_COLORS}）。
@@ -458,8 +471,11 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
             return;
         }
         int color = VARIETY_COLORS[Math.floorMod(getVariety(), VARIETY_COLORS.length)];
-        server.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, color),
-                getX(), getY(), getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        FRParticles.serverWisp(server, getX(), getY(), getZ(),
+                ((color >> 16) & 0xFF) / 255.0F,
+                ((color >> 8) & 0xFF) / 255.0F,
+                (color & 0xFF) / 255.0F,
+                0.3F, 0.0D, 0.0D, 0.0D);
     }
 
     /**

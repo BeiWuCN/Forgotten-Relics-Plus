@@ -1,12 +1,11 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import java.util.List;
-import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -53,8 +52,9 @@ import net.minecraft.world.phys.Vec3;
  *   <li><b>「撞上非目标不消失」要覆写 {@code onHit}</b>：基类对任何命中都会 {@code discard()}，
  *       原版却只在命中锁定目标时结算，所以这里整段覆写，把结算放进 {@code onImpact}；</li>
  *   <li>原版 {@code DamageSourceMagic} → {@link FRDamageTypes#FORGOTTEN_MAGIC}（复用已建好的类型）；</li>
- *   <li>粒子：Botania sparkleFX / wispFX → 原版 {@link ParticleTypes#ENTITY_EFFECT} 按原版颜色染色
- *       （与 EntityChaoticOrb 同一画法），由客户端本地生成，与服务端轨迹无关；</li>
+ *   <li>粒子：原版就是 Botania 的 {@code sparkleFX}（拖尾）与 {@code wispFX}（与活体重叠时的 12 颗），
+ *       这里直接用 {@link FRParticles#sparkle} / {@link FRParticles#wisp} 复刻，颜色与尺寸逐字对齐原版
+ *       （{@code r=0、g=0.8+rand*0.2、b=0.4+rand*0.6}），由客户端本地生成，与服务端轨迹无关；</li>
  *   <li>音效 {@code random.fizz} → 原版 {@link SoundEvents#FIRE_EXTINGUISH}
  *       （与 EntityDarkMatterOrb 同一替代方案），照原版音量 2.0 / 音调 0.8 + 随机 0.2。</li>
  * </ul>
@@ -259,27 +259,30 @@ public class EntityRageousMissile extends FRHomingProjectile {
         }
 
         // 原版客户端：与某个活体重叠（±0.5）时再撒 12 颗带随机微速的 wisp。
+        // wispFX(中心, r=0, g=0.8+rand*0.2, b=0.4+rand*0.6, size=0.2+rand*0.1,
+        //        xm/ym/zm=(rand-0.5)*0.15)。
         if (!level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(0.5D)).isEmpty()) {
             Vec3 origin = center();
             for (int i = 0; i < 12; i++) {
-                double xm = (random.nextDouble() - 0.5D) * 0.15D;
-                double ym = (random.nextDouble() - 0.5D) * 0.15D;
-                double zm = (random.nextDouble() - 0.5D) * 0.15D;
-                level().addParticle(sparkle(), origin.x, origin.y, origin.z, xm, ym, zm);
+                FRParticles.wisp(level(), origin.x, origin.y, origin.z,
+                        0.0F,
+                        (float) (0.8D + random.nextDouble() * 0.2D),
+                        (float) (0.4D + random.nextDouble() * 0.6D),
+                        0.2F + random.nextFloat() * 0.1F,
+                        (random.nextDouble() - 0.5D) * 0.15D,
+                        (random.nextDouble() - 0.5D) * 0.15D,
+                        (random.nextDouble() - 0.5D) * 0.15D);
             }
         }
     }
 
-    /** 撒一颗与原版 sparkleFX 同色的原版粒子。 */
+    /** 原版拖尾的一颗 sparkleFX：{@code r=0}、{@code g=0.8~1.0}、{@code b=0.4~1.0}，尺寸 0.8、m=2。 */
     private void addSparkle(Vec3 pos) {
-        level().addParticle(sparkle(), pos.x, pos.y, pos.z, 0.0D, 0.0D, 0.0D);
-    }
-
-    /** 原版 sparkleFX 的颜色：{@code r=0}、{@code g=0.8~1.0}、{@code b=0.4~1.0}。 */
-    private ColorParticleOption sparkle() {
-        int g = (int) ((0.8D + random.nextDouble() * 0.2D) * 255.0D);
-        int b = (int) ((0.4D + random.nextDouble() * 0.6D) * 255.0D);
-        return ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, (g << 8) | b);
+        FRParticles.sparkle(level(), pos.x, pos.y, pos.z,
+                0.0F,
+                (float) (0.8D + random.nextDouble() * 0.2D),
+                (float) (0.4D + random.nextDouble() * 0.6D),
+                0.8F, 2);
     }
 
     /** 身体中心，对应 Botania 的 {@code Vector3.fromEntityCenter}。 */

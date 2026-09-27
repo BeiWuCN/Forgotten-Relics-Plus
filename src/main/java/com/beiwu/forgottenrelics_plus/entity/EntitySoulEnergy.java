@@ -1,8 +1,8 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -38,8 +38,9 @@ import net.minecraft.world.phys.Vec3;
  *       本类只补上原版额外的「速度分量限幅」与「1×1×1 距离判定」；</li>
  *   <li>原版的 {@code IEntityAdditionalSpawnData}（把目标 id 写进生成包）在 1.21.1 由基类的
  *       {@code SynchedEntityData} 承担，两端都能解析出目标，不必自己写生成包；</li>
- *   <li>原版 Botania 的 {@code sparkleFX} / {@code wispFX}（白色）改成原版粒子
- *       {@link ParticleTypes#END_ROD}（同为白色光点），不需要自定义渲染器；</li>
+ *   <li>粒子直接用 Botania 的现代对应物（原版本来就是 Botania，无需替代）：
+ *       拖尾 {@code sparkleFX} → {@link FRParticles#sparkle}，命中七颗 {@code wispFX} →
+ *       {@link FRParticles#serverWisp}；参数与原版逐一对齐，见各处注释；</li>
  *   <li>音效 {@code random.fizz} → {@link SoundEvents#FIRE_EXTINGUISH}
  *       （与邪术之咒、核子之怒同一替代方案），并按项目约定过 {@link SoundHelper#play} 压音量；
  *       发射音 {@code botania:missile} 由物品侧播放，不在本实体里。</li>
@@ -146,7 +147,16 @@ public class EntitySoulEnergy extends FRHomingProjectile {
             player.getFoodData().eat(FOOD_AMOUNT, FOOD_SATURATION);
         }
         if (level() instanceof ServerLevel server) {
-            server.sendParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 7, 0.1D, 0.1D, 0.1D, 0.05D);
+            // 原版 for (i = 0; i <= 6; i++)：7 颗 wispFX(x, y, z, 1, 1, 1, size=0.1+rand*0.1,
+            //   xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=1.0)。逐颗单独发包以保留每颗不同的尺寸与初速。
+            for (int i = 0; i <= 6; i++) {
+                FRParticles.serverWisp(server, getX(), getY(), getZ(),
+                        1.0F, 1.0F, 1.0F,
+                        0.1F + random.nextFloat() * 0.1F,
+                        (random.nextDouble() - 0.5D) * 0.15D,
+                        (random.nextDouble() - 0.5D) * 0.15D,
+                        (random.nextDouble() - 0.5D) * 0.15D);
+            }
         }
         discard();
     }
@@ -170,13 +180,14 @@ public class EntitySoulEnergy extends FRHomingProjectile {
         int steps = (int) (length / TRAIL_STEP);
         Vec3 pos = from;
         for (int i = 0; i < steps; i++) {
-            level().addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, 0.0D, 0.0D, 0.0D);
+            // 原版 sparkleFX(pos, rc=gc=bc=1.0, size=0.8, m=2)。
+            FRParticles.sparkle(level(), pos.x, pos.y, pos.z, 1.0F, 1.0F, 1.0F, 0.8F, 2);
             if (random.nextInt(steps) <= 1) {
-                level().addParticle(ParticleTypes.END_ROD,
+                FRParticles.sparkle(level(),
                         pos.x + (random.nextDouble() - 0.5D) * 0.4D,
                         pos.y + (random.nextDouble() - 0.5D) * 0.4D,
                         pos.z + (random.nextDouble() - 0.5D) * 0.4D,
-                        0.0D, 0.0D, 0.0D);
+                        1.0F, 1.0F, 1.0F, 0.8F, 2);
             }
             pos = pos.add(step);
         }

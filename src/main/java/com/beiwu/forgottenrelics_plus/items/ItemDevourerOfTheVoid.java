@@ -63,7 +63,11 @@ import net.minecraft.world.phys.Vec3;
  *       再用 {@code level.isLoaded} 保证只看已加载区块，最后按原版口径复核距离，语义一致；</li>
  *   <li>NBT 的三个 double 坐标 → 数据组件 {@link FRDataComponents#DEVOURER_TARGET}（{@code BlockPos}）；</li>
  *   <li>自定义网络包画的闪电 → 原版 {@link ParticleTypes#ELECTRIC_SPARK}（与霹雳咒书同一种画法），
- *       不引入自定义网络；客户端 wisp / portal 粒子 → 服务端 {@code ServerLevel#sendParticles}；</li>
+ *       不引入自定义网络；客户端 wisp / portal 粒子 → 服务端 {@code ServerLevel#sendParticles}。
+ *       <b>依据</b>：原版这里的粒子是 {@code SuperpositionHandler.imposeLightning}（Thaumcraft
+ *       {@code FXLightningBolt}）与 {@code Main.proxy.wispFX4}（FR 自己的 {@code FXWisp}），
+ *       还有 {@code EntityPortalFX}，<b>都不是 Botania 粒子</b>，按「原版本来就不是 Botania
+ *       就保持原样」的口径保留原版粒子近似；</li>
  *   <li>{@code thaumcraft:zap} → {@link SoundEvents#FIREWORK_ROCKET_BLAST}，沿用霹雳咒书的替代方案；</li>
  *   <li><b>「给背包法杖补 Vis」这一支完整保留</b>：Thaumaturge 的 {@link WandVisHelper#addVis} 就是
  *       {@code ItemWandCasting#addVis} 的直接对应物，欧米伽之核也是这么给法杖补 Vis 的

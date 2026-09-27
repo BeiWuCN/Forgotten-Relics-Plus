@@ -1,12 +1,12 @@
 package com.beiwu.forgottenrelics_plus.entity;
 
+import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FREntities;
 import com.beiwu.forgottenrelics_plus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import java.util.List;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -47,9 +47,11 @@ import net.minecraft.world.phys.Vec3;
  *   <li>原版 {@code onImpact} 里「草丛/树叶/液体穿过」的写法，1.21.1 的射线检测默认
  *       只命中带碰撞箱的方块——液体与草丛本来就不拦射线，只有<b>树叶</b>需要显式放行。
  *       即便如此这里仍按原版的三类逐条判断，语义保持一致；</li>
- *   <li>原版用 {@code Thaumcraft.proxy.wispFXEG} 画拖尾、用状态码 16 让客户端爆出 30 个怨灵粒子。
- *       1.21.1 改用原版粒子 {@code ParticleTypes.SCULK_SOUL}（同为暗色异界质感），
- *       不需要自定义渲染器；</li>
+ *   <li>原版用 {@code Thaumcraft.proxy.wispFXEG} 画拖尾、用状态码 16 让客户端爆出 30 个怨灵粒子；
+ *       这两处都是 <b>Thaumcraft 自己的粒子</b>，但 RE 的 {@code EntityDarkMatterOrb} 已经把它们
+ *       换成了 Botania 的 {@code wispFX}，本项目照 RE 复刻：
+ *       拖尾每 tick 2 颗 {@code (0.05, 0.05, 0.1)} 的小 wisp，命中/冒烟时 30 颗 {@code (0.1, 0.1, 0.15)}
+ *       的 wisp 再叠一颗 {@code (0.4, 0.4, 0.6)} 的 sparkle；</li>
  *   <li>原版冒烟音效是 {@code random.fizz}，这里换成等价的原版 {@link SoundEvents#FIRE_EXTINGUISH}；</li>
  *   <li>{@code Config.dimensionOuterId} → Thaumaturge 的 {@link OuterLands#DIMENSION}；</li>
  *   <li>原版 {@code DamageSourceDarkMatter} → {@link FRDamageTypes#DARK_MATTER}。</li>
@@ -121,14 +123,29 @@ public class EntityDarkMatterOrb extends FRHomingProjectile {
         }
     }
 
-    /** 拖尾：原版 {@code wispFXEG} 的异界怨灵，这里用同为暗色的原版粒子代替。 */
+    /**
+     * 拖尾：照抄 RE {@code EntityDarkMatterOrb#onUpdate} 客户端分支的 2 颗 wisp——
+     * <pre>
+     *   wispFX(posX + fx, posY + fy + 0.22*height, posZ + fz,
+     *          0.05, 0.05, 0.1, size=0.25,
+     *          xm/ym/zm=(rand-0.5)*0.04, maxAgeMul=0.6)
+     *   其中 fx/fy/fz = (rand - rand) * 0.25
+     * </pre>
+     * 1.7.10 这里用的是 Thaumcraft 的 {@code wispFXEG}（非 Botania），按 RE 的 Botania 版本复刻。
+     */
     @Override
     protected void spawnTrailParticles() {
-        level().addParticle(ParticleTypes.SCULK_SOUL,
-                getX() + (random.nextDouble() - 0.5D) * 0.3D,
-                getY() + 0.22D * getBbHeight() + (random.nextDouble() - 0.5D) * 0.3D,
-                getZ() + (random.nextDouble() - 0.5D) * 0.3D,
-                0.0D, 0.0D, 0.0D);
+        for (int i = 0; i < 2; i++) {
+            FRParticles.wisp(level(),
+                    getX() + (random.nextDouble() - random.nextDouble()) * 0.25D,
+                    getY() + 0.22D * getBbHeight() + (random.nextDouble() - random.nextDouble()) * 0.25D,
+                    getZ() + (random.nextDouble() - random.nextDouble()) * 0.25D,
+                    0.05F, 0.05F, 0.1F, 0.25F,
+                    (random.nextDouble() - 0.5D) * 0.04D,
+                    (random.nextDouble() - 0.5D) * 0.04D,
+                    (random.nextDouble() - 0.5D) * 0.04D,
+                    0.6F);
+        }
     }
 
     /** 原版 {@code EntityThrowable} 的碰撞列表会排除发射者，这里在实体命中筛选上补回同一条。 */
@@ -219,8 +236,14 @@ public class EntityDarkMatterOrb extends FRHomingProjectile {
         SoundHelper.play(level(), getX(), getY(), getZ(), SoundEvents.FIRE_EXTINGUISH,
                 SoundSource.NEUTRAL, 0.5F, 2.6F + (random.nextFloat() - random.nextFloat()) * 0.8F);
         if (level() instanceof ServerLevel server) {
-            server.sendParticles(ParticleTypes.SCULK_SOUL,
-                    getX(), getY(), getZ(), 30, 0.3D, 0.3D, 0.3D, 0.02D);
+            // RE #spawnHitParticles：30 颗 wispFX(pos + fx, 0.1, 0.1, 0.15, size=0.25,
+            //                                  xm/ym/zm = fx*0.5, maxAgeMul=0.8)，
+            // 其中 fx/fy/fz = (rand - rand) * 0.3。位置抖动用 spread=0.3 近似，
+            // 速度取 fx*0.5 的等效 gaussian 幅度（0.3*0.5*0.289 ≈ 0.043）。
+            FRParticles.serverWispBurst(server, getX(), getY(), getZ(),
+                    0.1F, 0.1F, 0.15F, 0.25F, 0.8F, 30, 0.3D, 0.043D);
+            // 末尾那颗 sparkleFX(pos, 0.4, 0.4, 0.6, size=2.0, m=4)。
+            FRParticles.serverSparkle(server, getX(), getY(), getZ(), 0.4F, 0.4F, 0.6F, 2.0F, 4);
         }
     }
 }

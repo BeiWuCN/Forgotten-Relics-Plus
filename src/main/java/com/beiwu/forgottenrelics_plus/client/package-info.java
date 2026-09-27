@@ -27,9 +27,15 @@
  * 需要判断光影是否开启，只能通过软依赖方式（{@code ModList.get().isLoaded("iris")} 之后再取用），
  * 且不得让缺少它们时崩溃。
  *
- * <p>现阶段本包内只有 {@link com.beiwu.forgottenrelics_plus.client.CrownCurioRenderer}，
- * 它从设计上就只用了上面第二条允许的写法（{@code MultiBufferSource} +
- * {@code RenderType.armorCutoutNoCull}），整个项目没有任何一处
+ * <p>本包内的渲染器（{@code CrownCurioRenderer}、{@code FROrbRenderer}、
+ * {@code FRBabylonWeaponRenderer}、{@code FRShinyEnergyRenderer}）都只用了上面第二条允许的写法
+ * （{@code MultiBufferSource} + 原版 {@code RenderType}），整个项目没有任何一处
  * {@code GlStateManager}/{@code RenderSystem}/{@code BufferBuilder} 调用。
+ *
+ * <p>另有一个例外需要说明：{@link com.beiwu.forgottenrelics_plus.client.FRParticles} 不在三条约束的
+ * 射程内——它只是「造 Botania 的 {@code SparkleParticleData}/{@code WispParticleData} 并调用
+ * {@code Level#addParticle} / {@code ServerLevel#sendParticles}」，不碰 GL 状态、不建顶点、
+ * 不注册 {@code RenderType}，因此可以被实体 / 物品这类<b>公共端</b>代码直接调用（服务端只会用到
+ * 它的 {@code server*} 方法，且这些方法只依赖 Botania 的公共粒子数据类，不依赖任何客户端 MC 类型）。
  */
 package com.beiwu.forgottenrelics_plus.client;
