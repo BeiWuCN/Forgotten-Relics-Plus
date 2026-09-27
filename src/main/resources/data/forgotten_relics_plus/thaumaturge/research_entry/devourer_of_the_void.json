@@ -15,6 +15,7 @@
   "stages": [
     {
       "text": "fr.text.ObeliskDrainer.1",
+      "warp": 4,
       "required_knowledge": [
         {
           "type": "observation",

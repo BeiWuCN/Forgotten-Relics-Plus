@@ -16,6 +16,7 @@
   "stages": [
     {
       "text": "fr.text.TheParadox.1",
+      "warp": 8,
       "required_knowledge": [
         {
           "type": "observation",

@@ -15,6 +15,7 @@
   "stages": [
     {
       "text": "fr.text.OblivionStone.1",
+      "warp": 3,
       "required_knowledge": [
         {
           "type": "observation",

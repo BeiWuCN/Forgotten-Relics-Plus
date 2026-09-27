@@ -15,6 +15,7 @@
   "stages": [
     {
       "text": "fr.text.ChaosTome.1",
+      "warp": 7,
       "required_knowledge": [
         {
           "type": "observation",

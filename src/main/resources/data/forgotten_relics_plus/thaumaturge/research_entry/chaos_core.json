@@ -16,6 +16,7 @@
   "stages": [
     {
       "text": "fr.text.ChaosCore.1",
+      "warp": 2,
       "required_knowledge": [
         {
           "type": "observation",

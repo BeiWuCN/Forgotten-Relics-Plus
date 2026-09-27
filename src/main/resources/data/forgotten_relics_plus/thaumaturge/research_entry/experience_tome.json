@@ -13,6 +13,7 @@
   "stages": [
     {
       "text": "fr.text.XPTome.1",
+      "warp": 2,
       "required_knowledge": [
         {
           "type": "observation",

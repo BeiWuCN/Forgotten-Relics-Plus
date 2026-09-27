@@ -15,6 +15,7 @@
   "stages": [
     {
       "text": "fr.text.NuclearFury.1",
+      "warp": 4,
       "required_knowledge": [
         { "type": "observation", "category": "thaumaturge:auromancy", "amount": 1 },
         { "type": "observation", "category": "thaumaturge:infusion", "amount": 1 }
