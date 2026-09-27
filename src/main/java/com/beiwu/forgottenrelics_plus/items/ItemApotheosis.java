@@ -24,35 +24,35 @@ import vazkii.botania.common.handler.BotaniaSounds;
 
 /**
  * 神化（Apotheosis），注册名 {@code apotheosis}，1.7.10 原版 {@code ItemApotheosis}。
- * 堆叠上限 1、稀有度 EPIC、Warp 5，<b>没有施法后冷却</b>（从不调 {@code SuperpositionHandler.setCasted}）。
+ * 堆叠上限 1、稀有度 EPIC、Warp 5，没有施法后冷却（从不调 {@code SuperpositionHandler.setCasted}）。
  *
  * <p>行为：右键进入 {@code EnumAction.bow} 拉弓姿态（可用时长 72000）。只要
  * {@code count != getMaxItemUseDuration() && count % 2 == 0}（除第一个 tick 外每 2 tick 一次），就尝试抽
  * 一次 Vis（地 30 + 火 60 + 秩序 50 + 混沌 75 厘 = 215 厘 = 2.15 点，四项都乘 {@code apotheosisVisMult}），
- * 抽得出来才召唤一把巴比伦武器 {@code EntityBabylonWeaponSS}，于是引导期间<b>每 2 tick 铺一把武器</b>
+ * 抽得出来才召唤一把巴比伦武器 {@code EntityBabylonWeaponSS}，于是引导期间每 2 tick 铺一把武器
  * （10 把/秒）。武器撒在玩家周围：以头朝向换算单位方向并做「对角收缩」（{@code yaw % 90} 关于 45° 对折），
- * 再在 ±80° 内随机旋转、乘 2~12 格、叠加 0~1 倍原方向、竖直漂移 -0.5~7.5 格；最多重掷 101 次、<b>避开任何
- * 2 格内已有武器</b>；落点定下后设 variety 0~11、delay 0，并播一次 {@code botania:babylonSpawn}
+ * 再在 ±80° 内随机旋转、乘 2~12 格、叠加 0~1 倍原方向、竖直漂移 -0.5~7.5 格；最多重掷 101 次、避开任何
+ * 2 格内已有武器；落点定下后设 variety 0~11、delay 0，并播一次 {@code botania:babylonSpawn}
  * （音量 1.0、音调 1.0 + 随机 × 3.0）。
  *
  * <p>1.21.1 对应：{@code onItemRightClick} / {@code onUsingTick} / {@code EnumAction.bow} →
- * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
- * （见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），改成 {@link FRRechargable} 的物品自身充能；
- * 原版 {@code botania:babylonSpawn} 在 1.21.1 改名为 {@link BotaniaSounds#TREASURE_WEAPON_SPAWN}（音效文件
- * 就是 {@code treasureweaponspawn.ogg}），直接引用并按项目约定过 {@link SoundHelper#play} 压音量；原版的
- * {@code Vector3.rotate/fromEntityCenter} 等向量工具在 1.21.1 的 Botania 里已不存在，落点散布改用原版
- * {@link Vec3} / {@link AABB} 逐字重写（见 {@link #spawnBabylonWeapon}）。
+ * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}。原版「从背包法杖抽 Vis」没有对应 API，
+ * 改成 {@link FRRechargable} 的物品自身充能；原版 {@code botania:babylonSpawn} 在 1.21.1 改名为
+ * {@link BotaniaSounds#TREASURE_WEAPON_SPAWN}（音效文件就是 {@code treasureweaponspawn.ogg}），直接引用
+ * 并按项目约定过 {@link SoundHelper#play} 压音量；原版的 {@code Vector3.rotate/fromEntityCenter}
+ * 等向量工具在 1.21.1 的 Botania 里已不存在，落点散布改用原版 {@link Vec3} / {@link AABB} 逐字重写
+ * （见 {@link #spawnBabylonWeapon}）。
  *
- * <p><b>Vis 折算</b>：原版每次召唤 2.15 点，而物品充能是整数，按本项目既有做法（霹雳咒书 2.2 → 2、
+ * <p>Vis 折算：原版每次召唤 2.15 点，而物品充能是整数，按本移植既有做法（霹雳咒书 2.2 → 2、
  * 月耀咒书 1.5 → 2）就近取 {@code apotheosisVisCost = 2}。最大储量取 300：原版四项里混沌（Perditio）是
  * 瓶颈，一把每要素满 100 的标准法杖约支撑 {@code 10000 / 75 ≈ 133} 次召唤，乘 2 得 266，向上取整到 300
  * （≈150 次），与月耀咒书「按满法杖瓶颈量换算、取整」的口径一致。
  *
- * <p><b>两处与 RE 的差异</b>：
+ * <p>两处与 RE 的差异：
  * <ol>
  *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerSecond.lore} + 四个要素成本）依赖
- *       {@code GuiScreen.isCtrlKeyDown}，而本项目的共享基类 {@code FRItem} 只实现了 Shift 展开，近几件
- *       施法物品也都没有该行；此外本模组已把「按要素抽 Vis」改成物品自身充能，那个分支已无意义，所以同样
+ *       {@code GuiScreen.isCtrlKeyDown}，而本移植的共享基类 {@code FRItem} 只实现了 Shift 展开，近几件
+ *       施法物品也都没有该行；此外本移植已把「按要素抽 Vis」改成物品自身充能，那个分支已无意义，所以同样
  *       不实现；</li>
  *   <li>原版 {@code isFull3D()} 返回 false、{@code EnumRarity.epic} 等 1.21.1 已无对应概念，分别略过与
  *       改用 {@code Item.Properties.rarity} 声明。</li>
@@ -202,8 +202,8 @@ public class ItemApotheosis extends FRItem implements FRRechargable, IWarpingGea
         // 原版 weapon.rotationYaw = player.rotationYawHead。
         weapon.setYRot(player.getYHeadRot());
         // 原版 ItemApotheosis.java:150：weapon.setRotation(wrapAngleTo180_float(-player.rotationYawHead + 180))。
-        // 渲染器 FRBabylonWeaponRenderer 读的就是这个 rotation；此前召唤路径从来没写过它，
-        // 导致所有巴比伦武器朝向恒为 0（只有读档才会恢复该字段）。
+        // 渲染器 FRBabylonWeaponRenderer 读的就是这个 rotation，召唤路径必须写它，否则所有
+        // 巴比伦武器的朝向恒为 0（只有读档才会从存档恢复该字段）。
         weapon.setRotation(Mth.wrapDegrees(-player.getYHeadRot() + 180.0F));
         weapon.setVariety(player.getRandom().nextInt(12));
         weapon.setDelay(0);

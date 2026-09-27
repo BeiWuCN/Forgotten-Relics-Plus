@@ -13,32 +13,31 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * 日耀石（shiny_stone）的「日耀能量」，1.7.10 原版 {@code EntityShinyEnergy}
+ * 日耀石（shiny_stone）的「日耀能量」，对应 1.7.10 原版 {@code EntityShinyEnergy}
  * （RE 的 {@code entities/EntityShinyEnergy.java} 逐字相同）。
  *
  * <p>原版（{@code EntityThrowable}，无重力、尺寸 0×0、{@code onImpact} 空实现——穿过一切方块与实体）：
  * 出生点 = 佩戴者身体中心 + 每轴 {@code (random-0.5)*3.0} 的随机偏移，初速 = 该偏移取反归一化 × 0.1；
  * 每 tick 在自身 ±0.05 内发 8 颗 sparkle（{@code r=0.9+rand*0.1、g=0.2+rand*0.2、b=0}，
- * 尺寸 {@code min(1/距离, 1.5)}），然后把速度<b>覆写</b>成「朝目标中心、大小 0.15」；
+ * 尺寸 {@code min(1/距离, 1.5)}），然后把速度覆写成「朝目标中心、大小 0.15」；
  * {@code ticksExisted > 30} 或 {@code target == null} 就消失；服务端每 tick 检查目标是否落进
  * 自身包围盒外扩 0.1 的盒子，是就消失。
  *
  * <p>1.21.1 对应：
  * <ul>
- *   <li><b>基类换成 {@link Entity}</b>：既不需要重力也不需要碰撞，直接手动前进，省掉一整套投射物碰撞检测；</li>
- *   <li><b>目标用 {@link SynchedEntityData} 同步</b>（原版写进 {@code IEntityAdditionalSpawnData} 生成包）；
+ *   <li>基类换成 {@link Entity}：既不需要重力也不需要碰撞，直接手动前进，省掉一整套投射物碰撞检测；</li>
+ *   <li>目标用 {@link SynchedEntityData} 同步（原版写进 {@code IEntityAdditionalSpawnData} 生成包）；
  *       两端都能解析出目标，客户端因此可以自己算 {@code size} 并本地移动；</li>
- *   <li><b>sparkle 直接用 Botania 的现代对应物</b> {@link FRParticles#sparkle}：颜色、单颗尺寸、
- *       位置抖动 ±0.05 全部按原版公式算；只有数量按玩家反馈砍到 25%
- *       （见 {@link #SPARKLES_PER_TICK}，想恢复原版改回 8 即可）；</li>
- *   <li><b>不做撞击爆发</b>：原版的 {@code particleExplosion()}（24 颗 wisp）在 1.7.10 与 RE 里
- *       <b>都没有任何调用点</b>，是死代码。本项目早期一度把它接到「到达施法者」上，但实测整屏青绿气泡、
- *       原版根本不会出现这一幕，因此现在<b>保持原版原样、不调用</b>，能量体到达时直接消失；</li>
+ *   <li>sparkle 用 Botania 的现代对应物 {@link FRParticles#sparkle}：颜色、单颗尺寸、位置抖动 ±0.05
+ *       全部按原版公式算；数量降到 25%（见 {@link #SPARKLES_PER_TICK}，改回 8 即为原版）；</li>
+ *   <li><b>不做撞击爆发</b>：原版的 {@code particleExplosion()}（24 颗 wisp）在 1.7.10 与 RE 里都没有
+ *       任何调用点，是死代码；接了它会在到达时刷出整屏青绿气泡，原版不会出现这一幕，因此保持原版原样、
+ *       不调用，能量体到达时直接消失；</li>
  *   <li>到达判定用「自身包围盒外扩 0.1 与目标包围盒相交」，等价于原版的
  *       {@code getEntitiesWithinAABB(..., box.expand(0.1,0.1,0.1)).contains(target)}。</li>
  * </ul>
  *
- * <p>性能：原版的 8 颗 sparkle 就是<b>客户端</b>发的，这里保持一致——粒子只在客户端 {@code tick()} 里
+ * <p>性能：原版的 8 颗 sparkle 就是客户端发的，这里保持一致——粒子只在客户端 {@code tick()} 里
  * {@code addParticle}，不走网络、不占带宽。
  */
 public class EntityShinyEnergy extends Entity {
@@ -56,9 +55,8 @@ public class EntityShinyEnergy extends Entity {
     /**
      * 每 tick 的 sparkle 数量。
      *
-     * <p>原版是 <b>8</b>；玩家实测反馈日耀石的粒子太密集（档位高时 4 tick 生成 4 个能量体、
-     * 每个活 30 tick，叠起来整屏都是），要求「保留 25%」，所以这里取 {@code 8 * 0.25 = 2}。
-     * 想恢复原版密度把这里的 2 改回 8 即可。
+     * <p>原版是 8。档位高时每 4 tick 生成 4 个能量体、每个活 30 tick，粒子会叠满整屏，
+     * 因此取 {@code 8 * 0.25 = 2}；要恢复原版密度把 2 改回 8。
      */
     private static final int SPARKLES_PER_TICK = 2;
 

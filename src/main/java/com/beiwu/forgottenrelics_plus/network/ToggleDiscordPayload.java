@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * 「切换不和谐之戒开关」的客户端→服务端消息。
  *
- * <p>对应 1.12.2 原版的 {@code DiscordKeybindMessage}（一个空的 {@code IMessage}）。
+ * <p>对应 RE 的 {@code DiscordKeybindMessage}（一个空的 {@code IMessage}）。
  * 1.21.1 改用 {@link CustomPacketPayload}：定义一个类型标识 + 一个编解码器即可，
  * 因为不带任何数据，编解码器两边都是空实现。
  *

@@ -35,12 +35,11 @@ import net.minecraft.world.level.Level;
  * 按绑定顺序找到第一个存在的类型，只清数量最小的一栈（相同则清标号最大），每次最多一栈。
  * 合成：放进一件物品即登记，只放钥匙石则清空清单；附带 2 点扭曲。
  *
- * <p>1.21.1 对应：metadata → 数据组件 {@link FRDataComponents#OBLIVION_MODE}，<b>取值口径原样照抄</b>
+ * <p>1.21.1 对应：metadata → 数据组件 {@link FRDataComponents#OBLIVION_MODE}，取值口径原样照抄
  * （{@code 0..2} 启用、{@code +100} 停用），方便与 1.7.10 逐行对照。原版两个平行 NBT 数组
  * {@code SupersolidID} / {@code SupersolidMetaID} → {@link FRDataComponents#OBLIVION_BOUND_ITEMS}：
  * 1.21.1 没有数值物品 id、也没有 metadata 变体，所以直接存整份样本 {@link ItemStack}，
- * 匹配语义按原版映射——<b>可损毁物品按物品类型通配</b>（原版 meta = -1），
- * <b>其余按「物品 + 组件」精确匹配</b>。
+ * 匹配语义按原版映射——<b>可损毁物品按物品类型通配</b>（原版 meta = -1），其余按「物品 + 组件」精确匹配。
  *
  * <p>偏差与坑：
  * <ul>
@@ -50,7 +49,7 @@ import net.minecraft.world.level.Level;
  *       {@code dftoolkit:sound.hhoff} / {@code hhon}（DFToolkit，1.21.1 无对应物）
  *       → {@link SoundEvents#STONE_BUTTON_CLICK_OFF} / {@link SoundEvents#STONE_BUTTON_CLICK_ON}，
  *       保留「停用 / 启用」的听感区分，并经 {@link SoundHelper} 统一压低音量；</li>
- *   <li>这件物品<b>不消耗也不储存 Vis</b>，原版从头到尾没有 Vis 逻辑，所以不实现 {@code FRRechargable}。</li>
+ *   <li>这件物品不消耗也不储存 Vis，原版从头到尾没有 Vis 逻辑，所以不实现 {@code FRRechargable}。</li>
  * </ul>
  *
  * <p>与 1.12.2 移植版（RE）行为一致，lang 文案与 1.7.10 逐条一致，无需改写。

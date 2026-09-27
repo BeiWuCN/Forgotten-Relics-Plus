@@ -14,16 +14,16 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * 粒子类型注册表。
  *
- * <p>本项目<b>只有一个</b>自定义粒子类型：{@link #BOLT}「闪电弧」。它不是用来画粒子的——
+ * <p>本移植只有一个自定义粒子类型：{@link #BOLT}「闪电弧」。它不是用来画粒子的——
  * 它只是 1.7.10 {@code LightningMessage} 那个自定义网络包的现代替身：把闪电两端塞进
  * {@link net.minecraft.core.particles.ParticleOptions}，借原版 {@code ClientboundLevelParticlesPacket}
  * 广播到客户端，客户端的 provider 再把端点交给 Botania 的 {@code BoltRenderer} 画成真正的折线闪电。
  * 详见 {@link FRBoltParticleData} 与 {@code client/FRBolts}。
  *
- * <p>类型本身在<b>两端</b>都要注册（服务端要能编码，客户端要能解码并找到 provider），
+ * <p>类型本身在两端都要注册（服务端要能编码，客户端要能解码并找到 provider），
  * 所以走公共端的 {@link DeferredRegister}；provider 只在客户端注册。
  *
- * <p>注意：{@code ParticleType} 的 {@code overrideLimiter} 传 {@code true}。这不是为了好看——
+ * <p>注意：{@code ParticleType} 的 {@code overrideLimiter} 传 {@code true}。
  * {@code LevelRenderer#addParticleInternal} 在「粒子：最少」时会把普通粒子直接丢掉，
  * 而那正是客户端粒子 provider 唯一被调用的入口；置 {@code true} 才能保证闪电在任何粒子设置下都出现。
  * 同时这个类型<b>不能</b>再配 {@code assets/.../particles/bolt.json}，否则 NeoForge 会报

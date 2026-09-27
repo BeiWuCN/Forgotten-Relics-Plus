@@ -17,11 +17,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * 千咒之诫的灵魂能量（Soul Energy），1.7.10 原版 {@code EntitySoulEnergy}，本项目注册名 {@code soul_energy}。
+ * 千咒之诫的灵魂能量（Soul Energy），原版 {@code EntitySoulEnergy}，本移植注册名 {@code soul_energy}。
  *
  * <p>原版（{@code EntityThrowable}，无重力 + 0.99 阻尼）：追施用者（瞄准其身高 60% 处）每 tick 叠加
  * 单位向量的 0.3 倍加速度，速度三分量夹到 ±0.35；目标为空立即 {@code setDead()}；
- * {@code onImpact} 是<b>空实现</b>（穿过一切方块与实体，不因碰撞消失）；每 tick 检查自身 ±0.5 的
+ * {@code onImpact} 是空实现（穿过一切方块与实体，不因碰撞消失）；每 tick 检查自身 ±0.5 的
  * 1×1×1 判定框，里面出现目标就播 {@code random.fizz}、治疗 1 点、补 1 点饥饿，然后消失；
  * 客户端拖尾每 0.05 格一颗白色 sparkle（另有约 {@code 2/steps} 概率补一颗），命中时再撒 7 颗白色 wisp。
  *

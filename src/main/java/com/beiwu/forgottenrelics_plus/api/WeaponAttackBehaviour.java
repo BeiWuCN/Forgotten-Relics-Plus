@@ -7,11 +7,11 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 /**
  * 「用手里的东西攻击实体时」的行为。
  *
- * <p>对应 1.7.10 原版的 {@code Item#onLeftClickEntity}：那个钩子允许物品<b>接管</b>这次攻击
+ * <p>对应原版的 {@code Item#onLeftClickEntity}：该钩子允许物品<b>接管</b>这次攻击
  * （原版返回 {@code true} 即取消原版伤害）。1.21.1 已无该钩子，改用 NeoForge 的
- * {@link AttackEntityEvent}——它同样在伤害结算<b>之前</b>触发且可取消，语义一致。
+ * {@link AttackEntityEvent}：它同样在伤害结算之前触发且可取消，语义一致。
  *
- * <p>派发范围只有<b>手持</b>的那一份（主手 + 副手），见 {@code FRCarriedItems#forEachHeld}。
+ * <p>派发范围只有手持的那一份（主手 + 副手），见 {@code FRCarriedItems#forEachHeld}。
  */
 public interface WeaponAttackBehaviour {
 

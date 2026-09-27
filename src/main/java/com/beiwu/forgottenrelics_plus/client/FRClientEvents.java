@@ -13,9 +13,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /**
  * 客户端游戏事件：把「预言之典按下左键」报给服务端。
  *
- * <p>1.7.10 原版是物品在客户端 {@code onUpdate} 里轮询攻击键，这里换成两个原版事件：
+ * <p>原版是物品在客户端 {@code onUpdate} 里轮询攻击键，这里换成两个原版事件：
  * <ul>
- *   <li>{@link PlayerInteractEvent.LeftClickEmpty}：<b>只在客户端触发</b>（左键点空气），
+ *   <li>{@link PlayerInteractEvent.LeftClickEmpty}：只在客户端触发（左键点空气），
  *       服务端收不到，必须自己发包；</li>
  *   <li>{@link PlayerInteractEvent.LeftClickBlock}：点方块。客户端在
  *       {@code MultiPlayerGameMode#startAttack} 里只 fire 一次（按下边沿，不是持续按住），
@@ -45,7 +45,7 @@ public final class FRClientEvents {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        // 只认主手：原版 leftClick 看的就是 getHeldItem()。
+        // 只认主手：原版 leftClick 读取的是 getHeldItem()。
         if (!(player.getMainHandItem().getItem() instanceof ItemTelekinesisTome)) {
             return;
         }

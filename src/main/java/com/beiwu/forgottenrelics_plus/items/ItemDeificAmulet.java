@@ -19,7 +19,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * 神圣护身符（Deific Amulet），1.12.2 原版 {@code ItemDeificAmulet}，护身符槽。
+ * 神圣护身符（Deific Amulet），RE 的 {@code ItemDeificAmulet}，护身符槽。
  *
  * <p>原版行为：
  * <ul>
@@ -30,7 +30,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  *   <li>{@code deificAmuletInvincibility} 开启时延长无敌帧，并有独立冷却。</li>
  * </ul>
  *
- * <p>注意一处刻意的差异：1.12.2 原版在窒息分支里调用的是 {@code entity.setFire(...)}，
+ * <p>注意一处刻意的差异：RE 在窒息分支里调用的是 {@code entity.setFire(...)}，
  * 但同一段代码上面刚写过「着火就熄灭」，语言键写的是「在水下自动补充氧气」，
  * 配置注释也写的是「prevents suffocation」。据此判断原版是笔误，这里按<b>补氧气</b>实现，
  * 配置项改用 {@code deificAmuletAirSupply}（默认 300 tick，即一管氧气）。
@@ -111,7 +111,7 @@ public class ItemDeificAmulet extends FRCurioItem
      *
      * <p>原版把无敌帧延长写在 {@code ItemDeificAmulet.onWornTick} 里、按 tick 直接设置
      * {@code hurtResistantTime}，与其它物品的伤害处理<b>互相独立</b>，谁取消都不影响它。
-     * 我们的派发器会在事件被取消时停止后续派发，所以这里必须给它一个比谁都小的优先级，
+     * 本移植的派发器在事件被取消时会停止后续派发，所以这里必须给它最小的优先级，
      * 才能保住「独立生效」这个语义。
      */
     @Override

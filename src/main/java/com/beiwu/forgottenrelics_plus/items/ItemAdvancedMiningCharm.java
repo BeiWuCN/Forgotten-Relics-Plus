@@ -17,12 +17,12 @@ import top.theillusivec4.curios.api.SlotContext;
 /**
  * 以太采矿护符（Ethereal Mining Charm）。
  *
- * <p>采矿护符的升级版。原版 {@code ItemAdvancedMiningCharm} 的行为与
+ * <p>采矿护符的升级版。RE 的 {@code ItemAdvancedMiningCharm} 的行为与
  * {@link ItemMiningCharm} 完全一致，只是数值换成
  * {@code advancedMiningCharmBoost}（默认 3.0，即 +300%）与
  * {@code advancedMiningCharmReach}（默认 4）。
  *
- * <p>两个护符同时装备时，挖掘速度加成按原版 {@code RelicsEventHandler.miningStuff} 的写法
+ * <p>两个护符同时装备时，挖掘速度加成按 RE 的 {@code RelicsEventHandler.miningStuff} 的写法
  * <b>相加</b>（{@code 1.0 + 3.0 + 1.0 = 5.0}，即 +400%），不是相乘。
  */
 public class ItemAdvancedMiningCharm extends FRCurioItem implements BreakSpeedBehaviour {

@@ -25,28 +25,28 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 月耀咒书（Tome of Lunar Flares），注册名 {@code tome_of_lunar_flares}，
- * 1.7.10 原版 {@code ItemLunarFlares}。堆叠上限 1、稀有度 EPIC、Warp 3，<b>没有冷却</b>。
+ * 1.7.10 原版 {@code ItemLunarFlares}。堆叠上限 1、稀有度 EPIC、Warp 3，没有冷却。
  *
  * <p>行为：右键进入 {@code EnumAction.bow} 拉弓姿态（可用时长 72000）。只要 {@code count % 2 == 0}
  * 且不是第一个 tick，就先用 {@code SuperpositionHandler.getPointedBlock(player, world, 128.0F)} 取准星
  * 指向的方块（射线长 128 格），拿不到方块就什么都不发生；拿到后抽一次 Vis（风 35 + 火 50 + 秩序 65 厘
- * = 1.5 点，三项都乘 {@code lunarFlaresVisMult}），抽得出来才发射一颗 {@link EntityLunarFlare}，于是
- * 引导期间<b>每 2 tick 降下一颗耀月之辉</b>；每 4 tick 在玩家处补一次
+ * = 1.5 点，三项都乘 {@code lunarFlaresVisMult}），抽得出来才发射一颗 {@link EntityLunarFlare}，
+ * 于是引导期间每 2 tick 降下一颗耀月之辉；每 4 tick 在玩家处补一次
  * {@code ForgottenRelics:sound.starfall}（音量 2.0、音调 1.0 + 随机 × 0.5）。
  *
  * <p>1.21.1 对应：{@code onItemRightClick} / {@code onUsingTick} / {@code EnumAction.bow} →
- * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
- * （见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），改成 {@link FRRechargable} 的物品自身充能；
+ * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；「从背包法杖抽 Vis」在 Thaumaturge
+ * 1.21.1 API 里没有对应接口，改成 {@link FRRechargable} 的物品自身充能；
  * 取方块改用原版 {@link ClipContext} 射线（透视液体、与错位之典同一写法）；发射音效
  * {@code ForgottenRelics:sound.starfall} 换成模组自带的 {@link FRSounds#STARFALL}（原版
- * {@code sound.starfall}），并按项目约定过 {@link SoundHelper#play} 统一压低音量。
+ * {@code sound.starfall}），并按本移植的约定过 {@link SoundHelper#play} 统一压低音量。
  *
  * <p><b>两处刻意的取舍</b>：
  * <ol>
- *   <li>原版每颗耀月之辉的 Vis 消耗是风 0.35 + 火 0.50 + 秩序 0.65 = 1.5 点，充能是整数，按本项目
+ *   <li>原版每颗耀月之辉的 Vis 消耗是风 0.35 + 火 0.50 + 秩序 0.65 = 1.5 点，充能是整数，按本移植
  *       「把原版单次合计取整成一个固定值」的既有做法（霹雳咒书 2.2 → 2、错位之典 6.4 → 6）就近取 2；</li>
- *   <li>原版右键引导<b>没有冷却</b>，节奏完全来自 {@code count % 2 == 0}。本项目为它保留了
- *       {@code tomeOfLunarFlaresCooldown} 配置，但它的语义是<b>两次发射之间的间隔</b>（默认 2），不是
+ *   <li>原版右键引导没有冷却，节奏完全来自 {@code count % 2 == 0}。本移植为它保留了
+ *       {@code tomeOfLunarFlaresCooldown} 配置，但它的语义是两次发射之间的间隔（默认 2），不是
  *       施法后的冷却，因此不接 {@code CooldownHelper}（与原初混沌之典同一处理）。</li>
  * </ol>
  *

@@ -49,38 +49,37 @@ import vazkii.botania.common.entity.GaiaGuardianEntity;
  * 闪电、播一次 {@code zap}、造成 {@code 16 + 24 × 随机} 的真实闪电伤害；潜行 + 左键则把目标沿视线以
  * {@code (3.0, 1.5, 3.0)} 抛开。Thaumcraft Boss 与 Botania 盖亚守护者不吃念力（Vis 照扣）。
  *
- * <p>1.21.1 对应：{@code use} / {@code onUseTick} / {@link UseAnim#BOW} 一一对应；
- * <b>「从背包法杖抽 Vis」没有对应 API</b>（见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），
- * 改成 {@link FRRechargable} 的物品自身充能；原版以玩家为键的静态 map {@code globalTomeMap} → 本类的
- * {@code Map<UUID, TomeState>}（Player 实例会在换维度 / 重登时被替换，UUID 更稳，与
- * {@link CooldownHelper} 同一考虑）；{@code SuperpositionHandler} 的共用施法冷却 → {@link CooldownHelper}。
- * <b>不写任何自定义网络包</b>：紫色 wisp 走服务端 {@link FRParticles}（原版就是 Botania wispFX），
- * portalstuff 继续用 {@link ParticleTypes#PORTAL}，玩家目标的移动改为改完速度后置 {@code hurtMarked}
- * 靠原版同步。左键闪电用 {@link FRBoltParticleData#broadcast} 把两端送到客户端、由
- * {@code client/FRBolts} 交给 Botania 的 {@code BoltRenderer} 画折线闪电，宽度沿用原版
+ * <p>1.21.1 对应：{@code use} / {@code onUseTick} / {@link UseAnim#BOW} 一一对应；「从背包法杖抽 Vis」
+ * 在 Thaumaturge 1.21.1 API 里没有对应接口，改成 {@link FRRechargable} 的物品自身充能；原版以玩家为键的
+ * 静态 map {@code globalTomeMap} → 本类的 {@code Map<UUID, TomeState>}（Player 实例会在换维度 / 重登时
+ * 被替换，UUID 更稳，与 {@link CooldownHelper} 同一考虑）；{@code SuperpositionHandler} 的共用施法冷却
+ * → {@link CooldownHelper}。不写任何自定义网络包：紫色 wisp 走服务端 {@link FRParticles}
+ * （原版就是 Botania wispFX），portalstuff 继续用 {@link ParticleTypes#PORTAL}，玩家目标的移动改为
+ * 改完速度后置 {@code hurtMarked} 靠原版同步。左键闪电用 {@link FRBoltParticleData#broadcast} 把两端送到
+ * 客户端、由 {@code client/FRBolts} 交给 Botania 的 {@code BoltRenderer} 画折线闪电，宽度沿用原版
  * {@code 0.225 + distSq / 2000}（比霹雳咒书的 0.075 粗得多，是 1.7.10 自己的取值）；
  * {@code thaumcraft:zap} → {@link SoundEvents#FIREWORK_ROCKET_BLAST} 并过 {@link SoundHelper#play}。
  *
- * <p><b>使用姿态</b>：原版默认（{@code altTelekinesisAlgorithm = false}）右键不进入
+ * <p>使用姿态：原版默认（{@code altTelekinesisAlgorithm = false}）右键不进入
  * {@code setItemInUse}，而由客户端每 tick 发包驱动服务端；1.21.1 不允许自定义包，这里统一按该选项为
  * {@code true} 的路径实现：右键进入拉弓姿态、{@code onUseTick} 里做念力控制，可见效果与打开该配置的
  * 原版一致。
  *
- * <p><b>Vis 折算</b>：原版念力 0.14 点/tick、闪电 3.3 点、抛开 2.3 点，充能是整数。念力改为每秒扣
- * 一次（本模组引导型遗物的既有节奏），默认 3（2.8 向上取整）；闪电取 3、抛开取 2（四舍五入）。
+ * <p>Vis 折算：原版念力 0.14 点/tick、闪电 3.3 点、抛开 2.3 点，充能是整数。念力改为每秒扣
+ * 一次（本移植引导型遗物的既有节奏），默认 3（2.8 向上取整）；闪电取 3、抛开取 2（四舍五入）。
  *
  * <p><b>与 1.7.10 的偏差</b>：
  * <ol>
  *   <li>原版搜索目标时把 {@code target} 既累加 {@code look × distance} 又累加 {@code y += 0.5}，
- *       搜索点会越来越偏、越来越高——这是原版自身的实现，这里<b>逐字保留</b>，未做「修正」；</li>
+ *       搜索点会越来越偏、越来越高——这是原版自身的实现，这里逐字保留，未做「修正」；</li>
  *   <li>念力的 Vis 从「每 tick 抽一次、抽不出来当 tick 不动」改成「每秒扣一次、扣不出来才中断引导」，
  *       节奏与其它引导型遗物统一；</li>
  *   <li>原版 {@code onUsingTickAlt} 在客户端也跑一份（本地预测），这里整套只在服务端跑，客户端完全
  *       依赖服务端同步 —— 可见结果一致；</li>
  *   <li>左键触发：原版是「按下攻击键的边沿」，与左键有没有点到实体无关。1.21.1 拆成两条互补入口
  *       （点实体走 {@link WeaponAttackBehaviour} / 点空气或方块走客户端补发的空载荷
- *       {@code TelekinesisLeftClickPayload}），都汇到 {@link #leftClick(Player, ItemStack)} 这一份实现，
- *       <b>1.6.2 修正</b>：上一版只有点实体一条路，点空气完全没反应，与 1.7.10 不一致；</li>
+ *       {@code TelekinesisLeftClickPayload}），都汇到 {@link #leftClick(Player, ItemStack)} 这一份实现。
+ *       两条入口缺一不可：只实现点实体时，点空气或方块完全没有反应，与 1.7.10 不一致；</li>
  *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerTick.lore} + 各要素成本）依赖
  *       {@code GuiScreen.isCtrlKeyDown}，共享基类 {@link FRItem} 只实现 Shift 展开，这里保持一致。</li>
  * </ol>
@@ -202,7 +201,7 @@ public class ItemTelekinesisTome extends FRItem
     }
 
     /**
-     * 左键点到<b>实体</b>的入口：NeoForge 的 {@code AttackEntityEvent}（{@link WeaponAttackBehaviour} 派发）。
+     * 左键点到实体的入口：NeoForge 的 {@code AttackEntityEvent}（{@link WeaponAttackBehaviour} 派发）。
      *
      * <p><b>不取消事件</b>：原版的左键闪电是独立于普通攻击的一条包，普通挥击照常结算，
      * 这里保持同样行为。
@@ -228,7 +227,7 @@ public class ItemTelekinesisTome extends FRItem
     }
 
     /**
-     * 对应原版 {@code leftClick(player) -> lightningAttack(player, item, ..)}：不管这次左键
+     * 对应原版 {@code leftClick(player) -> lightningAttack(player, item, ..)}：不管本次左键
      * 有没有点到东西，只要身上锁着目标、目标还在视线前方，就打一发闪电（潜行时改为抛开）。
      *
      * <p>这就是原版「按下左键就朝已锁定目标打闪电」的语义，两条入口（点实体 / 点空气或方块）
@@ -430,7 +429,7 @@ public class ItemTelekinesisTome extends FRItem
      *
      * <p>两处都是「位置正好在中心 + 各向同性随机初速」，所以能整簇发包：原版本来就只有
      * <b>一个</b> {@code TelekinesisParticleMessage}，这里用两个包（两种粒子类型各一个）。
-     * 逐颗发是 6 个包/tick，而引导时长上限 72000 tick——本项目的每 tick 广播热点之一。
+     * 逐颗发是 6 个包/tick，而引导时长上限 72000 tick——本移植的每 tick 广播热点之一。
      * 位置不变；初速由「均匀 ±0.075 / ±1.5」换成同标准差的 gaussian
      *（{@code 0.15/√12 ≈ 0.043} 与 {@code 3.0/√12 ≈ 0.866}）；颜色与尺寸由逐颗随机改为
      * 整簇抽一次——与 {@link FRParticles#serverWispBurst} 的既定口径一致。

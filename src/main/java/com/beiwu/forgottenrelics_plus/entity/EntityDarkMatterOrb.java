@@ -27,30 +27,34 @@ import net.minecraft.world.phys.Vec3;
 /**
  * 邪术之咒的暗物质法球（Dark Matter Orb），1.7.10 原版 {@code EntityDarkMatterOrb}。
  *
- * <p>原版（{@code EntityThrowable}，无重力 + 0.99 阻尼）：沿初始方向直线飞行；200 tick 静静消失
- * （<b>不结算伤害</b>）；100 tick 后若速度三分量都小于 0.01 则原地自爆；撞草丛 / 树叶 / 液体穿过，
- * 其余方块命中只冒烟消失；命中实体或自爆时，对自身碰撞箱外扩 1 格内的所有活体（排除发射者）
- * 造成一次暗物质魔法伤害并施加三种负面效果，外域（Outer Lands）里更强——这段只在
- * {@code getThrower() != null} 时执行。
+ * <p>原版行为（{@code EntityThrowable}，无重力 + 0.99 阻尼）：
+ * <ul>
+ *   <li>沿初始方向直线飞行，200 tick 后静静消失，不结算伤害；</li>
+ *   <li>{@code ticksExisted >= 100} 后，若速度三分量都小于 0.01 则原地自爆；</li>
+ *   <li>撞草丛 / 树叶 / 液体穿过，其余方块命中只冒烟消失；</li>
+ *   <li>命中实体或自爆时，对自身碰撞箱外扩 1 格内的所有活体（排除发射者）造成一次暗物质
+ *       魔法伤害并施加三种负面效果，外域（Outer Lands）里更强；这段只在
+ *       {@code getThrower() != null} 时执行。</li>
+ * </ul>
  *
- * <p>1.21.1 对应：基类 {@link FRHomingProjectile} 负责无重力与生存时限，但本实体<b>不追踪</b>
- * （{@code homingStrength} 保持 0）；1.21.1 的射线本来就穿液体与草丛，只有<b>树叶</b>需要显式放行，
- * 这里仍按原版三类逐条判断以保持语义。粒子照 RE 复刻（原版是 Thaumcraft {@code wispFXEG} 拖尾 +
- * 状态码 16 爆 30 个怨灵，RE 换成 Botania：拖尾每 tick 2 颗 {@code (0.05,0.05,0.1)} 小 wisp，
- * 命中/冒烟 30 颗 {@code (0.1,0.1,0.15)} wisp 再叠一颗 {@code (0.4,0.4,0.6)} sparkle）。
- * 冒烟音 {@code random.fizz} → {@link SoundEvents#FIRE_EXTINGUISH}；
+ * <p>1.21.1 对应：基类 {@link FRHomingProjectile} 负责无重力与生存时限，本实体不追踪
+ * （{@code homingStrength} 保持 0）；1.21.1 的射线本来就穿液体与草丛，只有树叶需要显式放行，
+ * 这里仍按原版三类逐条判断以保持语义。粒子照 RE 复刻：原版是 Thaumcraft {@code wispFXEG}
+ * 拖尾 + 状态码 16 爆 30 个怨灵，RE 换成 Botania 的拖尾每 tick 2 颗 {@code (0.05,0.05,0.1)}
+ * 小 wisp、命中与冒烟 30 颗 {@code (0.1,0.1,0.15)} wisp 再叠一颗 {@code (0.4,0.4,0.6)}
+ * sparkle。冒烟音 {@code random.fizz} → {@link SoundEvents#FIRE_EXTINGUISH}；
  * {@code Config.dimensionOuterId} → Thaumaturge 的 {@link OuterLands#DIMENSION}；
  * 伤害类型 {@code DamageSourceDarkMatter} → {@link FRDamageTypes#DARK_MATTER}。
  *
- * <p><b>与原版的两处已知偏差</b>：
+ * <p>与原版的两处已知偏差：
  * <ol>
  *   <li>原版那段判定写的是 {@code double absMotionX = this.field_70159_w;} 然后单独调
- *       {@code Math.abs(absMotionX);} —— 反编译出来 {@code Math.abs} 的返回值被丢掉了，
- *       实际比的是<b>带符号</b>的三个分量。这里按注释描述的本意（速度几乎为零）取绝对值判断，
- *       两者只在「朝负方向高速飞行」这种极端情形下才有区别，而速度衰减到 0.01 需要 500 tick，
- *       早已超过 200 tick 的生存时限，所以实际几乎不可触发；</li>
- *   <li>原版在命中实体后把 {@code ticksExisted} 置 199、下一 tick 才死；这里结算完立即
- *       {@code discard()}，观感一致。</li>
+ *       {@code Math.abs(absMotionX);}，反编译出来 {@code Math.abs} 的返回值被丢掉，
+ *       实际比的是带符号的三个分量。这里按注释描述的本意（速度几乎为零）取绝对值判断；
+ *       两者只在「朝负方向高速飞行」这种极端情形下有区别，而速度衰减到 0.01 需要 500 tick，
+ *       早已超过 200 tick 的生存时限，实际几乎不可触发。</li>
+ *   <li>原版命中实体后把 {@code ticksExisted} 置 199，下一 tick 才死；这里结算完立即
+ *       {@code discard()}。</li>
  * </ol>
  */
 public class EntityDarkMatterOrb extends FRHomingProjectile {

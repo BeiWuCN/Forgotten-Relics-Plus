@@ -12,9 +12,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * 创造模式标签页。
  *
- * <p>图标以 1.7.10 为准：原版 {@code Main} 里那个匿名 {@code CreativeTabs("tabForgottenRelics")}
+ * <p>图标以原版为准：原版 {@code Main} 里那个匿名 {@code CreativeTabs("tabForgottenRelics")}
  * 返回的是 {@code itemApotheosis}（「神化」，{@code Main.java:363-369}）；
- * 改成「恐惧之冠」的是 1.12.2 移植版（RE），本项目不沿用。
+ * 改成「恐惧之冠」的是 RE，本移植不沿用。
  * 1.21.1 的标签页是数据驱动的注册对象，图标通过 {@code CreativeModeTab.builder()} 指定。
  *
  * <p>注意：翻译键沿用原版的 {@code itemGroup.tabForgottenRelics}。
@@ -27,7 +27,7 @@ public final class FRCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FORGOTTEN_RELICS =
             TABS.register("forgotten_relics_plus", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.tabForgottenRelics"))
-                    // 1.7.10 原版的标签页图标是「神化」(itemApotheosis)，不是恐惧之冠。
+                    // 原版的标签页图标是「神化」(itemApotheosis)，不是恐惧之冠。
                     .icon(() -> new ItemStack(FRItems.APOTHEOSIS.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(FRItems.MINING_CHARM.get());

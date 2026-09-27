@@ -3,14 +3,14 @@ package com.beiwu.forgottenrelics_plus.config;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
- * 模组配置。
+ * 本移植的配置。
  *
- * <p>对应 1.12.2 原版的 {@code RelicsConfigHandler}。原版用的是 Forge 的 {@code Configuration}
+ * <p>对应 RE 的 {@code RelicsConfigHandler}。它用的是 Forge 的 {@code Configuration}
  * 加一堆静态字段，NeoForge 1.21.1 换成了 {@link ModConfigSpec}：字段本身是「值的包装」，
  * 读取时要调用 {@code get()}。
  *
  * <p>键名与默认值都照抄原版，默认值后面的注释里标出原版所在的分类，方便对照老配置文件。
- * 原版按物品分了很多分类，这里按同样的思路 push 出子分类。
+ * 原版按物品分成多个分类，这里按同样的思路 push 出子分类。
  */
 public final class FRConfig {
 
@@ -321,7 +321,7 @@ public final class FRConfig {
      * 核子之怒：导弹的目标搜索半径。
      *
      * <p>key 照抄 RE 的 {@code nuclearFuryClearRange}（RE 用它做「左键清除 32 格内导弹」的范围）；
-     * 1.7.10 的 {@code ItemMissileTome} 没有清弹功能，而同为 32 的这个数字在那边的实体里是
+     * 原版的 {@code ItemMissileTome} 没有清弹功能，而同为 32 的这个数字在原版实体里是
      * <b>目标搜索半径</b>（{@code double range = 32.0}），所以这里就把它用作搜索半径。
      */
     public static final ModConfigSpec.DoubleValue NUCLEAR_FURY_CLEAR_RANGE;
@@ -464,7 +464,7 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue TOME_OF_BROKEN_FATES_BIG_EXPLOSION_RADIUS;
     /** 破碎的命运巨著：免死时施加增益（而非减益）的概率（原版 fateTomeBuffChance，默认 0.75）。 */
     public static final ModConfigSpec.DoubleValue TOME_OF_BROKEN_FATES_BUFF_CHANCE;
-    /** 破碎的命运巨著：附带的扭曲值（原版 {@code getWarp} 返回 7，全模组第二高）。 */
+    /** 破碎的命运巨著：附带的扭曲值（原版 {@code getWarp} 返回 7，本移植中第二高）。 */
     public static final ModConfigSpec.IntValue TOME_OF_BROKEN_FATES_WARP;
 
     // ---- 湮灭之钥 / Keystone of The Oblivion ----
@@ -553,8 +553,8 @@ public final class FRConfig {
                 .defineInRange("dimensionalMirrorChannelDuration", 80, 1, 32768);
         builder.pop();
 
-        // 原版没有这一项：1.12.2 各处音量是写死的，最响的几处到了 8.0F，听感很吵。
-        // 这里新增一个总开关，把所有音效（含以后补的物品）统一压低。
+        // RE 没有这一项：各处音量写死，最响的几处达到 8.0F，明显高于需要。
+        // 这里新增一个总开关，把所有音效（含新增物品）统一压低。
         builder.comment("音效（原版无此配置，为本模组新增）").push("sound");
         SOUND_VOLUME_MULTIPLIER = builder
                 .comment("Global volume multiplier applied to every Forgotten Relics sound effect.",

@@ -9,9 +9,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * 日耀能量（{@code EntityShinyEnergy}）的占位渲染器：<b>什么都不画</b>。
+ * 日耀能量（{@code EntityShinyEnergy}）的占位渲染器：什么都不画。
  *
- * <p>1.7.10 / RE 里这个实体也没有渲染器——它的全部形体就是 {@link EntityShinyEnergy} 自己
+ * <p>原版与 RE 里这个实体也没有渲染器——它的全部形体就是 {@link EntityShinyEnergy} 自己
  * 每 tick 在客户端发的 8 颗 sparkle（原版 Botania 的 {@code sparkleFX} 同样是纯客户端粒子）。
  *
  * <p>之所以仍要注册一个渲染器：{@code EntityRenderDispatcher#shouldRender} 会直接

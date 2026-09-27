@@ -11,7 +11,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * 本模组弹射物的共同基类（对应 1.7.10 的 {@code EntityAIProjectileBase} 与各个 {@code EntityXxxOrb}）：
+ * 本移植弹射物的共同基类（对应 1.7.10 的 {@code EntityAIProjectileBase} 与各个 {@code EntityXxxOrb}）：
  * 无重力直线飞行、可选目标追踪、生存时限、命中结算钩子。
  *
  * <p>原版用 {@code IEntityAdditionalSpawnData} 把目标 id 写进生成包；这里改用
@@ -84,8 +84,8 @@ public abstract class FRHomingProjectile extends ThrowableProjectile {
             discard();
             return;
         }
-        // 追踪必须在两端都算：只在服务端加加速度的话，客户端速度每 tick 只衰减不补，
-        // 位置一路落后、每 10 tick 被位置包硬拉一次，观感就是「弹幕像 PPT」（1.6.2 修正）。
+        // 追踪必须在两端都算。只在服务端加加速度的话，客户端速度每 tick 只衰减不补，
+        // 位置一路落后、每 10 tick 被位置包硬拉一次，弹幕看起来像 PPT。
         // 目标 id 已通过 SynchedEntityData 下发，客户端能算出同一份加速度。
         applyHoming();
         if (level().isClientSide()) {

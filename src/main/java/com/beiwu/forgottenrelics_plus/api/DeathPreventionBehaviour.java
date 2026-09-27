@@ -35,7 +35,7 @@ public interface DeathPreventionBehaviour {
     void onLethalDamage(LivingDeathEvent event, Player player, ItemStack stack);
 
     /**
-     * 携带者<b>打死了一个生物</b>、那个生物将要死亡时。
+     * 携带者打死了一个生物、那个生物将要死亡时。
      *
      * <p>对应原版 {@code RelicsEventHandler:303}：虚伪审判是「无人受审」——带着它的人打死的东西
      * 也不会死。原版这里是 if / else，所以<b>只有死者不是玩家时</b>才会走到这个钩子。

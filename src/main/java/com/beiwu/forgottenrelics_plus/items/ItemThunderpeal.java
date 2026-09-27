@@ -25,24 +25,23 @@ import net.minecraft.world.level.Level;
  * <ul>
  *   <li>右键发射一颗雷电球 {@code EntityThunderpealOrb}：从视线前方 1.25 格、抬高 0.5 处出现，
  *       速度是视线的 1.5 倍；</li>
- *   <li>消耗<b>背包里法杖的 Vis</b>：风（Aer）{@code 135}、火（Ignis）{@code 85}（单位是厘 Vis，
+ *   <li>消耗背包里法杖的 Vis：风（Aer）{@code 135}、火（Ignis）{@code 85}（单位是厘 Vis，
  *       即 1.35 + 0.85 = 2.2 点 Vis），两者都乘 {@code thunderpealVisMult}；</li>
  *   <li>随后进入 {@code SuperpositionHandler.setCasted(player, 30, true)} 的 30 tick 冷却，
- *       该冷却是原版<b>所有施法类遗物共用</b>的那一个；</li>
+ *       该冷却是原版所有施法类遗物共用的那一个；</li>
  *   <li>物品堆叠上限 1，稀有度 EPIC。</li>
  * </ul>
  *
  * <p>1.21.1 的对应关系：
  * <ul>
  *   <li>{@code onItemRightClick} → {@code Item#use}；</li>
- *   <li><b>「从背包法杖抽 Vis」在 1.21.1 没有对应 API</b>（见
- *       {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1）。本模组对这一类消耗统一改为
- *       {@link FRRechargable} 的<b>物品自身充能</b>，用 {@link RechargeAccess#consumeCharge}
+ *   <li>「从背包法杖抽 Vis」在 1.21.1 没有对应 API。本移植对这一类消耗统一改为
+ *       {@link FRRechargable} 的物品自身充能，用 {@link RechargeAccess#consumeCharge}
  *       扣除，充能由周围灵气补充。符文天象石、食尸鬼之颅等走的都是这条路，
  *       1.12.2 移植版（RE）的 {@code ItemThunderpeal} 也是这么改的，这里沿用同一约定；</li>
  *   <li>原版的 {@code SuperpositionHandler} 冷却 → {@link CooldownHelper}，同样是全体共用；</li>
  *   <li>发射音效：原版 {@code thaumcraft:zap}，这里沿用 RE 的替代方案
- *       {@link SoundEvents#FIREWORK_ROCKET_BLAST}（本模组对 Thaumcraft 音效一律换原版等价物）。</li>
+ *       {@link SoundEvents#FIREWORK_ROCKET_BLAST}（本移植对 Thaumcraft 音效一律换原版等价物）。</li>
  * </ul>
  *
  * <p><b>一处刻意的数值取舍</b>：原版单次合计 2.2 点 Vis，而充能是整数，

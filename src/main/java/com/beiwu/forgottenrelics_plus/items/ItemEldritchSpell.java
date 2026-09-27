@@ -20,7 +20,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 /**
- * 邪术之咒（Eldritch Spell），注册名 {@code eldritch_spell}，1.7.10 原版 {@code ItemEldritchSpell}。
+ * 邪术之咒（Eldritch Spell），注册名 {@code eldritch_spell}，原版 {@code ItemEldritchSpell}。
  * 堆叠上限 1、稀有度 EPIC、Warp 4。
  *
  * <p>行为：右键发射一颗暗物质法球 {@code EntityDarkMatterOrb}——从视线前方 1.0 格、抬高 0.5 处出现，
@@ -29,20 +29,20 @@ import net.minecraft.world.level.Level;
  * {@code SuperpositionHandler.setCasted(player, 20, true)} 的 20 tick 共用冷却。
  *
  * <p>1.21.1 对应：{@code onItemRightClick} → {@code Item#use}；<b>「从背包法杖抽 Vis」没有对应 API</b>，
- * 按本模组统一约定改成 {@link FRRechargable} 的物品自身充能，用 {@link RechargeAccess#consumeCharge}
+ * 按本移植的统一约定改成 {@link FRRechargable} 的物品自身充能，用 {@link RechargeAccess#consumeCharge}
  * 扣除；原版的 {@code SuperpositionHandler} 冷却 → {@link CooldownHelper}（与其它遗物共用）；发射音效
  * {@code thaumcraft:egattack} → {@link SoundEvents#FIREWORK_ROCKET_BLAST}（与霹雳咒书同一套替代方案，
  * 且照原版音量 0.6 / 音调 0.8 + 随机 0.2）；RE 已把原版的 {@code ItemEldritchSpell5_1.lore + " " +
  * 伤害 + " " + ItemEldritchSpell5_2.lore} 合并成带 {@code %s} 的 {@code ItemEldritchSpell5.lore}，
- * 本项目的 lang 沿用合并后的键，这里直接传配置里的基础伤害值。
+ * 本移植的 lang 沿用合并后的键，这里直接传配置里的基础伤害值。
  *
- * <p><b>两处刻意的取舍</b>：
+ * <p>两处刻意的取舍：
  * <ol>
  *   <li>原版 tooltip 按住 Shift 时显示的是按「持有者是否身处外域」取的伤害值（{@code eldritchSpellDamageEx}
- *       或 {@code eldritchSpellDamage}）。1.21.1 的 {@code appendHoverText} 拿不到玩家实例，本项目也不在
+ *       或 {@code eldritchSpellDamage}）。1.21.1 的 {@code appendHoverText} 拿不到玩家实例，本移植也不在
  *       通用物品类里引入客户端专属类，所以固定显示基础伤害（RE 的 1.12.2 版同样只显示基础值）；</li>
  *   <li>原版的「Ctrl 查看 Vis 消耗」分支依赖 {@code FRVisPerCast.lore} / {@code FRPerditioCost.lore}，
- *       而共享基类 {@code FRItem} 只实现 Shift 展开，近几件施法物品（霹雳咒书、错位之典）也都没有该行，
+ *       而共享基类 {@code FRItem} 只实现 Shift 展开，其它施法物品（霹雳咒书、错位之典）也都没有该行，
  *       这里保持一致、不新增语言键。</li>
  * </ol>
  */
@@ -110,7 +110,7 @@ public class ItemEldritchSpell extends FRItem implements FRRechargable, IWarping
         tooltip.add(Component.translatable("item.ItemEldritchSpell3.lore"));
         tooltip.add(Component.translatable("item.FREmpty.lore"));
         tooltip.add(Component.translatable("item.ItemEldritchSpell4.lore"));
-        // 见类注释「取舍」第 1 条：1.7.10 这里按维度取值，这里固定显示基础伤害。
+        // 见类注释「取舍」第 1 条：原版按维度取值，这里固定显示基础伤害。
         tooltip.add(Component.translatable("item.ItemEldritchSpell5.lore", FRConfig.ELDRITCH_SPELL_DAMAGE.get()));
         tooltip.add(Component.translatable("item.ItemEldritchSpell6.lore"));
         tooltip.add(Component.translatable("item.FREmpty.lore"));

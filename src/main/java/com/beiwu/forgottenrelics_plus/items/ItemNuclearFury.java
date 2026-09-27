@@ -23,9 +23,9 @@ import net.minecraft.world.level.Level;
 import vazkii.botania.common.handler.BotaniaSounds;
 
 /**
- * 核子之怒（Nuclear Fury），注册名 {@code nuclear_fury}，
- * 1.7.10 原版类名是 {@code ItemMissileTome}（这里沿用 RE 的 {@code ItemNuclearFury}）。
- * 堆叠上限 1、Warp 5、{@code EnumAction.bow}，<b>原版没有施法冷却</b>。
+ * 核子之怒（Nuclear Fury），注册名 {@code nuclear_fury}。1.7.10 原版类名是 {@code ItemMissileTome}
+ * （这里沿用 RE 的 {@code ItemNuclearFury}）。堆叠上限 1、Warp 5、{@code EnumAction.bow}；
+ * <b>原版没有施法冷却</b>。
  *
  * <p>行为：右键进入 72000 tick 的拉弓引导；引导期间只要 {@code count % 2 == 0} 且不是第一 tick，
  * 就尝试抽一次 Vis——火（Ignis）20 + 秩序（Ordo）10 + 混沌（Perditio）15 厘 = 每颗法球 0.45 点
@@ -36,31 +36,34 @@ import vazkii.botania.common.handler.BotaniaSounds;
  * Botania sparkle。
  *
  * <p>1.21.1 对应：{@code onItemRightClick / onUsingTick / getMaxItemUseDuration / EnumAction.bow} →
- * {@code use / onUseTick / getUseDuration / UseAnim.BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
- *（见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），按本模组统一约定改成 {@link FRRechargable}
- * 的物品自身充能；导弹音 {@code botania:missile} 本就是 {@link BotaniaSounds#MISSILE}，直接引用并按项目
- * 约定过 {@link SoundHelper#play} 压音量；Thaumcraft 的 {@code proxy.burst}（纯客户端粒子，<b>不是
- * Botania</b>）→ 服务端 {@link ParticleTypes#WITCH}，玩家上方的 Botania sparkle →
- * {@link FRParticles#serverSparkle}（颜色 {@code (1.0, 0.4, 1.0)}、尺寸 6.0、m=6）；原版
- * {@code spawnMissile} 返回 {@code boolean} 但调用方忽略、{@code isFull3D()} 无对应概念，都略过。
+ * {@code use / onUseTick / getUseDuration / UseAnim.BOW}；「从背包法杖抽 Vis」没有对应 API，
+ * 按本移植统一约定改成 {@link FRRechargable} 的物品自身充能；导弹音 {@code botania:missile} 本就是
+ * {@link BotaniaSounds#MISSILE}，直接引用并按约定过 {@link SoundHelper#play} 压音量；
+ * Thaumcraft 的 {@code proxy.burst}（纯客户端粒子，不是 Botania）→ 服务端 {@link ParticleTypes#WITCH}；
+ * 玩家上方的 Botania sparkle → {@link FRParticles#serverSparkle}（颜色 {@code (1.0, 0.4, 1.0)}、
+ * 尺寸 6.0、m=6）；原版 {@code spawnMissile} 返回 {@code boolean} 但调用方忽略、
+ * {@code isFull3D()} 无对应概念，都略过。
  *
- * <p><b>Vis 折算（沿用 RE）</b>：原版每秒 10 颗 × 每颗 0.45 = 4.5 点/秒，而充能是整数。RE 把它折算成
- * {@code nuclearFuryVisCostPerSecond = 5}（4.5 向上取整）、{@code nuclearFuryMaxCharge = 500}（正好
- * 100 秒连续引导）、{@code nuclearFuryClearRange = 32}。本项目沿用这套值：导弹仍然每 2 tick 一发，
- * <b>在每一秒的第一发导弹之前扣一次 {@code getVisCostPerSecond()} 点</b>，扣不出来就停止引导——于是
- * 500 充能恰好打出 100 秒（1000 颗）。扣费放在该秒第一发之前（而不是固定每 20 tick 的边界上），是为了
- * 不让「0 充能先白打半秒、松手再按」变成可反复白嫖的漏洞；代价是「不满 1 秒就松手会按满 1 秒计费」。
+ * <h2>Vis 折算（沿用 RE）</h2>
  *
- * <p><b>与 1.7.10 的偏差</b>：
+ * <p>原版每秒 10 颗 × 每颗 0.45 = 4.5 点/秒，而充能是整数。RE 折算成
+ * {@code nuclearFuryVisCostPerSecond = 5}（4.5 向上取整）、{@code nuclearFuryMaxCharge = 500}
+ * （正好 100 秒连续引导）、{@code nuclearFuryClearRange = 32}。本移植沿用这套值：导弹仍然每 2 tick
+ * 一发，在每一秒的第一发导弹之前扣一次 {@code getVisCostPerSecond()} 点，扣不出来就停止引导——
+ * 于是 500 充能恰好打出 100 秒（1000 颗）。扣费放在该秒第一发之前（而不是固定每 20 tick 的边界上），
+ * 是为了不让「0 充能先白打半秒、松手再按」变成可反复白嫖的漏洞；代价是「不满 1 秒就松手会按满 1 秒计费」。
+ *
+ * <h2>与 1.7.10 的偏差</h2>
+ *
  * <ol>
  *   <li>原版是「每颗法球从法杖抽 0.45 点，抽不到就不发」，这里是「每秒从物品充能扣 5 点，扣不到就停」，
  *       见上面的折算说明；</li>
  *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerSecond.lore} + 各要素成本）依赖
- *       {@code GuiScreen.isCtrlKeyDown}，而共享基类 {@code FRItem} 只实现 Shift 展开，近几件施法物品
- *       （霹雳咒书、腥红之咒、邪术之咒）也都没有该行，这里保持一致；lang 里现成的
- *       {@code item.NuclearFuryVisCost.lore} 因此不引用（留给以后复用它做 tooltip 的物品）；</li>
+ *       {@code GuiScreen.isCtrlKeyDown}；共享基类 {@code FRItem} 只实现 Shift 展开，其余施法物品
+ *       （霹雳咒书、腥红之咒、邪术之咒）也都没有该行，这里保持一致。lang 里现成的
+ *       {@code item.NuclearFuryVisCost.lore} 因此不引用，留给以后复用它做 tooltip 的物品；</li>
  *   <li>RE 给本物品加了「左键清除 32 格内自己的导弹」（{@code clearMissiles} + 自定义网络包），
- *       1.7.10 的 {@code ItemMissileTome} <b>没有</b>这个功能，所以本项目不实现；配置
+ *       1.7.10 的 {@code ItemMissileTome} 没有这个功能，所以本移植不实现；配置
  *       {@code nuclearFuryClearRange} 转交给实体做目标搜索半径。</li>
  * </ol>
  */
@@ -85,8 +88,8 @@ public class ItemNuclearFury extends FRItem implements FRRechargable, IWarpingGe
     private static final double VERTICAL_OFFSET = 3.8D;
 
     /**
-     * 出生点：竖直方向的 {@code (random - 1.55)}——原版就是这么写的（RE 文档怀疑本意是
-     * {@code (random - 0.5) * 3.1}，两者相差一个左括号）。按「1.7.10 是唯一行为参照」逐字保留。
+     * 出生点：竖直方向的 {@code (random - 1.55)}——原版就是这么写的。它与
+     * {@code (random - 0.5) * 3.1} 只差一个左括号，但 1.7.10 是唯一行为参照，逐字保留。
      */
     private static final double VERTICAL_SPREAD = 1.55D;
 

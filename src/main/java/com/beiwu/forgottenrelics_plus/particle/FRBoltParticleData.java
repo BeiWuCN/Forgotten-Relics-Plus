@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
  * <h2>为什么是 {@link ParticleOptions}，而不是网络包</h2>
  * <p>1.7.10 与 1.12.2 移植版（RE）都自己写了 {@code LightningMessage}（客户端收到后调 Thaumcraft 的
  * {@code arcBolt} 画电弧）。1.21.1 的 Botania 已带现成的闪电几何生成器与渲染器（见 {@code client/FRBolts}），
- * 缺的只是「把端点送到客户端」。本项目<b>不新写自定义网络包</b>：把这几个字段塞进自定义
+ * 缺的只是「把端点送到客户端」。本移植<b>不新写自定义网络包</b>：把这几个字段塞进自定义
  * {@link ParticleOptions}，走原版 {@code ClientboundLevelParticlesPacket}（{@code ServerLevel#sendParticles}）
  * 广播。网络上传输的仍是原版粒子包，只是这个「粒子」自己不画东西（provider 返回 {@code null}），
  * 真正画闪电的是 Botania 的 {@code BoltRenderer}。

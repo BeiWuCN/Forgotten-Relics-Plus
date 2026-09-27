@@ -10,22 +10,22 @@ import net.minecraft.world.level.Level;
 /**
  * 音效播放辅助。
  *
- * <p>存在的唯一理由：统一压低本模组音效的音量。
+ * <p>存在的唯一理由：统一压低本移植音效的音量。
  *
- * <p>原版（1.12.2）各处 {@code playSound} 的音量参数是硬编码的，而且普遍偏大 ——
+ * <p>RE（1.12.2）各处 {@code playSound} 的音量参数是硬编码的，而且普遍偏大 ——
  * 最高的几处写到了 {@code 8.0F}（{@code EntityBabylonWeapon}）和 {@code 4.0F}
  * （{@code ItemVoidGrimoire}），即便是普通物品也有 {@code 2.0F}。
  *
  * <p>关于音量参数的实际语义（对照 1.21.1 的 {@code SoundEngine} 反编译结果）：
  * <ul>
  *   <li>真正的响度是 {@code Mth.clamp(volume * 频道音量, 0, 1)}（{@code SoundEngine.calculateVolume}），
- *       所以音量超过 1 的部分<b>不会更响</b>，最高就是满响度；</li>
+ *       所以音量超过 1 的部分不会更响，最高就是满响度；</li>
  *   <li>音量大于 1 只会让声音传得更远 —— {@code SoundEngine} 用
  *       {@code Math.max(volume, 1.0F) * 衰减距离} 算可听半径。</li>
  * </ul>
  *
- * <p>因此这里<b>必须先把原始音量夹到 [0,1] 再乘倍率</b>。
- * 若直接乘倍率，原版那些 {@code 8.0F} / {@code 4.0F} 的调用点会得到 {@code 3.6} / {@code 1.8}，
+ * <p>因此<b>必须先把原始音量夹到 [0,1] 再乘倍率</b>。
+ * 若直接乘倍率，RE 那些 {@code 8.0F} / {@code 4.0F} 的调用点会得到 {@code 3.6} / {@code 1.8}，
  * 交给游戏后又被夹回满响度，等于完全没降 —— 这是很容易踩的坑，所以在此显式夹紧。
  * 副作用是那些原本"传得很远"的音效可听半径会缩回默认的 16 格，这与"把音量降下来"的意图一致。
  *
@@ -33,7 +33,7 @@ import net.minecraft.world.level.Level;
  * 由 {@link FRConfig#SOUND_VOLUME_MULTIPLIER} 统一缩放。
  * 这样音量大小只在一处可调，也避免以后补物品时又漏掉几处。
  *
- * <p>只缩放音量，不改音调 —— 音调是音色的一部分，改了会变味。
+ * <p>只缩放音量，不改音调 —— 音调是音色的一部分，改动会改变音色。
  */
 public final class SoundHelper {
 

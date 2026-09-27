@@ -26,16 +26,15 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 月耀咒书降下的耀月之辉，1.7.10 原版 {@code EntityLunarFlare}，
- * 本项目注册名 {@code lunar_flare}（沿用 lang 里现成的 {@code entity.forgotten_relics_plus.lunar_flare}）。
+ * 本移植注册名 {@code lunar_flare}（沿用 lang 里现成的 {@code entity.forgotten_relics_plus.lunar_flare}）。
  *
  * <p>原版逻辑（{@code EntityThrowable} 子类）：
  * <ul>
- *   <li><b>重力 0</b>，直线飞行，1000 tick 后自毁；</li>
- *   <li>构造时锁定「准星指向的那个方块」{@code (lockX, lockY, lockZ)}，初速由物品算成朝该方块俯冲；</li>
- *   <li>命中活体（且不是发射者）时造成固定的<b>直击伤害</b>；<b>但不会因此消失</b>，
- *       耀月之辉继续飞向锁定方块；</li>
- *   <li>命中「锁定方块」的那一刻才引爆：以自身为中心 5×5×5 格内的所有活体（发射者除外）
- *       各受一次<b>范围伤害</b>，并被从耀月之辉中心向外推开——推力是
+ *   <li>重力 0，直线飞行，1000 tick 后自毁；</li>
+ *   <li>构造时锁定准星指向的那个方块 {@code (lockX, lockY, lockZ)}，初速由物品算成朝该方块俯冲；</li>
+ *   <li>命中活体（且不是发射者）时造成固定的直击伤害，但不会因此消失，耀月之辉继续飞向锁定方块；</li>
+ *   <li>命中锁定方块的那一刻才引爆：以自身为中心 5×5×5 格内的所有活体（发射者除外）
+ *       各受一次范围伤害，并被从耀月之辉中心向外推开——推力是
  *       {@code normalize(目标中心 - 自身中心) / 距离}，超过 1.0 时归一化，
  *       Boss（{@code IBossDisplayData}）额外减半；随后播放方块破坏粒子、
  *       {@code ForgottenRelics:sound.lunarFlare} 与两发粒子网络包（48 颗 wisp + 一团大光斑），
@@ -47,8 +46,8 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>1.21.1 的对应关系：
  * <ul>
- *   <li>基类换成 {@link FRHomingProjectile}（无重力、有生存时限、命中钩子）。本实体<b>不用它的追踪</b>
- *       （{@code homingStrength} 保持 0）：原版本来就没有追踪，只认初始速度；</li>
+ *   <li>基类换成 {@link FRHomingProjectile}（无重力、有生存时限、命中钩子）。本实体不用它的追踪，
+ *       {@code homingStrength} 保持 0：原版本来就没有追踪，只认初始速度；</li>
  *   <li>原版 {@code DamageSourceMagic} → {@link FRDamageTypes#FORGOTTEN_MAGIC}
  *       （既有类型，直接复用，见 {@code damage_type/forgotten_magic.json}）；</li>
  *   <li>原版用 {@code IEntityAdditionalSpawnData} 同步 lock 坐标，但客户端从不读它
@@ -58,19 +57,19 @@ import net.minecraft.world.phys.Vec3;
  *       爆发用一圈 {@code END_ROD} + 中心一个 {@code FLASH}；</li>
  *   <li>原版 {@code world.playAuxSFX(2001, ...)}（方块破坏粒子）→ {@code ServerLevel#levelEvent(2001, ...)}，
  *       方块状态 id 用 {@code Block.getId(state)}；</li>
- *   <li>原版 {@code sound.lunarFlare}（音量 16）→ 模组自带音效 {@link FRSounds#LUNAR_FLARE}，
+ *   <li>原版 {@code sound.lunarFlare}（音量 16）→ 本移植自带音效 {@link FRSounds#LUNAR_FLARE}，
  *       经 {@link SoundHelper#play} 统一压低音量。</li>
  * </ul>
  *
- * <p><b>三处刻意的取舍</b>：
+ * <p>三处刻意的取舍：
  * <ol>
  *   <li>原版直击伤害与范围伤害在代码里是<b>写死的 100 / 75</b>，而配置项
  *       {@code damageLunarFlareDirect}/{@code damageLunarFlareImpact}（默认 72 / 40）只被 tooltip 读取——
- *       这是原版的疏漏（配置与实际行为不一致）。本项目把配置接到实际结算上，
+ *       配置与实际行为不一致是原版的疏漏。本移植把配置接到实际结算上，
  *       于是开箱即为 72 / 40，与 tooltip 显示的数值一致；</li>
- *   <li>原版命中活体后不 {@code setDead}，耀月之辉会继续飞向目标；本项目逐字保留这一点
+ *   <li>原版命中活体后不 {@code setDead}，耀月之辉会继续飞向目标；本移植逐字保留这一点
  *       （{@link #onHit} 只对非活体命中移除实体）；</li>
- *   <li>原版判定范围是零尺寸实体的 {@code boundingBox.expand(2.5, 2.5, 2.5)}；本项目实体是
+ *   <li>原版判定范围是零尺寸实体的 {@code boundingBox.expand(2.5, 2.5, 2.5)}；本移植实体是
  *       0.25×0.25（见 {@code FREntities}），用 {@code getBoundingBox().inflate(2.5)} 近似，误差约 0.125 格。</li>
  * </ol>
  */
@@ -195,7 +194,7 @@ public class EntityLunarFlare extends FRHomingProjectile {
         BlockPos lockPos = new BlockPos(lockX, lockY, lockZ);
         BlockState state = level().getBlockState(lockPos);
         server.levelEvent(2001, lockPos, Block.getId(state));
-        // 原版 sound.lunarFlare：音量 16、音调 0.8 + rand * 0.2。现用模组自带音效，不再用原版爆炸音近似。
+        // 原版 sound.lunarFlare：音量 16、音调 0.8 + rand * 0.2，用本移植自带音效播放。
         SoundHelper.play(level(), lockX, lockY, lockZ, FRSounds.LUNAR_FLARE.get(),
                 SoundSource.PLAYERS, 16.0F, 0.8F + random.nextFloat() * 0.2F);
         discard();

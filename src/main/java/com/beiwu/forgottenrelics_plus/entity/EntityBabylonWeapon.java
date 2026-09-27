@@ -38,27 +38,27 @@ import vazkii.botania.common.handler.BotaniaSounds;
 
 /**
  * 神化召唤的巴比伦武器，1.7.10 原版 {@code EntityBabylonWeaponSS}，
- * 本项目注册名 {@code babylon_weapon}（语言键 {@code entity.forgotten_relics_plus.babylon_weapon}）。
+ * 本移植注册名 {@code babylon_weapon}（语言键 {@code entity.forgotten_relics_plus.babylon_weapon}）。
  *
  * <p>原版逻辑（{@code EntityThrowableCopy} 子类，即 Botania 版 {@code EntityThrowable} 的拷贝）：
  * <ul>
- *   <li>前 15 tick（{@code ticksExisted <= 15}）<b>滞空蓄力</b>：速度清零，每 20 tick 有 1 次
+ *   <li>前 15 tick（{@code ticksExisted <= 15}）滞空蓄力：速度清零，每 20 tick 有 1 次
  *       以 0.1 音量播 {@code botania:babylonSpawn}；</li>
  *   <li>之后进入 {@code liveTicks} 计时：{@code liveTicks < delay} 时继续悬停；
- *       {@code liveTicks == delay} 的那一 tick <b>锁定发射</b>——从玩家眼睛沿视线做 64 格射线
+ *       {@code liveTicks == delay} 的那一 tick 锁定发射——从玩家眼睛沿视线做 64 格射线
  *       （{@code ToolCommons.raytraceFromEntity(world, player, true, 64.0)}，遇液体也停），
  *       命中方块就瞄准方块中心，没命中就取「视线 × 64 + 玩家位置」；速度 =
  *       {@code normalize(瞄准点 - 自身中心) × 3}，并播 {@code botania:babylonAttack}。
  *       神化把 {@code delay} 设成 0，所以蓄力一结束就发射；{@code delay} 是给「先铺场、再齐射」
  *       那类用法留的（王之宝钥）。</li>
- *   <li>飞行途中<b>每 tick</b>检查「上一 tick 位置到当前位置」这条线段外扩 2 格的盒子里的活体
+ *   <li>飞行途中每 tick 检查「上一 tick 位置到当前位置」这条线段外扩 2 格的盒子里的活体
  *       （排除发射者）：第一个命中者吃一发 {@code damageApotheosisDirect} 的魔法伤害，并被沿
  *       「目标中心 − 自身中心」方向推开（推力大小 {@code 1/距离}，超过 1 归一化，Boss 减半），
- *       然后<b>立刻原地爆炸</b>；</li>
+ *       然后立刻原地爆炸；</li>
  *   <li>爆炸（原版 {@code onImpact}）：{@code imposeBurst} + 对自身包围盒外扩 3 格内的所有活体
  *       各造成一发 {@code damageApotheosisImpact} 并同样推开 + 播 {@code random.explode}
  *       （音量 8.0）+ 给周围 128 格内的玩家发 40 颗黄白色 wisp 粒子包，最后 {@code setDead}。
- *       命中<b>草/树叶/液体</b>不触发爆炸，弹体继续飞；命中发射者本身也不结算、不消失；</li>
+ *       命中草/树叶/液体不触发爆炸，弹体继续飞；命中发射者本身也不结算、不消失；</li>
  *   <li>速度每 tick 都被写回原值，所以 {@code EntityThrowable} 自带的 0.99 阻尼与重力都等于被取消，
  *       实际是一条 3 格/tick 的直线；</li>
  *   <li>{@code liveTicks > delay} 后每 tick 在自身位置撒一颗黄色 wisp；
@@ -67,15 +67,15 @@ import vazkii.botania.common.handler.BotaniaSounds;
  *
  * <p>1.21.1 的对应关系：
  * <ul>
- *   <li>基类换成 {@link FRHomingProjectile}（无重力、有生存时限、命中钩子）。<b>不用它的追踪</b>
+ *   <li>基类换成 {@link FRHomingProjectile}（无重力、有生存时限、命中钩子）。不用它的追踪
  *       （{@code homingStrength} 保持 0）：原版是一次性锁定后直线飞，不是持续追踪；</li>
- *   <li>原版把「移动」交给 {@code super.onUpdate()}（{@code EntityThrowable}），并<b>在移动后把速度
- *       写回</b>来抵消阻尼。这里同样：{@link #tick()} 先调 {@code super.tick()} 完成移动与碰撞，
+ *   <li>原版把「移动」交给 {@code super.onUpdate()}（{@code EntityThrowable}），并在移动后把速度
+ *       写回来抵消阻尼。这里同样：{@link #tick()} 先调 {@code super.tick()} 完成移动与碰撞，
  *       再在每个飞行 tick 用 {@link #launchVelocity} 覆盖回速度；</li>
  *   <li>原版 {@code DamageSourceMagic} → {@link FRDamageTypes#FORGOTTEN_MAGIC}（复用既有类型）；</li>
  *   <li>原版用 {@code IBossDisplayData} 判断 Boss 把推力减半；1.21.1 没有共同接口，直接列
  *       {@link EnderDragon} 与 {@link WitherBoss}（与 {@code EntityLunarFlare} 同一写法）；</li>
- *   <li><b>不写任何自定义网络包</b>：{@code ApotheosisParticleMessage}（40 颗 wisp）与
+ *   <li>不写任何自定义网络包：{@code ApotheosisParticleMessage}（40 颗 wisp）与
  *       {@code SuperpositionHandler.imposeBurst}（Thaumcraft 的爆裂特效）都改成服务端
  *       {@code ServerLevel#sendParticles}；每 tick 的拖尾则和其余法球一样挪到客户端本地生成
  *       （见 {@link #spawnTrailParticles()}），不再占带宽；</li>
@@ -86,23 +86,22 @@ import vazkii.botania.common.handler.BotaniaSounds;
  *       {@link SoundEvents#GENERIC_EXPLODE}。两者都过 {@link SoundHelper#play} 统一压低音量。</li>
  * </ul>
  *
- * <p><b>与 Botania 现代版 {@code BabylonWeaponEntity} 的对应</b>：
+ * <p>与 Botania 现代版 {@code BabylonWeaponEntity} 的对应：
  * 六个同步字段里本实体保留 {@code variety / chargeTicks / liveTicks / delay / rotation}
  * （渲染器 {@code client/FRBabylonWeaponRenderer} 全部要用）；唯独 {@code charging}
- * 不保留——本项目用 {@code tickCount <= 15} 直接推得蓄力窗口，没有需要同步的独立状态。
- * 原版 {@code rotation} 由 Apotheosis 在召唤时写入
- * （{@code ItemApotheosis.java:150}：{@code setRotation(wrapAngleTo180_float(-player.rotationYawHead + 180))}），
- * 渲染器用它决定武器绕 Y 轴的朝向。此前这里错误地写成「原版从不写入」，
- * 相应地召唤路径漏了这一步，武器朝向恒为 0——1.6.3 已修正。
+ * 不保留——本移植用 {@code tickCount <= 15} 直接推得蓄力窗口，没有需要同步的独立状态。
+ * {@code rotation} 必须由召唤路径写入
+ * （原版 {@code ItemApotheosis.java:150}：{@code setRotation(wrapAngleTo180_float(-player.rotationYawHead + 180))}），
+ * 渲染器用它决定武器绕 Y 轴的朝向；不写则朝向恒为 0。
  *
  * <p><b>与原版的偏差</b>：
  * <ol>
  *   <li>武器形体现在由 {@code client/FRBabylonWeaponRenderer} 画：用 Botania 的
  *       {@code MiscellaneousModels.INSTANCE.kingKeyWeaponModels[variety]} 模型 + 光晕 quad。
- *       模型不可用时（未烘焙 / 索引越界）退回本模组的金色公告板光球；</li>
+ *       模型不可用时（未烘焙 / 索引越界）退回本移植的金色公告板光球；</li>
  *   <li>拖尾仍用 {@code variety} 的 12 档暖金色调上色（见 {@link #VARIETY_COLORS}），
  *       作为模型之外的额外汇聚视觉区分；</li>
- *   <li>原版实体碰撞箱是 0；本项目实体按约定 0.25×0.25。直击扫掠盒与爆炸范围仍用
+ *   <li>原版实体碰撞箱是 0；本移植实体按约定 0.25×0.25。直击扫掠盒与爆炸范围仍用
  *       {@code inflate(2)} / {@code inflate(3)} 近似，半径误差约 0.125 格；</li>
  *   <li>原版那 40 颗 wisp 是自定义网络包定点生成、各自带 ±0.125 的初速
  *       （{@code ApotheosisParticleMessage(x, y, z, 40)}，每颗
@@ -179,7 +178,7 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
     private static final EntityDataAccessor<Integer> DATA_DELAY =
             SynchedEntityData.defineId(EntityBabylonWeapon.class, EntityDataSerializers.INT);
 
-    /** 原版 {@code rotation}：绕 Y 轴的朝向；神化/RE 的召唤路径不设置它，保持 0。 */
+    /** {@code rotation}（Botania 同名同步字段）：绕 Y 轴的朝向；召唤路径必须写入，否则武器朝向恒为 0。 */
     private static final EntityDataAccessor<Float> DATA_ROTATION =
             SynchedEntityData.defineId(EntityBabylonWeapon.class, EntityDataSerializers.FLOAT);
 
@@ -302,7 +301,7 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
                 setDeltaMovement(launchVelocity);
             }
             setLiveTicks(liveTime + 1);
-            // 原版每 tick 的直击扫掠；命中并爆炸时本轮结束。
+            // 原版每 tick 的直击扫掠；命中即爆炸并消失，不再继续。
             if (sweepDirectHit()) {
                 return;
             }
@@ -451,9 +450,9 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
      * （与 {@code ItemVoidGrimoire#voidBurst} 同一方案）。
      */
     private static void burst(ServerLevel level, Vec3 center) {
-        // 原版 imposeBurst(.., 1.5f) → BurstMessage → 模组<b>自带</b>的 FXBurst 粒子：
+        // 原版 imposeBurst(.., 1.5f) → BurstMessage → 本移植自带的 FXBurst 粒子：
         // 一颗加法混合的青绿色柔光精灵（颜色 0 / 0.8+rand*0.2 / 0.4+rand*0.6，寿命 31 tick，尺寸 ×1.5）。
-        // 此前用 ParticleTypes.FLASH 顶替——那是一张巨大的白色方片，玩家反馈「一层白色遮罩，很不好看」。
+        // 不要用 ParticleTypes.FLASH：它是巨大的白色方片，会盖一层白色遮罩。
         FRParticles.serverWispBurst(level, center.x, center.y, center.z,
                 0.0F,
                 (float) (0.8D + level.random.nextDouble() * 0.2D),
@@ -468,9 +467,9 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
      *（9 参重载里第 8 个是 size、第 9 个是 gravity），对应
      * {@link FRParticles#wisp}（maxAgeMul 默认 1.0、gravity 默认 0）。
      *
-     * <p>1.7.0 起改由客户端本地生成（{@code Level#addParticle}），不再走
+     * <p>拖尾由客户端本地生成（{@code Level#addParticle}），不走
      * {@code ServerLevel#sendParticles} 的每 tick 发包；位置取客户端插值后的 {@code getX/Y/Z}，
-     * 与原先服务端坐标等价。
+     * 与服务端坐标等价。
      *
      * <p>服务端原条件是 {@code liveTime > delay && launched}。客户端没有 {@code launched} 字段，
      * 但 {@code launched} 只在 {@code liveTime == delay} 那一 tick 变真、紧接着 {@code liveTicks}

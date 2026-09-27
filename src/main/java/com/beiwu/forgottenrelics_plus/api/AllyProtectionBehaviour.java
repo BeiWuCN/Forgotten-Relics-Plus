@@ -5,14 +5,14 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * 「替附近玩家承伤」的行为（远古之庇护的伤害转嫁）。
+ * 「替附近玩家承伤」行为：远古之庇护把伤害转嫁给附近佩戴者。
  *
- * <p>它与 {@link IncomingDamageBehaviour} 的区别在<b>触发者是谁</b>：后者的触发者是受伤的人
- * 本人（受害者身上戴了什么就触发什么），而这里的触发者是附近<b>别人</b>身上的物品。
- * 因此派发方向相反——从受害者出发，去找附近戴着该物品的玩家。
+ * <p>与 {@link IncomingDamageBehaviour} 的关键区别在<b>触发者不同</b>：后者是受伤者本人
+ * （受害者身上戴了什么就触发什么），这里是附近别人身上的物品。因此派发方向相反——
+ * 从受害者出发，去找附近戴着该物品的玩家。
  *
  * <p>原版 {@code findPlayerWithBauble} 在候选者里随机挑一个：同一件物品附近有多位佩戴者时，
- * 只有随机挑中的那一位承伤。派发器照此实现。
+ * 只有被挑中的那一位承伤。派发器照此实现。
  */
 public interface AllyProtectionBehaviour {
 

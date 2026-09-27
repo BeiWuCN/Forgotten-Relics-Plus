@@ -18,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 核子之怒的追踪导弹（Rageous Missile），1.7.10 原版 {@code EntityRageousMissile}，
- * 本项目注册名 {@code rageous_missile}（沿用 RE 的实体注册名）。
+ * 本移植注册名 {@code rageous_missile}（沿用 RE 的实体注册名）。
  *
  * <p>原版逻辑（{@code EntityThrowable} 子类）：
  * <ul>
@@ -26,15 +26,15 @@ import net.minecraft.world.phys.Vec3;
  *       因此 {@code EntityThrowable} 自带的 0.99 阻尼与 0.03 重力都被这段覆盖，实际不生效；
  *       发射后的前 30 tick 若竖直分量为负，强制取绝对值（先把弹体抬起来再追）；</li>
  *   <li>没有目标时，在自身 ±16 格的随机点方向以 0.5 速度乱飞；</li>
- *   <li><b>目标搜索</b>：每 tick 先校验当前目标（血量 &gt; 0、未死、仍在已加载实体表里），
+ *   <li>目标搜索：每 tick 先校验当前目标（血量 &gt; 0、未死、仍在已加载实体表里），
  *       失效则清空，然后在自身 ±32 格（{@code double range = 32.0}）内随机挑一个活体，
- *       并<b>排除发射者</b>；</li>
- *   <li><b>自毁</b>：服务端上「没有目标」且 {@code time > 160} 时消失；{@code evil} 开关
+ *       并排除发射者；</li>
+ *   <li>自毁：服务端上「没有目标」且 {@code time > 160} 时消失；{@code evil} 开关
  *       （原版只由物品传 {@code false}，另有未使用的 {@code true} 分支）还会在距目标 &lt; 1 格时自毁；</li>
- *   <li><b>命中结算</b>：只有撞到的实体<b>正好是当前锁定的目标</b>时才造成
+ *   <li>命中结算：只有撞到的实体正好是当前锁定的目标时才造成
  *       {@code nuclearFuryDamageMIN + random * (MAX - MIN)} 的 {@code DamageSourceMagic} 伤害
  *       （原版确实读了配置，而不是硬编码）、播 {@code random.fizz} 并消失；
- *       撞方块或非目标实体一律<b>穿过</b>，既不结算也不消失（对应 lore 的
+ *       撞方块或非目标实体一律穿过，既不结算也不消失（对应 lore 的
  *       "Charges can pass through most blocks"）；</li>
  *   <li>粒子：从上一 tick 位置到当前位置沿途每隔 0.05 格撒一颗 Botania sparkle
  *       （颜色 r=0、g=0.8~1.0、b=0.4~1.0），另有约 2/steps 的概率额外再撒一颗；
@@ -43,13 +43,13 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>1.21.1 的对应关系：
  * <ul>
- *   <li>基类换成 {@link FRHomingProjectile}，但<b>不用它的追踪</b>（{@code homingStrength} 保持 0）：
+ *   <li>基类换成 {@link FRHomingProjectile}，但不用它的追踪（{@code homingStrength} 保持 0）：
  *       原版是「直接重写速度」而不是「叠加加速度」，且目标是随机搜出来的，整段自己实现；</li>
  *   <li>原版 {@code IEntityAdditionalSpawnData} 同步的 {@code evil} / {@code TARGET_ID} /
  *       thrower 名字，在 1.21.1 由基类的 {@code SynchedEntityData} 与 {@code getOwner()} 承担：
  *       目标沿用基类的 {@code setTarget/resolvedTarget}，发射者直接用 {@code getOwner()}，
  *       {@code evil} 只有服务端逻辑用到，无需同步；</li>
- *   <li><b>「撞上非目标不消失」要覆写 {@code onHit}</b>：基类对任何命中都会 {@code discard()}，
+ *   <li>「撞上非目标不消失」要覆写 {@code onHit}：基类对任何命中都会 {@code discard()}，
  *       原版却只在命中锁定目标时结算，所以这里整段覆写，把结算放进 {@code onImpact}；</li>
  *   <li>原版 {@code DamageSourceMagic} → {@link FRDamageTypes#FORGOTTEN_MAGIC}（复用已建好的类型）；</li>
  *   <li>粒子：原版就是 Botania 的 {@code sparkleFX}（拖尾）与 {@code wispFX}（与活体重叠时的 12 颗），
@@ -59,17 +59,17 @@ import net.minecraft.world.phys.Vec3;
  *       （与 EntityDarkMatterOrb 同一替代方案），照原版音量 2.0 / 音调 0.8 + 随机 0.2。</li>
  * </ul>
  *
- * <p><b>两处与 RE 的差异</b>：
+ * <p>两处与 RE 的差异：
  * <ol>
  *   <li>RE 的 {@code EntityRageousMissile} 把伤害硬编码成 {@code 24.0F + random * 8.0F}，
  *       并把尺寸缩到 0.15；1.7.10 读的是配置、尺寸是 {@code EntityThrowable} 的 0.25，
  *       这里按 1.7.10 走（尺寸在 {@link FREntities} 里统一为 0.25×0.25）；</li>
  *   <li>RE 给物品加了「左键清除 32 格内自己的导弹」，1.7.10 的 {@code ItemMissileTome}
- *       <b>没有</b>这个功能，所以本项目不实现；配置 {@code nuclearFuryClearRange} 改用作本实体的
+ *       没有这个功能，所以本移植不实现；配置 {@code nuclearFuryClearRange} 改用作本实体的
  *       目标搜索半径——1.7.10 那里写死的正是 32。</li>
  * </ol>
  *
- * <p><b>原版两处死代码 / 笔误</b>（按「1.7.10 是唯一行为参照」逐字保留需要的部分）：
+ * <p>原版两处死代码 / 笔误（按「1.7.10 是唯一行为参照」逐字保留需要的部分）：
  * {@code lockX / lockY / lockZ} 三个字段只会被赋值、从不被读取；导弹出生 Y 写成
  * {@code posY + 3.8 + (random - 1.55)}（RE 文档怀疑应为 {@code (random - 0.5) * 3.1}），
  * 出生点算术在物品侧逐字保留。
@@ -88,9 +88,9 @@ public class EntityRageousMissile extends FRHomingProjectile {
     /**
      * 无目标时「流线」方向的扩散系数。
      *
-     * <p>原版这一段是每 tick 重取一个自身 ±16 格内的随机点当方向（{@code EntityRageousMissile.java:155-162}），
-     * 速度方向每 tick 都在跳，观感像蚊子。现按项目负责人要求改成「沿发射者视线方向、略微分散的流线运动」，
-     * 这是<b>刻意偏离原版</b>：方向只取一次，每颗球在视线基础上叠 ±{@code STREAM_SPREAD} 的随机量。
+     * <p><b>刻意偏离原版</b>：原版这段每 tick 重取一个自身 ±16 格内的随机点当方向
+     * （{@code EntityRageousMissile.java:155-162}），速度方向每 tick 都在跳；
+     * 这里方向只取一次，每颗球沿发射者视线方向叠 ±{@code STREAM_SPREAD} 的随机量。
      */
     private static final double STREAM_SPREAD = 0.18D;
 
@@ -146,13 +146,12 @@ public class EntityRageousMissile extends FRHomingProjectile {
             return;
         }
 
-        // 速度<b>两端都算</b>——与基类 FRHomingProjectile 在 1.6.2 做的修正同一口径。
+        // 速度必须两端都算，与基类 FRHomingProjectile 的处理同一口径。
         //
-        // 此前这里写的是「客户端直接 return」，于是客户端只能被动跟随每 tick 的服务端位置包，
-        // 一旦有延迟或抖动就表现为「一卡一卡」。1.6.2 那次修正只改到了基类的 applyHoming，
-        // 而这颗导弹不用基类的追踪（homingStrength 保持 0、速度由这里整条重写），所以没被覆盖到。
-        //
-        // 客户端的职责仍然只有「把速度算成与服务端一致的那一份」：不写同步数据、不做任何结算。
+        // 客户端只被动跟随每 tick 的服务端位置包时，一旦有延迟或抖动就表现为移动卡顿。
+        // 基类的 applyHoming 已处理这一点，但这颗导弹不用基类的追踪
+        // （homingStrength 保持 0、速度由这里整条重写），所以必须自己算。
+        // 客户端的职责只有「把速度算成与服务端一致的那一份」：不写同步数据、不做结算。
         boolean client = level().isClientSide();
         // 原版 getTarget() 因为用的是非短路 &，每 tick 都会跑一次；客户端只读服务端同步下来的目标 id。
         boolean hasTarget = client || refreshTarget();
@@ -181,7 +180,7 @@ public class EntityRageousMissile extends FRHomingProjectile {
             }
         } else if (client) {
             // 客户端在「无目标」时什么都不算：位置包同时带着服务端的 delta，
-            // 跟着它飞就与服务端一致；自己再算一份反而两边打架（那正是之前的「一卡一卡」）。
+            // 跟着它飞就与服务端一致；自己再算一份会两边打架。
         } else {
             // 无目标时的「流线运动」：方向只取一次并保持不变（原版是每 tick 重取随机点，方向乱跳）。
             // 见 STREAM_SPREAD 的说明——这是刻意偏离原版。

@@ -42,39 +42,39 @@ import net.minecraft.world.phys.Vec3;
  * 扣费发生在目标校验之前，抽不出来立刻停止；然后清零目标坠落距离、施加 30 tick / amplifier 100 的
  * 移动缓慢、把 {@code motionY} 写成 0.03（缓缓上浮）、置 {@code noClip = true}，并广播紫色 wisp 与
  * 传送门粒子；第一 tick 播一次蓄力音。最后一 tick 结算：爆裂特效 + 129 颗向外炸开的 wisp +
- * {@code thaumcraft:craftfail} 的替代音效，再 {@code overthrow} 把目标丢进<b>当前维度</b>的虚空
+ * {@code thaumcraft:craftfail} 的替代音效，再 {@code overthrow} 把目标丢进当前维度的虚空
  *（X/Z 各 ±10001 随机、Y = -100000 ± 10001）：非玩家目标搬完立即抹除，玩家目标留在虚空等死并
  * 全服广播 type 1 消息（"into the Void."），最后进 30 tick 共用冷却。
  *
  * <p>1.21.1 对应：{@code onItemRightClick / onUsingTick / getMaxItemUseDuration / EnumAction.bow} →
- * {@code use / onUseTick / getUseDuration / UseAnim.BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
- *（见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），按本模组统一约定改成 {@link FRRechargable}
- * 的物品自身充能；以玩家为键的静态 map {@code targetList} → {@link FRDataComponents#VOID_GRIMOIRE_TARGET}；
- * 原版自定义网络包（{@code PacketVoidMessage / BurstMessage / EntityMotionMessage}）全部改由服务端直接
- * 生成粒子 / 改速度并靠原版同步送达；音效 {@code forgottenrelics:sound.mdcharge} → {@link FRSounds#MD_CHARGE}、
+ * {@code use / onUseTick / getUseDuration / UseAnim.BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>，
+ * 按本移植统一约定改成 {@link FRRechargable} 的物品自身充能；以玩家为键的静态 map {@code targetList}
+ * → {@link FRDataComponents#VOID_GRIMOIRE_TARGET}；原版自定义网络包（{@code PacketVoidMessage /
+ * BurstMessage / EntityMotionMessage}）全部改由服务端直接生成粒子 / 改速度并靠原版同步送达；
+ * 音效 {@code forgottenrelics:sound.mdcharge} → {@link FRSounds#MD_CHARGE}、
  * {@code thaumcraft:craftfail} → {@link SoundEvents#FIRE_EXTINGUISH}，都过 {@link SoundHelper#play} 压音量。
  *
- * <p>{@code voidGrimoireEnabled} 总开关<b>没有移植</b>：它原版只包住研究词条的注册，而 1.21.1 的研究
+ * <p>{@code voidGrimoireEnabled} 总开关没有移植：它原版只包住研究词条的注册，而 1.21.1 的研究
  * 只能写数据包 JSON、没有 Java 注册/注销 API（与 {@code falseJusticeEnabled} 同样处理），想禁用只能改
  * {@code research_entry/void_grimoire.json}。
  *
- * <p><b>与 1.7.10 的偏差</b>：
+ * <p>与 1.7.10 的偏差：
  * <ol>
- *   <li>原版 {@code onUsingTick} 两侧都跑（客户端也自己改速度、加缓慢），这里<b>玩法逻辑</b>只在服务端跑，
- *       可见结果一致；<b>但每 tick 的收束粒子仍照原版放在客户端本地生成</b>（{@code channelingParticles}），
+ *   <li>原版 {@code onUsingTick} 两侧都跑（客户端也自己改速度、加缓慢），这里玩法逻辑只在服务端跑，
+ *       可见结果一致；但每 tick 的收束粒子仍照原版放在客户端本地生成（{@code channelingParticles}），
  *       否则只能逐颗发包（见 {@link #channelingParticles} 的说明）；</li>
  *   <li>原版的 {@code localCooldown = 60} 是纯客户端防连点，这里只保留服务端权威的 30 tick 共用冷却；</li>
- *   <li>原版把 {@code noClip = true}（1.21.1 里字段名为 {@code noPhysics}）写在目标身上后<b>从不复位</b>：
+ *   <li>原版把 {@code noClip = true}（1.21.1 里字段名为 {@code noPhysics}）写在目标身上后从不复位：
  *       引导被提前打断（松手、Vis 耗尽、目标消失）时目标会永久穿墙。这是 1.7.10 自身的缺陷，按
- *       「以 1.7.10 为准」<b>逐字保留</b>。另外非玩家目标 {@code setPosition + setDead()} →
+ *       「以 1.7.10 为准」逐字保留。另外非玩家目标 {@code setPosition + setDead()} →
  *       {@code teleportTo(x, y, z) + discard()}，玩家目标走 {@code ServerPlayer#teleportTo(ServerLevel, ..)}
  *       保证客户端被同步；</li>
  *   <li>原版 tooltip 的 Ctrl 分支（{@code FRVisPerTick.lore} + 各要素成本）依赖 {@code GuiScreen.isCtrlKeyDown}，
  *       而共享基类 {@link FRItem} 只实现 Shift 展开，这里保持一致。</li>
  * </ol>
  *
- * <p><b>Vis 折算</b>：原版每 tick 抽秩序（Ordo）9 + 混沌（Perditio）16 = 25 厘 Vis = 0.25 点/tick，
- * 即 <b>5 点/秒</b>；充能是整数，故直接取 5，并在每一秒的第一 tick 扣一次（与永恒放逐之诫、核子之怒
+ * <p>Vis 折算：原版每 tick 抽秩序（Ordo）9 + 混沌（Perditio）16 = 25 厘 Vis = 0.25 点/tick，
+ * 即 5 点/秒；充能是整数，故直接取 5，并在每一秒的第一 tick 扣一次（与永恒放逐之诫、核子之怒
  * 同一扣费节奏），一次完整引导（100 tick）合计扣 5 次 = 25 点。
  */
 public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingGear {
@@ -290,7 +290,7 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
      * 对应原版 {@code OverthrowChatMessage(type 1)} 的全服广播：
      * {@code <施法者> has overthrown <目标> into the Void.}
      *
-     * <p>本项目<b>不写自定义网络包</b>，改用原版 {@link Component} + {@code PlayerList#broadcastSystemMessage}
+     * <p>本移植不写自定义网络包，改用原版 {@link Component} + {@code PlayerList#broadcastSystemMessage}
      *（等价于原版的 {@code sendToAll}）。注意 type 1 用的是 {@code message.overthrown3}
      *（"into the Void."），与永恒放逐之诫用的 {@code message.overthrown2}（"into the Nether."）不同。
      */
@@ -318,10 +318,10 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
      * 初速=(中心-取点)*0.08, maxAgeMul=0.45)} 让紫色 wisp 向内收束；
      * 再在中心撒 5 颗随机初速的原版传送门粒子（原版就是 {@code EntityPortalFX}）。
      *
-     * <p><b>纯客户端本地粒子</b>：1.7.10 这段本来就写在客户端的 {@code onUsingTick} 里
+     * <p>纯客户端本地粒子：1.7.10 这段本来就写在客户端的 {@code onUsingTick} 里
      *（服务端的 {@code spawnParticle} 是空操作），所以这里逐颗 {@code addParticle}，
-     * 与 RE 逐字一致且<b>一个包都不发</b>。此前按服务端 {@code sendParticles} 写时是每 tick
-     * 13 个包（8 颗收束 wisp 各一包 + 5 颗传送门粒子各一包），即 §11 点名的带宽热点。
+     * 与 RE 逐字一致且一个包都不发。不要改回服务端 {@code sendParticles}：那样每 tick 要发
+     * 13 个包（8 颗收束 wisp 各一包 + 5 颗传送门粒子各一包），是明确的带宽热点。
      *
      * <p>这类「初速方向随落点变化」的收束粒子无法用 {@code count > 0} 整簇发包表达：
      * 整簇的三个轴只能共用一个高斯初速标量（{@code ClientPacketListener#handleParticleEvent}）。
@@ -373,7 +373,7 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
      * 一簇向外炸开的紫色 effect 粒子」近似，向外速度随 size 放大。
      */
     private static void voidBurst(ServerLevel level, Vec3 center) {
-        // 原版 imposeBurst(.., 2.0f) → 模组自带的 FXBurst（青绿加法柔光精灵），不是白色方片。
+        // 原版 imposeBurst(.., 2.0f) → 本移植自带的 FXBurst（青绿加法柔光精灵），不是白色方片。
         FRParticles.serverWispBurst(level, center.x, center.y, center.z,
                 0.0F,
                 (float) (0.8D + level.random.nextDouble() * 0.2D),
@@ -388,7 +388,7 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
      * 先按「视线线段外扩 3 格」的包围盒粗筛，再对每个候选实体的碰撞箱（外扩 0.1，即原版
      * {@code getCollisionBorderSize()}）做线段求交，取交点上离眼睛最近的活体。
      *
-     * <p>与永恒放逐之诫、错位之典里那份同名实现完全一致（项目按「一件物品一份自足实现」的
+     * <p>与永恒放逐之诫、错位之典里那份同名实现完全一致（本移植按「一件物品一份自足实现」的
      * 惯例各留一份，暂未抽公共工具）。
      */
     private static LivingEntity findPointedEntity(Level level, Player player) {

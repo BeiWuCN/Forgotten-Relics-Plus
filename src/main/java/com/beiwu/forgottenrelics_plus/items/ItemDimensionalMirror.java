@@ -27,7 +27,7 @@ import net.minecraft.world.phys.Vec3;
 /**
  * 空间魔镜（Dimensional Mirror）。
  *
- * <p>1.12.2 原版（{@code ItemDimensionalMirror}）逻辑：
+ * <p>1.12.2 移植版（RE）的 {@code ItemDimensionalMirror} 逻辑：
  * <ul>
  *   <li>Shift + 右键：把当前位置与维度写进物品 NBT；</li>
  *   <li>普通右键：若已记录，开始 {@code dimensionalMirrorChannelDuration}（默认 80 tick）的蓄力，
@@ -41,14 +41,14 @@ import net.minecraft.world.phys.Vec3;
  * <ul>
  *   <li>物品 NBT → 数据组件。1.20.5 之后 {@code ItemStack} 直接存 NBT 的写法被移除，
  *       这里沿用 NeoForge 的 {@code minecraft:custom_data} 组件，
- *       键名保持原版的 {@code IStoredX / IStoredY / IStoredZ / IDimensionID}，
+ *       键名保持 RE 的 {@code IStoredX / IStoredY / IStoredZ / IDimensionID}，
  *       这样从 1.12.2 存档迁移过来的镜子还能读出坐标；</li>
- *   <li>维度编号（原版是 int）→ {@code ResourceKey<Level>}，存的是维度 ID 字符串；</li>
+ *   <li>维度编号（RE 是 int）→ {@code ResourceKey<Level>}，存的是维度 ID 字符串；</li>
  *   <li>跨维度传送：{@code ServerPlayer#teleportTo(ServerLevel, ...)}
- *       在目标维度不同时会自动完成换维度流程，替代原版的 {@code ExtradimensionalTeleporter}。</li>
+ *       在目标维度不同时会自动完成换维度流程，替代 RE 的 {@code ExtradimensionalTeleporter}。</li>
  * </ul>
  *
- * <p>注意：原版还会在蓄力时用 {@code SuperpositionHandler.imposeBurst} 发一个网络包给周围玩家做特效。
+ * <p>注意：RE 还会在蓄力时用 {@code SuperpositionHandler.imposeBurst} 发一个网络包给周围玩家做特效。
  * 1.21.1 里粒子由服务端 {@code sendParticles} 直接广播，不再需要网络包。
  */
 public class ItemDimensionalMirror extends FRItem implements FRRechargable {
@@ -69,7 +69,7 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
 
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
-        // 原版 EnumAction.BOW
+        // 对应 RE 的 EnumAction.BOW
         return UseAnim.BOW;
     }
 
@@ -79,8 +79,8 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
     }
 
     /**
-     * 原版 {@code ItemDimensionalMirror.java:93} 的 {@code hasEffect}：带 NBT（即已记录过坐标）时发光。
-     * 1.21.1 对应 {@code Item#isFoil}。
+     * 对应 RE {@code ItemDimensionalMirror.java:93} 的 {@code hasEffect}：带 NBT（即已记录过坐标）
+     * 时发光。1.21.1 对应 {@code Item#isFoil}。
      */
     @Override
     public boolean isFoil(ItemStack stack) {
@@ -90,12 +90,12 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
     /**
      * 潜行 + 左键：清空已记录的坐标。
      *
-     * <p><b>本项目新增</b>（1.7.10 没有这个操作）：原版只能靠"再记录一次"覆盖，想彻底回到
-     * "未记录"状态没有办法。按玩家要求补上。
+     * <p><b>本移植新增</b>：1.7.10 与 RE 都没有这个操作，只能靠「再记录一次」覆盖，
+     * 无法回到「未记录」状态。
      *
      * <p>左键由客户端 {@code PlayerInteractEvent.LeftClickEmpty/LeftClickBlock} 经
      * {@code TelekinesisLeftClickPayload} 送到服务端（与预言之典共用同一条通道，不新增网络包），
-     * 这里再自行校验"潜行 + 主手持镜 + 确实有记录"。
+     * 这里再自行校验「潜行 + 主手持镜 + 确实有记录」。
      */
     public static void onServerLeftClick(ServerPlayer player) {
         if (!player.isShiftKeyDown()) {
@@ -111,7 +111,7 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
         player.displayClientMessage(Component.translatable("message.mirror_cleared"), true);
     }
 
-    /** 是否已经记录过坐标。对应原版 {@code stack.hasTagCompound()}。 */
+    /** 是否已经记录过坐标。对应 RE 的 {@code stack.hasTagCompound()}。 */
     private static boolean hasStoredLocation(ItemStack stack) {
         return stack.has(DataComponents.CUSTOM_DATA) && !stack.get(DataComponents.CUSTOM_DATA).isEmpty();
     }
@@ -120,7 +120,7 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
     }
 
-    /** 读取已记录的维度。原版存 int，这里为了可读性存维度 ID 字符串。 */
+    /** 读取已记录的维度。RE 存 int，这里为了可读性存维度 ID 字符串。 */
     private static String storedDimension(ItemStack stack) {
         CompoundTag tag = storedTag(stack);
         return tag.contains(TAG_DIMENSION) ? tag.getString(TAG_DIMENSION) : Level.OVERWORLD.location().toString();
@@ -146,7 +146,7 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
         if (!hasStoredLocation(stack)) {
             return InteractionResultHolder.pass(stack);
         }
-        // 原版的两条拦截规则
+        // RE 的两条拦截规则
         if (!FRConfig.INTERDIMENSIONAL_MIRROR.get() && !storedDimension(stack).equals(level.dimension().location().toString())) {
             return InteractionResultHolder.pass(stack);
         }
@@ -163,8 +163,8 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
             return;
         }
         Vec3 center = player.position().add(0.0D, player.getBbHeight() / 2.0D, 0.0D);
-        // 蓄力过程中持续冒末影粒子。原版这一段是 {@code PacketVoidMessage} 风格的
-        // {@code spawnSuperParticle("portalstuff")} → 原版 {@code EntityPortalFX}，
+        // 蓄力过程中持续冒末影粒子。RE 这一段是 {@code PacketVoidMessage} 风格的
+        // {@code spawnSuperParticle("portalstuff")} → {@code EntityPortalFX}，
         // 也就是原版传送门粒子本身，所以这里继续用 PORTAL，不算「用原版粒子代替 Botania」。
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypesHolder.PORTAL, center.x, center.y, center.z, 4,
@@ -187,7 +187,7 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
                 return;
             }
             serverPlayer.teleportTo(target, x + 0.5D, y + 0.5D, z + 0.5D, serverPlayer.getYRot(), serverPlayer.getXRot());
-            // 落地后的 128 个末影粒子（对应原版）
+            // 落地后的 128 个末影粒子（对应 RE）
             target.sendParticles(ParticleTypesHolder.PORTAL, x + 0.5D, y - 0.5D, z + 0.5D, 128,
                     (Math.random() - 0.5D) * 3.0D, (Math.random() - 0.5D) * 3.0D, (Math.random() - 0.5D) * 3.0D, 0.05D);
         }
@@ -199,7 +199,7 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        // 已记录坐标时，无论是否按 Shift 都显示坐标（与原版一致）
+        // 已记录坐标时，无论是否按 Shift 都显示坐标（与 RE 一致）
         if (hasStoredLocation(stack)) {
             CompoundTag tag = storedTag(stack);
             tooltip.add(Component.translatable("item.FREmpty.lore"));
@@ -221,11 +221,11 @@ public class ItemDimensionalMirror extends FRItem implements FRRechargable {
         tooltip.add(Component.translatable("item.ItemDimensionalMirror3.lore"));
         tooltip.add(Component.translatable("item.FREmpty.lore"));
         tooltip.add(Component.translatable("item.ItemDimensionalMirror4.lore"));
-        // 1.6.5 新增：潜行 + 左键清空已记录的坐标。
+        // 潜行 + 左键可清空已记录的坐标。
         tooltip.add(Component.translatable("item.ItemDimensionalMirror5.lore"));
     }
 
-    /** 单独抽出来只是为了让上面的方法短一点。 */
+    /** 用短名字引用 {@code ParticleTypes.PORTAL}，避免在方法里写全限定名。 */
     private static final class ParticleTypesHolder {
         private static final net.minecraft.core.particles.SimpleParticleType PORTAL = net.minecraft.core.particles.ParticleTypes.PORTAL;
 

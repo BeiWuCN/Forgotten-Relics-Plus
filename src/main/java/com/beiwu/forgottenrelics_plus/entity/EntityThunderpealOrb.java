@@ -29,28 +29,28 @@ import net.minecraft.world.phys.Vec3;
  *   <li>命中实体时先对它造成 {@code damageThunderpealDirect} 的直接伤害；</li>
  *   <li>然后以落点为中心、{@code area}（原版初值 4，发射方 +2 变成 6）格内的活体各受一次
  *       {@code damageThunderpealBolt}，并从每个被击中者再向它 4 格内最多 3 个目标打出
- *       <b>一半伤害</b>的链式闪电；</li>
+ *       一半伤害的链式闪电；</li>
  *   <li>所有伤害都带「真雷」类型，并各自清空无敌帧，保证同一次落雷里的每一跳都能打实。</li>
  * </ul>
  *
- * <p><b>闪电怎么画（1.6.2 重做）</b>：
+ * <p>闪电的画法：
  * <ul>
  *   <li>1.7.10 用 {@code SuperpositionHandler.imposeLightning(...)} 把「雷电球 → 目标中心」
  *       打包成 {@code LightningMessage}，客户端用 Thaumcraft 的 {@code FXLightningBolt}
  *       画成一道深蓝锯齿电弧；链式那一跳用 {@code main = false}，宽度从 0.075 收窄到 0.04；
- *       1.12.2 移植版（RE）的 {@code EntityThunderpealOrb} 是同一套（{@code LightningMessage}
+ *       1.12.2 移植版（RE）的 {@code EntityThunderpealOrb} 沿用同一套（{@code LightningMessage}
  *       + 客户端 {@code FXDispatcher.arcBolt(..., 0.4, 0.6, 1.0, width)}）；</li>
- *   <li>本项目改成：{@code FRBoltParticleData.broadcast(...)} 走原版粒子包把两端送到客户端，
+ *   <li>本移植改成：{@code FRBoltParticleData.broadcast(...)} 走原版粒子包把两端送到客户端，
  *       客户端的 {@code client/FRBolts} 再交给 Botania 的 {@code BoltRenderer} 画折线
  *       （几何由 {@code BoltParticleOptions.generate()} 生成）。端点、宽度与颜色逐一对齐 RE：
  *       主电弧「雷电球位置 → 目标身体中心」宽 {@link FRBoltParticleData#WIDTH_MAIN}，
  *       链式电弧「主目标中心 → 次目标中心」宽 {@link FRBoltParticleData#WIDTH_CHAIN}，
  *       颜色都是 RE {@code arcBolt} 的 {@code 0.4/0.6/1.0}；</li>
- *   <li>1.7.10 的 {@code shootLightning} 起点其实是「雷电球沿连线前移 0.5 格」，
- *       RE 直接用了雷电球自身坐标。这里按 RE 走（球心即起点），差异只有半格；</li>
- *   <li><b>不再</b>在命中点撒 60 颗 {@code ELECTRIC_SPARK} 冒充电弧——那是本项目上一版自行加的，
- *       原版与 RE 都没有，而且正是玩家抱怨的「散点」。命中处的两发
- *       {@code imposeBurst}（Thaumcraft {@code FXBurst}，非 Botania）仍按既有口径用 {@code FLASH} 近似。</li>
+ *   <li>1.7.10 的 {@code shootLightning} 起点在「雷电球沿连线前移 0.5 格」，
+ *       RE 直接用雷电球自身坐标。这里按 RE 走（球心即起点），差异只有半格；</li>
+ *   <li>不要在命中点撒 60 颗 {@code ELECTRIC_SPARK} 冒充电弧：原版与 RE 都没有这一手，
+ *       它也构不成连续电弧。命中处的两发 {@code imposeBurst}（Thaumcraft {@code FXBurst}，
+ *       非 Botania）仍按既有做法用 {@code FLASH} 近似。</li>
  * </ul>
  */
 public class EntityThunderpealOrb extends FRHomingProjectile {
@@ -87,9 +87,9 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
     }
 
     /**
-     * 原版 {@code EntityThunderpealOrb#func_70185_h()} 返回 <b>0.05</b>——这是本模组所有弹射物里
+     * 原版 {@code EntityThunderpealOrb#func_70185_h()} 返回 <b>0.05</b>——这是本移植所有弹射物里
      * 唯一有重力的一颗（其余都返回 0，基类 {@link FRHomingProjectile} 已统一处理）。
-     * 此前这里沿用基类的 0，弹道变成了纯直线。
+     * 注意：不要沿用基类的 0，否则弹道会变成纯直线。
      */
     @Override
     protected double getDefaultGravity() {
@@ -104,7 +104,7 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
      *                  size=0.12+rand*0.08, xm/ym/zm=(rand-0.5)*0.05, maxAgeMul=0.6)
      *   ticksExisted % 2 == 0：sparkleFX(pos, 0.4, 0.6, 1.0, size=1.0, m=2)
      * </pre>
-     * 对应本项目 {@link FRParticles#wisp} 与 {@link FRParticles#sparkle}（纯客户端 addParticle）。
+     * 对应本移植的 {@link FRParticles#wisp} 与 {@link FRParticles#sparkle}（纯客户端 addParticle）。
      */
     @Override
     protected void spawnTrailParticles() {
@@ -126,7 +126,7 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
      * 原版 {@code attackEntityFrom}（{@code EntityThunderpealOrb.java:114-133}）：雷电球本身不吃伤害，
      * 被击中时改为<b>沿攻击者视线方向被打飞</b>（速度 = 视线单位向量 × 0.9），并播放 {@code thaumcraft:zap}。
      *
-     * <p>音效按本项目既有口径换成原版等价物（{@link SoundEvents#FIREWORK_ROCKET_BLAST}），
+     * <p>音效按本移植的既有做法换成原版等价物（{@link SoundEvents#FIREWORK_ROCKET_BLAST}），
      * 与 {@link EntityCrimsonOrb#hurt} 是同一套实现。
      */
     @Override
@@ -155,7 +155,7 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         // 原版/RE 的闪电起点就是雷电球自身位置。
         Vec3 origin = position();
         // 原版把「直接命中的那一个」从范围列表里移除（EntityThunderpealOrb.java:71-73），
-        // 所以它只吃一次直接伤害，不会再吃一次范围伤害。此前漏了这一步。
+        // 所以它只吃一次直接伤害。注意：不能把它再算进下面的范围伤害。
         LivingEntity directHit = null;
         if (result instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity direct) {
             strike(direct, lightning, FRConfig.THUNDERPEAL_DIRECT_DAMAGE.get().floatValue());

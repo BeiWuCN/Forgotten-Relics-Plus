@@ -26,7 +26,7 @@ import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 /**
- * 恐惧之冠（Crown of Terror），1.12.2 原版 {@code ItemTerrorCrown}。
+ * 恐惧之冠（Crown of Terror），RE 的 {@code ItemTerrorCrown}。
  *
  * <p>原版是个「同时是头盔和饰品」的物品：继承 {@code ItemArmor}（HEAD 槽、金材质）又实现
  * {@code IBauble}（HEAD 槽）。1.21.1 这边同样两头兼顾——继承 {@link ArmorItem} 让它能戴在
@@ -42,7 +42,7 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
  *   <li>可用 Botania 的魔力修复耐久，每点耐久 {@code terrorCrownManaCost}（默认 200）。</li>
  * </ul>
  *
- * <p>渲染在客户端：1.12.2 是给 {@code RenderPlayer} 挂一层 {@code LayerCrown}；
+ * <p>渲染在客户端：RE 给 {@code RenderPlayer} 挂一层 {@code LayerCrown}；
  * 1.21.1 改用 Curios 的 {@code ICurioRenderer} 注册，见 {@code client.CrownCurioRenderer}。
  */
 public class ItemTerrorCrown extends ArmorItem

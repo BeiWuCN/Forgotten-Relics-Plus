@@ -24,17 +24,17 @@ import net.minecraft.world.phys.Vec3;
 /**
  * 腥红之咒（Crimson Spell），注册名 {@code crimson_spell}，1.7.10 原版 {@code ItemCrimsonSpell}。
  *
- * <p>原版逻辑：右键沿视线逐格搜索活体——每格取一个以（<b>累加推进的</b>）视线落点为中心的方框，
+ * <p>原版逻辑：右键沿视线逐格搜索活体——每格取一个以（累加推进的）视线落点为中心的方框，
  * 半边长基础 3 格、超过 10 格加到 6、超过 20 格加到 8，找到第一个就停；扫到 32 格仍没有，就兜底取
  * 玩家周围 32 格内所有能看见玩家的活体，再从候选里随机挑一个。消耗背包法杖的 Vis：火 480 + 混沌 360
  * 厘（合计 8.4 点），发射一颗 {@code EntityCrimsonOrb}（出生点 = 身体中心 + 视线 × 1.0 再抬高 0.5，
  * 初速 = 视线 × 0.75），随后进入 {@code setCasted(player, 30, true)} 的 30 tick 共用冷却。
  *
- * <p>1.21.1 对应：{@code onItemRightClick} → {@code Item#use}；<b>「从背包法杖抽 Vis」没有对应 API</b>
- * （见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），按模组统一约定改成
- * {@link FRRechargable} 物品自身充能；共用冷却 → {@link CooldownHelper}；发射音效
- * {@code thaumcraft:egattack} 换成 {@link SoundEvents#FIREWORK_ROCKET_BLAST}（与邪术之咒、霹雳咒书
- * 同一替代方案）；tooltip 的伤害行沿用 RE 合并后的 {@code ItemCrimsonSpell6.lore}（两处 %s 占位）。
+ * <p>1.21.1 对应：{@code onItemRightClick} → {@code Item#use}；「从背包法杖抽 Vis」在 Thaumaturge
+ * 1.21.1 API 里没有对应接口，按模组统一约定改成 {@link FRRechargable} 物品自身充能；
+ * 共用冷却 → {@link CooldownHelper}；发射音效 {@code thaumcraft:egattack} 换成
+ * {@link SoundEvents#FIREWORK_ROCKET_BLAST}（与邪术之咒、霹雳咒书同一替代方案）；
+ * tooltip 的伤害行沿用 RE 合并后的 {@code ItemCrimsonSpell6.lore}（两处 %s 占位）。
  *
  * <p><b>三处刻意的取舍</b>：
  * <ol>
@@ -42,8 +42,8 @@ import net.minecraft.world.phys.Vec3;
  *       （与霹雳咒书 2.2 → 2 同一处理）；</li>
  *   <li>原版 {@code IgnisCost} / {@code PerditioCost} 乘的其实是 {@code chaosTomeVisMult}，而专门为它
  *       准备的 {@code crimsonSpellVisMult} 从未被使用——这是原版的笔误。这里按配置本意改用本物品自己的
- *       倍率，并把这条偏差写进提交说明；</li>
- *   <li>原版「Ctrl 查看 Vis 消耗」那一支依赖 {@code FRVisPerCast.lore} 等键，本项目共享基类
+ *       倍率；</li>
+ *   <li>原版「Ctrl 查看 Vis 消耗」那一支依赖 {@code FRVisPerCast.lore} 等键，共享基类
  *       {@code FRItem} 只实现 Shift 展开，这里保持一致、不新增语言键。</li>
  * </ol>
  */
@@ -102,7 +102,7 @@ public class ItemCrimsonSpell extends FRItem implements FRRechargable, IWarpingG
     /**
      * 原版 {@code onItemRightClick} 里那段「沿视线找目标」的复刻。
      *
-     * <p><b>注意：原版的位置推进写得很怪</b>——{@code vec.add(look.multiply(distance))} 是<b>累加</b>，
+     * <p><b>注意：原版的位置推进是累加的</b>——{@code vec.add(look.multiply(distance))} 累加位移，
      * 而不是常规的「起点 + 视线 × 距离」，并且每轮还要再 {@code vec.y += 0.5}。31 轮累计下来，
      * 视线方向的偏移是 1+2+…+31 = 496 格，远超 32 格上限，等于扫出一条迅速飞出视野、且不断爬升的射线。
      * 好在每轮方框有 3~8 格半边长，实际仍覆盖面前十几格；这里逐字保留，不「修正」成正常射线。

@@ -26,39 +26,38 @@ import net.minecraft.world.phys.Vec3;
 import vazkii.botania.common.handler.BotaniaSounds;
 
 /**
- * 千咒之诫（Edict of a Thousand Damned Souls），注册名 {@code soul_tome}，
- * 1.7.10 原版 {@code ItemSoulTome}。堆叠上限 1、稀有度 EPIC、Warp 3，<b>没有施法后冷却</b>。
+ * 千咒之诫（Edict of a Thousand Damned Souls），注册名 {@code soul_tome}，原版 {@code ItemSoulTome}。
+ * 堆叠上限 1、稀有度 EPIC、Warp 3，没有施法后冷却。
  *
  * <p>行为：右键进入 {@code EnumAction.bow} 拉弓姿态（可用时长 72000），引导期间每 tick 无条件把水平移动
- * 清零；满 20 tick 后开始结算，其中<b>两件事彼此独立</b>——<b>近距离击退</b>（每 tick）对 20 格内、距玩家
- * &lt;= 3.0 格的每个活体各抽一次 Vis（火 150 + 混沌 120 厘 = 2.70 点），抽得出来才连画 4 道闪电、播
+ * 清零；满 20 tick 后开始结算。其中两件事彼此独立：近距离击退每 tick 对 20 格内、距玩家 &lt;= 3.0 格的
+ * 每个活体各抽一次 Vis（火 150 + 混沌 120 厘 = 2.70 点），抽得出来才连画 4 道闪电、播
  * {@code thaumcraft:zap}、造成 {@code 20 + 80 × 随机} 的真雷伤害并朝远离玩家的方向击飞（竖直额外 +1.0）；
- * <b>灵魂抽取</b>（每 4 tick）抽一次 Vis（土 25 + 风 20 + 火 35 + 混沌 50 厘 = 1.30 点），从 20 格内随机
- * 挑一个活体，造成 {@code 最大生命 / soulTomeDivisor}（夹在 1.0~20.0）的夺魂伤害，并从目标处生成一颗追踪
- * 施法者的 {@link EntitySoulEnergy}——命中玩家时治疗 1 点、补 1 点饥饿。
+ * 灵魂抽取每 4 tick 抽一次 Vis（土 25 + 风 20 + 火 35 + 混沌 50 厘 = 1.30 点），从 20 格内随机挑一个活体，
+ * 造成 {@code 最大生命 / soulTomeDivisor}（夹在 1.0~20.0）的夺魂伤害，并从目标处生成一颗追踪施法者的
+ * {@link EntitySoulEnergy}——命中玩家时治疗 1 点、补 1 点饥饿。
  *
  * <p>1.21.1 对应：{@code onItemRightClick} / {@code onUsingTick} / {@code EnumAction.bow} →
- * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
- * （见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），改成 {@link FRRechargable} 的物品自身充能，
- * 灵魂抽取每次 1 点（原版 1.30 取整）、击退每命中一个实体 2 点（原版 2.70，与 RE 一致）。<b>不写任何自定义
- * 网络包</b>：击退闪电（1.6.2 重做）用 {@link FRBoltParticleData#broadcast} 把两端送到客户端、由
- * {@code client/FRBolts} 交给 Botania {@code BoltRenderer} 画真正的折线闪电；音效 {@code thaumcraft:zap} →
- * {@link SoundEvents#FIREWORK_ROCKET_BLAST}、生成灵魂能量的 {@code botania:missile} 直接引用
- * {@link BotaniaSounds#MISSILE}、命中时的 {@code random.fizz} → {@link SoundEvents#FIRE_EXTINGUISH}，都过
- * {@link SoundHelper#play} 统一压低音量；{@code DamageSourceSoulDrain} / {@code DamageSourceTLightning} →
- * {@link FRDamageTypes#SOUL_DRAIN} / {@link FRDamageTypes#TRUE_LIGHTNING}。
+ * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>，
+ * 改成 {@link FRRechargable} 的物品自身充能：灵魂抽取每次 1 点（原版 1.30 取整）、击退每命中一个实体 2 点
+ * （原版 2.70，与 RE 一致）。不写任何自定义网络包：击退闪电用 {@link FRBoltParticleData#broadcast} 把两端
+ * 送到客户端、由 {@code client/FRBolts} 交给 Botania {@code BoltRenderer} 画真正的折线闪电；音效
+ * {@code thaumcraft:zap} → {@link SoundEvents#FIREWORK_ROCKET_BLAST}、生成灵魂能量的
+ * {@code botania:missile} 直接引用 {@link BotaniaSounds#MISSILE}、命中时的 {@code random.fizz} →
+ * {@link SoundEvents#FIRE_EXTINGUISH}，都过 {@link SoundHelper#play} 统一压低音量；
+ * {@code DamageSourceSoulDrain} / {@code DamageSourceTLightning} → {@link FRDamageTypes#SOUL_DRAIN} /
+ * {@link FRDamageTypes#TRUE_LIGHTNING}。
  *
- * <p><b>领域结界环</b>（1.6.2 新增）：1.7.10 原版<b>没有</b>这个视觉，是 RE 补的
- * （{@code ItemSoulTome#renderAuraBoundary}，客户端画两圈白色粒子模仿 Botania 盖亚守护者的竞技场边界）。
- * 本项目此前完全没实现，玩家反馈「领域展开没有结界」后按 RE 照做——外圈半径 20 格、每 8° 一颗白色 wisp，
- * 内圈半径 3.0 格、每 16° 一颗淡粉白 sparkle（细节见 {@link #renderAuraBoundary}）。
+ * <p>领域结界环是 RE 补的视觉（{@code ItemSoulTome#renderAuraBoundary}，客户端画两圈白色粒子模仿 Botania
+ * 盖亚守护者的竞技场边界），原版没有。本移植按 RE 复刻：外圈半径 20 格、每 8° 一颗白色 wisp，内圈半径
+ * 3.0 格、每 16° 一颗淡粉白 sparkle（细节见 {@link #renderAuraBoundary}）。
  *
- * <p><b>与原版的两处偏差</b>：
+ * <p>与原版的两处偏差：
  * <ol>
  *   <li>原版的击退与灵魂抽取都是「先抽法杖 Vis，抽得出来才生效」。这里改成物品充能后含义相同，
  *       但整数充能无法表示 1.30 / 2.70，分别取 1 与 2；</li>
- *   <li>原版 {@code getDistanceToEntity(entity) <= 3.0f} 是<b>实体中心距离</b>，而 1.7.10 自己的词条
- *       写的是 "closer than 4 blocks"。本项目以 1.7.10 代码为准，取 3.0（词条仍照 1.7.10 原文写 4）。</li>
+ *   <li>原版 {@code getDistanceToEntity(entity) <= 3.0f} 是实体中心距离，而原版自己的词条
+ *       写的是 "closer than 4 blocks"。本移植以代码为准，取 3.0（词条仍照原版原文写 4）。</li>
  * </ol>
  */
 public class ItemSoulTome extends FRItem implements FRRechargable, IWarpingGear {
@@ -72,8 +71,8 @@ public class ItemSoulTome extends FRItem implements FRRechargable, IWarpingGear 
     /**
      * 原版击退判定 {@code player.getDistanceToEntity(entity) <= 3.0f}。
      *
-     * <p>这是实体中心距离；1.7.10 的词条写的是 "closer than 4 blocks"，
-     * 属于原版自身的文字与代码不一致，本项目按代码复刻（见类注释「偏差」第 2 条）。
+     * <p>这是实体中心距离；原版的词条写的是 "closer than 4 blocks"，
+     * 属于原版自身的文字与代码不一致，本移植按代码复刻（见类注释「偏差」第 2 条）。
      */
     private static final double KNOCKBACK_RANGE = 3.0D;
 
@@ -243,7 +242,7 @@ public class ItemSoulTome extends FRItem implements FRRechargable, IWarpingGear 
      *
      * <p><b>注意原版的参数命名有迷惑性</b>：原版调用是
      * {@code this.spawnSoul(world, randomEntity, player)}，方法内部的形参却叫 {@code player} 与 {@code target}。
-     * 也就是说「出生点与初速用的是<b>受害者</b>的位置与视线」，而追踪目标是<b>施法者</b>。
+     * 也就是说出生点与初速用的是受害者的位置与视线，而追踪目标是施法者。
      * 这里把形参改名成 {@code source} / {@code target} 以免误读，行为逐字保留。
      */
     private static void spawnSoul(Level level, LivingEntity source, LivingEntity target) {
@@ -265,24 +264,24 @@ public class ItemSoulTome extends FRItem implements FRRechargable, IWarpingGear 
     }
 
     /**
-     * 领域结界环，对应 RE {@code ItemSoulTome#renderAuraBoundary}（1.7.10 原版没有这一段）。
+     * 领域结界环，对应 RE {@code ItemSoulTome#renderAuraBoundary}（原版没有这一段）。
      *
      * <p>RE 的写法（客户端 {@code onUpdate}，只在引导这本典籍时执行）：
      * <ul>
-     *   <li><b>外圈</b>：半径 {@code soulTomeSearchRange}（本项目的灵魂抽取搜索半径 20 格），
+     *   <li>外圈：半径 {@code soulTomeSearchRange}（本移植的灵魂抽取搜索半径 20 格），
      *       {@code i += 8} 共 45 颗白色 wisp，尺寸 0.5，初速 {@code (±0.5)*0.15}、竖直 {@code (±0.5)*0.35}；</li>
-     *   <li><b>内圈</b>：半径 {@code soulTomeKnockbackRange}，{@code i += 16} 共 23 颗
+     *   <li>内圈：半径 {@code soulTomeKnockbackRange}，{@code i += 16} 共 23 颗
      *       {@code (1.0, 0.9, 0.9)} 的 sparkle，尺寸 2.0。</li>
      * </ul>
      *
      * <p>现代对应：RE 调的就是 Botania，这里直接用 {@link FRParticles#wisp} 与
      * {@link FRParticles#sparkle}（内部是 {@code WispParticleData} / {@code SparkleParticleData}），
      * 颜色、尺寸、初速、m 全部与 RE 逐字一致（外圈 maxAgeMul 0.8）。
-     * 内圈半径用本类的 {@link #KNOCKBACK_RANGE} 常量而不是配置——因为本项目的击退判定就是这个常量
+     * 内圈半径用本类的 {@link #KNOCKBACK_RANGE} 常量而不是配置——因为本移植的击退判定就是这个常量
      * （见类注释「偏差」第 2 条），结界要画在真正会触发击退的那一圈上。
      *
      * <p>粒子只在客户端 {@code addParticle}，不走网络、不占带宽；引导期间每 tick 约 68 颗，
-     * 与原版 RE 完全同量。
+     * 与 RE 完全同量。
      */
     private static void renderAuraBoundary(Player player) {
         Level level = player.level();
@@ -317,7 +316,7 @@ public class ItemSoulTome extends FRItem implements FRRechargable, IWarpingGear 
 
     @Override
     protected void appendShiftTooltip(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        // 行序与 1.7.10 原版逐条对齐：1~3、空行、4~5、空行、6~8、空行、9。
+        // 行序与原版逐条对齐：1~3、空行、4~5、空行、6~8、空行、9。
         tooltip.add(Component.translatable("item.ItemSoulTome1.lore"));
         tooltip.add(Component.translatable("item.ItemSoulTome2.lore"));
         tooltip.add(Component.translatable("item.ItemSoulTome3.lore"));

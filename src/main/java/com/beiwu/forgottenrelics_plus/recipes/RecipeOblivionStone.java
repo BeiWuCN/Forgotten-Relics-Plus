@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 /**
  * 湮灭之钥的「绑定 / 清空」合成配方，1.7.10 原版 {@code RecipeOblivionStone}。
  *
- * <p><b>原版怎么做</b>：这是一个实现 {@code IRecipe} 的<b>无序动态配方</b>，挂在全局合成表里：
+ * <p>原版怎么做：这是一个实现 {@code IRecipe} 的无序动态配方，挂在全局合成表里：
  * <ul>
  *   <li>{@code matches}：整个合成格里必须恰好有一把钥匙石，外加 0 或 1 件其它物品；
  *       且当有 1 件其它物品时，要求清单未达上限、该物品尚未被绑定（重复判定见下）；</li>
@@ -26,7 +26,7 @@ import net.minecraft.world.level.Level;
  *       <ul>
  *         <li>钥匙石 + 1 件物品 → 复制钥匙石，把该物品的数值 id 追加到 {@code SupersolidID}、
  *             把 metadata 追加到 {@code SupersolidMetaID}（可损毁物品写 {@code -1}，表示按类型通配）；</li>
- *         <li>只有钥匙石 → 返回一把<b>没有 NBT</b> 的新钥匙石（metadata 即模式照旧），等于清空清单；</li>
+ *         <li>只有钥匙石 → 返回一把没有 NBT 的新钥匙石（metadata 即模式照旧），等于清空清单；</li>
  *         <li>其余情况（没有钥匙石 / 不止一件样品 / 两把钥匙石）→ 空结果，即不匹配。</li>
  *       </ul>
  *   </li>
@@ -34,7 +34,7 @@ import net.minecraft.world.level.Level;
  *       metadata 相同）则拒绝（返回空），也就是「同一物品的同一种变体只能绑定一次」。</li>
  * </ul>
  *
- * <p><b>1.21.1 怎么对应</b>：1.7.10 的 {@code IRecipe} + 全局合成表在 1.21.1 对应
+ * <p>1.21.1 怎么对应：1.7.10 的 {@code IRecipe} + 全局合成表在 1.21.1 对应
  * 「实现 {@link net.minecraft.world.item.crafting.CraftingRecipe} 的自定义配方 + 注册
  * {@link RecipeSerializer}」。这里直接继承原版的 {@code CustomRecipe}
  * （{@code crafting_special_*} 那一套的抽象基类）：

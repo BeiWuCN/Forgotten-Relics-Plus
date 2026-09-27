@@ -19,14 +19,14 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  * 虚伪审判（False Justice），1.7.10 原版 {@code ItemFalseJustice}。
  *
  * <p>物品类本身只有 tooltip 与扭曲，全部效果都写在 {@code RelicsEventHandler} 里，
- * 而且用 {@code player.inventory.hasItem(...)} 判断——也就是说它是<b>随身携带</b>生效。
+ * 而且用 {@code player.inventory.hasItem(...)} 判断——也就是说它是随身携带生效。
  * 效果分两块，共四处：
  *
  * <ol>
- *   <li><b>伤害转化为真实伤害</b>（{@code :227} / {@code :238}）：携带者<b>受到</b>的、
- *       以及携带者<b>造成</b>的伤害，只要不是绝对伤害，就取消原结算，改以「真伤」重新结算
- *       <b>两倍</b>的数值。真伤属于绝对伤害，所以不会被这条再拦一次（原版靠的就是这个递归保护）；</li>
- *   <li><b>阻止死亡</b>（{@code :298} / {@code :303}）：携带者不会死，<b>被携带者打死的目标也不会死</b>
+ *   <li>伤害转化为真实伤害（{@code :227} / {@code :238}）：携带者受到的、以及携带者造成的伤害，
+ *       只要不是绝对伤害，就取消原结算，改以「真伤」重新结算<b>两倍</b>的数值。真伤属于绝对伤害，
+ *       所以不会被这条再拦一次（原版靠的就是这个递归保护）；</li>
+ *   <li>阻止死亡（{@code :298} / {@code :303}）：携带者不会死，被携带者打死的目标也不会死
  *       ——「虚伪审判」这个名字指的就是这个：无人受审，谁都不死。</li>
  * </ol>
  *
@@ -51,13 +51,13 @@ public class ItemFalseJustice extends FRItem
         return 30;
     }
 
-    /** 携带者<b>受到</b>伤害（原版 {@code :227}）。 */
+    /** 携带者受到伤害（原版 {@code :227}）。 */
     @Override
     public void onCarriedDefend(LivingIncomingDamageEvent event, Player victim, ItemStack stack) {
         convertToTrueDamage(event, victim);
     }
 
-    /** 携带者<b>造成</b>伤害（原版 {@code :238}）。 */
+    /** 携带者造成伤害（原版 {@code :238}）。 */
     @Override
     public void onCarriedAttack(LivingIncomingDamageEvent event, Player attacker, ItemStack stack) {
         convertToTrueDamage(event, event.getEntity());

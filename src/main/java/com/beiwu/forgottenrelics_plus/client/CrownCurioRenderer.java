@@ -27,13 +27,13 @@ import top.theillusivec4.curios.api.client.ICurioRenderer;
 /**
  * 恐惧之冠的佩戴渲染。
  *
- * <p>1.12.2 的做法是往 {@code RenderPlayer} 上挂一层 {@code LayerCrown}，里面手工
- * {@code bindTexture} + 复制头部角度 + 逐个 ModelRenderer 画；那条路子依赖
+ * <p>RE 的做法是往 {@code RenderPlayer} 上挂一层 {@code LayerCrown}，里面手工
+ * {@code bindTexture} + 复制头部角度 + 逐个 ModelRenderer 绘制；那条路子依赖
  * {@code ModelBiped} 与固定管线，1.21.1 已经没有了。
  *
  * <p>这里换成现代写法：
  * <ul>
- *   <li>用 {@link LayerDefinition} 描述一个 8×3×8 的「冠」立方体（等价于原版 ModelCrown 里
+ *   <li>用 {@link LayerDefinition} 描述一个 8×3×8 的「冠」立方体（等价于 RE 的 ModelCrown 里
  *       那个 {@code addBox(-4, y, -4, 8, 3, 8)}），由 NeoForge 的
  *       {@code EntityRenderersEvent.RegisterLayerDefinitions} 在客户端初始化时烘焙成
  *       {@link ModelPart}；</li>
@@ -42,7 +42,7 @@ import top.theillusivec4.curios.api.client.ICurioRenderer;
  *       不再手工拷贝十个字段。</li>
  * </ul>
  *
- * <p>与 1.12.2 一致的两处细节：戴着头盔时整体上抬 1 像素，且帽子层的显隐跟随原版模型。
+ * <p>与 RE 一致的两处细节：戴着头盔时整体上抬 1 像素，且帽子层的显隐跟随原版模型。
  */
 public final class CrownCurioRenderer implements ICurioRenderer {
 
@@ -53,7 +53,7 @@ public final class CrownCurioRenderer implements ICurioRenderer {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             ForgottenRelics.MOD_ID, "textures/armor/crown_prs.png");
 
-    /** 原版 ModelCrown 的盒子：宽 8、高 3、深 8，绕头部原点摆一圈。 */
+    /** RE 的 ModelCrown 盒子：宽 8、高 3、深 8，绕头部原点摆一圈。 */
     private static final float CROWN_THICKNESS = 3.0F;
 
     private ModelPart crown;
@@ -61,7 +61,7 @@ public final class CrownCurioRenderer implements ICurioRenderer {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        // y = -8 是头顶（原版头盒为 -8..0），冠体从 -11 抬到 -8，正好骑在头上。
+        // y = -8 是头顶（玩家头部模型范围为 -8..0），冠体从 -11 抬到 -8，正好骑在头上。
         root.addOrReplaceChild("crown",
                 CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-4.0F, -8.0F - CROWN_THICKNESS, -4.0F, 8, 3, 8),
@@ -83,7 +83,7 @@ public final class CrownCurioRenderer implements ICurioRenderer {
             float ageInTicks,
             float netHeadYaw,
             float headPitch) {
-        // 只有人形模型才有头可骑；其余情况直接跳过。
+        // 只有人形模型存在头部节点，其余模型直接跳过。
         if (!(renderLayerParent.getModel() instanceof HumanoidModel<?> humanoid)) {
             return;
         }
@@ -93,9 +93,9 @@ public final class CrownCurioRenderer implements ICurioRenderer {
         }
 
         poseStack.pushPose();
-        // 继承头盔姿态：位置与朝向都跟着头走。
+        // 继承头部姿态：位置与朝向都跟随头部。
         humanoid.head.translateAndRotate(poseStack);
-        // 与 1.12.2 一致：头顶已经有别的头饰时上抬 1 像素，避免穿插。
+        // 与 RE 一致：头顶已有别的头饰时上抬 1 像素，避免穿插。
         if (!wearer.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
             poseStack.translate(0.0F, -1.0F / 16.0F, 0.0F);
         }
@@ -107,7 +107,7 @@ public final class CrownCurioRenderer implements ICurioRenderer {
     /**
      * 懒加载烘焙模型。
      *
-     * <p>烘焙一次即可复用，不必每帧重建——这正是相对 1.12.2「每帧 new 一个 ModelCrown」的优化点。
+     * <p>烘焙一次即可复用，避免每帧重建（RE 的 {@code LayerCrown} 每帧都会 {@code new ModelCrown}）。
      */
     private ModelPart crown() {
         if (crown == null) {

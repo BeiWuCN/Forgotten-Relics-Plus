@@ -8,10 +8,10 @@ import net.minecraft.world.entity.player.Player;
 /**
  * 玩家冷却计时器。
  *
- * <p>对应 1.12.2 原版 {@code SuperpositionHandler} 里的 {@code setCasted} / {@code isOnCoodown}
+ * <p>对应 1.12.2 移植版（RE）的 {@code SuperpositionHandler} 里 {@code setCasted} / {@code isOnCoodown}
  * 一对方法，以及 {@code Main.castingCooldowns} 那张 {@code HashMap<EntityPlayer, Integer>}。
  *
- * <p>原版直接用玩家对象当 key，1.21.1 里改用玩家的 UUID：
+ * <p>RE 直接用玩家对象当 key，1.21.1 里改用玩家的 UUID：
  * 玩家的 {@code Player} 实例在维度切换或重登时会被替换，用对象当 key 会漏掉冷却；
  * UUID 在整个账号生命周期内稳定。
  *

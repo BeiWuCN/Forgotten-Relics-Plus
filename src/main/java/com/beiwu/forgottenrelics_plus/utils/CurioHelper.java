@@ -10,8 +10,8 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 /**
  * 饰品栏（Curios）辅助方法。
  *
- * <p>1.12.2 原版用的是 Baubles，判断「玩家身上是否戴着某个饰品」靠
- * {@code BaublesApi.isBaubleEquipped(player, item) != -1}（见原版
+ * <p>RE 用的是 Baubles，判断「玩家身上是否戴着某个饰品」靠
+ * {@code BaublesApi.isBaubleEquipped(player, item) != -1}（见 RE 的
  * {@code SuperpositionHandler.hasBauble}）。Curios 没有语义完全对等的单方法，但
  * {@code CuriosApi.getCuriosInventory} 能拿到整个「已装备饰品栏」的 {@code IItemHandler}，
  * 直接线性扫描即可，行为与 Baubles 版本一致：只看已装备的，不看背包里的。

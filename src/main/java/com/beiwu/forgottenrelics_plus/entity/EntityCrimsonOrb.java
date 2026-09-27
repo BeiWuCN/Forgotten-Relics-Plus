@@ -24,7 +24,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * 腥红之咒的猩红法球（Crimson Orb），1.7.10 原版 {@code EntityCrimsonOrb}。
+ * 腥红之咒的猩红法球（Crimson Orb），原版 {@code EntityCrimsonOrb}。
  *
  * <p>原版（{@code EntityThrowable}，无重力 + 0.99 阻尼）：有目标时瞄准其身高 60% 处，每 tick 叠加
  * 单位向量的 0.3 倍加速度，再把速度三分量各夹到 ±0.25；发射前 5 tick 若竖直速度为负则强制上抬；
@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
  * <p>1.21.1 对应：基类 {@link FRHomingProjectile} 提供无重力 / 追踪 / 时限 / 命中钩子，追踪加速度来自
  * {@link FRHomingProjectile#homingStrength()}；原版 {@code IEntityAdditionalSpawnData}（目标 id / 发射者 id /
  * red）由基类的 {@code SynchedEntityData} 承担（{@code red} 只有 {@code true} 一种取值，直接省掉）；
- * 命中粒子与拖尾照 RE 复刻（15 颗猩红 wisp + 1 颗 sparkle、sparkle 拖尾轨迹——1.7.10 这两处分别是
+ * 命中粒子与拖尾照 RE 复刻（15 颗猩红 wisp + 1 颗 sparkle、sparkle 拖尾轨迹——原版这两处分别是
  * 纯客户端 {@code imposeBurst} 与「无拖尾」）；音效 {@code thaumcraft:shock} / {@code zap} 分别换成
  * {@link SoundEvents#LIGHTNING_BOLT_IMPACT} / {@link SoundEvents#FIREWORK_ROCKET_BLAST}；
  * {@code DamageSourceMagic} → {@link FRDamageTypes#FORGOTTEN_MAGIC}。
@@ -187,7 +187,7 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
     protected void onImpact(HitResult result) {
         Entity owner = getOwner();
         if (result instanceof EntityHitResult entityHit) {
-            // 原版这段只在 getThrower() != null 时执行；本模组里发射者恒为玩家。
+            // 原版这段只在 getThrower() != null 时执行；本移植里发射者恒为玩家。
             if (owner == null) {
                 return;
             }
@@ -207,7 +207,7 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
             // RE #spawnHitParticles 的 15 颗猩红 wisp：
             // wispFX(hx, hy, hz, 0.8+rand*0.2, 0.1+rand*0.2, rand*0.1,
             //        size=0.1+rand*0.3, xm/ym/zm=(rand-0.5)*0.15, maxAgeMul=0.9)。
-            // 逐颗单独发包以保留「每颗颜色/尺寸都不同」的原版观感（旧版同样是一颗一颗 addParticle）。
+            // 逐颗单独发包，保留原版「每颗颜色/尺寸都不同」的观感；合并成一簇会丢掉每颗的差异。
             for (int i = 0; i < 15; i++) {
                 FRParticles.serverWisp(server, getX(), getY(), getZ(),
                         0.8F + random.nextFloat() * 0.2F,

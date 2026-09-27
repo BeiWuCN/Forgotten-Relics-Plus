@@ -22,33 +22,33 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 原初混沌之典（Tome of Primal Chaos），注册名 {@code tome_of_primal_chaos}，
- * 1.7.10 原版 {@code ItemChaosTome}。堆叠上限 1、稀有度 EPIC、Warp 4，<b>没有冷却</b>。
+ * 1.7.10 原版 {@code ItemChaosTome}。堆叠上限 1、稀有度 EPIC、Warp 4，没有冷却。
  *
  * <p>行为：右键进入 {@code EnumAction.bow} 拉弓姿态（可用时长 72000）。只要 {@code count % 2 == 0}
- * 且不是第一个 tick，就尝试抽一次 Vis：<b>六大原初要素各抽 {@code (int)(100 * chaosTomeVisMult *
- * random())} 厘</b>（AIR / EARTH / WATER / FIRE / ORDER / ENTROPY，每项独立随机 0~1 点，六项合计平均
+ * 且不是第一个 tick，就尝试抽一次 Vis：六大原初要素各抽 {@code (int)(100 * chaosTomeVisMult *
+ * random())} 厘（AIR / EARTH / WATER / FIRE / ORDER / ENTROPY，每项独立随机 0~1 点，六项合计平均
  * 3 点、最高 6 点）；抽不出来就什么都不发生，抽出来就生成一颗能量法球 {@link EntityChaoticOrb}，于是
- * 引导期间<b>每 2 tick 抛出一颗</b>。法球以玩家身体中心为基准，出生点在其 ±1.5（水平）/ ±0.5（竖直）
- * 的随机位置，初速 =（出生点 − 中心）×（0.2 + 随机 × 0.2），<b>35% 概率是追踪型</b>，并播一次
+ * 引导期间每 2 tick 抛出一颗。法球以玩家身体中心为基准，出生点在其 ±1.5（水平）/ ±0.5（竖直）
+ * 的随机位置，初速 =（出生点 − 中心）×（0.2 + 随机 × 0.2），35% 概率是追踪型，并播一次
  * Thaumcraft 的 {@code ice} 音效（0.3 音量 / 0.8 + 随机 × 0.1 音调）。
  *
  * <p>1.21.1 对应：{@code onItemRightClick} / {@code onUsingTick} / {@code EnumAction.bow} →
- * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
- * （见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），改成 {@link FRRechargable} 的物品自身充能；
- * 发射音效 {@code thaumcraft:ice} 换成原版等价物 {@link SoundEvents#GLASS_BREAK}（冰裂/碎晶质感），并按
- * 项目约定过 {@link SoundHelper#play} 统一压低音量；原版 tooltip 的「Orbs deal 1-N damage on contact and
- * / explode …」那一行是 {@code ItemChaosTome5_1.lore + " 1-" + cap + " " + ItemChaosTome5_2.lore} 拼出来
- * 的，RE 已把两段合并成带一个 {@code %s} 的 {@code ItemChaosTome5.lore}，本项目沿用合并后的键并把文本
- * 改回 1.7.10 的渲染结果（见提交说明）。
+ * {@code Item#use} / {@code Item#onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>，
+ * 改成 {@link FRRechargable} 的物品自身充能；发射音效 {@code thaumcraft:ice} 换成原版等价物
+ * {@link SoundEvents#GLASS_BREAK}（冰裂/碎晶质感），并按本移植约定过 {@link SoundHelper#play}
+ * 统一压低音量；原版 tooltip 的「Orbs deal 1-N damage on contact and / explode …」那一行是
+ * {@code ItemChaosTome5_1.lore + " 1-" + cap + " " + ItemChaosTome5_2.lore} 拼出来的，
+ * RE 已把两段合并成带一个 {@code %s} 的 {@code ItemChaosTome5.lore}，本移植沿用合并后的键，
+ * 并把文本改回 1.7.10 的渲染结果。
  *
- * <p><b>三处刻意的取舍</b>：
+ * <p>三处刻意的取舍：
  * <ol>
- *   <li>原版每颗法球的 Vis 消耗是六项独立随机、合计 0~6 点（平均 3 点）。充能是整数，按本项目「把原版
- *       单次合计取整成一个固定值」的既有做法（霹雳咒书 2.2 → 2、腥红之咒 8.4 → 8），这里固定为
- *       {@code tomeOfPrimalChaosVisCost = 3}（即原版平均值）；代价是丢掉了「有时便宜、有时抽不出来」的
- *       那点随机性，换来与其它施法物品一致的整数充能；</li>
- *   <li>原版右键引导<b>没有冷却</b>，节奏完全来自 {@code count % 2 == 0}。本项目为它保留了
- *       {@code tomeOfPrimalChaosCooldown} 配置，但它的语义是<b>两次生成法球之间的间隔</b>（默认 2），
+ *   <li>原版每颗法球的 Vis 消耗是六项独立随机、合计 0~6 点（平均 3 点）。充能是整数，按本移植
+ *       「把原版单次合计取整成一个固定值」的既有做法（霹雳咒书 2.2 → 2、腥红之咒 8.4 → 8），
+ *       这里固定为 {@code tomeOfPrimalChaosVisCost = 3}（即原版平均值）；代价是丢掉了「有时便宜、
+ *       有时抽不出来」的那点随机性，换来与其它施法物品一致的整数充能；</li>
+ *   <li>原版右键引导没有冷却，节奏完全来自 {@code count % 2 == 0}。本移植为它保留了
+ *       {@code tomeOfPrimalChaosCooldown} 配置，但它的语义是两次生成法球之间的间隔（默认 2），
  *       不是施法后的冷却，因此不接 {@code CooldownHelper}；</li>
  *   <li>原版在 {@code spawnOrb} 里算了一个 {@code vector = 中心 + 视线 × 1.0，y += 0.5} 的变量，但此后
  *       从未使用（真正的出生点走的是随机偏移）。这里不保留这段死代码。</li>

@@ -47,7 +47,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * 物品注册表。
  *
- * <p>对应 1.12.2 原版 {@code CommonProxy} 里那一长串静态物品字段与
+ * <p>对应 RE 的 {@code CommonProxy} 里那一长串静态物品字段与
  * {@code registerItems(RegistryEvent.Register<Item>)}。NeoForge 1.21.1 换成
  * {@link DeferredRegister}：物品在类加载时声明，注册表实例挂到模组事件总线上统一提交。
  *
@@ -121,7 +121,7 @@ public final class FRItems {
     /**
      * 恐惧之冠（Crown of Terror）。原版稀有度 EPIC。
      *
-     * <p>它是本模组唯一的护甲类物品：既能戴在头盔位（{@code ArmorItem}），也能放进 Curios 的
+     * <p>它是本移植唯一的护甲类物品：既能戴在头盔位（{@code ArmorItem}），也能放进 Curios 的
      * {@code head} 槽。原版是金材质 + {@code setMaxDamage(1000)}，这里护甲值走自定义材质
      * {@link FRArmorMaterials#TERROR_CROWN}，耐久度在 {@code Item.Properties} 上单独给。
      */
@@ -158,8 +158,8 @@ public final class FRItems {
     /**
      * 食尸鬼之颅（Ghastly Skull）。
      *
-     * <p>1.7.10 原版注册了它但逻辑没写完（详见 {@link ItemGhastlySkull} 的类注释），
-     * 1.12.2 移植版也没做。这一件是按原作者留下的意图与要素分配补完的**原创设计**，
+     * <p>原版注册了它但逻辑没写完（详见 {@link ItemGhastlySkull} 的类注释），
+     * RE 也没做。这一件是按原作者留下的意图与要素分配补完的**原创设计**，
      * 不是对照复刻。原版稀有度 EPIC，附带 3 点扭曲。
      */
     public static final DeferredItem<ItemGhastlySkull> GHASTLY_SKULL =
@@ -181,12 +181,12 @@ public final class FRItems {
     /**
      * 欧米伽之核（Omega Core）。原版稀有度 EPIC。
      *
-     * <p><b>原版没有研究词条、也没有灌注配方</b>，只能创造模式获取；按「只以原版为准」的原则，
-     * 本项目同样不配配方与研究。
+     * <p>原版没有研究词条、也没有灌注配方，只能创造模式获取；按「只以原版为准」的原则，
+     * 本移植同样不配配方与研究。
      *
-     * <p><b>这是既定设计，不是漏做</b>：项目负责人明确表示它的定位应当是「创造物品级别、
-     * 要非常贵」，因此普通灌注配方与研究都刻意留空。将来若引入无尽贪婪（Avaritia）之类
-     * 极昂贵的终局前置，再把它作为终局配方接进去——在此之前<b>不要</b>顺手给它补配方或研究。
+     * <p>这是既定设计，不是漏做：定位是「创造物品级别、造价极高」，因此普通灌注配方与研究
+     * 都刻意留空。将来若引入无尽贪婪（Avaritia）之类极昂贵的终局前置，再把它作为终局配方
+     * 接进去——在此之前<b>不要</b>顺手给它补配方或研究。
      */
     public static final DeferredItem<ItemOmegaCore> OMEGA_CORE =
             ITEMS.registerItem("omega_core", ItemOmegaCore::new,
@@ -216,9 +216,9 @@ public final class FRItems {
     /**
      * 错位之典（Tome of Discord），注册名 {@code tome_of_discord}。
      *
-     * <p>原版类名是 {@code ItemTeleportationTome}（研究键才叫 DiscordTome），1.7.10 注册名也是
-     * ItemTeleportationTome；本项目按「一个物品一个物品」的节奏迁移时统一改用
-     * {@code tome_of_discord} 这个注册名。原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
+     * <p>原版类名是 {@code ItemTeleportationTome}（研究键才叫 DiscordTome），原版注册名也是
+     * ItemTeleportationTome；本移植统一改用 {@code tome_of_discord} 这个注册名。
+     * 原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
      */
     public static final DeferredItem<ItemTeleportationTome> TELEPORTATION_TOME =
             ITEMS.registerItem("tome_of_discord", ItemTeleportationTome::new,
@@ -227,8 +227,8 @@ public final class FRItems {
     /**
      * 虚空吞噬者（Devourer of The Void），注册名 {@code devourer_of_the_void}。
      *
-     * <p>原版类名是 {@code ItemObeliskDrainer}（本项目的注册名按第 7 波口径统一改成
-     * {@code devourer_of_the_void}）。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
+     * <p>原版类名是 {@code ItemObeliskDrainer}（本移植统一改成
+     * {@code devourer_of_the_void} 这个注册名）。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
      */
     public static final DeferredItem<ItemDevourerOfTheVoid> DEVOURER_OF_THE_VOID =
             ITEMS.registerItem("devourer_of_the_void", ItemDevourerOfTheVoid::new,
@@ -264,7 +264,7 @@ public final class FRItems {
     /**
      * 核子之怒（Nuclear Fury），注册名 {@code nuclear_fury}。
      *
-     * <p>1.7.10 原版类名是 {@code ItemMissileTome}（这里沿用 RE 的 {@link ItemNuclearFury}）。
+     * <p>原版类名是 {@code ItemMissileTome}（这里沿用 RE 的 {@link ItemNuclearFury}）。
      * 原版稀有度 EPIC，堆叠上限 1，附带 5 点扭曲。
      */
     public static final DeferredItem<ItemNuclearFury> NUCLEAR_FURY =
@@ -283,8 +283,8 @@ public final class FRItems {
     /**
      * 永恒放逐之诫（Edict of Eternal Banishment），注册名 {@code edict_of_banishment}。
      *
-     * <p>1.7.10 原版类名就是 {@code ItemOverthrower}（1.7.10 的 Main 里注册的是它，同目录那份
-     * {@code ItemOverthrowerLegacy} 只是没被任何地方引用的备用实现，详见提交说明）。
+     * <p>原版类名就是 {@code ItemOverthrower}（原版 Main 里注册的是它；同目录的
+     * {@code ItemOverthrowerLegacy} 只是没被任何地方引用的备用实现，不移植）。
      * 原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
      */
     public static final DeferredItem<ItemOverthrower> EDICT_OF_BANISHMENT =
@@ -294,7 +294,7 @@ public final class FRItems {
     /**
      * 深渊魔典（Grimoire of The Abyss），注册名 {@code void_grimoire}。
      *
-     * <p>1.7.10 原版类名就是 {@code ItemVoidGrimoire}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
+     * <p>原版类名就是 {@code ItemVoidGrimoire}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
      */
     public static final DeferredItem<ItemVoidGrimoire> VOID_GRIMOIRE =
             ITEMS.registerItem("void_grimoire", ItemVoidGrimoire::new,
@@ -303,7 +303,7 @@ public final class FRItems {
     /**
      * 预言之典（Tome of Predestiny），注册名 {@code tome_of_predestiny}。
      *
-     * <p>1.7.10 原版类名就是 {@code ItemTelekinesisTome}（同目录的 {@code ItemTelekinesisTomeLegacy}
+     * <p>原版类名就是 {@code ItemTelekinesisTome}（同目录的 {@code ItemTelekinesisTomeLegacy}
      * 没有被任何地方引用，不移植）。原版稀有度 EPIC，堆叠上限 1，附带 4 点扭曲。
      */
     public static final DeferredItem<ItemTelekinesisTome> TOME_OF_PREDESTINY =
@@ -313,7 +313,7 @@ public final class FRItems {
     /**
      * 月耀咒书（Tome of Lunar Flares），注册名 {@code tome_of_lunar_flares}。
      *
-     * <p>1.7.10 原版类名就是 {@code ItemLunarFlares}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
+     * <p>原版类名就是 {@code ItemLunarFlares}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
      */
     public static final DeferredItem<ItemLunarFlares> TOME_OF_LUNAR_FLARES =
             ITEMS.registerItem("tome_of_lunar_flares", ItemLunarFlares::new,
@@ -322,7 +322,7 @@ public final class FRItems {
     /**
      * 神化（Apotheosis），注册名 {@code apotheosis}。
      *
-     * <p>1.7.10 原版类名 {@code ItemApotheosis}。原版稀有度 EPIC，堆叠上限 1，附带 5 点扭曲。
+     * <p>原版类名 {@code ItemApotheosis}。原版稀有度 EPIC，堆叠上限 1，附带 5 点扭曲。
      */
     public static final DeferredItem<ItemApotheosis> APOTHEOSIS =
             ITEMS.registerItem("apotheosis", ItemApotheosis::new,
@@ -331,8 +331,8 @@ public final class FRItems {
     /**
      * 破碎的命运巨著（Tome of Broken Fates），注册名 {@code tome_of_broken_fates}。
      *
-     * <p>1.7.10 原版类名 {@code ItemFateTome}。原版稀有度 EPIC，堆叠上限 1，附带 7 点扭曲
-     * （全模组第二高，仅次于悖论之刃的 8）。
+     * <p>原版类名 {@code ItemFateTome}。原版稀有度 EPIC，堆叠上限 1，附带 7 点扭曲
+     * （本移植中第二高，仅次于悖论之刃的 8）。
      */
     public static final DeferredItem<ItemFateTome> TOME_OF_BROKEN_FATES =
             ITEMS.registerItem("tome_of_broken_fates", ItemFateTome::new,
@@ -341,7 +341,7 @@ public final class FRItems {
     /**
      * 湮灭之钥（Keystone of The Oblivion），注册名 {@code oblivion_stone}。
      *
-     * <p>1.7.10 原版类名就是 {@code ItemOblivionStone}。原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
+     * <p>原版类名就是 {@code ItemOblivionStone}。原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
      * 它不消耗也不储存 Vis，所以不实现 {@code FRRechargable}。
      */
     public static final DeferredItem<ItemOblivionStone> OBLIVION_STONE =

@@ -19,26 +19,25 @@ import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4f;
 
 /**
- * 弹射物「法球」的渲染器——按 1.12.2 移植版（RE）的<b>两层结构</b>复刻，用现代渲染 API 写。
+ * 弹射物「法球」的渲染器，复刻 1.12.2 移植版（RE）的两层结构，用现代渲染 API 写。
  *
  * <h2>复刻的是 RE 的哪两层</h2>
  *
  * <p>RE 里每个 {@code RenderXxxOrb} 都是同一个套路：
  * <ol>
- *   <li><b>外层公告板</b>：一张柔光贴片，按相机朝向、带 {@code sin(ticksExisted / 5) * 0.2 + 0.2}
+ *   <li>外层公告板：一张柔光贴片，按相机朝向、带 {@code sin(ticksExisted / 5) * 0.2 + 0.2}
  *       的呼吸缩放，染成该法球的颜色；</li>
- *   <li><b>内层尖刺爆闪</b>：12 组绕随机轴旋转的三角锥，加法混合、纯顶点色，
+ *   <li>内层尖刺爆闪：12 组绕随机轴旋转的三角锥，加法混合、纯顶点色，
  *       中心白、外缘是该颜色压暗 30%，大小在前 10 tick 内线性长到 {@code (5~25)/30}。</li>
  * </ol>
  *
- * <p>逐实体的差异用三个开关表达（本次 1.6.1 对齐）：
- * lunar_flare / rageous_missile <b>只有尖刺层</b>；thunderpeal / primal 的公告板是加法混合
- * （{@code SRC_ALPHA, ONE}），crimson / dark_matter 是普通透明（{@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA}）；
+ * <p>逐实体的差异用三个开关表达：lunar_flare / rageous_missile 只有尖刺层；
+ * thunderpeal / primal 的公告板是加法混合（{@code SRC_ALPHA, ONE}），
+ * crimson / dark_matter 是普通透明（{@code SRC_ALPHA, ONE_MINUS_SRC_ALPHA}）；
  * primal 的颜色按实体同步过来的要素索引从 6 色表取，其余法球的颜色写死在各自的渲染器里。
  *
- * <p>早先曾把实体渲染器做成空实现、只留粒子拖尾，结果根本看不到球，观感与 RE 差得远。
- * 现在改成真正画两层——<b>形体由渲染器负责，粒子只作拖尾</b>（拖尾仍在各实体自己的
- * {@code spawnTrailParticles} 里）。
+ * <p>形体由渲染器负责，粒子只作拖尾：渲染器若做成空实现、只留粒子拖尾，法球根本看不到
+ * （拖尾仍在各实体自己的 {@code spawnTrailParticles} 里）。
  *
  * <h2>现代写法（满足 {@code client/package-info.java} 的三条硬约束）</h2>
  *
@@ -50,8 +49,8 @@ import org.joml.Matrix4f;
  *   <li>公告板：普通透明用 {@link RenderType#entityTranslucentEmissive(ResourceLocation)}
  *       （自发光、Iris 认识）；加法时用 {@link RenderType#eyes(ResourceLocation)}；</li>
  *   <li>尖刺用 {@link RenderType#eyes(ResourceLocation)}——它正好是原版「加法混合 + 主渲染目标 +
- *       NEW_ENTITY 格式」。<b>注意</b>：{@code RenderType.lightning()} 虽然也是加法混合，但它的输出
- *       目标是 {@code WEATHER_TARGET}（天气缓冲），在实体渲染里用会画到错误的帧缓冲，<b>不能用</b>；</li>
+ *       NEW_ENTITY 格式」。<b>不要用 {@code RenderType.lightning()}</b>：它虽然也是加法混合，但输出
+ *       目标是 {@code WEATHER_TARGET}（天气缓冲），在实体渲染里会画到错误的帧缓冲；</li>
  *   <li>随机数用 {@link RandomSource}（固定种子 187，与 RE 一致），不是 {@code Math.random()}。</li>
  * </ul>
  *
@@ -68,17 +67,16 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
             ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "textures/entity/fr_orb.png");
 
     /**
-     * 加法层用的柔光贴图：<b>RGB 就是径向衰减（中心 236、边缘 0）、alpha 恒为 255</b>。
+     * 加法层用的柔光贴图：RGB 就是径向衰减（中心 236、边缘 0）、alpha 恒为 255。
      * 由 {@code Tools/make_orb_add_texture.js} 从 {@link #TEXTURE} 生成。
      *
-     * <p>为什么加法层不能用 {@link #TEXTURE}：原版 {@link RenderType#eyes(ResourceLocation)} 的混合是
-     * {@code ADDITIVE_TRANSPARENCY}，其实现是 {@code RenderSystem.blendFunc(ONE, ONE)}——
-     * <b>alpha 完全不参与混合</b>（顶点 alpha 也一样被忽略），shader 只把「贴图 RGB × 顶点色」直接加到
-     * 帧缓冲。于是「RGB 全白、只有 alpha 有渐变」的贴图在加法层里会被当成一整块实心白 quad 加起来：
-     * 边缘没有渐变、四边形覆盖到哪里就把那里刷亮到哪里，贴近相机时就是玩家反馈的那块「巨大的硬边半透明
-     * 面片」。RE 的 {@code RenderThunderpealOrb} 用的是 {@code blendFunc(SRC_ALPHA, ONE)}（会乘 alpha），
-     * 1.21.1 没有「贴图 + SRC_ALPHA,ONE + 主渲染目标」的现成 RenderType，所以这里改为把衰减放进 RGB，
-     * 用它配合 {@code eyes} 的 {@code ONE,ONE} 得到等价的柔光加法效果。
+     * <p><b>加法层不能用 {@link #TEXTURE}</b>：原版 {@link RenderType#eyes(ResourceLocation)} 的混合是
+     * {@code ADDITIVE_TRANSPARENCY}，其实现是 {@code RenderSystem.blendFunc(ONE, ONE)}，alpha 完全不参与
+     * 混合（顶点 alpha 也一样被忽略），shader 只把「贴图 RGB × 顶点色」直接加到帧缓冲。于是「RGB 全白、
+     * 只有 alpha 有渐变」的贴图在加法层里会变成一整块实心白 quad：边缘没有渐变，四边形覆盖到哪里就刷亮
+     * 到哪里，贴近相机时是一块硬边半透明面片。RE 的 {@code RenderThunderpealOrb} 用的是
+     * {@code blendFunc(SRC_ALPHA, ONE)}（会乘 alpha）；1.21.1 没有「贴图 + SRC_ALPHA,ONE + 主渲染目标」
+     * 的现成 RenderType，所以改为把衰减放进 RGB，配合 {@code eyes} 的 {@code ONE,ONE} 得到等价的柔光加法效果。
      */
     private static final ResourceLocation ADD_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "textures/entity/fr_orb_add.png");
@@ -86,8 +84,8 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
     /**
      * 公告板尺寸上限（格）。
      *
-     * <p>纯属防御：目前最大的实体是暗物质球 {@code 0.75 * (1 + bob)} ≈ 1.05，本上限不会改变现有观感，
-     * 只是保证以后有人把 {@code baseScale} 调飞时不会再一次出现「一块 quad 糊满屏幕」。
+     * <p>防御性上限：当前最大的实体是暗物质球 {@code 0.75 * (1 + bob)} ≈ 1.05，本上限不会改变现有
+     * 观感，只保证 {@code baseScale} 被调大时不会出现「一块 quad 糊满屏幕」。
      */
     private static final float MAX_BILLBOARD_SCALE = 1.1F;
 
@@ -189,7 +187,7 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
             b = (rgb & 0xFF) / 255.0F;
         }
 
-        // 淡出：目前只有 EntityChaoticOrb 会覆写 renderScale（从未锁定目标的球 7 秒后缩小消失）。
+        // 淡出：只有 EntityChaoticOrb 覆写 renderScale（未锁定目标的球 7 秒后缩小消失）。
         float fade = entity instanceof FRHomingProjectile projectile ? projectile.renderScale() : 1.0F;
 
         if (this.renderBillboard) {
@@ -201,7 +199,7 @@ public class FROrbRenderer<T extends Entity> extends EntityRenderer<T> {
     /** 第 1 层：RE 的外层公告板（lunar_flare / rageous_missile 不画）。 */
     private void renderBillboard(PoseStack poseStack, MultiBufferSource buffers, float age, float r, float g, float b,
                                  float fade) {
-        // 原版那一圈 RenderXxxOrb 都用 sin(ticksExisted / 5) * 0.2 + 0.2 做呼吸缩放。
+        // RE 那一圈 RenderXxxOrb 都用 sin(ticksExisted / 5) * 0.2 + 0.2 做呼吸缩放。
         float bob = Mth.sin(age / 5.0F) * 0.2F + 0.2F;
         float scale = Math.min(this.baseScale * (1.0F + bob), MAX_BILLBOARD_SCALE) * fade;
 

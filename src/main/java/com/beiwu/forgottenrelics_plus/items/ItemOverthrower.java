@@ -43,7 +43,7 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * 永恒放逐之诫（Edict of Eternal Banishment），注册名 {@code edict_of_banishment}，
- * 1.7.10 原版 {@code ItemOverthrower}。堆叠上限 1、Warp 2，<b>原版没有施法冷却</b>。
+ * 1.7.10 原版 {@code ItemOverthrower}。堆叠上限 1、Warp 2，原版没有施法冷却。
  *
  * <p>行为：右键锁定准星指向的活体（射线 64 格、搜索盒外扩 3 格），进入 150 tick 拉弓引导；
  * 引导期间每 tick 向目标喷 5 颗向内收束的红橙 wisp、施加 30 tick / amplifier 2 的缓慢，每 10 tick
@@ -52,21 +52,20 @@ import net.minecraft.world.phys.Vec3;
  * 身处下界时右键完全无效。
  *
  * <p>1.21.1 对应：{@code onItemRightClick} / {@code onUsingTick} / {@code EnumAction.bow} →
- * {@code use} / {@code onUseTick} / {@link UseAnim#BOW}；<b>「从背包法杖抽 Vis」没有对应 API</b>
- * （见 {@code docs/reference/thaumaturge-1.21.1-api.md} §12.1），按本模组统一约定改成
- * {@link FRRechargable} 的物品自身充能；以玩家为键的静态 map {@code targetList} →
+ * {@code use} / {@code onUseTick} / {@link UseAnim#BOW}。原版「从背包法杖抽 Vis」没有对应 API，
+ * 按本移植统一约定改成 {@link FRRechargable} 的物品自身充能；以玩家为键的静态 map {@code targetList} →
  * {@link FRDataComponents#EDICT_TARGET} 存实体 id（与虚空吞噬者锁定方尖碑坐标同源）；原版写 NBT
- * 重建实体 → {@code Entity#teleportTo(ServerLevel, ...)}；<b>不写任何自定义网络包</b>，粒子走服务端
+ * 重建实体 → {@code Entity#teleportTo(ServerLevel, ...)}；不写任何自定义网络包，粒子走服务端
  * {@link FRParticles}、真雷直接生成 {@link LightningBolt} 实体、全服公告走原版 {@code Component} +
  * {@code PlayerList#broadcastSystemMessage}；{@code thaumcraft:fireloop} → {@link SoundEvents#FIRE_AMBIENT}
  * 并过 {@link SoundHelper#play} 统一压低音量。
  *
- * <p><b>Vis 折算</b>：原版每 tick 抽 18 厘 Vis = 3.6 点/秒，充能是整数，按核子之怒的先例向上取整为
+ * <p>Vis 折算：原版每 tick 抽 18 厘 Vis = 3.6 点/秒，充能是整数，按核子之怒的先例向上取整为
  * 4 点/秒，扣在每一秒的第一 tick（一次完整引导 150 tick 共扣 8 次 = 32 点，原版 27 点）。
  *
- * <p><b>与 1.7.10 的偏差</b>：
+ * <p>与原版的偏差：
  * <ol>
- *   <li>落点搜索的 {@code y == 124} 哨兵<b>逐字保留</b>：原版从 124 往下找，若 124 本身合法也仍被当成
+ *   <li>落点搜索的 {@code y == 124} 哨兵逐字保留：原版从 124 往下找，若 124 本身合法也仍被当成
  *       「没找到落点」——原版自身的怪癖，不修正；</li>
  *   <li>落点由整格 {@code (x, y, z)} 改为 {@code (x + 0.5, y, z + 0.5)}，否则实体会卡在方块角上；</li>
  *   <li>目标锁定改用实体 id：目标若在引导途中跨维度离开，{@code ServerLevel#getEntity(id)} 取不到，
@@ -473,7 +472,7 @@ public class ItemOverthrower extends FRItem implements FRRechargable, IWarpingGe
      * 对应原版 {@code OverthrowChatMessage(type 0)} 的全服广播：
      * {@code <施法者> has overthrown <目标> into the Nether.}
      *
-     * <p>本项目<b>不写自定义网络包</b>，改用原版 {@link Component} + {@code PlayerList#broadcastSystemMessage}
+     * <p>本移植不写自定义网络包，改用原版 {@link Component} + {@code PlayerList#broadcastSystemMessage}
      *（等价于原版的 {@code sendToAll}）。
      */
     private static void broadcastOverthrow(Player overthrower, ServerPlayer victim) {

@@ -22,15 +22,15 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * 实体注册表。
  *
- * <p>1.12.2 原版把实体挂在 {@code EntityRegistry.registerModEntity(...)} 上，1.21.1 换成
+ * <p>RE 把实体挂在 {@code EntityRegistry.registerModEntity(...)} 上，1.21.1 换成
  * {@link DeferredRegister}。尺寸一律取 0.25×0.25：这些弹射物在 1.7.10 里就是「零尺寸 + 目标判定」，
  * 碰撞由 {@code onHit} 自己处理，不靠实体体积。
  *
- * <p><b>updateInterval 取 5（1.7.0 调整，服务器友好）</b>：这些弹射物的运动在<b>两端都算</b>
+ * <p><b>updateInterval 取 5</b>（服务器友好）：这些弹射物的运动在两端都算
  * （{@code FRHomingProjectile#applyHoming} 与 {@code EntityRageousMissile#tick}），
- * 客户端能自己推出接近一致的轨迹，位置包只剩纠偏作用，没有必要每 tick 都发。
- * 1.6.2 曾因为「客户端完全不参与运动、只被动跟随位置包」而把间隔压到 1（当时反馈「像 PPT」），
- * 那个前提现在不存在了。取 5 之后位置包降到 1/5，纠偏间隔仍明显密于原版投射物（原版普遍 10~20）。
+ * 客户端能自己推出接近一致的轨迹，位置包只剩纠偏作用，没有必要每 tick 都发。间隔不要再压到 1：
+ * 那是为「客户端完全不参与运动、只被动跟随位置包」准备的，画面会一顿一顿。取 5 之后位置包降到 1/5，
+ * 纠偏间隔仍明显密于原版投射物（原版普遍 10~20）。
  * 唯一例外是 {@link EntityShinyEnergy}：两端各自确定性推算，连纠偏都不需要，保持 10。
  */
 public final class FREntities {
