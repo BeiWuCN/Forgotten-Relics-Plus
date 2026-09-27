@@ -5,6 +5,7 @@ import com.beiwu.forgottenrelics_plus.client.FRParticles;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.utils.CooldownHelper;
+import com.beiwu.forgottenrelics_plus.registry.FRSounds;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -99,7 +100,7 @@ import net.minecraft.world.phys.Vec3;
  *   <li><b>不写任何自定义网络包</b>：{@code PacketVoidMessage} / {@code BurstMessage} /
  *       {@code EntityMotionMessage} 全部改由服务端直接生成粒子与改速度，
  *       靠原版同步送达客户端（服务端改 {@code motion} 后置 {@code hurtMarked} 即会同步）；</li>
- *   <li>音效：{@code forgottenrelics:sound.mdcharge} → 原版 {@link SoundEvents#RESPAWN_ANCHOR_CHARGE}
+ *   <li>音效：{@code forgottenrelics:sound.mdcharge} → 模组自带音效 {@link FRSounds#MD_CHARGE}
  *       （同为「蓄力」音，且都有音调参数）；{@code thaumcraft:craftfail} → 原版
  *       {@link SoundEvents#FIRE_EXTINGUISH}（同为失败时的「嗤」声）。本模组对自定义/Thaumcraft
  *       音效一律换原版等价物，且都过 {@link SoundHelper#play} 统一压低音量；</li>
@@ -276,7 +277,7 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
         // 原版只在引导的第一个 tick（count == getMaxItemUseDuration()）播一次蓄力音。
         if (remainingUseDuration == duration) {
             SoundHelper.play(level, thisPos.x, thisPos.y, thisPos.z,
-                    SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.PLAYERS, 4.0F, 0.75F);
+                    FRSounds.MD_CHARGE.get(), SoundSource.PLAYERS, 4.0F, 0.75F);
         }
 
         // 原版每 tick 广播 PacketVoidMessage(.., false)：紫色 wisp 向内收束 + 传送门粒子。

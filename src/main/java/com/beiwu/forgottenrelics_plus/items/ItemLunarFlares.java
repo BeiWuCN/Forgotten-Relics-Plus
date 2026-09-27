@@ -3,6 +3,7 @@ package com.beiwu.forgottenrelics_plus.items;
 import com.beiwu.forgottenrelics_plus.api.FRRechargable;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
 import com.beiwu.forgottenrelics_plus.entity.EntityLunarFlare;
+import com.beiwu.forgottenrelics_plus.registry.FRSounds;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -49,7 +50,7 @@ import net.minecraft.world.phys.Vec3;
  *       {@link RechargeAccess#consumeCharge} 扣除；</li>
  *   <li>取方块改用原版 {@code ClipContext} 射线（透视液体、与传送之典同一写法）；</li>
  *   <li>发射音效 {@code ForgottenRelics:sound.starfall} 换成原版等价物
- *       {@link SoundEvents#FIREWORK_ROCKET_LAUNCH}（流星下坠的呼啸感），
+ *       模组自带音效 {@link FRSounds#STARFALL}（原版 {@code sound.starfall}），
  *       并按项目约定过 {@link SoundHelper#play} 统一压低音量。</li>
  * </ul>
  *
@@ -150,7 +151,7 @@ public class ItemLunarFlares extends FRItem implements FRRechargable, IWarpingGe
         // 原版每 4 tick 在玩家处播一次 sound.starfall（音量 2.0、音调 1.0 + rand * 0.5）。
         if (remainingUseDuration % 4 == 0) {
             SoundHelper.play(level, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 2.0F,
+                    FRSounds.STARFALL.get(), SoundSource.PLAYERS, 2.0F,
                     1.0F + level.random.nextFloat() * 0.5F);
         }
     }
