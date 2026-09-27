@@ -22,6 +22,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemOblivionAmulet;
 import com.beiwu.forgottenrelics_plus.items.ItemParadox;
 import com.beiwu.forgottenrelics_plus.items.ItemRingOfDiscord;
 import com.beiwu.forgottenrelics_plus.items.ItemShinyStone;
+import com.beiwu.forgottenrelics_plus.items.ItemSoulTome;
 import com.beiwu.forgottenrelics_plus.items.ItemSuperpositionRing;
 import com.beiwu.forgottenrelics_plus.items.ItemTeleportationTome;
 import com.beiwu.forgottenrelics_plus.items.ItemTerrorCrown;
@@ -285,6 +286,19 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemNuclearFury> NUCLEAR_FURY =
             ITEMS.registerItem("nuclear_fury", ItemNuclearFury::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 千咒之诫（Edict of a Thousand Damned Souls），注册名 {@code soul_tome}。
+     *
+     * <p>原版类名 {@code ItemSoulTome}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
+     *
+     * <p>右键拉弓持续引导：20 格内的活体每 4 tick 被随机抽取一次最大生命 1/10 的灵魂伤害，
+     * 3 格内的活体每 tick 被击退并承受真雷伤害；引导期间玩家几乎无法水平移动。
+     * 详见 {@link ItemSoulTome}。
+     */
+    public static final DeferredItem<ItemSoulTome> SOUL_TOME =
+            ITEMS.registerItem("soul_tome", ItemSoulTome::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

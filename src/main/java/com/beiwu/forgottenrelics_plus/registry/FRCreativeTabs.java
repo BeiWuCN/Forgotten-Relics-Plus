@@ -65,6 +65,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.TOME_OF_PRIMAL_CHAOS.get());
                         // 第六波：核子之怒。
                         output.accept(FRItems.NUCLEAR_FURY.get());
+                        // 第七波：千咒之诫。
+                        output.accept(FRItems.SOUL_TOME.get());
                     })
                     .build());
 

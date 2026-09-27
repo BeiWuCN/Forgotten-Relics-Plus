@@ -5,6 +5,7 @@ import com.beiwu.forgottenrelics_plus.entity.EntityChaoticOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityCrimsonOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityDarkMatterOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityRageousMissile;
+import com.beiwu.forgottenrelics_plus.entity.EntitySoulEnergy;
 import com.beiwu.forgottenrelics_plus.entity.EntityThunderpealOrb;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
@@ -62,6 +63,14 @@ public final class FREntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRageousMissile>> RAGEOUS_MISSILE =
             register("rageous_missile",
                     () -> EntityType.Builder.<EntityRageousMissile>of(EntityRageousMissile::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10));
+
+    /** 千咒之诫的灵魂能量（原版 {@code EntitySoulEnergy}）。 */
+    public static final DeferredHolder<EntityType<?>, EntityType<EntitySoulEnergy>> SOUL_ENERGY =
+            register("soul_energy",
+                    () -> EntityType.Builder.<EntitySoulEnergy>of(EntitySoulEnergy::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
                             .updateInterval(10));

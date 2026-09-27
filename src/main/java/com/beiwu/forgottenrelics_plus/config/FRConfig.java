@@ -365,6 +365,30 @@ public final class FRConfig {
     /** 核子之怒：附带的扭曲值（原版 {@code getWarp} 返回 5）。 */
     public static final ModConfigSpec.IntValue NUCLEAR_FURY_WARP;
 
+    // ---- 千咒之诫 / Edict of a Thousand Damned Souls ----
+    /** 千咒之诫：每 4 tick 一次灵魂抽取的 Vis 基础消耗。 */
+    public static final ModConfigSpec.IntValue SOUL_TOME_VIS_COST;
+    /** 千咒之诫：Vis 消耗倍率（原版配置 key 是 soulTomeVisCost，字段语义却是倍率）。 */
+    public static final ModConfigSpec.DoubleValue SOUL_TOME_VIS_MULT;
+    /** 千咒之诫：近距离击退每命中一个实体扣一次的 Vis 基础消耗。 */
+    public static final ModConfigSpec.IntValue SOUL_TOME_KNOCKBACK_VIS_COST;
+    /** 千咒之诫：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue SOUL_TOME_MAX_CHARGE;
+    /** 千咒之诫：灵魂抽取伤害的计算除数（原版 soulTomeDivisor）。 */
+    public static final ModConfigSpec.DoubleValue SOUL_TOME_DIVISOR;
+    /** 千咒之诫：引导预热时间（tick），期间不结算任何效果。 */
+    public static final ModConfigSpec.IntValue SOUL_TOME_WARMUP_TICKS;
+    /** 千咒之诫：灵魂抽取伤害下限。 */
+    public static final ModConfigSpec.DoubleValue SOUL_TOME_DAMAGE_MIN;
+    /** 千咒之诫：灵魂抽取伤害上限。 */
+    public static final ModConfigSpec.DoubleValue SOUL_TOME_DAMAGE_MAX;
+    /** 千咒之诫：近距离击退的真雷伤害下限。 */
+    public static final ModConfigSpec.DoubleValue SOUL_TOME_KNOCKBACK_DAMAGE_MIN;
+    /** 千咒之诫：近距离击退的真雷伤害上限。 */
+    public static final ModConfigSpec.DoubleValue SOUL_TOME_KNOCKBACK_DAMAGE_MAX;
+    /** 千咒之诫：附带的扭曲值（原版 {@code getWarp} 返回 3）。 */
+    public static final ModConfigSpec.IntValue SOUL_TOME_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -994,6 +1018,63 @@ public final class FRConfig {
                 .comment("Warp granted by Nuclear Fury.",
                          "核子之怒附带的扭曲值。原版 ItemMissileTome#getWarp 返回 5。")
                 .defineInRange("nuclearFuryWarp", 5, 0, 32768);
+        builder.pop();
+
+        builder.comment("千咒之诫（第七波：拉弓持续引导的范围灵魂汲取）").push("soul_tome");
+        SOUL_TOME_VIS_COST = builder
+                .comment("Base Vis cost for each soul drain pulse (one pulse every 4 ticks)."
+                                 + " Original: Earth 25 + Air 20 + Fire 35 + Entropy 50 = 130 centivis = 1.30 vis,"
+                                 + " rounded to 1 since the item charge is an integer.",
+                         "每 4 tick 一次灵魂抽取的 Vis 基础消耗。原版是土（Terra）25 + 风（Aer）20 + 火（Ignis）35"
+                                 + " + 混沌（Perditio）50 厘 Vis = 1.30 点；充能是整数，故取 1。")
+                .defineInRange("soulTomeVisCost", 1, 0, 32768);
+        SOUL_TOME_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Edict of a Thousand Damned Souls.",
+                         "千咒之诫的 Vis 消耗倍率。注意：原版配置的 key 就叫 soulTomeVisCost（默认 1.0），"
+                                 + "语义却是倍率，属于和核子之怒 nuclearFuryVisCost 同一类命名冲突；"
+                                 + "这里按本项目惯例把 key 定为 soulTomeVisMult。")
+                .defineInRange("soulTomeVisMult", 1.0D, 0.0D, 1024.0D);
+        SOUL_TOME_KNOCKBACK_VIS_COST = builder
+                .comment("Base Vis cost charged per entity pushed back inside the knockback range."
+                                 + " Original: Fire 150 + Entropy 120 = 270 centivis = 2.70 vis, rounded to 2 (same as RE).",
+                         "近距离击退每命中一个实体扣一次的 Vis 基础消耗。原版是火（Ignis）150 + 混沌（Perditio）120"
+                                 + " = 2.70 点，充能为整数故取 2（与 1.12.2 RE 的取值一致）。")
+                .defineInRange("soulTomeKnockbackVisCost", 2, 0, 32768);
+        SOUL_TOME_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Edict of a Thousand Damned Souls."
+                                 + " RE uses 1000, which is exactly 200 seconds of soul draining at 1 vis per 4 ticks.",
+                         "千咒之诫的最大 Vis 储量。沿用 RE 的 1000：每 4 tick 抽 1 点，正好支撑 200 秒连续灵魂抽取。")
+                .defineInRange("soulTomeMaxCharge", 1000, 0, 32768);
+        SOUL_TOME_DIVISOR = builder
+                .comment("Divisor used during damage calculations by the Edict of a Thousand Damned Souls."
+                                 + " Setting this to 10 basically means that most of the time it drains 1/10 of the target's max health per attack.",
+                         "千咒之诫灵魂抽取伤害的计算除数：伤害 = 目标最大生命 / 该值。原版配置 key 就是 soulTomeDivisor，"
+                                 + "默认 10，即每次抽取大约抽掉目标最大生命的 1/10。")
+                .defineInRange("soulTomeDivisor", 10.0D, 0.0D, 32768.0D);
+        SOUL_TOME_WARMUP_TICKS = builder
+                .comment("Warm-up ticks after starting to channel before any effect applies. Original hardcodes 20.",
+                         "开始引导后的预热时间（tick），期间不结算任何效果。原版硬编码 20。")
+                .defineInRange("soulTomeWarmupTicks", 20, 0, 32768);
+        SOUL_TOME_DAMAGE_MIN = builder
+                .comment("Minimal soul drain damage per pulse. Original hardcodes 1.0.",
+                         "每次灵魂抽取的伤害下限。原版硬编码 1.0。")
+                .defineInRange("soulTomeDamageMin", 1.0D, 0.0D, 32768.0D);
+        SOUL_TOME_DAMAGE_MAX = builder
+                .comment("Maximal soul drain damage per pulse. Original hardcodes 20.0.",
+                         "每次灵魂抽取的伤害上限。原版硬编码 20.0。")
+                .defineInRange("soulTomeDamageMax", 20.0D, 0.0D, 32768.0D);
+        SOUL_TOME_KNOCKBACK_DAMAGE_MIN = builder
+                .comment("Minimal true lightning damage dealt to an entity pushed back. Original: 20.0.",
+                         "近距离击退造成的真雷伤害下限。原版是 20.0。")
+                .defineInRange("soulTomeKnockbackDamageMin", 20.0D, 0.0D, 32768.0D);
+        SOUL_TOME_KNOCKBACK_DAMAGE_MAX = builder
+                .comment("Maximal true lightning damage dealt to an entity pushed back. Original: 20.0 + 80.0 * random, i.e. 100.0.",
+                         "近距离击退造成的真雷伤害上限。原版是 20.0 + 80.0 × 随机，即 100.0。")
+                .defineInRange("soulTomeKnockbackDamageMax", 100.0D, 0.0D, 32768.0D);
+        SOUL_TOME_WARP = builder
+                .comment("Warp granted by the Edict of a Thousand Damned Souls. Original getWarp returns 3.",
+                         "千咒之诫附带的扭曲值。原版 getWarp 返回 3。")
+                .defineInRange("soulTomeWarp", 3, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();
