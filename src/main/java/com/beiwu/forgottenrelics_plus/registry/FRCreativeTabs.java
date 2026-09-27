@@ -59,6 +59,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.DEVOURER_OF_THE_VOID.get());
                         // 第七波：邪术之咒。
                         output.accept(FRItems.ELDRITCH_SPELL.get());
+                        // 第七波：腥红之咒。
+                        output.accept(FRItems.CRIMSON_SPELL.get());
                     })
                     .build());
 

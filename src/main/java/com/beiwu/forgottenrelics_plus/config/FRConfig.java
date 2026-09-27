@@ -308,6 +308,22 @@ public final class FRConfig {
     /** 邪术之咒：外域（Outer Lands）中暗物质法球造成的伤害。 */
     public static final ModConfigSpec.DoubleValue ELDRITCH_SPELL_DAMAGE_EX;
 
+    // ---- 腥红之咒 / Crimson Spell ----
+    /** 腥红之咒：每次施法的 Vis 基础消耗。 */
+    public static final ModConfigSpec.IntValue CRIMSON_SPELL_VIS_COST;
+    /** 腥红之咒：Vis 消耗倍率。 */
+    public static final ModConfigSpec.DoubleValue CRIMSON_SPELL_VIS_MULT;
+    /** 腥红之咒：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue CRIMSON_SPELL_MAX_CHARGE;
+    /** 腥红之咒：使用后的冷却（tick）。 */
+    public static final ModConfigSpec.IntValue CRIMSON_SPELL_COOLDOWN;
+    /** 腥红之咒：法球伤害下限。 */
+    public static final ModConfigSpec.DoubleValue CRIMSON_SPELL_DAMAGE_MIN;
+    /** 腥红之咒：法球伤害上限。 */
+    public static final ModConfigSpec.DoubleValue CRIMSON_SPELL_DAMAGE_MAX;
+    /** 腥红之咒：附带的扭曲值。 */
+    public static final ModConfigSpec.IntValue CRIMSON_SPELL_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -845,6 +861,36 @@ public final class FRConfig {
                 .comment("Damage dealt by the Dark Matter Orb inside the Outer Lands.",
                          "暗物质法球在外域（Outer Lands）造成的伤害。原版是 eldritchSpellDamageEx，默认 100。")
                 .defineInRange("eldritchSpellDamageEx", 100.0D, 0.0D, 32768.0D);
+        builder.pop();
+
+        builder.comment("腥红之咒（第七波：猩红法球）").push("crimson_spell");
+        CRIMSON_SPELL_VIS_COST = builder
+                .comment("Base Vis cost per cast for the Crimson Spell.",
+                         "腥红之咒每次施法的 Vis 基础消耗。原版是火 4.8 + 混沌 3.6 = 8.4，充能为整数故取 8。")
+                .defineInRange("crimsonSpellVisCost", 8, 0, 32768);
+        CRIMSON_SPELL_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Crimson Spell.",
+                         "腥红之咒的 Vis 消耗倍率。注意：原版此处的代码误乘了 chaosTomeVisMult，这里按配置本意使用本项。")
+                .defineInRange("crimsonSpellVisMult", 1.0D, 0.0D, 1024.0D);
+        CRIMSON_SPELL_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Crimson Spell.", "腥红之咒的最大 Vis 储量。")
+                .defineInRange("crimsonSpellMaxCharge", 100, 0, 32768);
+        CRIMSON_SPELL_COOLDOWN = builder
+                .comment("Cooldown in ticks after casting the Crimson Spell.",
+                         "腥红之咒使用后的冷却（tick）。原版是 30。")
+                .defineInRange("crimsonSpellCooldown", 30, 0, 32768);
+        CRIMSON_SPELL_DAMAGE_MIN = builder
+                .comment("Minimal damage dealt by the Crimson Orbs.",
+                         "猩红法球能造成的伤害下限。原版 key 是 crimsonSpellDamageMIN，默认 42。")
+                .defineInRange("crimsonSpellDamageMIN", 42.0D, 0.0D, 32768.0D);
+        CRIMSON_SPELL_DAMAGE_MAX = builder
+                .comment("Maximal damage dealt by the Crimson Orbs.",
+                         "猩红法球能造成的伤害上限。原版 key 是 crimsonSpellDamageMAX，默认 100。")
+                .defineInRange("crimsonSpellDamageMAX", 100.0D, 0.0D, 32768.0D);
+        CRIMSON_SPELL_WARP = builder
+                .comment("Warp granted by the Crimson Spell.",
+                         "腥红之咒附带的扭曲值。原版 ItemCrimsonSpell#getWarp 返回 3。")
+                .defineInRange("crimsonSpellWarp", 3, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

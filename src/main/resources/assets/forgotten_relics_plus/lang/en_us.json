@@ -167,7 +167,7 @@
   "item.ItemCrimsonSpell3.lore": "§5at random target nearby if none found.",
   "item.ItemCrimsonSpell4.lore": "§5Crimson Orbs move slowly and could get",
   "item.ItemCrimsonSpell5.lore": "§5destroyed by block collision, but",
-  "item.ItemCrimsonSpell6.lore": "§5Deals §6%1$s-%2$s§5 damage.",
+  "item.ItemCrimsonSpell6.lore": "§5deal§6 %1$s-%2$s §6damage§5.",
   "item.ItemDevourerOfTheVoid1.lore": "§5Can drain power from §6Eldritch Obelisk§5,",
   "item.ItemDevourerOfTheVoid2.lore": "§5if one is present within §6%s blocks§5 radius.",
   "item.ItemDevourerOfTheVoid3.lore": "§5Absorbed power regenerates your life,",

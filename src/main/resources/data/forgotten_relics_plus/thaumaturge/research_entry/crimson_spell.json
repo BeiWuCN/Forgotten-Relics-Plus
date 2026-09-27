@@ -1,0 +1,57 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "name": "fr.name.CrimsonSpell",
+  "parents": [
+    "forgotten_relics_plus:eldritch_spell"
+  ],
+  "column": 3,
+  "row": 8,
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics_plus:crimson_spell"
+  ],
+  "stages": [
+    {
+      "text": "fr.text.CrimsonSpell.1",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "fr.text.CrimsonSpell.2",
+      "recipes": [
+        "forgotten_relics_plus:infusion/crimson_spell"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:ignis",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:perditio",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 3
+    }
+  ],
+  "complexity": 3
+}

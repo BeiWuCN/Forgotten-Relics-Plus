@@ -57,6 +57,20 @@ public final class FRDamageTypes {
      */
     public static final ResourceKey<DamageType> DARK_MATTER = key("dark_matter");
 
+    /**
+     * 遗落魔法伤害（原版 {@code DamageRegistryHandler.DamageSourceMagic}，message_id = {@code forgottenMagic}），
+     * 腥红之咒的猩红法球使用。
+     *
+     * <p>原版这个伤害源构造时调了 {@code setDamageBypassesArmor()}；1.21.1 里这件事由
+     * {@code tags/damage_type/*.json} 表达，本项目<b>暂不补任何 tag</b>
+     * （是否补 armor bypass 待用户拍板，见 {@code Tools/HANDOVER.md} 第 5 节），
+     * 所以这里的实际效果与原版有偏差：不穿甲。
+     *
+     * <p>注意：原版 {@code SuperpositionHandler.isDamageTypeAbsolute} 的名单里没有魔法伤害，
+     * 也就是它同样能被七阳之戒、神圣护符等拦截或转嫁；这里也不把它加进 {@link #isAbsolute}。
+     */
+    public static final ResourceKey<DamageType> FORGOTTEN_MAGIC = key("forgotten_magic");
+
     private static ResourceKey<DamageType> key(String path) {
         return ResourceKey.create(Registries.DAMAGE_TYPE,
                 ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, path));

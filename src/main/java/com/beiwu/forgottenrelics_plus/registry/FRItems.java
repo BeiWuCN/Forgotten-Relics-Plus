@@ -10,6 +10,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemDormantArcanum;
 import com.beiwu.forgottenrelics_plus.items.ItemDevourerOfTheVoid;
 import com.beiwu.forgottenrelics_plus.items.ItemEldritchSpell;
 import com.beiwu.forgottenrelics_plus.items.ItemChaosCore;
+import com.beiwu.forgottenrelics_plus.items.ItemCrimsonSpell;
 import com.beiwu.forgottenrelics_plus.items.ItemDimensionalMirror;
 import com.beiwu.forgottenrelics_plus.items.ItemFalseJustice;
 import com.beiwu.forgottenrelics_plus.items.ItemGhastlySkull;
@@ -245,6 +246,18 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemEldritchSpell> ELDRITCH_SPELL =
             ITEMS.registerItem("eldritch_spell", ItemEldritchSpell::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 腥红之咒（Crimson Spell），注册名 {@code crimson_spell}。
+     *
+     * <p>原版类名 {@code ItemCrimsonSpell}。原版稀有度 EPIC，堆叠上限 1，附带 3 点扭曲。
+     *
+     * <p>右键沿视线索敌并发射猩红法球，消耗物品自身 Vis 充能，并有 30 tick 共用冷却。
+     * 详见 {@link ItemCrimsonSpell}。
+     */
+    public static final DeferredItem<ItemCrimsonSpell> CRIMSON_SPELL =
+            ITEMS.registerItem("crimson_spell", ItemCrimsonSpell::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

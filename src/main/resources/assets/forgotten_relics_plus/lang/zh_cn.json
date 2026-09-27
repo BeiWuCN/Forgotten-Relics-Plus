@@ -167,7 +167,7 @@
   "item.ItemCrimsonSpell3.lore": "§5若未发现目标则随机攻击附近生物。",
   "item.ItemCrimsonSpell4.lore": "§5绯红法球移动缓慢且可能因",
   "item.ItemCrimsonSpell5.lore": "§5方块碰撞而消失，但",
-  "item.ItemCrimsonSpell6.lore": "§5可造成 §6%1$s-%2$s §5伤害。",
+  "item.ItemCrimsonSpell6.lore": "§5造成§6 %1$s-%2$s §6伤害§5。",
   "item.ItemDevourerOfTheVoid1.lore": "§5可以从附近的§6神秘方尖碑§5中汲取能量，",
   "item.ItemDevourerOfTheVoid2.lore": "§5范围 §6%s 格§5以内。",
   "item.ItemDevourerOfTheVoid3.lore": "§5吸收的能量可以恢复你的生命值、",
