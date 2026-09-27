@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus;
 
 import com.beiwu.forgottenrelics_plus.api.AllyProtectionBehaviour;
+import com.beiwu.forgottenrelics_plus.api.CarriedDamageBehaviour;
 import com.beiwu.forgottenrelics_plus.api.DeathPreventionBehaviour;
 import com.beiwu.forgottenrelics_plus.api.BreakSpeedBehaviour;
 import com.beiwu.forgottenrelics_plus.api.IncomingDamageBehaviour;
@@ -97,9 +98,62 @@ public final class FRCommonEvents {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide()) {
             return;
         }
-        dispatchWearerBehaviours(event, player);
+        dispatchCarriedBehaviours(event, player);
+        if (!event.isCanceled()) {
+            dispatchWearerBehaviours(event, player);
+        }
         if (!event.isCanceled()) {
             dispatchAllyProtection(event, player);
+        }
+    }
+
+    /**
+     * 第一遍：随身携带物的伤害行为，按原版次序分三段执行。
+     *
+     * <p>原版三段分别写在 {@code LivingAttackEvent}（攻击者分支、受害者分支）与
+     * {@code LivingHurtEvent}（较晚）里；1.21.1 没有 {@code LivingAttackEvent}，这里用同一个事件
+     * 加三个钩子还原那个次序：攻击者转嫁 → 受害者转嫁 → 受害者随机系数。
+     */
+    private static void dispatchCarriedBehaviours(LivingIncomingDamageEvent event, Player victim) {
+        if (event.getSource().getEntity() instanceof Player attacker && attacker != victim) {
+            runCarried(event, attacker, CarriedSide.ATTACK);
+        }
+        if (event.isCanceled()) {
+            return;
+        }
+        runCarried(event, victim, CarriedSide.DEFEND);
+        if (event.isCanceled()) {
+            return;
+        }
+        runCarried(event, victim, CarriedSide.HURT);
+    }
+
+    private static void runCarried(LivingIncomingDamageEvent event, Player carrier, CarriedSide side) {
+        List<Carried> list = new ArrayList<>();
+        FRCarriedItems.forEach(carrier, stack -> {
+            if (!(stack.getItem() instanceof CarriedDamageBehaviour behaviour)) {
+                return;
+            }
+            for (Carried existing : list) {
+                if (existing.behaviour() == behaviour) {
+                    return;
+                }
+            }
+            list.add(new Carried(behaviour, stack));
+        });
+        if (list.isEmpty()) {
+            return;
+        }
+        list.sort(Comparator.comparingInt(entry -> entry.behaviour().priority()));
+        for (Carried entry : list) {
+            if (event.isCanceled()) {
+                return;
+            }
+            switch (side) {
+                case ATTACK -> entry.behaviour().onCarriedAttack(event, carrier, entry.stack());
+                case DEFEND -> entry.behaviour().onCarriedDefend(event, carrier, entry.stack());
+                case HURT -> entry.behaviour().onCarriedHurt(event, carrier, entry.stack());
+            }
         }
     }
 
@@ -244,6 +298,17 @@ public final class FRCommonEvents {
 
     /** 致死派发里的「哪个行为 + 哪一份物品栈」。 */
     private record Guard(DeathPreventionBehaviour behaviour, ItemStack stack) {
+    }
+
+    /** 随身携带物伤害派发里的「哪个行为 + 哪一份物品栈」。 */
+    private record Carried(CarriedDamageBehaviour behaviour, ItemStack stack) {
+    }
+
+    /** {@link #dispatchCarriedBehaviours} 里的三段，顺序即原版执行次序。 */
+    private enum CarriedSide {
+        ATTACK,
+        DEFEND,
+        HURT
     }
 
     private FRCommonEvents() {

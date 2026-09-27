@@ -231,6 +231,14 @@ public final class FRConfig {
     public static final ModConfigSpec.IntValue CHAOS_CORE_MAX_AMPLIFIER;
     /** 混沌之核：附带的扭曲值。 */
     public static final ModConfigSpec.IntValue CHAOS_CORE_WARP;
+    /** 混沌之核：攻击者携带时转嫁伤害的概率。 */
+    public static final ModConfigSpec.DoubleValue CHAOS_CORE_REDIRECT_ATTACK;
+    /** 混沌之核：受害者携带时转嫁伤害的概率。 */
+    public static final ModConfigSpec.DoubleValue CHAOS_CORE_REDIRECT_DEFEND;
+    /** 混沌之核：攻击者携带时，转嫁改为反弹给自己的概率。 */
+    public static final ModConfigSpec.DoubleValue CHAOS_CORE_SELF_REFLECT;
+    /** 混沌之核：转嫁量与随机系数的上限倍率（原版写死 2.0）。 */
+    public static final ModConfigSpec.DoubleValue CHAOS_CORE_DAMAGE_MULT_MAX;
     /** 欧米伽之核：每 tick 给法杖的每个原初要素补充的 Vis。 */
     public static final ModConfigSpec.IntValue OMEGA_CORE_VIS_PER_TICK;
     /** 欧米伽之核：是否免疫致死伤害。 */
@@ -620,6 +628,22 @@ public final class FRConfig {
         CHAOS_CORE_WARP = builder
                 .comment("Warp granted by the Chaos Core.", "混沌之核附带的扭曲值。原版是 2。")
                 .defineInRange("chaosCoreWarp", 2, 0, 32768);
+        CHAOS_CORE_REDIRECT_ATTACK = builder
+                .comment("Chance to redirect damage when the carrier is the attacker.",
+                         "携带者是攻击者时，把伤害转嫁给 16 格内随机实体的概率。原版是 0.45。")
+                .defineInRange("chaosCoreRedirectAttack", 0.45D, 0.0D, 1.0D);
+        CHAOS_CORE_REDIRECT_DEFEND = builder
+                .comment("Chance to redirect damage when the carrier is the victim.",
+                         "携带者是受害者时，把伤害转嫁给 16 格内随机实体的概率。原版是 0.42。")
+                .defineInRange("chaosCoreRedirectDefend", 0.42D, 0.0D, 1.0D);
+        CHAOS_CORE_SELF_REFLECT = builder
+                .comment("Chance for the redirected damage to bounce back onto the attacker instead.",
+                         "转嫁时改为反弹给攻击者自己的概率。原版是 0.15。")
+                .defineInRange("chaosCoreSelfReflect", 0.15D, 0.0D, 1.0D);
+        CHAOS_CORE_DAMAGE_MULT_MAX = builder
+                .comment("Upper bound of the random multiplier applied to redirected damage and incoming damage.",
+                         "转嫁量与「受到的伤害随机系数」的上限倍率。原版写死 2.0（即 0~2 倍）。")
+                .defineInRange("chaosCoreDamageMultMax", 2.0D, 0.0D, 1024.0D);
         builder.pop();
 
         builder.comment("欧米伽之核（第四波：原版无配方与研究的创造模式物品）").push("omega_core");
