@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
+import com.beiwu.forgottenrelics_plus.particle.FRBoltParticleData;
 import com.beiwu.forgottenrelics_plus.registry.FRDataComponents;
 import com.beiwu.forgottenrelics_plus.utils.SoundHelper;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -62,12 +63,13 @@ import net.minecraft.world.phys.Vec3;
  *       这里改成以玩家为中心的方块立方体扫描，只认 {@code TCBlocks.ELDRITCH_OBELISK}，
  *       再用 {@code level.isLoaded} 保证只看已加载区块，最后按原版口径复核距离，语义一致；</li>
  *   <li>NBT 的三个 double 坐标 → 数据组件 {@link FRDataComponents#DEVOURER_TARGET}（{@code BlockPos}）；</li>
- *   <li>自定义网络包画的闪电 → 原版 {@link ParticleTypes#ELECTRIC_SPARK}（与霹雳咒书同一种画法），
- *       不引入自定义网络；客户端 wisp / portal 粒子 → 服务端 {@code ServerLevel#sendParticles}。
- *       <b>依据</b>：原版这里的粒子是 {@code SuperpositionHandler.imposeLightning}（Thaumcraft
- *       {@code FXLightningBolt}）与 {@code Main.proxy.wispFX4}（FR 自己的 {@code FXWisp}），
- *       还有 {@code EntityPortalFX}，<b>都不是 Botania 粒子</b>，按「原版本来就不是 Botania
- *       就保持原样」的口径保留原版粒子近似；</li>
+ *   <li><b>闪电（1.6.2 重做）</b>：原版是 {@code SuperpositionHandler.imposeLightning} /
+ *       {@code imposeArcLightning} 打包成 {@code LightningMessage} / {@code ArcLightningMessage}，
+ *       客户端用 Thaumcraft {@code FXLightningBolt} 画成锯齿电弧。本项目改成
+ *       {@link FRBoltParticleData#broadcast} 走原版粒子包把两端送到客户端，再由
+ *       {@code client/FRBolts} 交给 Botania 的 {@code BoltRenderer} 画真正的折线闪电，
+ *       端点 / 宽度 / 颜色逐条对齐原版（详见 {@link #drain} 与 {@link #randomArc}）；
+ *       客户端 wisp / portal 粒子仍由服务端 {@code ServerLevel#sendParticles} 承担；</li>
  *   <li>{@code thaumcraft:zap} → {@link SoundEvents#FIREWORK_ROCKET_BLAST}，沿用霹雳咒书的替代方案；</li>
  *   <li><b>「给背包法杖补 Vis」这一支完整保留</b>：Thaumaturge 的 {@link WandVisHelper#addVis} 就是
  *       {@code ItemWandCasting#addVis} 的直接对应物，欧米伽之核也是这么给法杖补 Vis 的
@@ -138,7 +140,7 @@ public class ItemDevourerOfTheVoid extends FRItem implements IWarpingGear {
         }
         // 抽取、治疗、音效与粒子都只在服务端做；客户端交给服务端同步
         //（原版客户端那几颗 wisp / portal 粒子同样改成服务端 sendParticles）。
-        if (level.isClientSide()) {
+        if (!(level instanceof ServerLevel server)) {
             return;
         }
 
@@ -149,6 +151,13 @@ public class ItemDevourerOfTheVoid extends FRItem implements IWarpingGear {
             return;
         }
 
+        // 下面两段在原版里都<b>不受 count % 30 约束</b>：雷弧每 tick 掷一次 17.5%，
+        // portal 粒子客户端每 tick 都撒。上一版把它们误放进「每 30 tick 一次」的分支里，这里改回。
+        if (level.random.nextFloat() <= ARC_LIGHTNING_CHANCE) {
+            randomArc(server, target);
+        }
+        obeliskPortals(server, target);
+
         int interval = FRConfig.DEVOURER_OF_THE_VOID_PULSE_INTERVAL.get();
         // 原版条件 count % 30 == 0 且 count != getMaxItemUseDuration（第一个 tick 不触发）。
         if (remainingUseDuration <= 0
@@ -157,22 +166,16 @@ public class ItemDevourerOfTheVoid extends FRItem implements IWarpingGear {
             return;
         }
 
-        drain(level, player, target);
-
-        // 原版每 tick 17.5% 概率在方尖碑周围补一道随机弧光（imposeArcLightning）。
-        if (level.random.nextFloat() <= ARC_LIGHTNING_CHANCE && level instanceof ServerLevel server) {
-            Vec3 to = obeliskTop(target);
-            server.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                    to.x + (level.random.nextDouble() - 0.5D) * 4.0D,
-                    to.y + (level.random.nextDouble() - 0.5D) * 4.0D,
-                    to.z + (level.random.nextDouble() - 0.5D) * 4.0D,
-                    12, 0.3D, 0.3D, 0.3D, 0.05D);
-        }
+        drain(server, player, target);
     }
 
     /** 抽一次：闪电 + 音效 + 自伤 0.01 + 回血 4 + 补饥饿 2 + 给背包里的法杖补 Vis。 */
-    private static void drain(Level level, Player player, BlockPos target) {
-        drawLightning(level, player, obeliskTop(target));
+    private static void drain(ServerLevel level, Player player, BlockPos target) {
+        // 原版 for (counter = 0; counter <= 3; ++counter)：同一处连画 4 道 imposeLightning。
+        // 这里换算成一次广播里的 count = 4（Botania 的 BoltParticleOptions#count）。
+        FRBoltParticleData.broadcast(level, obeliskTop(target), playerCenter(player),
+                FRBoltParticleData.WIDTH_MAIN, 4,
+                FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE);
 
         // 原版 thaumcraft:zap（音量 1.0、音调 0.8）；沿用霹雳咒书对 Thaumcraft 音效的替代方案。
         SoundHelper.play(level, player.getX(), player.getY(), player.getZ(),
@@ -233,27 +236,54 @@ public class ItemDevourerOfTheVoid extends FRItem implements IWarpingGear {
         return new Vec3(pos.getX() + 0.5D, pos.getY() + 2.75D, pos.getZ() + 0.5D);
     }
 
+    /** 玩家身体中心，对应原版 {@code Vector3.fromEntityCenter(player)} 与 {@code motionVec} 的基准点。 */
+    private static Vec3 playerCenter(Player player) {
+        return player.position().add(0.0D, player.getBbHeight() / 2.0D, 0.0D);
+    }
+
     /**
-     * 从玩家中心到方尖碑顶端画一道带抖动的电弧。
+     * 原版每 tick 17.5% 概率的「方尖碑周围随机弧光」，对应
+     * {@code SuperpositionHandler.imposeArcLightning(..., x + 0.5, y + 2.5 ± 1, z + 0.5,
+     * x + 0.5 ± 2, y + 2.5 ± 2, z + 0.5 ± 2, 1.0F, 0.6F, 1.0F, h)}。
      *
-     * <p>对应原版 {@code SuperpositionHandler.imposeLightning}。这里用
-     * {@link ParticleTypes#ELECTRIC_SPARK} 沿连线撒点近似，不引入自定义网络包；
-     * 末尾那几颗 portal 粒子对应原版客户端在方尖碑上方撒的 portal。
+     * <p>端点全部按原版那样在方尖碑上方抖动：起点竖直 ±1 格，终点三轴 ±2 格；
+     * 颜色是原版写死的 {@code (1.0, 0.6, 1.0)}；宽度取原版那个随机变量 {@code h} 的绝对值 0.4
+     * （{@code h} 的符号只决定四边带的缠绕方向，对这条对称的光带没有可见影响，
+     * 而 Botania 的 {@code size} 必须是正数）。
      */
-    private static void drawLightning(Level level, Player player, Vec3 to) {
-        if (!(level instanceof ServerLevel server)) {
-            return;
+    private static void randomArc(ServerLevel level, BlockPos pos) {
+        double x = pos.getX() + 0.5D;
+        double z = pos.getZ() + 0.5D;
+        Vec3 from = new Vec3(x, pos.getY() + 2.5D + (level.random.nextDouble() - 0.5D) * 2.0D, z);
+        Vec3 to = new Vec3(
+                x + (level.random.nextDouble() - 0.5D) * 4.0D,
+                pos.getY() + 2.5D + (level.random.nextDouble() - 0.5D) * 4.0D,
+                z + (level.random.nextDouble() - 0.5D) * 4.0D);
+        FRBoltParticleData.broadcast(level, from, to, 0.4F, 1,
+                FRBoltParticleData.OBELISK_ARC_RED,
+                FRBoltParticleData.OBELISK_ARC_GREEN,
+                FRBoltParticleData.OBELISK_ARC_BLUE);
+    }
+
+    /**
+     * 原版客户端每 tick 在方尖碑上方撒的 5 颗 {@code EntityPortalFX}
+     * （{@code func_72869_a("portal", x + 0.5, y + 2.5 ± 1, z + 0.5, ±1.5, ±0.15, ±1.5)}）。
+     *
+     * <p>1.21.1 改为服务端 {@code sendParticles}；走 {@code count == 0} 的单颗分支，
+     * 这样每颗的初速都能像原版那样各给一个（{@code count > 0} 只能给整簇的 gaussian 速度）。
+     */
+    private static void obeliskPortals(ServerLevel level, BlockPos pos) {
+        for (int i = 0; i <= 4; i++) {
+            level.sendParticles(ParticleTypes.PORTAL,
+                    pos.getX() + 0.5D,
+                    pos.getY() + 2.5D + (level.random.nextDouble() - 0.5D) * 2.0D,
+                    pos.getZ() + 0.5D,
+                    0,
+                    (level.random.nextDouble() - 0.5D) * 3.0D,
+                    (level.random.nextDouble() - 0.5D) * 0.3D,
+                    (level.random.nextDouble() - 0.5D) * 3.0D,
+                    1.0D);
         }
-        Vec3 from = player.position().add(0.0D, player.getBbHeight() / 2.0D, 0.0D);
-        int steps = Math.max(1, (int) Math.ceil(from.distanceTo(to) * 3.0D));
-        for (int i = 0; i <= steps; i++) {
-            double t = (double) i / (double) steps;
-            double x = from.x + (to.x - from.x) * t + (level.random.nextDouble() - 0.5D) * 0.3D;
-            double y = from.y + (to.y - from.y) * t + (level.random.nextDouble() - 0.5D) * 0.3D;
-            double z = from.z + (to.z - from.z) * t + (level.random.nextDouble() - 0.5D) * 0.3D;
-            server.sendParticles(ParticleTypes.ELECTRIC_SPARK, x, y, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-        }
-        server.sendParticles(ParticleTypes.PORTAL, to.x, to.y - 0.25D, to.z, 5, 0.2D, 1.0D, 0.2D, 0.05D);
     }
 
     /**
