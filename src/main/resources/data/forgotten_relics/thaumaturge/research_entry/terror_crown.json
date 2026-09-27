@@ -47,23 +47,19 @@
   "note_aspects": [
     {
       "aspect": "thaumaturge:alienis",
-      "amount": 8
+      "amount": 6
     },
     {
       "aspect": "thaumaturge:aversio",
-      "amount": 6
+      "amount": 5
     },
     {
-      "aspect": "thaumaturge:perditio",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:praemunio",
+      "aspect": "thaumaturge:mortuus",
       "amount": 4
     },
     {
       "aspect": "thaumaturge:sensus",
-      "amount": 2
+      "amount": 3
     }
   ],
   "complexity": 3

@@ -45,20 +45,16 @@
   "complexity": 2,
   "note_aspects": [
     {
-      "aspect": "thaumaturge:volatus",
-      "amount": 8
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
-      "amount": 6
-    },
-    {
       "aspect": "thaumaturge:alienis",
-      "amount": 6
+      "amount": 7
     },
     {
-      "aspect": "thaumaturge:praecantatio",
+      "aspect": "thaumaturge:motus",
       "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:vacuos",
+      "amount": 4
     }
   ]
 }

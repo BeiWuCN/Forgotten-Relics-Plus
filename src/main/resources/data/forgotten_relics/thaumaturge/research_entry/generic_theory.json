@@ -37,11 +37,7 @@
   "note_aspects": [
     {
       "aspect": "thaumaturge:cognitio",
-      "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:instrumentum",
-      "amount": 4
+      "amount": 5
     },
     {
       "aspect": "thaumaturge:praecantatio",
@@ -49,7 +45,7 @@
     },
     {
       "aspect": "thaumaturge:fabrico",
-      "amount": 4
+      "amount": 3
     }
   ],
   "complexity": 1

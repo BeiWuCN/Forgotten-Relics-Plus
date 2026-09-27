@@ -40,19 +40,15 @@
   "note_aspects": [
     {
       "aspect": "thaumaturge:auram",
-      "amount": 10
+      "amount": 7
     },
     {
       "aspect": "thaumaturge:praecantatio",
-      "amount": 8
+      "amount": 5
     },
     {
       "aspect": "thaumaturge:vacuos",
-      "amount": 6
-    },
-    {
-      "aspect": "thaumaturge:potentia",
-      "amount": 6
+      "amount": 4
     },
     {
       "aspect": "thaumaturge:permutatio",

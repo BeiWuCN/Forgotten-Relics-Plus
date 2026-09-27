@@ -39,31 +39,15 @@
   "note_aspects": [
     {
       "aspect": "thaumaturge:ignis",
-      "amount": 7
-    },
-    {
-      "aspect": "thaumaturge:tenebrae",
       "amount": 6
     },
     {
-      "aspect": "thaumaturge:potentia",
+      "aspect": "thaumaturge:lux",
       "amount": 5
     },
     {
-      "aspect": "thaumaturge:praemunio",
+      "aspect": "thaumaturge:tenebrae",
       "amount": 4
-    },
-    {
-      "aspect": "thaumaturge:permutatio",
-      "amount": 3
-    },
-    {
-      "aspect": "thaumaturge:praecantatio",
-      "amount": 2
-    },
-    {
-      "aspect": "thaumaturge:lux",
-      "amount": 1
     }
   ],
   "complexity": 3
