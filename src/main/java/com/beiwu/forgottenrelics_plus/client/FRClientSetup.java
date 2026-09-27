@@ -41,15 +41,16 @@ public final class FRClientSetup {
      */
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        // 弹射物不画几何体，形体交给原版粒子，见 FRProjectileRenderer 的类注释。
-        event.registerEntityRenderer(FREntities.THUNDERPEAL_ORB.get(), FRProjectileRenderer::new);
-        event.registerEntityRenderer(FREntities.DARK_MATTER_ORB.get(), FRProjectileRenderer::new);
-        event.registerEntityRenderer(FREntities.CRIMSON_ORB.get(), FRProjectileRenderer::new);
-        event.registerEntityRenderer(FREntities.PRIMAL_ORB.get(), FRProjectileRenderer::new);
-        event.registerEntityRenderer(FREntities.RAGEOUS_MISSILE.get(), FRProjectileRenderer::new);
-        event.registerEntityRenderer(FREntities.SOUL_ENERGY.get(), FRProjectileRenderer::new);
-        event.registerEntityRenderer(FREntities.LUNAR_FLARE.get(), FRProjectileRenderer::new);
-        event.registerEntityRenderer(FREntities.BABYLON_WEAPON.get(), FRProjectileRenderer::new);
+        // 法球：用可见的公告板渲染器（自带柔光贴图 + 呼吸缩放），颜色按种类给。
+        // 见 FROrbRenderer 的类注释——它满足 client/package-info.java 的三条硬约束。
+        event.registerEntityRenderer(FREntities.THUNDERPEAL_ORB.get(), ctx -> new FROrbRenderer<>(ctx, 0.40F, 0.62F, 1.00F, 0.45F));
+        event.registerEntityRenderer(FREntities.DARK_MATTER_ORB.get(), ctx -> new FROrbRenderer<>(ctx, 0.16F, 0.08F, 0.34F, 0.75F));
+        event.registerEntityRenderer(FREntities.CRIMSON_ORB.get(), ctx -> new FROrbRenderer<>(ctx, 0.62F, 0.06F, 0.03F, 0.45F));
+        event.registerEntityRenderer(FREntities.PRIMAL_ORB.get(), ctx -> new FROrbRenderer<>(ctx, 0.66F, 0.34F, 0.95F, 0.40F));
+        event.registerEntityRenderer(FREntities.RAGEOUS_MISSILE.get(), ctx -> new FROrbRenderer<>(ctx, 0.95F, 0.38F, 0.10F, 0.35F));
+        event.registerEntityRenderer(FREntities.SOUL_ENERGY.get(), ctx -> new FROrbRenderer<>(ctx, 0.55F, 1.00F, 0.92F, 0.35F));
+        event.registerEntityRenderer(FREntities.LUNAR_FLARE.get(), ctx -> new FROrbRenderer<>(ctx, 0.86F, 0.97F, 0.86F, 0.55F));
+        event.registerEntityRenderer(FREntities.BABYLON_WEAPON.get(), ctx -> new FROrbRenderer<>(ctx, 1.00F, 0.90F, 0.45F, 0.55F));
     }
 
     @SubscribeEvent

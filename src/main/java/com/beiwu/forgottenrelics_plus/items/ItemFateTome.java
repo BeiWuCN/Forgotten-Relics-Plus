@@ -239,14 +239,16 @@ public class ItemFateTome extends FRItem implements FRRechargable, IWarpingGear,
                 player.getX() + range, player.getY() + range, player.getZ() + range);
         float damage = FRConfig.TOME_OF_BROKEN_FATES_DAMAGE.get().floatValue();
         float radius = FRConfig.TOME_OF_BROKEN_FATES_EXPLOSION_RADIUS.get().floatValue();
+        // 原版 newExplosion(..., isFlaming=true, isSmoking=true) 会炸方块并引燃；玩家指出破坏地形是 bug，
+        // 所以这里**刻意偏离原版**：只保留爆炸对实体的伤害与击退，方块破坏与引燃都关掉。
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area)) {
             target.hurt(FRDamageTypes.source(level, FRDamageTypes.FATE), damage);
-            level.explode(player, target.getX(), target.getY(), target.getZ(), radius, true, Level.ExplosionInteraction.BLOCK);
+            level.explode(player, target.getX(), target.getY(), target.getZ(), radius, false, Level.ExplosionInteraction.NONE);
         }
 
         // ③ 最后在玩家自己的位置来一发大的。
         level.explode(player, player.getX(), player.getY(), player.getZ(),
-                FRConfig.TOME_OF_BROKEN_FATES_BIG_EXPLOSION_RADIUS.get().floatValue(), true, Level.ExplosionInteraction.BLOCK);
+                FRConfig.TOME_OF_BROKEN_FATES_BIG_EXPLOSION_RADIUS.get().floatValue(), false, Level.ExplosionInteraction.NONE);
     }
 
     /** 原版 {@code SuperpositionHandler.itemSearch} 只数主背包（36 格），这里照做。 */

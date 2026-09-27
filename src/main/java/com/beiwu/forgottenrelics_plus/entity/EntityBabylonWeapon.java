@@ -83,8 +83,8 @@ import vazkii.botania.common.handler.BotaniaSounds;
  *
  * <p><b>与原版的偏差</b>：
  * <ol>
- *   <li>原版实体有真实的武器模型（{@code variety} 选 12 种形体），本项目按约定不画几何体
- *       （{@code client/FRProjectileRenderer}），形体全交给粒子。{@code variety} 于是没有形体可选，
+ *   <li>原版实体有真实的武器模型（{@code variety} 选 12 种形体），本项目不画几何体
+ *       （可见形体只有 {@code client/FROrbRenderer} 的一个柔光球）。{@code variety} 于是没有形体可选，
  *       这里改用它挑 12 档暖金色调给拖尾上色；</li>
  *   <li>原版的 {@code charging / chargeTicks / rotation} 三个同步字段只服务于客户端渲染：
  *       蓄力状态这里由 {@code tickCount} 直接推得，{@code rotation} 没有几何体可摆，均不保留；</li>

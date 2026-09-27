@@ -22,15 +22,15 @@ import net.minecraft.world.phys.Vec3;
  *   <li>有生存时限（原版 200 / 500 / 1000 tick 不等）。</li>
  * </ul>
  *
- * <h2>视觉为什么是粒子</h2>
+ * <h2>视觉</h2>
  *
- * <p>1.7.10 的 jar 里<b>根本没有实体贴图</b>——那些球体的渲染器用的是
- * {@code ParticleEngine.particleTexture}（原版粒子图集），也就是「用粒子贴片画的二维面片」。
- * 所以这里沿用同一思路：<b>实体只负责逻辑，视觉由粒子承担</b>，并注册一个不画任何东西的
- * {@code FRProjectileRenderer}。
+ * <p>1.7.10 的 jar 里没有实体贴图，那些球体当时是用 {@code ParticleEngine} 的粒子面片画出来的。
+ * 现在的做法是：<b>逻辑照旧，形体交给 {@code client/FROrbRenderer}</b>——它用一张自带的柔光贴图
+ * 按相机朝向画一个公告板四边形，颜色与大小按法球种类给，同时保留各类法球自己的粒子拖尾。
  *
- * <p>这样做同时是 {@code client/package-info.java} 里那几条约束的最省事解法：完全不碰自定义
- * {@code RenderType}，也就不存在 Sodium / Iris 兼容问题。
+ * <p>这样既让法球真正可见，又满足 {@code client/package-info.java} 的三条硬约束：
+ * 只用 {@code MultiBufferSource} 拿 {@code VertexConsumer}、只用原版 {@code RenderType}，
+ * 不碰 GL 状态，也就没有 Sodium / Iris 兼容问题。
  */
 public abstract class FRHomingProjectile extends ThrowableProjectile {
 

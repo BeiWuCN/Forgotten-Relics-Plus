@@ -245,6 +245,8 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue CHAOS_CORE_DAMAGE_MULT_MAX;
     /** 欧米伽之核：每 tick 给法杖的每个原初要素补充的 Vis。 */
     public static final ModConfigSpec.IntValue OMEGA_CORE_VIS_PER_TICK;
+    /** 欧米伽之核：每 tick 给携带者身上每件遗物（FRRechargable）补充的充能。 */
+    public static final ModConfigSpec.IntValue OMEGA_CORE_RECHARGE_PER_TICK;
     /** 欧米伽之核：是否免疫致死伤害。 */
     public static final ModConfigSpec.BooleanValue OMEGA_CORE_PREVENT_DEATH;
     /** 悖论之刃：伤害上限（目标所受与自身所受之和）。 */
@@ -919,6 +921,12 @@ public final class FRConfig {
                 .comment("Vis added to each primal aspect of each wand per tick while carried.",
                          "随身携带时，每 tick 给法杖的每个原初要素补充的 Vis。原版是 1。")
                 .defineInRange("omegaCoreVisPerTick", 1, 0, 32768);
+        OMEGA_CORE_RECHARGE_PER_TICK = builder
+                .comment("Charge added per tick to every Forgotten Relics rechargeable item the carrier holds.",
+                         "随身携带时，每 tick 给身上每件遗物（物品自身充能）补充的点数。"
+                                 + "1.21.1 没有玩家 Vis 池，遗物的 Vis 存在物品充能里，所以欧米伽之核必须同时给它们充能；"
+                                 + "0 表示关闭这一支（只补法杖）。")
+                .defineInRange("omegaCoreRechargePerTick", 1, 0, 32768);
         OMEGA_CORE_PREVENT_DEATH = builder
                 .comment("Whether carrying the Omega Core cancels lethal damage and leaves the holder at 1 HP.",
                          "携带欧米伽之核时是否免死并把持有者留在 1 点生命。")

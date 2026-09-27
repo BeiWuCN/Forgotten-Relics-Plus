@@ -254,9 +254,12 @@ public class EntityChaoticOrb extends FRHomingProjectile {
             entityHit.getEntity().hurt(
                     FRDamageTypes.source(level(), FRDamageTypes.FORGOTTEN_MAGIC, getOwner()), damage);
         }
-        // 原版 createExplosion(null, x, y, z, 1.0 + random * 6.0, true)：无来源、会引燃。
+        // 原版 createExplosion(null, x, y, z, 1.0 + random * 6.0, true)：isSmoking=true，会连方块一起炸掉。
+        //
+        // 玩家实测后指出「爆炸破坏地形是 bug」，所以这里**刻意偏离原版**：保留爆炸的威力、
+        // 对实体的伤害与击退，但把方块破坏关掉（ExplosionInteraction.NONE），同时不引燃（fire=false）。
         level().explode(null, getX(), getY(), getZ(),
-                (float) (1.0D + random.nextDouble() * EXPLOSION_MAX_EXTRA), true, Level.ExplosionInteraction.MOB);
+                (float) (1.0D + random.nextDouble() * EXPLOSION_MAX_EXTRA), false, Level.ExplosionInteraction.NONE);
         float specialChance = blockInWater ? 10.0F : 1.0F;
         if (!seeker && random.nextInt(100) <= specialChance) {
             if (random.nextBoolean()) {
