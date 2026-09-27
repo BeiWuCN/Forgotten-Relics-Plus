@@ -1,0 +1,68 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    {
+      "aspect": "thaumaturge:motus",
+      "amount": 50
+    },
+    {
+      "aspect": "thaumaturge:tenebrae",
+      "amount": 30
+    },
+    {
+      "aspect": "thaumaturge:vacuos",
+      "amount": 30
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 45
+    },
+    {
+      "aspect": "thaumaturge:cognitio",
+      "amount": 24
+    }
+  ],
+  "catalyst": {
+    "item": "minecraft:writable_book"
+  },
+  "components": [
+    {
+      "item": "thaumaturge:primal_charm"
+    },
+    {
+      "item": "botania:elementium_ingot"
+    },
+    {
+      "item": "minecraft:ender_pearl"
+    },
+    {
+      "item": "botania:pure_ender_essence"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "thaumaturge:focus_2"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "botania:pure_ender_essence"
+    },
+    {
+      "item": "minecraft:ender_pearl"
+    },
+    {
+      "item": "botania:elementium_ingot"
+    }
+  ],
+  "instability": 5,
+  "research": {
+    "entry": "forgotten_relics_plus:tome_of_discord"
+  },
+  "result": {
+    "count": 1,
+    "id": "forgotten_relics_plus:tome_of_discord"
+  }
+}

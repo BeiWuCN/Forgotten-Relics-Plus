@@ -18,6 +18,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemParadox;
 import com.beiwu.forgottenrelics_plus.items.ItemRingOfDiscord;
 import com.beiwu.forgottenrelics_plus.items.ItemShinyStone;
 import com.beiwu.forgottenrelics_plus.items.ItemSuperpositionRing;
+import com.beiwu.forgottenrelics_plus.items.ItemTeleportationTome;
 import com.beiwu.forgottenrelics_plus.items.ItemTerrorCrown;
 import com.beiwu.forgottenrelics_plus.items.ItemThunderpeal;
 import com.beiwu.forgottenrelics_plus.items.ItemWeatherStone;
@@ -201,6 +202,22 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemThunderpeal> THUNDERPEAL =
             ITEMS.registerItem("thunderpeal", ItemThunderpeal::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    // ---- 第七波：错位之典 ----
+
+    /**
+     * 错位之典（Tome of Discord），注册名 {@code tome_of_discord}。
+     *
+     * <p>原版类名是 {@code ItemTeleportationTome}（研究键才叫 DiscordTome），1.7.10 注册名也是
+     * ItemTeleportationTome；本项目按「一个物品一个物品」的节奏迁移时统一改用
+     * {@code tome_of_discord} 这个注册名。原版稀有度 EPIC，堆叠上限 1，附带 2 点扭曲。
+     *
+     * <p>右键有三种传送模式，消耗物品自身 Vis 充能，并有 20 tick 共用冷却。
+     * 详见 {@link ItemTeleportationTome}。
+     */
+    public static final DeferredItem<ItemTeleportationTome> TELEPORTATION_TOME =
+            ITEMS.registerItem("tome_of_discord", ItemTeleportationTome::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

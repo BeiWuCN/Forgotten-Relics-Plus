@@ -271,6 +271,15 @@ public final class FRConfig {
     /** 霹雳咒书：使用后的冷却（tick）。 */
     public static final ModConfigSpec.IntValue THUNDERPEAL_COOLDOWN;
 
+    /** 错位之典：每次施法的 Vis 基础消耗。 */
+    public static final ModConfigSpec.IntValue DISCORD_TOME_VIS_COST;
+    /** 错位之典：Vis 消耗倍率。 */
+    public static final ModConfigSpec.DoubleValue DISCORD_TOME_VIS_MULT;
+    /** 错位之典：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue DISCORD_TOME_MAX_CHARGE;
+    /** 错位之典：使用后的冷却（tick）。 */
+    public static final ModConfigSpec.IntValue DISCORD_TOME_COOLDOWN;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -737,6 +746,24 @@ public final class FRConfig {
                 .comment("Cooldown in ticks after casting Thunderpeal.",
                          "霹雳咒书使用后的冷却（tick）。原版是 30。")
                 .defineInRange("thunderpealCooldown", 30, 0, 32768);
+        builder.pop();
+
+        builder.comment("错位之典（第七波：三种传送模式的法术典籍）").push("tome_of_discord");
+        DISCORD_TOME_VIS_COST = builder
+                .comment("Base Vis cost per cast for the Tome of Discord.",
+                         "错位之典每次施法的 Vis 基础消耗。原版是风 1.60 + 秩序 2.40 + 混沌 2.40 = 6.4，充能为整数故取 6。")
+                .defineInRange("discordTomeVisCost", 6, 0, 32768);
+        DISCORD_TOME_VIS_MULT = builder
+                .comment("Vis cost multiplier for the Tome of Discord.",
+                         "错位之典的 Vis 消耗倍率。")
+                .defineInRange("discordTomeVisMult", 1.0D, 0.0D, 1024.0D);
+        DISCORD_TOME_MAX_CHARGE = builder
+                .comment("Max Vis charge for the Tome of Discord.", "错位之典的最大 Vis 储量。")
+                .defineInRange("discordTomeMaxCharge", 100, 0, 32768);
+        DISCORD_TOME_COOLDOWN = builder
+                .comment("Cooldown in ticks after casting the Tome of Discord.",
+                         "错位之典使用后的冷却（tick）。原版是 20。")
+                .defineInRange("discordTomeCooldown", 20, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

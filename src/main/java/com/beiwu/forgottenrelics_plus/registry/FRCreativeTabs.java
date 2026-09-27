@@ -53,6 +53,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.FALSE_JUSTICE.get());
                         // 第六波：弹射物书籍。
                         output.accept(FRItems.THUNDERPEAL.get());
+                        // 第七波：错位之典。
+                        output.accept(FRItems.TELEPORTATION_TOME.get());
                     })
                     .build());
 

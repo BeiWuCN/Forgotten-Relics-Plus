@@ -1,0 +1,57 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "name": "fr.name.DiscordTome",
+  "parents": [
+    "forgotten_relics_plus:spellbook_theory"
+  ],
+  "column": -2,
+  "row": 5,
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics_plus:tome_of_discord"
+  ],
+  "stages": [
+    {
+      "text": "fr.text.DiscordTome.1",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "fr.text.DiscordTome.2",
+      "recipes": [
+        "forgotten_relics_plus:infusion/tome_of_discord"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:motus",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}
