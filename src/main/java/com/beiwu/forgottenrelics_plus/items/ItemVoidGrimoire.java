@@ -60,7 +60,9 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p><b>与 1.7.10 的偏差</b>：
  * <ol>
- *   <li>原版 {@code onUsingTick} 两侧都跑（客户端也自己改速度、加缓慢），这里只在服务端跑，可见结果一致；</li>
+ *   <li>原版 {@code onUsingTick} 两侧都跑（客户端也自己改速度、加缓慢），这里<b>玩法逻辑</b>只在服务端跑，
+ *       可见结果一致；<b>但每 tick 的收束粒子仍照原版放在客户端本地生成</b>（{@code channelingParticles}），
+ *       否则只能逐颗发包（见 {@link #channelingParticles} 的说明）；</li>
  *   <li>原版的 {@code localCooldown = 60} 是纯客户端防连点，这里只保留服务端权威的 30 tick 共用冷却；</li>
  *   <li>原版把 {@code noClip = true}（1.21.1 里字段名为 {@code noPhysics}）写在目标身上后<b>从不复位</b>：
  *       引导被提前打断（松手、Vis 耗尽、目标消失）时目标会永久穿墙。这是 1.7.10 自身的缺陷，按
@@ -166,10 +168,22 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
         if (!(livingEntity instanceof Player player)) {
             return;
         }
-        // 原版 onUsingTick 两侧都会跑；这里整套只在服务端跑，客户端交给服务端同步。
+        Integer targetId = stack.get(FRDataComponents.VOID_GRIMOIRE_TARGET.get());
+
+        // 客户端：只负责引导期间每 tick 的收束粒子。1.7.10 原版这段粒子本来就只在客户端生成
+        //（onUsingTick 两侧都跑，而服务端的 spawnParticle 是空操作），这里照原版走本地 addParticle：
+        // 零网络开销，每颗的颜色 / 尺寸 / 初速与 RE 逐字一致。
+        // 旁观者客户端也会跑 onUseTick——LivingEntity#onSyncedDataUpdated 收到
+        // DATA_LIVING_ENTITY_FLAGS 变化后会为观察者设好 useItem / useItemRemaining，
+        // 且数据组件随装备包同步——所以其他玩家同样看得到。
         if (level.isClientSide()) {
+            if (targetId != null && level.getEntity(targetId) instanceof LivingEntity clientTarget) {
+                channelingParticles(level, particleAnchor(clientTarget));
+            }
             return;
         }
+
+        // 其余（抽 Vis、定身、上浮、结算）全部只在服务端跑，客户端交给服务端同步。
         ServerLevel server = (ServerLevel) level;
 
         // 原版 onUsingTick 第一步就是抽 Vis（秩序 9 + 混沌 16 = 25 厘 = 0.25 点/tick），
@@ -184,7 +198,6 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
             return;
         }
 
-        Integer targetId = stack.get(FRDataComponents.VOID_GRIMOIRE_TARGET.get());
         if (targetId == null) {
             // 对应原版 !targetList.containsKey(player) -> stopUsingItem。
             player.stopUsingItem();
@@ -213,18 +226,14 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
         // target.noClip = true（1.21.1 里这个字段叫 noPhysics；原版从不复位，见类注释「偏差」第 3 条）。
         target.noPhysics = true;
 
-        // 原版 Vector3.fromEntityCenter(target)，再 y += 0.03 作为粒子与爆裂的基准点。
-        Vec3 center = target.position().add(0.0D, target.getBbHeight() / 2.0D, 0.0D);
-        Vec3 thisPos = center.add(0.0D, 0.03D, 0.0D);
+        // 粒子与爆裂的基准点：原版 Vector3.fromEntityCenter(target)，再 y += 0.03。
+        Vec3 thisPos = particleAnchor(target);
 
         // 原版只在引导的第一个 tick（count == getMaxItemUseDuration()）播一次蓄力音。
         if (remainingUseDuration == duration) {
             SoundHelper.play(level, thisPos.x, thisPos.y, thisPos.z,
                     FRSounds.MD_CHARGE.get(), SoundSource.PLAYERS, 4.0F, 0.75F);
         }
-
-        // 原版每 tick 广播 PacketVoidMessage(.., false)：紫色 wisp 向内收束 + 传送门粒子。
-        voidParticles(server, thisPos, false);
 
         if (remainingUseDuration != 1) {
             return;
@@ -234,7 +243,7 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
         // 原版 SuperpositionHandler.imposeBurst(.., 2.0f)：Thaumcraft 的爆裂特效。
         voidBurst(server, thisPos);
         // 原版 PacketVoidMessage(.., true)：129 颗 wisp 向外炸开。
-        voidParticles(server, thisPos, true);
+        finishBurst(server, thisPos);
         // 原版 thaumcraft:craftfail（音量 4.0、音调 0.8 + random * 0.2），播在目标处。
         SoundHelper.play(level, target.getX(), target.getY(), target.getZ(),
                 SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 4.0F,
@@ -297,36 +306,33 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
         server.getPlayerList().broadcastSystemMessage(message, false);
     }
 
+    /** 粒子与爆裂的基准点：原版 {@code Vector3.fromEntityCenter(target)}，再 {@code y += 0.03}。 */
+    private static Vec3 particleAnchor(LivingEntity target) {
+        return target.position().add(0.0D, target.getBbHeight() / 2.0D, 0.0D).add(0.0D, 0.03D, 0.0D);
+    }
+
     /**
-     * 对应原版 {@code PacketVoidMessage} 的客户端渲染（Botania wispFX + EntityPortalFX）。
-     *
-     * <p>{@code finish == false}（每 tick）：在中心 ±6 内随机取 8 个点
-     * （{@code (rand-0.5)*12}），每颗
+     * 引导期间每 tick 的 {@code PacketVoidMessage(.., false)} 渲染：
+     * 在中心 ±6 内随机取 8 个点（{@code (rand-0.5)*12}），每颗
      * {@code wispFX(取点, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.2+rand*0.2,
-     * 初速=(中心-取点)*0.08, maxAgeMul=0.45)}，让紫色 wisp 向内收束；
+     * 初速=(中心-取点)*0.08, maxAgeMul=0.45)} 让紫色 wisp 向内收束；
      * 再在中心撒 5 颗随机初速的原版传送门粒子（原版就是 {@code EntityPortalFX}）。
      *
-     * <p>{@code finish == true}（引导结束）：{@code i <= 128} 即 129 颗
-     * {@code wispFX(中心, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.4+rand*0.4,
-     * xm/ym/zm=(rand-0.5)*0.5, maxAgeMul=1.0)} 向外炸开；
-     * 颜色 / 尺寸各抽一次，初速幅度按 {@code 0.5/√12 ≈ 0.144} 折算。
+     * <p><b>纯客户端本地粒子</b>：1.7.10 这段本来就写在客户端的 {@code onUsingTick} 里
+     *（服务端的 {@code spawnParticle} 是空操作），所以这里逐颗 {@code addParticle}，
+     * 与 RE 逐字一致且<b>一个包都不发</b>。此前按服务端 {@code sendParticles} 写时是每 tick
+     * 13 个包（8 颗收束 wisp 各一包 + 5 颗传送门粒子各一包），即 §11 点名的带宽热点。
+     *
+     * <p>这类「初速方向随落点变化」的收束粒子无法用 {@code count > 0} 整簇发包表达：
+     * 整簇的三个轴只能共用一个高斯初速标量（{@code ClientPacketListener#handleParticleEvent}）。
      */
-    private static void voidParticles(ServerLevel level, Vec3 center, boolean finish) {
-        if (finish) {
-            FRParticles.serverWispBurst(level, center.x, center.y, center.z,
-                    0.2F + level.random.nextFloat() * 0.3F,
-                    0.0F,
-                    0.5F + level.random.nextFloat() * 0.2F,
-                    0.4F + level.random.nextFloat() * 0.4F, 1.0F,
-                    129, 0.0D, 0.144D);
-            return;
-        }
-        // 每颗颜色 / 尺寸 / 初速都不同，逐颗单独发包（count == 0 分支能精确指定初速）。
+    private static void channelingParticles(Level level, Vec3 center) {
+        // 每颗颜色 / 尺寸 / 初速都不同，本地逐颗 addParticle 正好能精确指定初速。
         for (int i = 0; i < 8; i++) {
             double px = center.x + (level.random.nextDouble() - 0.5D) * 12.0D;
             double py = center.y + (level.random.nextDouble() - 0.5D) * 12.0D;
             double pz = center.z + (level.random.nextDouble() - 0.5D) * 12.0D;
-            FRParticles.serverWisp(level, px, py, pz,
+            FRParticles.wisp(level, px, py, pz,
                     0.2F + level.random.nextFloat() * 0.3F,
                     0.0F,
                     0.5F + level.random.nextFloat() * 0.2F,
@@ -337,11 +343,28 @@ public class ItemVoidGrimoire extends FRItem implements FRRechargable, IWarpingG
                     0.45F);
         }
         for (int i = 0; i < 5; i++) {
-            level.sendParticles(ParticleTypes.PORTAL, center.x, center.y, center.z, 0,
+            level.addParticle(ParticleTypes.PORTAL, center.x, center.y, center.z,
                     (level.random.nextDouble() - 0.5D) * 8.0D,
                     (level.random.nextDouble() - 0.5D) * 8.0D,
-                    (level.random.nextDouble() - 0.5D) * 8.0D, 1.0D);
+                    (level.random.nextDouble() - 0.5D) * 8.0D);
         }
+    }
+
+    /**
+     * 引导结束的 {@code PacketVoidMessage(.., true)}：{@code i <= 128} 即 129 颗
+     * {@code wispFX(中心, r=0.2+rand*0.3, g=0, b=0.5+rand*0.2, size=0.4+rand*0.4,
+     * xm/ym/zm=(rand-0.5)*0.5, maxAgeMul=1.0)} 向外炸开。
+     *
+     * <p>颜色 / 尺寸各抽一次（原版逐颗随机），初速幅度按 {@code 0.5/√12 ≈ 0.144} 折算。
+     * 这一处保留服务端广播：整簇<b>只发一个包</b>，改成客户端逐颗反而多花客户端 CPU。
+     */
+    private static void finishBurst(ServerLevel level, Vec3 center) {
+        FRParticles.serverWispBurst(level, center.x, center.y, center.z,
+                0.2F + level.random.nextFloat() * 0.3F,
+                0.0F,
+                0.5F + level.random.nextFloat() * 0.2F,
+                0.4F + level.random.nextFloat() * 0.4F, 1.0F,
+                129, 0.0D, 0.144D);
     }
 
     /**

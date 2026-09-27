@@ -114,25 +114,36 @@ public class ItemDevourerOfTheVoid extends FRItem implements IWarpingGear {
         if (!(livingEntity instanceof Player player)) {
             return;
         }
-        // 抽取、治疗、音效与粒子都只在服务端做；客户端交给服务端同步
-        //（原版客户端那几颗 wisp / portal 粒子同样改成服务端 sendParticles）。
-        if (!(level instanceof ServerLevel server)) {
+        BlockPos target = stack.get(FRDataComponents.DEVOURER_TARGET.get());
+
+        // 方尖碑上方每 tick 的 5 颗传送门粒子：1.7.10 原版就是<b>客户端本地生成</b>的
+        //（onUsingTick + world.spawnParticle，服务端那半是空操作），这里照原版改回客户端
+        // addParticle——逐颗的位置 / 初速随机与 1.7.10 逐字一致，且<b>一个包都不发</b>。
+        // 此前是服务端每 tick 发 5 个 count == 0 的包，而本物品引导时长上限 72000 tick，
+        // 这是全项目最重的一处每 tick 广播（HANDOVER §11 点名的热点）。
+        // 旁观者客户端也会跑 onUseTick——LivingEntity#onSyncedDataUpdated 收到
+        // DATA_LIVING_ENTITY_FLAGS 变化后会为观察者设好 useItem / useItemRemaining，
+        // 目标坐标又随物品数据组件同步——所以其他玩家同样看得到。
+        if (level.isClientSide()) {
+            if (target != null) {
+                obeliskPortals(level, target);
+            }
             return;
         }
 
-        BlockPos target = stack.get(FRDataComponents.DEVOURER_TARGET.get());
+        // 抽取、治疗、音效与雷弧都只在服务端做；客户端交给服务端同步。
+        ServerLevel server = (ServerLevel) level;
         if (target == null || !isValidTarget(level, player, target)) {
             // 原版：目标方尖碑消失、换掉，或玩家走远到 16 格之外时立即停止使用。
             player.stopUsingItem();
             return;
         }
 
-        // 下面两段在原版里都<b>不受 count % 30 约束</b>：雷弧每 tick 掷一次 17.5%，
-        // portal 粒子客户端每 tick 都撒。上一版把它们误放进「每 30 tick 一次」的分支里，这里改回。
+        // 雷弧在原版里<b>不受 count % 30 约束</b>：每 tick 掷一次 17.5%。
+        // 上一版把它误放进「每 30 tick 一次」的分支里，这里改回。
         if (level.random.nextFloat() <= ARC_LIGHTNING_CHANCE) {
             randomArc(server, target);
         }
-        obeliskPortals(server, target);
 
         int interval = FRConfig.DEVOURER_OF_THE_VOID_PULSE_INTERVAL.get();
         // 原版条件 count % 30 == 0 且 count != getMaxItemUseDuration（第一个 tick 不触发）。
@@ -245,20 +256,23 @@ public class ItemDevourerOfTheVoid extends FRItem implements IWarpingGear {
      * 原版客户端每 tick 在方尖碑上方撒的 5 颗 {@code EntityPortalFX}
      * （{@code func_72869_a("portal", x + 0.5, y + 2.5 ± 1, z + 0.5, ±1.5, ±0.15, ±1.5)}）。
      *
-     * <p>1.21.1 改为服务端 {@code sendParticles}；走 {@code count == 0} 的单颗分支，
-     * 这样每颗的初速都能像原版那样各给一个（{@code count > 0} 只能给整簇的 gaussian 速度）。
+     * <p>走客户端本地 {@code addParticle}，与 1.7.10 完全一致：位置与初速逐颗独立随机，
+     * <b>不发任何网络包</b>。
+     *
+     * <p><b>不能改用服务端的 {@code count > 0} 整簇发包</b>：整簇三个轴只能共用一个高斯初速
+     * 标量（见 {@code ClientPacketListener#handleParticleEvent}），而这里水平 ±1.5、竖直 ±0.15
+     * 的各向异性正是观感的一部分；又因为 {@code PortalParticle} 的位移就是「初速 × f2(age)」，
+     * 初速被拉大到水平量级后竖直散布会从约 0.17 格涨到约 1 格。
      */
-    private static void obeliskPortals(ServerLevel level, BlockPos pos) {
+    private static void obeliskPortals(Level level, BlockPos pos) {
         for (int i = 0; i <= 4; i++) {
-            level.sendParticles(ParticleTypes.PORTAL,
+            level.addParticle(ParticleTypes.PORTAL,
                     pos.getX() + 0.5D,
                     pos.getY() + 2.5D + (level.random.nextDouble() - 0.5D) * 2.0D,
                     pos.getZ() + 0.5D,
-                    0,
                     (level.random.nextDouble() - 0.5D) * 3.0D,
                     (level.random.nextDouble() - 0.5D) * 0.3D,
-                    (level.random.nextDouble() - 0.5D) * 3.0D,
-                    1.0D);
+                    (level.random.nextDouble() - 0.5D) * 3.0D);
         }
     }
 
