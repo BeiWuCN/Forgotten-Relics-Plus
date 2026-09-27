@@ -1,27 +1,63 @@
 {
   "category": "forgotten_relics:forgotten_relics",
   "name": "fr.name.NebulousCore",
-  "parents": [ "forgotten_relics:deific_amulet", "thaumaturge:infusion" ],
+  "parents": [
+    "forgotten_relics:deific_amulet",
+    "thaumaturge:infusion"
+  ],
   "column": 0,
   "row": -6,
-  "meta": [ "hidden", "spiky" ],
-  "icons": [ "forgotten_relics:arcanum" ],
+  "meta": [
+    "hidden",
+    "spiky"
+  ],
+  "icons": [
+    "forgotten_relics:arcanum"
+  ],
   "stages": [
     {
       "text": "fr.text.NebulousCore.1",
       "required_knowledge": [
-        { "type": "theory", "category": "thaumaturge:eldritch", "amount": 1 },
-        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 }
+        {
+          "type": "observation",
+          "category": "thaumaturge:eldritch",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
       ]
     },
     {
       "text": "fr.text.NebulousCore.2",
-      "recipes": [ "forgotten_relics:infusion/arcanum" ]
+      "recipes": [
+        "forgotten_relics:infusion/arcanum"
+      ]
     }
   ],
   "note_aspects": [
-    { "aspect": "thaumaturge:vacuos", "amount": 3 },
-    { "aspect": "thaumaturge:praecantatio", "amount": 3 }
+    {
+      "aspect": "thaumaturge:auram",
+      "amount": 10
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 8
+    },
+    {
+      "aspect": "thaumaturge:vacuos",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:potentia",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 4
+    }
   ],
   "complexity": 3
 }

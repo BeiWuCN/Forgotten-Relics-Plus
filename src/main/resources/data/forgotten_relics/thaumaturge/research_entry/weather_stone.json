@@ -1,26 +1,62 @@
 {
   "category": "forgotten_relics:forgotten_relics",
   "name": "fr.name.WeatherStone",
-  "parents": [ "forgotten_relics:generic_theory", "thaumaturge:infusion" ],
+  "parents": [
+    "forgotten_relics:generic_theory",
+    "thaumaturge:infusion"
+  ],
   "column": -3,
   "row": 0,
-  "icons": [ "forgotten_relics:weather_stone" ],
+  "icons": [
+    "forgotten_relics:weather_stone"
+  ],
   "stages": [
     {
       "text": "fr.text.WeatherStone.1",
       "required_knowledge": [
-        { "type": "theory", "category": "thaumaturge:auromancy", "amount": 1 },
-        { "type": "theory", "category": "thaumaturge:artifice", "amount": 1 },
-        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 }
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
       ],
       "obtain": [
-        { "items": "botania:teru_teru_bozu", "amount": 1 }
+        {
+          "items": "botania:teru_teru_bozu",
+          "amount": 1
+        }
       ]
     },
     {
       "text": "fr.text.WeatherStone.2",
-      "recipes": [ "forgotten_relics:infusion/weather_stone" ]
+      "recipes": [
+        "forgotten_relics:infusion/weather_stone"
+      ]
     }
   ],
-  "complexity": 2
+  "complexity": 1,
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:aer",
+      "amount": 12
+    },
+    {
+      "aspect": "thaumaturge:aqua",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 3
+    }
+  ]
 }

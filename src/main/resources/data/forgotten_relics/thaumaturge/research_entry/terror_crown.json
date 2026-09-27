@@ -1,31 +1,70 @@
 {
   "category": "forgotten_relics:forgotten_relics",
   "name": "fr.name.TerrorCrown",
-  "parents": [ "forgotten_relics:generic_theory", "thaumaturge:unlock_eldritch" ],
+  "parents": [
+    "forgotten_relics:generic_theory",
+    "thaumaturge:unlock_eldritch"
+  ],
   "column": 4,
   "row": 0,
-  "meta": [ "spiky", "hidden" ],
-  "icons": [ "forgotten_relics:terror_crown" ],
+  "meta": [
+    "spiky",
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics:terror_crown"
+  ],
   "stages": [
     {
       "text": "fr.text.TerrorCrown.1",
       "required_knowledge": [
-        { "type": "theory", "category": "thaumaturge:eldritch", "amount": 1 },
-        { "type": "theory", "category": "thaumaturge:infusion", "amount": 1 }
+        {
+          "type": "observation",
+          "category": "thaumaturge:eldritch",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
       ],
       "obtain": [
-        { "items": "thaumaturge:goggles_revealing", "amount": 1 }
+        {
+          "items": "thaumaturge:goggles_revealing",
+          "amount": 1
+        }
       ],
       "warp": 2
     },
     {
       "text": "fr.text.TerrorCrown.2",
-      "recipes": [ "forgotten_relics:infusion/terror_crown" ]
+      "recipes": [
+        "forgotten_relics:infusion/terror_crown"
+      ]
     }
   ],
   "note_aspects": [
-    { "aspect": "thaumaturge:alienis", "amount": 3 },
-    { "aspect": "thaumaturge:tenebrae", "amount": 3 }
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 8
+    },
+    {
+      "aspect": "thaumaturge:aversio",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:perditio",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:praemunio",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:sensus",
+      "amount": 2
+    }
   ],
   "complexity": 3
 }
