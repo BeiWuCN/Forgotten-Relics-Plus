@@ -113,6 +113,29 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         }
     }
 
+    /**
+     * 原版 {@code attackEntityFrom}（{@code EntityThunderpealOrb.java:114-133}）：雷电球本身不吃伤害，
+     * 被击中时改为<b>沿攻击者视线方向被打飞</b>（速度 = 视线单位向量 × 0.9），并播放 {@code thaumcraft:zap}。
+     *
+     * <p>音效按本项目既有口径换成原版等价物（{@link SoundEvents#FIREWORK_ROCKET_BLAST}），
+     * 与 {@link EntityCrimsonOrb#hurt} 是同一套实现。
+     */
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (isInvulnerableTo(source)) {
+            return false;
+        }
+        markHurt();
+        Entity attacker = source.getEntity();
+        if (attacker == null) {
+            return false;
+        }
+        setDeltaMovement(attacker.getLookAngle().scale(0.9D));
+        SoundHelper.play(level(), getX(), getY(), getZ(), SoundEvents.FIREWORK_ROCKET_BLAST, SoundSource.PLAYERS,
+                1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
+        return true;
+    }
+
     @Override
     protected void onImpact(HitResult result) {
         if (!(level() instanceof ServerLevel server)) {
