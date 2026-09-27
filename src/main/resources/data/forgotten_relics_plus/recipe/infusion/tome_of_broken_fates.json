@@ -1,0 +1,29 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:victus", "amount": 104 },
+    { "aspect": "thaumaturge:permutatio", "amount": 32 },
+    { "aspect": "thaumaturge:humanus", "amount": 24 },
+    { "aspect": "thaumaturge:cognitio", "amount": 16 },
+    { "aspect": "thaumaturge:spiritus", "amount": 36 },
+    { "aspect": "thaumaturge:ordo", "amount": 20 }
+  ],
+  "catalyst": { "item": "minecraft:writable_book" },
+  "components": [
+    { "item": "botania:terrasteel_ingot" },
+    { "item": "botania:dragonstone" },
+    { "item": "botania:gaia_spirit" },
+    { "tag": "thaumaturge:nitors" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "thaumaturge:primal_charm" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "botania:gaia_spirit" },
+    { "tag": "thaumaturge:nitors" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "botania:dragonstone" }
+  ],
+  "instability": 20,
+  "research": { "entry": "forgotten_relics_plus:tome_of_broken_fates" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:tome_of_broken_fates" }
+}

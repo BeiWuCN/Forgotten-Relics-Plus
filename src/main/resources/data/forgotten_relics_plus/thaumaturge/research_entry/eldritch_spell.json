@@ -1,0 +1,57 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "name": "fr.name.EldritchSpell",
+  "parents": [
+    "forgotten_relics_plus:devourer_of_the_void"
+  ],
+  "column": 2,
+  "row": 6,
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics_plus:eldritch_spell"
+  ],
+  "stages": [
+    {
+      "text": "fr.text.EldritchSpell.1",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "fr.text.EldritchSpell.2",
+      "recipes": [
+        "forgotten_relics_plus:infusion/eldritch_spell"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:tenebrae",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:mortuus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}

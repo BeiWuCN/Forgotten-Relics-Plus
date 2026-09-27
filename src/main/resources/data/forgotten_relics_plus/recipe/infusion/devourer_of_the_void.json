@@ -1,0 +1,82 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 72
+    },
+    {
+      "aspect": "thaumaturge:vacuos",
+      "amount": 64
+    },
+    {
+      "aspect": "thaumaturge:tenebrae",
+      "amount": 64
+    },
+    {
+      "aspect": "thaumaturge:potentia",
+      "amount": 40
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 52
+    },
+    {
+      "aspect": "thaumaturge:auram",
+      "amount": 25
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 32
+    }
+  ],
+  "catalyst": {
+    "item": "minecraft:writable_book"
+  },
+  "components": [
+    {
+      "tag": "thaumaturge:nitors"
+    },
+    {
+      "item": "thaumaturge:curio_knowledge"
+    },
+    {
+      "item": "thaumaturge:ingot_void"
+    },
+    {
+      "item": "thaumaturge:primal_charm"
+    },
+    {
+      "item": "thaumaturge:fabric"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "thaumaturge:eldritch_eye"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "thaumaturge:fabric"
+    },
+    {
+      "item": "thaumaturge:primal_charm"
+    },
+    {
+      "item": "thaumaturge:ingot_void"
+    },
+    {
+      "item": "thaumaturge:curio_knowledge"
+    }
+  ],
+  "instability": 8,
+  "research": {
+    "entry": "forgotten_relics_plus:devourer_of_the_void"
+  },
+  "result": {
+    "count": 1,
+    "id": "forgotten_relics_plus:devourer_of_the_void"
+  }
+}

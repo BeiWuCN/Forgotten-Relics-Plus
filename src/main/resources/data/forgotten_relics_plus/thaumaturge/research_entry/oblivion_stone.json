@@ -1,0 +1,53 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "name": "fr.name.OblivionStone",
+  "parents": [
+    "forgotten_relics_plus:ring_of_superposition"
+  ],
+  "column": 7,
+  "row": -2,
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics_plus:oblivion_stone"
+  ],
+  "stages": [
+    {
+      "text": "fr.text.OblivionStone.1",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:eldritch",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "fr.text.OblivionStone.2",
+      "recipes": [
+        "forgotten_relics_plus:infusion/oblivion_stone"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:tenebrae",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:vacuos",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 3
+    }
+  ],
+  "complexity": 1
+}

@@ -40,6 +40,51 @@ public final class FRDamageTypes {
     /** 无来源的真实伤害（原版 {@code DamageSourceTrueDamageUndef}）。 */
     public static final ResourceKey<DamageType> TRUE_DAMAGE_UNDEF = key("true_damage_undef");
 
+    /** 真雷伤害（原版 {@code DamageSourceTLightning}），霹雳咒书使用。 */
+    public static final ResourceKey<DamageType> TRUE_LIGHTNING = key("true_lightning");
+
+    /**
+     * 暗物质伤害（原版 {@code DamageRegistryHandler.DamageSourceDarkMatter}，message_id = {@code attackDarkMatter}），
+     * 邪术之咒的暗物质法球使用。
+     *
+     * <p>原版这个伤害源构造时调了 {@code setDamageBypassesArmor()} 与 {@code setExplosion}；
+     * 1.21.1 里这两件事由 {@code tags/damage_type/*.json} 表达，本项目<b>暂不补任何 tag</b>
+     * （是否补 armor bypass 待用户拍板，见 {@code Tools/HANDOVER.md} 第 5 节），
+     * 所以这里的实际效果与原版有偏差：既不穿甲、也不带爆炸判定。
+     *
+     * <p>注意：原版 {@code SuperpositionHandler.isDamageTypeAbsolute} 的名单里<b>没有</b>暗物质，
+     * 也就是它可以被七阳之戒、神圣护符等拦截或转嫁；这里同样不把它加进 {@link #isAbsolute}。
+     */
+    public static final ResourceKey<DamageType> DARK_MATTER = key("dark_matter");
+
+    /**
+     * 遗落魔法伤害（原版 {@code DamageRegistryHandler.DamageSourceMagic}，message_id = {@code forgottenMagic}），
+     * 腥红之咒的猩红法球使用。
+     *
+     * <p>原版这个伤害源构造时调了 {@code setDamageBypassesArmor()}；1.21.1 里这件事由
+     * {@code tags/damage_type/*.json} 表达，本项目<b>暂不补任何 tag</b>
+     * （是否补 armor bypass 待用户拍板，见 {@code Tools/HANDOVER.md} 第 5 节），
+     * 所以这里的实际效果与原版有偏差：不穿甲。
+     *
+     * <p>注意：原版 {@code SuperpositionHandler.isDamageTypeAbsolute} 的名单里没有魔法伤害，
+     * 也就是它同样能被七阳之戒、神圣护符等拦截或转嫁；这里也不把它加进 {@link #isAbsolute}。
+     */
+    public static final ResourceKey<DamageType> FORGOTTEN_MAGIC = key("forgotten_magic");
+
+    /**
+     * 命运伤害（原版 {@code DamageRegistryHandler.DamageSourceFate}，message_id = {@code attackFate}），
+     * 破碎的命运巨著「同时携带多本」时的自毁惩罚使用。
+     *
+     * <p>原版这个伤害源构造时调了 {@code setMagicDamage} + {@code setDamageIsAbsolute} +
+     * {@code setDamageBypassesArmor} + {@code setDamageAllowedInCreativeMode}。
+     * 其中「穿甲 / 创造模式可伤」在 1.21.1 里由 {@code tags/damage_type/*.json} 表达，
+     * 本项目<b>暂不补任何 tag</b>（是否补 armor bypass 待用户拍板，见 {@code Tools/HANDOVER.md} 第 5 节），
+     * 所以这里的实际效果与原版有偏差：不穿甲、创造模式玩家不受影响。
+     * 而 {@code setDamageIsAbsolute} 在本项目里由 {@link #isAbsolute} 的名单承担，已一并加入——
+     * 命运伤害不会被七阳之戒、虚伪审判等拦截或转嫁（原版就是这样）。
+     */
+    public static final ResourceKey<DamageType> FATE = key("fate");
+
     private static ResourceKey<DamageType> key(String path) {
         return ResourceKey.create(Registries.DAMAGE_TYPE,
                 ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, path));
@@ -66,7 +111,7 @@ public final class FRDamageTypes {
      * 判断一种伤害是否「绝对伤害」——即不该被本模组的各种减伤/转移逻辑拦截的伤害。
      *
      * <p>对应原版 {@code SuperpositionHandler.isDamageTypeAbsolute}：虚空、饥饿，以及模组自己的
-     * 湮灭 / 超维 / 夺魂 / 真伤伤害。原版还列了「命运」类型，那件物品尚未移植，等移植时再补。
+     * 湮灭 / 超维 / 夺魂 / 真伤 / 命运伤害（命运类型是随破碎的命运巨著一起补上的）。
      *
      * <p>这张表同时承担<b>递归保护</b>的职责：虚伪审判把伤害取消后重新以真伤结算，如果真伤不在表里，
      * 那次重结算会被自己再拦一次，无限递归；传送之戒的分摊也是同一个道理。
@@ -79,7 +124,8 @@ public final class FRDamageTypes {
                 || source.is(SUPERPOSITION_DEFINED)
                 || source.is(SOUL_DRAIN)
                 || source.is(TRUE_DAMAGE)
-                || source.is(TRUE_DAMAGE_UNDEF);
+                || source.is(TRUE_DAMAGE_UNDEF)
+                || source.is(FATE);
     }
 
     private FRDamageTypes() {

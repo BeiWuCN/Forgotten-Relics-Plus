@@ -1,0 +1,82 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 72
+    },
+    {
+      "aspect": "thaumaturge:tenebrae",
+      "amount": 64
+    },
+    {
+      "aspect": "thaumaturge:mortuus",
+      "amount": 40
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 36
+    },
+    {
+      "aspect": "thaumaturge:cognitio",
+      "amount": 24
+    },
+    {
+      "aspect": "thaumaturge:vitium",
+      "amount": 24
+    },
+    {
+      "aspect": "thaumaturge:aversio",
+      "amount": 12
+    }
+  ],
+  "catalyst": {
+    "item": "minecraft:writable_book"
+  },
+  "components": [
+    {
+      "item": "thaumaturge:primal_charm"
+    },
+    {
+      "item": "thaumaturge:ingot_void"
+    },
+    {
+      "item": "minecraft:fire_charge"
+    },
+    {
+      "item": "thaumaturge:eldritch_eye"
+    },
+    {
+      "item": "thaumaturge:bottle_taint"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "botania:gaia_spirit"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "thaumaturge:bottle_taint"
+    },
+    {
+      "item": "thaumaturge:eldritch_eye"
+    },
+    {
+      "item": "minecraft:fire_charge"
+    },
+    {
+      "item": "thaumaturge:ingot_void"
+    }
+  ],
+  "instability": 8,
+  "research": {
+    "entry": "forgotten_relics_plus:eldritch_spell"
+  },
+  "result": {
+    "count": 1,
+    "id": "forgotten_relics_plus:eldritch_spell"
+  }
+}

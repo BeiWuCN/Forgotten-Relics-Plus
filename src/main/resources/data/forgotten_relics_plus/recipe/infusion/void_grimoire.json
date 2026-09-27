@@ -1,0 +1,27 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:vacuos", "amount": 100 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 52 },
+    { "aspect": "thaumaturge:motus", "amount": 24 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 40 },
+    { "aspect": "thaumaturge:cognitio", "amount": 32 },
+    { "aspect": "thaumaturge:alienis", "amount": 40 },
+    { "aspect": "thaumaturge:permutatio", "amount": 16 },
+    { "aspect": "thaumaturge:perditio", "amount": 20 }
+  ],
+  "catalyst": { "item": "forgotten_relics_plus:edict_of_banishment" },
+  "components": [
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:curio_knowledge" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:eldritch_eye" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:curio_knowledge" },
+    { "item": "thaumaturge:void_seed" }
+  ],
+  "instability": 10,
+  "research": { "entry": "forgotten_relics_plus:void_grimoire" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:void_grimoire" }
+}

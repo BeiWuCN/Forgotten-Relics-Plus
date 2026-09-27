@@ -1,0 +1,24 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:vacuos", "amount": 16 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 16 },
+    { "aspect": "thaumaturge:perditio", "amount": 12 },
+    { "aspect": "thaumaturge:permutatio", "amount": 8 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 8 }
+  ],
+  "catalyst": { "item": "thaumaturge:eldritch_stone" },
+  "components": [
+    { "item": "minecraft:ender_eye" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:ingot_void" },
+    { "item": "thaumaturge:void_seed" },
+    { "tag": "thaumaturge:nitors" },
+    { "item": "thaumaturge:void_seed" },
+    { "item": "thaumaturge:ingot_void" },
+    { "item": "thaumaturge:void_seed" }
+  ],
+  "instability": 4,
+  "research": { "entry": "forgotten_relics_plus:oblivion_stone" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:oblivion_stone" }
+}

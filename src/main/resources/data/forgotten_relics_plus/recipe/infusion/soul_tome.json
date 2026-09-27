@@ -1,0 +1,30 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:spiritus", "amount": 80 },
+    { "aspect": "thaumaturge:vacuos", "amount": 60 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 45 },
+    { "aspect": "thaumaturge:vinculum", "amount": 60 },
+    { "aspect": "thaumaturge:mortuus", "amount": 32 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 48 },
+    { "aspect": "thaumaturge:permutatio", "amount": 52 }
+  ],
+  "catalyst": { "item": "minecraft:writable_book" },
+  "components": [
+    { "item": "thaumaturge:focus_2" },
+    { "item": "thaumaturge:alumentum" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "minecraft:ender_eye" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "thaumaturge:jar_brain" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "minecraft:ender_eye" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:alumentum" }
+  ],
+  "instability": 10,
+  "research": { "entry": "forgotten_relics_plus:soul_tome" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:soul_tome" }
+}

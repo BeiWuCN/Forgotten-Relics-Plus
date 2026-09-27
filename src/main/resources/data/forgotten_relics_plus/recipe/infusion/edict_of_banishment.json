@@ -1,0 +1,26 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:ignis", "amount": 70 },
+    { "aspect": "thaumaturge:motus", "amount": 40 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 36 },
+    { "aspect": "thaumaturge:cognitio", "amount": 24 },
+    { "aspect": "thaumaturge:tenebrae", "amount": 48 }
+  ],
+  "catalyst": { "item": "minecraft:writable_book" },
+  "components": [
+    { "item": "thaumaturge:primal_charm" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:nether_brick" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "minecraft:nether_wart" },
+    { "item": "minecraft:ender_eye" },
+    { "item": "minecraft:nether_wart" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "minecraft:nether_brick" },
+    { "item": "minecraft:blaze_powder" }
+  ],
+  "instability": 8,
+  "research": { "entry": "forgotten_relics_plus:edict_of_banishment" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:edict_of_banishment" }
+}

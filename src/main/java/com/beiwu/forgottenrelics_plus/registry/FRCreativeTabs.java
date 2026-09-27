@@ -51,6 +51,36 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.OMEGA_CORE.get());
                         output.accept(FRItems.PARADOX.get());
                         output.accept(FRItems.FALSE_JUSTICE.get());
+                        // 第六波：弹射物书籍。
+                        output.accept(FRItems.THUNDERPEAL.get());
+                        // 第七波：错位之典。
+                        output.accept(FRItems.TELEPORTATION_TOME.get());
+                        // 第七波：虚空吞噬者。
+                        output.accept(FRItems.DEVOURER_OF_THE_VOID.get());
+                        // 第七波：邪术之咒。
+                        output.accept(FRItems.ELDRITCH_SPELL.get());
+                        // 第七波：腥红之咒。
+                        output.accept(FRItems.CRIMSON_SPELL.get());
+                        // 第七波：原初混沌之典。
+                        output.accept(FRItems.TOME_OF_PRIMAL_CHAOS.get());
+                        // 第六波：核子之怒。
+                        output.accept(FRItems.NUCLEAR_FURY.get());
+                        // 第七波：千咒之诫。
+                        output.accept(FRItems.SOUL_TOME.get());
+                        // 第七波：永恒放逐之诫。
+                        output.accept(FRItems.EDICT_OF_BANISHMENT.get());
+                        // 第七波：深渊魔典。
+                        output.accept(FRItems.VOID_GRIMOIRE.get());
+                        // 第七波：预言之典。
+                        output.accept(FRItems.TOME_OF_PREDESTINY.get());
+                        // 第七波：月耀咒书。
+                        output.accept(FRItems.TOME_OF_LUNAR_FLARES.get());
+                        // 第七波：神化。
+                        output.accept(FRItems.APOTHEOSIS.get());
+                        // 第七波：破碎的命运巨著。
+                        output.accept(FRItems.TOME_OF_BROKEN_FATES.get());
+                        // 第七波：湮灭之钥。
+                        output.accept(FRItems.OBLIVION_STONE.get());
                     })
                     .build());
 

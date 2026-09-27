@@ -1,0 +1,45 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "name": "fr.name.Apotheosis",
+  "parents": [
+    "forgotten_relics_plus:tome_of_discord"
+  ],
+  "column": -2,
+  "row": 7,
+  "meta": [
+    "round"
+  ],
+  "icons": [
+    "forgotten_relics_plus:apotheosis"
+  ],
+  "stages": [
+    {
+      "text": "fr.text.Apotheosis.1",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "fr.text.Apotheosis.2",
+      "recipes": [
+        "forgotten_relics_plus:infusion/apotheosis"
+      ]
+    }
+  ],
+  "note_aspects": [
+    { "aspect": "thaumaturge:praecantatio", "amount": 6 },
+    { "aspect": "thaumaturge:aversio", "amount": 5 },
+    { "aspect": "thaumaturge:lux", "amount": 4 },
+    { "aspect": "thaumaturge:cognitio", "amount": 3 }
+  ],
+  "complexity": 2
+}

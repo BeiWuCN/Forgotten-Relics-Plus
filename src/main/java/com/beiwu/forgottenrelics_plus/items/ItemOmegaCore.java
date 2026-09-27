@@ -1,11 +1,14 @@
 package com.beiwu.forgottenrelics_plus.items;
 
 import com.beiwu.forgottenrelics_plus.api.DeathPreventionBehaviour;
+import com.beiwu.forgottenrelics_plus.api.FRRechargable;
 import com.beiwu.forgottenrelics_plus.config.FRConfig;
+import com.beiwu.forgottenrelics_plus.utils.FRCarriedItems;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
+import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.chat.Component;
@@ -60,15 +63,34 @@ public class ItemOmegaCore extends FRItem implements DeathPreventionBehaviour {
             return;
         }
         int amount = FRConfig.OMEGA_CORE_VIS_PER_TICK.get();
-        if (amount <= 0) {
+        int recharge = FRConfig.OMEGA_CORE_RECHARGE_PER_TICK.get();
+        if (amount <= 0 && recharge <= 0) {
             return;
         }
         // 原版对六个原初要素各挑一根「有效的」法杖补 1 点。
-        for (ResourceKey<IAspect> aspect : TCAspects.PRIMALS) {
-            ItemStack wand = findWandWithRoom(player, aspect);
-            if (wand != null) {
-                WandVisHelper.addVis(wand, aspect, amount, true);
+        if (amount > 0) {
+            for (ResourceKey<IAspect> aspect : TCAspects.PRIMALS) {
+                ItemStack wand = findWandWithRoom(player, aspect);
+                if (wand != null) {
+                    WandVisHelper.addVis(wand, aspect, amount, true);
+                }
             }
+        }
+        // ---- 本移植新增：同时给其他遗物充能 ----
+        //
+        // 1.7.10 原版的所有遗物消耗的都是「玩家背包里法杖的 Vis」，欧米伽之核补的也是它；
+        // 但 1.21.1 没有玩家 Vis 池，本模组把这类消耗统一改成了物品自身充能
+        // （FRRechargable + RechargeAccess，见 HANDOVER.md 第 3 节）。如果欧米伽之核还只补法杖，
+        // 它就等于对其他遗物完全失效——这正是玩家报的问题。
+        //
+        // RE 版的 ItemOmegaCore#fillAllVis 已经给出了正确的对应做法：遍历主背包 / 护甲 / 副手 /
+        // 饰品栏，对所有 IRechargable 物品调 rechargeItemBlindly。这里沿用同一范围。
+        if (recharge > 0) {
+            FRCarriedItems.forEach(player, carried -> {
+                if (carried.getItem() instanceof FRRechargable && !(carried.getItem() == this)) {
+                    RechargeAccess.rechargeItemBlindly(carried, player, recharge);
+                }
+            });
         }
     }
 

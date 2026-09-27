@@ -1,0 +1,31 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    { "aspect": "thaumaturge:aversio", "amount": 128 },
+    { "aspect": "thaumaturge:instrumentum", "amount": 72 },
+    { "aspect": "thaumaturge:permutatio", "amount": 54 },
+    { "aspect": "thaumaturge:praecantatio", "amount": 80 },
+    { "aspect": "thaumaturge:lux", "amount": 64 },
+    { "aspect": "thaumaturge:metallum", "amount": 32 },
+    { "aspect": "thaumaturge:cognitio", "amount": 48 },
+    { "aspect": "thaumaturge:ordo", "amount": 40 }
+  ],
+  "catalyst": { "item": "minecraft:writable_book" },
+  "components": [
+    { "item": "botania:key_of_the_kings_law" },
+    { "item": "thaumaturge:curio_knowledge" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "thaumaturge:primal_charm" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "thaumaturge:primordial_pearl" },
+    { "item": "thaumaturge:salis_mundus" },
+    { "item": "botania:gaia_spirit" },
+    { "item": "thaumaturge:primal_charm" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "thaumaturge:curio_knowledge" }
+  ],
+  "instability": 48,
+  "research": { "entry": "forgotten_relics_plus:apotheosis" },
+  "result": { "count": 1, "id": "forgotten_relics_plus:apotheosis" }
+}

@@ -1,0 +1,45 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "name": "fr.name.TelekinesisTome",
+  "parents": [
+    "forgotten_relics_plus:tome_of_discord"
+  ],
+  "column": -4,
+  "row": 7,
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "forgotten_relics_plus:tome_of_predestiny"
+  ],
+  "stages": [
+    {
+      "text": "fr.text.TelekinesisTome.1",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "fr.text.TelekinesisTome.2",
+      "recipes": [
+        "forgotten_relics_plus:infusion/tome_of_predestiny"
+      ]
+    }
+  ],
+  "note_aspects": [
+    { "aspect": "thaumaturge:motus", "amount": 6 },
+    { "aspect": "thaumaturge:volatus", "amount": 5 },
+    { "aspect": "thaumaturge:vinculum", "amount": 4 },
+    { "aspect": "thaumaturge:cognitio", "amount": 3 }
+  ],
+  "complexity": 2
+}
