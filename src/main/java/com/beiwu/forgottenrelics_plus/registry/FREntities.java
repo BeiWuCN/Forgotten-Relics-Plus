@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelics_plus.registry;
 
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
+import com.beiwu.forgottenrelics_plus.entity.EntityBabylonWeapon;
 import com.beiwu.forgottenrelics_plus.entity.EntityChaoticOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityCrimsonOrb;
 import com.beiwu.forgottenrelics_plus.entity.EntityDarkMatterOrb;
@@ -72,6 +73,14 @@ public final class FREntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLunarFlare>> LUNAR_FLARE =
             register("lunar_flare",
                     () -> EntityType.Builder.<EntityLunarFlare>of(EntityLunarFlare::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10));
+
+    /** 神化召唤的巴比伦武器（原版 {@code EntityBabylonWeaponSS}）。 */
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBabylonWeapon>> BABYLON_WEAPON =
+            register("babylon_weapon",
+                    () -> EntityType.Builder.<EntityBabylonWeapon>of(EntityBabylonWeapon::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(4)
                             .updateInterval(10));

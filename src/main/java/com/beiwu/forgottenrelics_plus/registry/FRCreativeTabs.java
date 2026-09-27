@@ -75,6 +75,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.TOME_OF_PREDESTINY.get());
                         // 第七波：月耀咒书。
                         output.accept(FRItems.TOME_OF_LUNAR_FLARES.get());
+                        // 第七波：神化。
+                        output.accept(FRItems.APOTHEOSIS.get());
                     })
                     .build());
 

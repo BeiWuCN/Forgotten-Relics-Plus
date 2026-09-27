@@ -3,6 +3,7 @@ package com.beiwu.forgottenrelics_plus.registry;
 import com.beiwu.forgottenrelics_plus.ForgottenRelics;
 import com.beiwu.forgottenrelics_plus.items.ItemAdvancedMiningCharm;
 import com.beiwu.forgottenrelics_plus.items.ItemAncientAegis;
+import com.beiwu.forgottenrelics_plus.items.ItemApotheosis;
 import com.beiwu.forgottenrelics_plus.items.ItemDarkSunRing;
 import com.beiwu.forgottenrelics_plus.items.ItemArcanum;
 import com.beiwu.forgottenrelics_plus.items.ItemDeificAmulet;
@@ -356,6 +357,20 @@ public final class FRItems {
      */
     public static final DeferredItem<ItemLunarFlares> TOME_OF_LUNAR_FLARES =
             ITEMS.registerItem("tome_of_lunar_flares", ItemLunarFlares::new,
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    /**
+     * 神化（Apotheosis），注册名 {@code apotheosis}。
+     *
+     * <p>1.7.10 原版类名 {@code ItemApotheosis}。原版稀有度 EPIC，堆叠上限 1，附带 5 点扭曲。
+     *
+     * <p>右键拉弓持续引导，每 2 tick 召唤一把巴比伦武器，消耗物品自身 Vis 充能；
+     * 武器先悬停 15 tick，再朝视线落点直线飞出，直击与爆炸各有独立伤害。
+     * 详见 {@link ItemApotheosis} 与
+     * {@link com.beiwu.forgottenrelics_plus.entity.EntityBabylonWeapon}。
+     */
+    public static final DeferredItem<ItemApotheosis> APOTHEOSIS =
+            ITEMS.registerItem("apotheosis", ItemApotheosis::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {

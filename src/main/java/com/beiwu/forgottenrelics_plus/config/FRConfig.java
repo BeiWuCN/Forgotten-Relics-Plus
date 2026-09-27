@@ -453,6 +453,27 @@ public final class FRConfig {
     /** 月耀咒书：附带的扭曲值（原版 {@code getWarp} 返回 3）。 */
     public static final ModConfigSpec.IntValue TOME_OF_LUNAR_FLARES_WARP;
 
+    // ---- 神化 / Apotheosis ----
+    /** 神化：每次召唤的 Vis 基础消耗（原版地 30 + 火 60 + 秩序 50 + 混沌 75 = 215 厘 = 2.15 点，就近取 2）。 */
+    public static final ModConfigSpec.IntValue APOTHEOSIS_VIS_COST;
+    /** 神化：Vis 消耗倍率（原版配置 key 就是 apotheosisVisMult，默认 1.0）。 */
+    public static final ModConfigSpec.DoubleValue APOTHEOSIS_VIS_MULT;
+    /** 神化：最大 Vis 储量（按满法杖的混沌瓶颈 133 次召唤 × 2 取整到 300）。 */
+    public static final ModConfigSpec.IntValue APOTHEOSIS_MAX_CHARGE;
+    /**
+     * 神化：连续引导时两次召唤之间的间隔（tick）。
+     *
+     * <p>原版在 {@code onUsingTick} 里写的是 {@code count % 2 == 0}，物品本身<b>没有任何施法后冷却</b>，
+     * 所以这一项不接 {@code CooldownHelper}（与月耀咒书同一处理）。
+     */
+    public static final ModConfigSpec.IntValue APOTHEOSIS_COOLDOWN;
+    /** 神化：巴比伦武器直击的伤害（原版配置 damageApotheosisDirect，默认 100）。 */
+    public static final ModConfigSpec.DoubleValue APOTHEOSIS_DIRECT_DAMAGE;
+    /** 神化：巴比伦武器爆炸的范围伤害（原版配置 damageApotheosisImpact，默认 75）。 */
+    public static final ModConfigSpec.DoubleValue APOTHEOSIS_IMPACT_DAMAGE;
+    /** 神化：附带的扭曲值（原版 {@code getWarp} 返回 5）。 */
+    public static final ModConfigSpec.IntValue APOTHEOSIS_WARP;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -1295,6 +1316,46 @@ public final class FRConfig {
                 .comment("Warp granted by the Tome of Lunar Flares. Original getWarp returns 3.",
                          "月耀咒书附带的扭曲值。原版 ItemLunarFlares#getWarp 返回 3。")
                 .defineInRange("tomeOfLunarFlaresWarp", 3, 0, 32768);
+        builder.pop();
+
+        builder.comment("神化（第七波：召唤成排的巴比伦武器）").push("apotheosis");
+        APOTHEOSIS_VIS_COST = builder
+                .comment("Base Vis cost per summoned Babylon Weapon."
+                                 + " Original: Earth 30 + Fire 60 + Order 50 + Entropy 75 centivis = 2.15 vis, rounded to 2.",
+                         "每次召唤一把巴比伦武器的 Vis 基础消耗。原版是地（Terra）30 + 火（Ignis）60 + 秩序（Ordo）50"
+                                 + " + 混沌（Perditio）75 厘 Vis = 2.15 点，充能为整数故就近取 2。")
+                .defineInRange("apotheosisVisCost", 2, 0, 32768);
+        APOTHEOSIS_VIS_MULT = builder
+                .comment("Vis cost multiplier for Apotheosis. Original key: apotheosisVisMult, default 1.0.",
+                         "神化的 Vis 消耗倍率。原版配置 key 就是 apotheosisVisMult，默认 1.0。")
+                .defineInRange("apotheosisVisMult", 1.0D, 0.0D, 1024.0D);
+        APOTHEOSIS_MAX_CHARGE = builder
+                .comment("Max Vis charge for Apotheosis."
+                                 + " The original bottleneck is Entropy: a full 100-vis wand sustains"
+                                 + " 10000 / 75 = 133 summons, times the rounded cost 2 gives 266, rounded up to 300.",
+                         "神化的最大 Vis 储量。原版四项消耗里混沌（Perditio）是瓶颈，一把每要素满 100 的标准法杖"
+                                 + "约支撑 10000 / 75 = 133 次召唤，乘取整后的 2 得 266，向上取整到 300（约 150 次）。")
+                .defineInRange("apotheosisMaxCharge", 300, 0, 32768);
+        APOTHEOSIS_COOLDOWN = builder
+                .comment("Interval in ticks between two summoned Babylon Weapons while channelling."
+                                 + " Original writes count % 2 == 0 in onUsingTick; the item has no post-cast cooldown.",
+                         "连续引导时两次召唤之间的间隔（tick）。原版在 onUsingTick 里写的是 count % 2 == 0，"
+                                 + "物品本身没有任何施法后冷却，所以这一项不接 CooldownHelper。")
+                .defineInRange("apotheosisCooldown", 2, 1, 32768);
+        APOTHEOSIS_DIRECT_DAMAGE = builder
+                .comment("Damage of a Babylon Weapon's direct hit."
+                                 + " Original key: damageApotheosisDirect, default 100.",
+                         "巴比伦武器直击命中的伤害。原版 key 是 damageApotheosisDirect，默认 100。")
+                .defineInRange("damageApotheosisDirect", 100.0D, 0.0D, 32768.0D);
+        APOTHEOSIS_IMPACT_DAMAGE = builder
+                .comment("Damage taken by entities inside a Babylon Weapon's impact zone."
+                                 + " Original key: damageApotheosisImpact, default 75.",
+                         "巴比伦武器爆炸时范围内活体受到的伤害。原版 key 是 damageApotheosisImpact，默认 75。")
+                .defineInRange("damageApotheosisImpact", 75.0D, 0.0D, 32768.0D);
+        APOTHEOSIS_WARP = builder
+                .comment("Warp granted by Apotheosis. Original getWarp returns 5.",
+                         "神化附带的扭曲值。原版 ItemApotheosis#getWarp 返回 5。")
+                .defineInRange("apotheosisWarp", 5, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

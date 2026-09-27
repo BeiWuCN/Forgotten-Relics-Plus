@@ -49,6 +49,7 @@ public final class FRClientSetup {
         event.registerEntityRenderer(FREntities.RAGEOUS_MISSILE.get(), FRProjectileRenderer::new);
         event.registerEntityRenderer(FREntities.SOUL_ENERGY.get(), FRProjectileRenderer::new);
         event.registerEntityRenderer(FREntities.LUNAR_FLARE.get(), FRProjectileRenderer::new);
+        event.registerEntityRenderer(FREntities.BABYLON_WEAPON.get(), FRProjectileRenderer::new);
     }
 
     @SubscribeEvent
