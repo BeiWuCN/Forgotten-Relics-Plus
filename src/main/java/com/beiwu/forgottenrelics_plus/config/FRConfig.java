@@ -262,6 +262,14 @@ public final class FRConfig {
     public static final ModConfigSpec.DoubleValue THUNDERPEAL_DIRECT_DAMAGE;
     /** 霹雳咒书：范围与链式闪电的伤害。 */
     public static final ModConfigSpec.DoubleValue THUNDERPEAL_BOLT_DAMAGE;
+    /** 霹雳咒书：每次施法的 Vis 基础消耗。 */
+    public static final ModConfigSpec.IntValue THUNDERPEAL_VIS_COST;
+    /** 霹雳咒书：Vis 消耗倍率。 */
+    public static final ModConfigSpec.DoubleValue THUNDERPEAL_VIS_MULT;
+    /** 霹雳咒书：最大 Vis 储量。 */
+    public static final ModConfigSpec.IntValue THUNDERPEAL_MAX_CHARGE;
+    /** 霹雳咒书：使用后的冷却（tick）。 */
+    public static final ModConfigSpec.IntValue THUNDERPEAL_COOLDOWN;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -707,12 +715,28 @@ public final class FRConfig {
 
         builder.comment("霹雳咒书（第六波：弹射物书籍）").push("thunderpeal");
         THUNDERPEAL_DIRECT_DAMAGE = builder
-                .comment("Damage dealt to the entity the orb hits directly.", "直接命中实体的伤害。原版是 damageThunderpealDirect。")
-                .defineInRange("thunderpealDirectDamage", 8.0D, 0.0D, 32768.0D);
+                .comment("Damage dealt to the entity the orb hits directly.",
+                         "直接命中实体的伤害。原版 key 是 damageThunderpealDirect，默认 24。")
+                .defineInRange("thunderpealDirectDamage", 24.0D, 0.0D, 32768.0D);
         THUNDERPEAL_BOLT_DAMAGE = builder
                 .comment("Damage dealt to every entity in the blast, and halved again for chained targets.",
-                         "范围伤害；链式闪电按它的一半结算。原版是 damageThunderpealBolt。")
-                .defineInRange("thunderpealBoltDamage", 12.0D, 0.0D, 32768.0D);
+                         "范围伤害；链式闪电按它的一半结算。原版 key 是 damageThunderpealBolt，默认 16。")
+                .defineInRange("thunderpealBoltDamage", 16.0D, 0.0D, 32768.0D);
+        THUNDERPEAL_VIS_COST = builder
+                .comment("Base Vis cost per cast for Thunderpeal.",
+                         "霹雳咒书每次施法的 Vis 基础消耗。原版是风 1.35 + 火 0.85 = 2.2，充能为整数故取 2。")
+                .defineInRange("thunderpealVisCost", 2, 0, 32768);
+        THUNDERPEAL_VIS_MULT = builder
+                .comment("Vis cost multiplier for Thunderpeal.",
+                         "霹雳咒书的 Vis 消耗倍率。")
+                .defineInRange("thunderpealVisMult", 1.0D, 0.0D, 1024.0D);
+        THUNDERPEAL_MAX_CHARGE = builder
+                .comment("Max Vis charge for Thunderpeal.", "霹雳咒书的最大 Vis 储量。")
+                .defineInRange("thunderpealMaxCharge", 100, 0, 32768);
+        THUNDERPEAL_COOLDOWN = builder
+                .comment("Cooldown in ticks after casting Thunderpeal.",
+                         "霹雳咒书使用后的冷却（tick）。原版是 30。")
+                .defineInRange("thunderpealCooldown", 30, 0, 32768);
         builder.pop();
 
         SPEC = builder.build();

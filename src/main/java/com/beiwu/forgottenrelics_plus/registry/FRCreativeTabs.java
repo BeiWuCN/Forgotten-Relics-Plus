@@ -51,6 +51,8 @@ public final class FRCreativeTabs {
                         output.accept(FRItems.OMEGA_CORE.get());
                         output.accept(FRItems.PARADOX.get());
                         output.accept(FRItems.FALSE_JUSTICE.get());
+                        // 第六波：弹射物书籍。
+                        output.accept(FRItems.THUNDERPEAL.get());
                     })
                     .build());
 

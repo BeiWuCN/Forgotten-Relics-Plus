@@ -1,0 +1,62 @@
+{
+  "type": "thaumaturge:infusion",
+  "aspects": [
+    {
+      "aspect": "thaumaturge:potentia",
+      "amount": 32
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 24
+    },
+    {
+      "aspect": "thaumaturge:aer",
+      "amount": 24
+    },
+    {
+      "aspect": "thaumaturge:cognitio",
+      "amount": 10
+    },
+    {
+      "aspect": "thaumaturge:ignis",
+      "amount": 16
+    }
+  ],
+  "catalyst": {
+    "item": "minecraft:writable_book"
+  },
+  "components": [
+    {
+      "item": "thaumaturge:primal_charm"
+    },
+    {
+      "item": "botania:pixie_dust"
+    },
+    {
+      "item": "botania:mana_pearl"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "thaumaturge:focus_2"
+    },
+    {
+      "item": "thaumaturge:salis_mundus"
+    },
+    {
+      "item": "botania:mana_pearl"
+    },
+    {
+      "item": "botania:pixie_dust"
+    }
+  ],
+  "instability": 4,
+  "research": {
+    "entry": "forgotten_relics_plus:thunderpeal"
+  },
+  "result": {
+    "count": 1,
+    "id": "forgotten_relics_plus:thunderpeal"
+  }
+}

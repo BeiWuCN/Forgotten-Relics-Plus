@@ -19,6 +19,7 @@ import com.beiwu.forgottenrelics_plus.items.ItemRingOfDiscord;
 import com.beiwu.forgottenrelics_plus.items.ItemShinyStone;
 import com.beiwu.forgottenrelics_plus.items.ItemSuperpositionRing;
 import com.beiwu.forgottenrelics_plus.items.ItemTerrorCrown;
+import com.beiwu.forgottenrelics_plus.items.ItemThunderpeal;
 import com.beiwu.forgottenrelics_plus.items.ItemWeatherStone;
 import com.beiwu.forgottenrelics_plus.items.ItemXPTome;
 import net.minecraft.world.item.ArmorItem;
@@ -188,6 +189,18 @@ public final class FRItems {
             ITEMS.registerItem("paradox",
                     properties -> new ItemParadox(FRToolTiers.PARADOX,
                             properties.attributes(SwordItem.createAttributes(FRToolTiers.PARADOX, 3.0F, -2.4F))),
+                    new Item.Properties().rarity(Rarity.EPIC));
+
+    // ---- 第六波：弹射物书籍 ----
+
+    /**
+     * 霹雳咒书（Thunderpeal）。原版稀有度 EPIC，堆叠上限 1。
+     *
+     * <p>右键发射雷电球，消耗物品自身的 Vis 充能，并有 30 tick 的共用冷却。
+     * 详见 {@link ItemThunderpeal}。
+     */
+    public static final DeferredItem<ItemThunderpeal> THUNDERPEAL =
+            ITEMS.registerItem("thunderpeal", ItemThunderpeal::new,
                     new Item.Properties().rarity(Rarity.EPIC));
 
     public static void register(IEventBus modBus) {
