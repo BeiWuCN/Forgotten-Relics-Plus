@@ -71,7 +71,7 @@ All of these are **required**:
 
 | Mod | Version | Notes |
 | --- | --- | --- |
-| [Thaumaturge](https://www.curseforge.com/minecraft/mc-mods/thaumaturge) | 0.4.0+ | Thaumcraft for modern versions; provides arcane crafting, aspects and the research system |
+| [Thaumaturge](https://github.com/Leclowndu93150/Thaumaturge/) | 0.4.0+ | Thaumcraft for modern versions; provides arcane crafting, aspects and the research system |
 | [Botania](https://www.curseforge.com/minecraft/mc-mods/botania) | 457+ | Provides some materials and the wand API |
 | [Curios](https://www.curseforge.com/minecraft/mc-mods/curios) | 9.0.0+ | Accessory slots (the 1.12.2 equivalent of Baubles) |
 | [TerraBlender](https://www.curseforge.com/minecraft/mc-mods/terrablender) | 4.1.0.0+ | A Thaumaturge dependency, declared here as well |
