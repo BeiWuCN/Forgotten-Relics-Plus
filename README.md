@@ -67,7 +67,7 @@ RE 版采用 CC BY-NC-SA 4.0，参考其代码会一并继承「禁止商用」�
 
 | 模组 | 版本要求 | 说明 |
 | --- | --- | --- |
-| [Thaumaturge](https://www.curseforge.com/minecraft/mc-mods/thaumaturge) | 0.4.0+ | 高版本的神秘时代，提供奥术合成、要素（Aspects）、研究系统 |
+| [Thaumaturge](https://www.curseforge.com/minecraft/mc-mods/thaumaturge](https://github.com/BeiWuCN/Thaumic-Energistics-CE) | 0.4.0+ | 高版本的神秘时代，提供奥术合成、要素（Aspects）、研究系统 |
 | [Botania](https://www.curseforge.com/minecraft/mc-mods/botania) | 457+ | 植物魔法，提供部分材料与法杖 API |
 | [Curios](https://www.curseforge.com/minecraft/mc-mods/curios) | 9.0.0+ | 饰品栏（对应 1.12.2 的 Baubles） |
 | [TerraBlender](https://www.curseforge.com/minecraft/mc-mods/terrablender) | 4.1.0.0+ | Thaumaturge 的前置，这里跟着声明 |
