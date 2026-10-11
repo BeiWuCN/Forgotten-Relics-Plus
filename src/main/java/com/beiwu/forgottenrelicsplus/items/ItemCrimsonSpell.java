@@ -5,6 +5,7 @@ import com.beiwu.forgottenrelicsplus.config.FRConfig;
 import com.beiwu.forgottenrelicsplus.entity.EntityCrimsonOrb;
 import com.beiwu.forgottenrelicsplus.utils.CooldownHelper;
 import com.beiwu.forgottenrelicsplus.utils.SoundHelper;
+import com.beiwu.forgottenrelicsplus.utils.SummonTargeting;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import java.util.List;
@@ -18,14 +19,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class ItemCrimsonSpell extends FRItem implements FRRechargable, IWarpingGear {
 
     private static final int SCAN_RANGE = 32;
-
-    private static final double BASE_BOX = 3.0D;
 
     public ItemCrimsonSpell(Properties properties) {
         super(properties.stacksTo(1));
@@ -69,43 +67,7 @@ public class ItemCrimsonSpell extends FRItem implements FRRechargable, IWarpingG
     }
 
     private static LivingEntity findTarget(Level level, Player player) {
-        Vec3 look = player.getLookAngle();
-
-        Vec3 cursor = player.position().add(0.0D, player.getBbHeight() * 0.5D, 0.0D);
-        List<LivingEntity> found = List.of();
-        for (int distance = 1; found.isEmpty() && distance < SCAN_RANGE; distance++) {
-
-            double extra = distance > 20 ? 5.0D : (distance > 10 ? 3.0D : 0.0D);
-            cursor = cursor.add(look.scale(distance)).add(0.0D, 0.5D, 0.0D);
-            double half = BASE_BOX + extra;
-            AABB box = new AABB(
-                    cursor.x - half,
-                    cursor.y - half,
-                    cursor.z - half,
-                    cursor.x + half,
-                    cursor.y + half,
-                    cursor.z + half);
-            found = level.getEntitiesOfClass(LivingEntity.class, box, e -> e != player && e.isAlive());
-        }
-        if (!found.isEmpty()) {
-            return pick(found, level);
-        }
-
-        List<LivingEntity> nearby = level.getEntitiesOfClass(
-                LivingEntity.class,
-                new AABB(
-                        player.getX() - SCAN_RANGE,
-                        player.getY() - SCAN_RANGE,
-                        player.getZ() - SCAN_RANGE,
-                        player.getX() + SCAN_RANGE,
-                        player.getY() + SCAN_RANGE,
-                        player.getZ() + SCAN_RANGE),
-                e -> e != player && e.isAlive() && e.hasLineOfSight(player));
-        return nearby.isEmpty() ? null : pick(nearby, level);
-    }
-
-    private static LivingEntity pick(List<LivingEntity> candidates, Level level) {
-        return candidates.get((int) ((candidates.size() - 1) * level.random.nextDouble()));
+        return SummonTargeting.select(player, player, SCAN_RANGE, null);
     }
 
     private static void spawnOrb(Level level, Player player, LivingEntity target) {

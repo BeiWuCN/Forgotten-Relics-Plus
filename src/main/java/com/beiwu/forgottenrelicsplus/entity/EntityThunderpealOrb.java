@@ -109,10 +109,14 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
         DamageSource lightning = FRDamageTypes.source(level(), FRDamageTypes.TRUE_LIGHTNING, this);
         Player owner = getOwner() instanceof Player player ? player : null;
 
-        Vec3 origin = position();
+        Vec3 origin = result.getLocation();
+        setPos(origin.x, origin.y, origin.z);
 
         LivingEntity directHit = null;
         if (result instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity direct) {
+            FRBoltParticleData.broadcast(server, origin, centerOf(direct), FRBoltParticleData.WIDTH_MAIN, 1,
+                    FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE,
+                    -1, direct.getId());
             strike(direct, lightning, FRConfig.THUNDERPEAL_DIRECT_DAMAGE.get().floatValue());
             directHit = direct;
         }
@@ -140,7 +144,7 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
                     1,
                     FRBoltParticleData.ARC_RED,
                     FRBoltParticleData.ARC_GREEN,
-                    FRBoltParticleData.ARC_BLUE);
+                    FRBoltParticleData.ARC_BLUE, -1, target.getId());
             strike(target, lightning, FRConfig.THUNDERPEAL_BOLT_DAMAGE.get().floatValue());
             AABB area = target.getBoundingBox().inflate(CHAIN_RADIUS);
             List<LivingEntity> candidates = new ArrayList<>();
@@ -162,7 +166,7 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
                         1,
                         FRBoltParticleData.ARC_RED,
                         FRBoltParticleData.ARC_GREEN,
-                        FRBoltParticleData.ARC_BLUE);
+                        FRBoltParticleData.ARC_BLUE, target.getId(), secondary.getId());
                 strike(
                         secondary,
                         lightning,
@@ -170,21 +174,9 @@ public class EntityThunderpealOrb extends FRHomingProjectile {
             }
         }
 
-        for (int i = 0; i < 2; i++) {
-            FRParticles.serverWispBurst(
-                    server,
-                    getX(),
-                    getY(),
-                    getZ(),
-                    0.0F,
-                    (float) (0.8D + random.nextDouble() * 0.2D),
-                    (float) (0.4D + random.nextDouble() * 0.6D),
-                    2.0F,
-                    1.0F,
-                    1,
-                    0.0D,
-                    0.0D);
-        }
+        FRParticles.serverSparkle(server, origin.x, origin.y, origin.z,
+                FRBoltParticleData.ARC_RED, FRBoltParticleData.ARC_GREEN, FRBoltParticleData.ARC_BLUE,
+                0.25F, 1);
         SoundHelper.play(
                 level(),
                 getX(),

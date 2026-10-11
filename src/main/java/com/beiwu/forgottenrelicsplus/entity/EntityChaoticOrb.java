@@ -4,11 +4,10 @@ import com.beiwu.forgottenrelicsplus.client.FRParticles;
 import com.beiwu.forgottenrelicsplus.config.FRConfig;
 import com.beiwu.forgottenrelicsplus.registry.FREntities;
 import com.beiwu.forgottenrelicsplus.utils.FRDamageTypes;
+import com.beiwu.forgottenrelicsplus.utils.SmoothHoming;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import java.util.List;
-import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -40,8 +39,6 @@ public class EntityChaoticOrb extends FRHomingProjectile {
 
     private static final double SEEK_RANGE = 16.0D;
 
-    private static final double SEEK_ACCEL = 0.2D;
-
     private static final double SEEK_MAX_SPEED = 0.2D;
 
     private static final double WANDER_ACCEL = 0.04D;
@@ -56,8 +53,6 @@ public class EntityChaoticOrb extends FRHomingProjectile {
 
     private static final double SELFDESTRUCT_CHANCE = 0.15D;
 
-    private static final float OWNER_SKIP_CHANCE = 0.8F;
-
     private static final double EXPLOSION_MAX_EXTRA = 6.0D;
 
     private static final int[] PRIMAL_COLORS = {
@@ -71,10 +66,12 @@ public class EntityChaoticOrb extends FRHomingProjectile {
 
     private static final EntityDataAccessor<Integer> DATA_COLOR_INDEX =
             SynchedEntityData.defineId(EntityChaoticOrb.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_SEEKER =
+            SynchedEntityData.defineId(EntityChaoticOrb.class, EntityDataSerializers.BOOLEAN);
 
-    private int count;
+    private Vec3 wanderAcceleration = Vec3.ZERO;
+    private Vec3 desiredWanderAcceleration = Vec3.ZERO;
 
-    private boolean seeker;
 
     private boolean everLockedTarget;
 
@@ -96,7 +93,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
 
     public EntityChaoticOrb(Level level, LivingEntity caster, boolean seeker) {
         super(FREntities.PRIMAL_ORB.get(), level);
-        this.seeker = seeker;
+        entityData.set(DATA_SEEKER, seeker);
 
         this.traveler = !seeker && random.nextDouble() < TRAVELER_CHANCE;
         this.selfDestruct = random.nextDouble() < SELFDESTRUCT_CHANCE;
@@ -109,6 +106,11 @@ public class EntityChaoticOrb extends FRHomingProjectile {
         super.defineSynchedData(builder);
         builder.define(DATA_COLOR_INDEX, 0);
         builder.define(DATA_FADE, 0);
+        builder.define(DATA_SEEKER, false);
+    }
+
+    private boolean isSeeker() {
+        return entityData.get(DATA_SEEKER);
     }
 
     public int getColorIndex() {
@@ -139,7 +141,6 @@ public class EntityChaoticOrb extends FRHomingProjectile {
 
     @Override
     public void tick() {
-        count++;
         if (!level().isClientSide()) {
 
             if (isInWater()) {
@@ -149,7 +150,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
             }
 
             if (tickCount > WANDER_START_TICK) {
-                if (seeker) {
+                if (isSeeker()) {
                     if (seek()) {
                         everLockedTarget = true;
                     }
@@ -184,17 +185,21 @@ public class EntityChaoticOrb extends FRHomingProjectile {
             return;
         }
 
-        var motion = getDeltaMovement().scale(DRAG / BASE_DRAG);
-        setDeltaMovement(motion.x, motion.y - GRAVITY, motion.z);
+        if (!isSeeker()) {
+            var motion = getDeltaMovement().scale(DRAG / BASE_DRAG);
+            setDeltaMovement(motion.x, motion.y - GRAVITY, motion.z);
+        }
     }
 
     private void wander() {
-        Random rr = new Random(getId() + count);
-        var motion = getDeltaMovement();
-        setDeltaMovement(
-                motion.x + (rr.nextFloat() - rr.nextFloat()) * WANDER_ACCEL,
-                motion.y + (rr.nextFloat() - rr.nextFloat()) * WANDER_ACCEL,
-                motion.z + (rr.nextFloat() - rr.nextFloat()) * WANDER_ACCEL);
+        if (tickCount % 20 == 0) {
+            desiredWanderAcceleration = new Vec3(
+                    (random.nextDouble() - 0.5D) * WANDER_ACCEL,
+                    (random.nextDouble() - 0.5D) * WANDER_ACCEL,
+                    (random.nextDouble() - 0.5D) * WANDER_ACCEL);
+        }
+        wanderAcceleration = wanderAcceleration.lerp(desiredWanderAcceleration, 0.1D);
+        setDeltaMovement(getDeltaMovement().add(wanderAcceleration));
     }
 
     private Vec3 randomTravelDirection() {
@@ -203,39 +208,12 @@ public class EntityChaoticOrb extends FRHomingProjectile {
     }
 
     private boolean seek() {
-        Entity owner = getOwner();
-        int ownerId = owner == null ? -1 : owner.getId();
-        List<LivingEntity> candidates = level().getEntitiesOfClass(LivingEntity.class,
-                getBoundingBox().inflate(SEEK_RANGE));
-        LivingEntity target = null;
-        double best = Double.MAX_VALUE;
-        for (LivingEntity candidate : candidates) {
-
-            if (candidate.getId() == ownerId && random.nextFloat() < OWNER_SKIP_CHANCE) {
-                continue;
-            }
-            if (!candidate.isAlive()) {
-                continue;
-            }
-            double distanceSq = distanceToSqr(candidate);
-            if (distanceSq >= best) {
-                continue;
-            }
-            best = distanceSq;
-            target = candidate;
-        }
+        LivingEntity target = refreshSummonTarget(SEEK_RANGE);
         if (target == null) {
             return false;
         }
-        double dx = target.getX() - getX();
-        double dy = target.getBoundingBox().minY + target.getBbHeight() * 0.9D - getY();
-        double dz = target.getZ() - getZ();
-        var motion = getDeltaMovement();
-
-        setDeltaMovement(
-                Mth.clamp(motion.x + dx / best * SEEK_ACCEL, -SEEK_MAX_SPEED, SEEK_MAX_SPEED),
-                Mth.clamp(motion.y + dy / best * SEEK_ACCEL, -SEEK_MAX_SPEED, SEEK_MAX_SPEED),
-                Mth.clamp(motion.z + dz / best * SEEK_ACCEL, -SEEK_MAX_SPEED, SEEK_MAX_SPEED));
+        Vec3 aim = target.getBoundingBox().getCenter().subtract(position());
+        setDeltaMovement(SmoothHoming.steer(getDeltaMovement(), aim, SEEK_MAX_SPEED));
         return true;
     }
 
@@ -257,7 +235,7 @@ public class EntityChaoticOrb extends FRHomingProjectile {
         level().explode(null, getX(), getY(), getZ(),
                 (float) (1.0D + random.nextDouble() * EXPLOSION_MAX_EXTRA), false, Level.ExplosionInteraction.NONE);
         float specialChance = blockInWater ? 10.0F : 1.0F;
-        if (!seeker && random.nextInt(100) <= specialChance) {
+        if (!isSeeker() && random.nextInt(100) <= specialChance) {
             if (random.nextBoolean()) {
                 taintSplosion(server);
             } else {

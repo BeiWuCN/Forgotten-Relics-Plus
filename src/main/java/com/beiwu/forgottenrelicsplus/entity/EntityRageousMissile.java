@@ -5,7 +5,7 @@ import com.beiwu.forgottenrelicsplus.config.FRConfig;
 import com.beiwu.forgottenrelicsplus.registry.FREntities;
 import com.beiwu.forgottenrelicsplus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelicsplus.utils.SoundHelper;
-import java.util.List;
+import com.beiwu.forgottenrelicsplus.utils.SmoothHoming;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -66,11 +66,13 @@ public class EntityRageousMissile extends FRHomingProjectile {
 
         boolean client = level().isClientSide();
 
-        boolean hasTarget = client || refreshTarget();
+        if (client) {
+            time++;
+            return;
+        }
+        boolean hasTarget = refreshTarget();
         if (!hasTarget && time > LIFESPAN_WITHOUT_TARGET) {
-            if (!client) {
-                discard();
-            }
+            discard();
             return;
         }
 
@@ -78,26 +80,22 @@ public class EntityRageousMissile extends FRHomingProjectile {
         var target = resolvedTarget();
         if (target != null) {
             Vec3 diff = center(target).subtract(thisVec);
-            var motion = diff.normalize().scale(SPEED);
+            Vec3 aim = diff;
             if (time < AIM_UP_TICKS) {
 
-                motion = new Vec3(motion.x, Math.abs(motion.y), motion.z);
+                aim = new Vec3(diff.x, Math.abs(diff.y) + 1.0D, diff.z);
             }
-            setDeltaMovement(motion);
+            setDeltaMovement(SmoothHoming.steer(getDeltaMovement(), aim, SPEED));
             if (evil && diff.length() < EVIL_DETONATE_DISTANCE) {
-                if (!client) {
-                    discard();
-                }
+                discard();
                 return;
             }
-        } else if (client) {
-
         } else {
 
             if (streamDirection == null) {
                 streamDirection = computeStreamDirection();
             }
-            setDeltaMovement(streamDirection.scale(SPEED));
+            setDeltaMovement(SmoothHoming.steer(getDeltaMovement(), streamDirection.scale(10.0D), SPEED));
         }
         time++;
     }
@@ -119,21 +117,7 @@ public class EntityRageousMissile extends FRHomingProjectile {
     }
 
     private boolean refreshTarget() {
-        if (resolvedTarget() != null) {
-            return true;
-        }
-
-        setTarget(null);
-        LivingEntity owner = getOwner() instanceof LivingEntity living ? living : null;
-        double range = FRConfig.NUCLEAR_FURY_CLEAR_RANGE.get();
-        List<LivingEntity> candidates = level().getEntitiesOfClass(LivingEntity.class,
-                getBoundingBox().inflate(range), e -> e != owner && e.isAlive());
-        if (candidates.isEmpty()) {
-            return false;
-        }
-
-        setTarget(candidates.get(random.nextInt(candidates.size())));
-        return true;
+        return refreshSummonTarget(FRConfig.NUCLEAR_FURY_CLEAR_RANGE.get()) != null;
     }
 
     @Override

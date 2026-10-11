@@ -14,7 +14,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-public record FRBoltParticleData(Vec3 from, Vec3 to, float width, int count, int color) implements ParticleOptions {
+public record FRBoltParticleData(Vec3 from, Vec3 to, float width, int count, int color,
+                                 int fromEntityId, int toEntityId) implements ParticleOptions {
+
+    public FRBoltParticleData(Vec3 from, Vec3 to, float width, int count, int color) {
+        this(from, to, width, count, color, -1, -1);
+    }
 
     public static final double BROADCAST_RADIUS = 64.0D;
 
@@ -34,7 +39,9 @@ public record FRBoltParticleData(Vec3 from, Vec3 to, float width, int count, int
                     Vec3.CODEC.fieldOf("to").forGetter(FRBoltParticleData::to),
                     Codec.FLOAT.fieldOf("width").forGetter(FRBoltParticleData::width),
                     Codec.INT.fieldOf("count").forGetter(FRBoltParticleData::count),
-                    Codec.INT.fieldOf("color").forGetter(FRBoltParticleData::color))
+                    Codec.INT.fieldOf("color").forGetter(FRBoltParticleData::color),
+                    Codec.INT.optionalFieldOf("from_entity", -1).forGetter(FRBoltParticleData::fromEntityId),
+                    Codec.INT.optionalFieldOf("to_entity", -1).forGetter(FRBoltParticleData::toEntityId))
             .apply(instance, FRBoltParticleData::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, FRBoltParticleData> STREAM_CODEC =
@@ -46,11 +53,13 @@ public record FRBoltParticleData(Vec3 from, Vec3 to, float width, int count, int
         buffer.writeFloat(data.width);
         buffer.writeInt(data.count);
         buffer.writeInt(data.color);
+        buffer.writeInt(data.fromEntityId);
+        buffer.writeInt(data.toEntityId);
     }
 
     private static FRBoltParticleData read(RegistryFriendlyByteBuf buffer) {
         return new FRBoltParticleData(readVec(buffer), readVec(buffer),
-                buffer.readFloat(), buffer.readInt(), buffer.readInt());
+                buffer.readFloat(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
     }
 
     private static void writeVec(RegistryFriendlyByteBuf buffer, Vec3 vec) {
@@ -82,11 +91,17 @@ public record FRBoltParticleData(Vec3 from, Vec3 to, float width, int count, int
 
     public static void broadcast(ServerLevel level, Vec3 from, Vec3 to, float width, int count,
                                  float red, float green, float blue) {
+        broadcast(level, from, to, width, count, red, green, blue, -1, -1);
+    }
+
+    public static void broadcast(ServerLevel level, Vec3 from, Vec3 to, float width, int count,
+                                 float red, float green, float blue, int fromEntityId, int toEntityId) {
 
         if (from.distanceToSqr(to) < 1.0E-6D) {
             return;
         }
-        var data = new FRBoltParticleData(from, to, width, Math.max(1, count), packColor(red, green, blue));
+        var data = new FRBoltParticleData(from, to, width, Math.max(1, count), packColor(red, green, blue),
+                fromEntityId, toEntityId);
         List<ServerPlayer> players = level.players();
         for (ServerPlayer player : players) {
             if (player.position().distanceToSqr(from) <= BROADCAST_RADIUS * BROADCAST_RADIUS) {

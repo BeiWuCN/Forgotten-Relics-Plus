@@ -5,6 +5,7 @@ import com.beiwu.forgottenrelicsplus.config.FRConfig;
 import com.beiwu.forgottenrelicsplus.registry.FREntities;
 import com.beiwu.forgottenrelicsplus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelicsplus.utils.SoundHelper;
+import com.beiwu.forgottenrelicsplus.utils.SummonTargeting;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ColorParticleOption;
@@ -212,7 +213,10 @@ public class EntityBabylonWeapon extends FRHomingProjectile {
         BlockHitResult hit = level().clip(new ClipContext(eye, end, ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.ANY, player));
         Vec3 aim;
-        if (hit.getType() == HitResult.Type.BLOCK) {
+        LivingEntity target = SummonTargeting.select(player, player, LOOK_RANGE, null);
+        if (target != null) {
+            aim = target.getBoundingBox().getCenter();
+        } else if (hit.getType() == HitResult.Type.BLOCK) {
             BlockPos pos = hit.getBlockPos();
             aim = new Vec3(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
         } else {

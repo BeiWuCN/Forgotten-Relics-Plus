@@ -2,6 +2,7 @@ package com.beiwu.forgottenrelicsplus.registry;
 
 import com.beiwu.forgottenrelicsplus.ForgottenRelics;
 import com.beiwu.forgottenrelicsplus.particle.FRBoltParticleData;
+import com.beiwu.forgottenrelicsplus.particle.FRSpellParticleData;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
@@ -18,6 +19,24 @@ public final class FRParticleTypes {
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<FRBoltParticleData>> BOLT =
             PARTICLE_TYPES.register("bolt", FRParticleTypes::createBoltType);
+    public static final DeferredHolder<ParticleType<?>, ParticleType<FRSpellParticleData>> WISP =
+            PARTICLE_TYPES.register("spell_wisp", FRParticleTypes::createSpellType);
+    public static final DeferredHolder<ParticleType<?>, ParticleType<FRSpellParticleData>> SPARKLE =
+            PARTICLE_TYPES.register("spell_sparkle", FRParticleTypes::createSpellType);
+
+    private static ParticleType<FRSpellParticleData> createSpellType() {
+        return new ParticleType<FRSpellParticleData>(false) {
+            @Override
+            public MapCodec<FRSpellParticleData> codec() {
+                return FRSpellParticleData.CODEC;
+            }
+
+            @Override
+            public StreamCodec<? super RegistryFriendlyByteBuf, FRSpellParticleData> streamCodec() {
+                return FRSpellParticleData.STREAM_CODEC;
+            }
+        };
+    }
 
     private static ParticleType<FRBoltParticleData> createBoltType() {
         return new ParticleType<FRBoltParticleData>(true) {

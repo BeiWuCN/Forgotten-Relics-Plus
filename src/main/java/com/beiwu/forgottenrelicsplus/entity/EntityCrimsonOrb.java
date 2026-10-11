@@ -5,12 +5,10 @@ import com.beiwu.forgottenrelicsplus.config.FRConfig;
 import com.beiwu.forgottenrelicsplus.registry.FREntities;
 import com.beiwu.forgottenrelicsplus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelicsplus.utils.SoundHelper;
-import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -30,8 +28,6 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
     private static final double HOMING_STRENGTH = 0.3D;
 
     private static final double MAX_SPEED = 0.25D;
-
-    private static final int LIFT_TICKS = 5;
 
     private static final int MAX_LIFE_TICKS = 1000;
 
@@ -56,39 +52,16 @@ public class EntityCrimsonOrb extends FRHomingProjectile {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (isRemoved() || level().isClientSide()) {
-            return;
-        }
-        if (resolvedTarget() == null) {
-
-            getNewTarget();
-            return;
-        }
-        var motion = getDeltaMovement();
-        double x = Mth.clamp(motion.x, -MAX_SPEED, MAX_SPEED);
-        double y = Mth.clamp(motion.y, -MAX_SPEED, MAX_SPEED);
-        double z = Mth.clamp(motion.z, -MAX_SPEED, MAX_SPEED);
-
-        if (tickCount < LIFT_TICKS && y < 0.0D) {
-            y = Math.abs(y);
-        }
-        setDeltaMovement(x, y, z);
+    protected double homingSpeed() {
+        return MAX_SPEED;
     }
 
-    private void getNewTarget() {
-        LivingEntity caster = getOwner() instanceof LivingEntity living ? living : null;
-        List<LivingEntity> candidates = level().getEntitiesOfClass(LivingEntity.class,
-                getBoundingBox().inflate(SEARCH_RANGE),
-                e -> e != caster && e.isAlive() && e.hasLineOfSight(this));
-
-        if (caster != null) {
-            candidates.remove(caster);
+    @Override
+    public void tick() {
+        if (!level().isClientSide()) {
+            refreshSummonTarget(SEARCH_RANGE);
         }
-        if (!candidates.isEmpty()) {
-            setTarget(candidates.get(random.nextInt(candidates.size())));
-        }
+        super.tick();
     }
 
     @Override
