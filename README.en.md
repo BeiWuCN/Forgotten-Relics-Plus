@@ -133,4 +133,3 @@ Java 21 and PowerShell 7 or newer are required. `libs/dependencies.lock.json` pi
 GitHub Actions runs the same checks. Configure the repository secret `DEPS_BASE_URL` before the first run to supply locked dependencies without public download URLs. CI does not upload dependency jars. The job requiring this secret does not run automatically for fork pull requests.
 
 `terrorCrownHavocInterval` controls the crown's brainwashing scan interval, defaulting to 5 ticks. Set it to 1 to restore scanning every tick. Gaze effects and repair retain their existing update frequency.
-

@@ -130,4 +130,3 @@ src/generated/resources/data/forgotten_relics_plus/thaumaturge/
 GitHub Actions 使用相同流程。首次运行需要配置仓库 secret `DEPS_BASE_URL`，为未提供公开下载地址的锁定依赖提供文件；CI 不会公开上传依赖 jar。来自 fork 的 PR 不自动运行需要该 secret 的任务。
 
 王冠洗脑检查间隔由 `terrorCrownHavocInterval` 控制，默认 5 tick；设为 1 可恢复每 tick 检查。凝视效果与修复逻辑保持原有检查频率。
-
