@@ -18,9 +18,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
       - uses: gradle/actions/setup-gradle@v4
       - uses: actions/cache@v4
         with:
@@ -29,11 +26,11 @@ jobs:
       - name: Prepare locked dependencies
         env:
           DEPS_BASE_URL: ${{ secrets.DEPS_BASE_URL }}
-        run: node scripts/setup-dependencies.cjs
+        run: ./scripts/setup-dependencies.ps1
       - name: Test and validate resources
         run: .\gradlew.bat clean build --console=plain
       - name: Check datagen output
-        run: node scripts/verify-datagen.cjs
+        run: ./scripts/verify-datagen.ps1
       - uses: actions/upload-artifact@v4
         if: always()
         with:

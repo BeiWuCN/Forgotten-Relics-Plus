@@ -13,6 +13,13 @@ _refs/
 docs/
 run/
 logs/
+*.js
+*.cjs
+*.mjs
+*.py
+*.md
+!README*.md
+!**/README*.md
 runs/
 .run/*
 !.run/Client.run.xml

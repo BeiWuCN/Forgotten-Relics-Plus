@@ -99,7 +99,7 @@ tasks.register('verifyDependencies') {
             def artifact = file("libs/${dependency.file}")
             if (!artifact.exists()) {
                 if (!dependency.optional) {
-                    throw new GradleException("Missing ${dependency.file}. Run node scripts/setup-dependencies.cjs --source <directory>.")
+                    throw new GradleException("Missing ${dependency.file}. Run pwsh -File scripts/setup-dependencies.ps1 -Source <directory>.")
                 }
             } else {
                 def digest = java.security.MessageDigest.getInstance('SHA-256')
@@ -182,7 +182,7 @@ if (System.getProperty('os.name').toLowerCase().contains('windows') && projectDi
 }
 tasks.register('verifyResources', Exec) {
     dependsOn 'jar'
-    commandLine 'node', 'scripts/verify-resources.cjs'
+    commandLine 'pwsh', '-NoProfile', '-File', 'scripts/verify-resources.ps1'
 }
 
 tasks.named('check') { dependsOn 'verifyResources' }

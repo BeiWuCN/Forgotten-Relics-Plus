@@ -27,7 +27,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
-        run: python3 scripts/prepare-curseforge-release.py
+        shell: pwsh
+        run: ./scripts/prepare-curseforge-release.ps1
       - name: Publish to CurseForge
         uses: Kira-NT/mc-publish@52307b03863581dec6b652b83e597aec02ebb075
         with:

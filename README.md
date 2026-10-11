@@ -123,12 +123,11 @@ src/generated/resources/data/forgotten_relics_plus/thaumaturge/
 
 在 IntelliJ IDEA 中打开本项目根目录并同步 Gradle，使用共享运行配置 `Client`、`Server` 或 `Data`。这些配置分别执行 `runClient`、`runServer` 和 `runData`，由 Gradle 自动准备启动参数、资源和依赖。项目移动目录后请重新同步，避免使用含旧目录绝对路径的 Application 配置。
 
-需要 Java 21 与 Node.js 22 及以上。依赖版本、SHA-256、用途和可选性由 `libs/dependencies.lock.json` 锁定。执行 `node scripts/setup-dependencies.cjs --source "前置 jar 所在目录"` 安装并校验依赖；已有依赖时可直接执行该脚本。公开下载地址可用时会自动下载，缺少公开地址的本地构建依赖需要从指定目录提供，或通过 `DEPS_BASE_URL` 指定保存这些文件的下载目录。
+需要 Java 21 与 PowerShell 7 及以上。依赖版本、SHA-256、用途和可选性由 `libs/dependencies.lock.json` 锁定。执行 `pwsh -File scripts/setup-dependencies.ps1 -Source "前置 jar 所在目录"` 安装并校验依赖；已有依赖时可直接执行该脚本。公开下载地址可用时会自动下载，缺少公开地址的本地构建依赖需要从指定目录提供，或通过 `DEPS_BASE_URL` 指定保存这些文件的下载目录。
 
-`./gradlew clean build` 会执行依赖校验、JUnit 回归测试、研究与配方引用校验、研究循环依赖检查和 JAR 资源检查。`node scripts/verify-datagen.cjs` 会重新生成数据，并检查文件内容、数量和路径是否与现有生成资源一致。
+`./gradlew clean build` 会执行依赖校验、JUnit 回归测试、研究与配方引用校验、研究循环依赖检查和 JAR 资源检查。`pwsh -File scripts/verify-datagen.ps1` 会重新生成数据，并检查文件内容、数量和路径是否与现有生成资源一致。
 
 GitHub Actions 使用相同流程。首次运行需要配置仓库 secret `DEPS_BASE_URL`，为未提供公开下载地址的锁定依赖提供文件；CI 不会公开上传依赖 jar。来自 fork 的 PR 不自动运行需要该 secret 的任务。
 
 王冠洗脑检查间隔由 `terrorCrownHavocInterval` 控制，默认 5 tick；设为 1 可恢复每 tick 检查。凝视效果与修复逻辑保持原有检查频率。
 
-合成研究的笔记要素和复杂度分配见 [研究笔记难度](RESEARCH_NOTES.md)。完成并学习笔记后才能推进到合成页；复杂度 2～8 的兼容只作用于本模组。

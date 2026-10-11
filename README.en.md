@@ -126,12 +126,11 @@ The research category and builder helpers live in `data/FRResearchBootstrap.java
 
 ## Build and verification
 
-Java 21 and Node.js 22 or newer are required. `libs/dependencies.lock.json` pins dependency filenames, SHA-256 hashes, configurations and optional status. Run `node scripts/setup-dependencies.cjs --source "directory containing dependency jars"` to install and verify them. Available public downloads are used automatically. Local builds without a public download URL must be supplied from that directory or through a download directory specified by `DEPS_BASE_URL`.
+Java 21 and PowerShell 7 or newer are required. `libs/dependencies.lock.json` pins dependency filenames, SHA-256 hashes, configurations and optional status. Run `pwsh -File scripts/setup-dependencies.ps1 -Source "directory containing dependency jars"` to install and verify them. Available public downloads are used automatically. Local builds without a public download URL must be supplied from that directory or through a download directory specified by `DEPS_BASE_URL`.
 
-`./gradlew clean build` runs dependency verification, JUnit regression tests, research and recipe reference checks, research cycle detection and JAR resource checks. `node scripts/verify-datagen.cjs` regenerates data and checks that file contents and paths match the existing generated resources.
+`./gradlew clean build` runs dependency verification, JUnit regression tests, research and recipe reference checks, research cycle detection and JAR resource checks. `pwsh -File scripts/verify-datagen.ps1` regenerates data and checks that file contents and paths match the existing generated resources.
 
 GitHub Actions runs the same checks. Configure the repository secret `DEPS_BASE_URL` before the first run to supply locked dependencies without public download URLs. CI does not upload dependency jars. The job requiring this secret does not run automatically for fork pull requests.
 
 `terrorCrownHavocInterval` controls the crown's brainwashing scan interval, defaulting to 5 ticks. Set it to 1 to restore scanning every tick. Gaze effects and repair retain their existing update frequency.
 
-See [research note difficulty](RESEARCH_NOTES.md) for the authored anchor sets and complexity levels. Crafting research requires a completed and learned note before revealing its recipe page. Complexity 2–8 support applies to this mod only.

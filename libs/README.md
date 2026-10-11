@@ -16,7 +16,7 @@ Thaumaturge 构建来自上游 `1.21.1` 分支提交 `b4670aeacb76f22a53dd3b57ba
 
 本地光影开发环境使用 Iris 1.8.14-beta.1 与 Sodium 0.8.13，放在 `run/mods`；Iris 1.8.12 与 Sodium 0.6.13 的组合不兼容新版 Thaumaturge。这两项不是本模组的必需依赖。
 
-在项目根目录执行 `node scripts/setup-dependencies.cjs --source "前置 jar 所在目录"`。可用的公开地址会自动下载；本地构建构件需要从指定目录提供，或设置 `DEPS_BASE_URL` 为存放这些文件的下载目录。添加 `--optional` 可同时安装可选依赖。
+在项目根目录执行 `pwsh -File scripts/setup-dependencies.ps1 -Source "前置 jar 所在目录"`。可用的公开地址会自动下载；本地构建构件需要从指定目录提供，或设置 `DEPS_BASE_URL` 为存放这些文件的下载目录。添加 `-Optional` 可同时安装可选依赖。
 
 脚本与 Gradle 都会验证文件哈希。替换依赖时需要审核并更新锁定清单；核心前置的重复版本会阻止构建。jar 本身不入库。
 
