@@ -1,0 +1,49 @@
+name: Sync release to CurseForge
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published GitHub release tag to sync
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: curseforge-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and validate release artifact
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: python3 scripts/prepare-curseforge-release.py
+      - name: Publish to CurseForge
+        uses: Kira-NT/mc-publish@52307b03863581dec6b652b83e597aec02ebb075
+        with:
+          curseforge-id: 1738718
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          files: ${{ steps.release.outputs.file }}
+          name: ${{ steps.release.outputs.name }}
+          version: ${{ steps.release.outputs.version }}
+          version-type: ${{ steps.release.outputs.type }}
+          changelog-file: build/curseforge/changelog.md
+          loaders: neoforge
+          game-versions: 1.21.1
+          java: 21
+          curseforge-dependencies: |
+            thaumaturge(required){curseforge:1628024}
+            lithostitched(required){curseforge:936015}
+            botania(required){curseforge:225643}
+            curios(required){curseforge:309927}
+          fail-mode: fail
