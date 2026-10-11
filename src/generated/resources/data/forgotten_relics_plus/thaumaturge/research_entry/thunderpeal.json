@@ -1,0 +1,63 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 0,
+  "complexity": 4,
+  "icons": [
+    "forgotten_relics_plus:thunderpeal"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.Thunderpeal",
+  "note_aspects": [
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:potentia"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:aer"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:aversio"
+    },
+    {
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:spellbook_theory",
+    "~forgotten_relics_plus:tome_of_discord",
+    "~thaumaturge:base_auromancy"
+  ],
+  "row": 4,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.Thunderpeal.1"
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/thunderpeal"
+      ],
+      "text": "fr.text.Thunderpeal.2"
+    }
+  ]
+}

@@ -9,10 +9,11 @@ version = "${mod_version}"
 displayName = "${mod_name}"
 authors = "${mod_authors}"
 description = '''${mod_description}'''
-# 模组列表里显示的图标。路径相对模组资源包根目录，图片放在 jar 根目录（与 curios、"Jade" 等一致）。
-# 由 Tools/make_logo.js 从 textures/item/omega_core.png 最近邻放大生成。
 logoFile = "logo.png"
 logoBlur = false
+
+[[mixins]]
+config = "forgotten_relics_plus.mixins.json"
 
 [[dependencies."${mod_id}"]]
 modId = "neoforge"
@@ -27,35 +28,27 @@ type = "required"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
-
-# Thaumaturge 提供奥术合成、要素、灵气等本模组的全部内容基础。
 [[dependencies."${mod_id}"]]
 modId = "thaumaturge"
 type = "required"
-versionRange = "[0.4.0,)"
+versionRange = "[1.0.0,)"
 ordering = "AFTER"
 side = "BOTH"
-
-# Botania 提供植物魔法相关材料与法杖 API（原版 1.12.2 就是硬依赖）。
 [[dependencies."${mod_id}"]]
 modId = "botania"
 type = "required"
 versionRange = "[457-SNAPSHOT,)"
 ordering = "AFTER"
 side = "BOTH"
-
-# Curios 提供饰品栏（原版 1.12.2 用的是 Baubles）。
 [[dependencies."${mod_id}"]]
 modId = "curios"
 type = "required"
 versionRange = "[9.0.0,)"
 ordering = "AFTER"
 side = "BOTH"
-
-# TerraBlender 是 Thaumaturge 的硬依赖，这里跟着声明。
 [[dependencies."${mod_id}"]]
-modId = "terrablender"
+modId = "lithostitched"
 type = "required"
-versionRange = "[4.1.0.0,)"
+versionRange = "[1.8.0,)"
 ordering = "AFTER"
 side = "BOTH"

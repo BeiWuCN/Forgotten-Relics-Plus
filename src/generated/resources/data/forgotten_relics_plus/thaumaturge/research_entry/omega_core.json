@@ -1,0 +1,80 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "avaritia"
+    }
+  ],
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -2,
+  "complexity": 8,
+  "icons": [
+    "forgotten_relics_plus:omega_core"
+  ],
+  "meta": [
+    "spiky",
+    "hidden"
+  ],
+  "name": "fr.name.OmegaCore",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:auram"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:praecantatio"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:alienis"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:potentia"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:spiritus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:permutatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:apotheosis",
+    "forgotten_relics_plus:tome_of_broken_fates",
+    "forgotten_relics_plus:void_grimoire"
+  ],
+  "row": 9,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:eldritch"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.OmegaCore.1",
+      "warp": 10
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/omega_core"
+      ],
+      "text": "fr.text.OmegaCore.2"
+    }
+  ]
+}

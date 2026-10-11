@@ -1,0 +1,64 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -1,
+  "complexity": 5,
+  "icons": [
+    "forgotten_relics_plus:soul_tome"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.SoulTome",
+  "note_aspects": [
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:spiritus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:mortuus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:exanimis"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:devourer_of_the_void",
+    "~thaumaturge:jar_brain"
+  ],
+  "row": 9,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.SoulTome.1",
+      "warp": 3
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/soul_tome"
+      ],
+      "text": "fr.text.SoulTome.2"
+    }
+  ]
+}

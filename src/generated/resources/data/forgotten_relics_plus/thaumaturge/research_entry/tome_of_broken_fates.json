@@ -1,0 +1,72 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -4,
+  "complexity": 8,
+  "icons": [
+    "forgotten_relics_plus:tome_of_broken_fates"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.FateTome",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:permutatio"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:victus"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:mortuus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:spiritus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:alienis"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:spellbook_theory",
+    "~thaumaturge:enter_outer_lands"
+  ],
+  "row": 2,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.FateTome.1",
+      "warp": 8
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/tome_of_broken_fates"
+      ],
+      "text": "fr.text.FateTome.2"
+    }
+  ]
+}

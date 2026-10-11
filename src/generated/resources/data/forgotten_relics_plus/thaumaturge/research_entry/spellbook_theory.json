@@ -1,0 +1,37 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -1,
+  "icons": [
+    "minecraft:writable_book"
+  ],
+  "meta": [
+    "round",
+    "hidden"
+  ],
+  "name": "fr.name.SpellbookTheory",
+  "parents": [
+    "forgotten_relics_plus:generic_theory",
+    "~thaumaturge:crimson_rites"
+  ],
+  "row": 2,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:artifice"
+        }
+      ],
+      "text": "fr.text.SpellbookTheory.1"
+    },
+    {
+      "text": "fr.text.SpellbookTheory.2"
+    }
+  ]
+}

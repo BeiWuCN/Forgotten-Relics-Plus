@@ -1,0 +1,69 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -7,
+  "complexity": 7,
+  "icons": [
+    "forgotten_relics_plus:false_justice"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.FalseJustice",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:aversio"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:praemunio"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:permutatio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:spiritus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:alienis"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:generic_theory",
+    "thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:apotheosis"
+  ],
+  "row": 0,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.FalseJustice.1",
+      "warp": 4
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/false_justice"
+      ],
+      "text": "fr.text.FalseJustice.2"
+    }
+  ]
+}

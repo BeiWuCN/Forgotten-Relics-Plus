@@ -1,0 +1,71 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 0,
+  "complexity": 4,
+  "icons": [
+    "forgotten_relics_plus:dimensional_mirror"
+  ],
+  "meta": [
+    "spiky"
+  ],
+  "name": "fr.name.DimensionalMirror",
+  "note_aspects": [
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:permutatio"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:vacuos"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:vitreus"
+    },
+    {
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:generic_theory",
+    "thaumaturge:mirror_hand",
+    "~thaumaturge:focus_rift",
+    "~forgotten_relics_plus:deific_amulet"
+  ],
+  "row": 3,
+  "stages": [
+    {
+      "craft": [
+        {
+          "amount": 1,
+          "items": "thaumaturge:hand_mirror"
+        }
+      ],
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:artifice"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.DimensionalMirror.1",
+      "warp": 1
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/dimensional_mirror"
+      ],
+      "text": "fr.text.DimensionalMirror.2"
+    }
+  ]
+}

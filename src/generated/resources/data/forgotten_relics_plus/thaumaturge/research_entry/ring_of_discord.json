@@ -1,0 +1,57 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 1,
+  "complexity": 2,
+  "icons": [
+    "forgotten_relics_plus:discord_ring"
+  ],
+  "meta": [
+    "round"
+  ],
+  "name": "fr.name.DiscordRing",
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:permutatio"
+    },
+    {
+      "aspect": "thaumaturge:potentia"
+    },
+    {
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:deific_amulet",
+    "thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:tome_of_discord"
+  ],
+  "row": -4,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:eldritch"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.DiscordRing.1"
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/discord_ring"
+      ],
+      "text": "fr.text.DiscordRing.2"
+    }
+  ]
+}

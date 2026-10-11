@@ -1,9 +1,6 @@
-# Gradle
+
 build/
 .gradle/
-!gradle/wrapper/gradle-wrapper.jar
-
-# IDE
 .idea/
 *.iml
 .eclipse/
@@ -11,19 +8,17 @@ build/
 bin/
 .classpath
 .project
-
-# 构建/校验脚本，按约定只放在本地，不入库
 Tools/
-
-# 参考产物与移植笔记，只放本地
 _refs/
 docs/
-
-# 运行目录
 run/
+logs/
 runs/
-# IDEA 共享运行配置：按约定只放本地，不入库（用 gradlew runClient/runServer/runData 即可）
-.run/
-
-# 本机开发用的前置 jar（体积大，不入库；见 libs/README.md）
+.run/*
+!.run/Client.run.xml
+!.run/Data.run.xml
+!.run/Server.run.xml
 libs/*.jar
+libs/*.download
+
+src/generated/resources/.cache/

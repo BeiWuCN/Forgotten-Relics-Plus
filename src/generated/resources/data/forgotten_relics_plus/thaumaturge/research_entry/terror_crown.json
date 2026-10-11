@@ -1,0 +1,73 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 4,
+  "complexity": 5,
+  "icons": [
+    "forgotten_relics_plus:terror_crown"
+  ],
+  "meta": [
+    "spiky",
+    "hidden"
+  ],
+  "name": "fr.name.TerrorCrown",
+  "note_aspects": [
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:sensus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:tenebrae"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:aversio"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:generic_theory",
+    "thaumaturge:unlock_eldritch",
+    "~thaumaturge:enter_outer_lands",
+    "~thaumaturge:oculus"
+  ],
+  "row": 0,
+  "stages": [
+    {
+      "obtain": [
+        {
+          "amount": 1,
+          "items": "thaumaturge:goggles_revealing"
+        }
+      ],
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:eldritch"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.TerrorCrown.1",
+      "warp": 4
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/terror_crown"
+      ],
+      "text": "fr.text.TerrorCrown.2"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -2,
+  "complexity": 8,
+  "icons": [
+    "forgotten_relics_plus:apotheosis"
+  ],
+  "meta": [
+    "round"
+  ],
+  "name": "fr.name.Apotheosis",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:praecantatio"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:aversio"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:lux"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:cognitio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:potentia"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:alienis"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:tome_of_discord",
+    "~forgotten_relics_plus:tome_of_lunar_flares",
+    "~forgotten_relics_plus:soul_tome",
+    "~forgotten_relics_plus:nuclear_fury",
+    "~forgotten_relics_plus:crimson_spell",
+    "~forgotten_relics_plus:tome_of_broken_fates",
+    "~forgotten_relics_plus:arcanum",
+    "~forgotten_relics_plus:oblivion_amulet",
+    "~forgotten_relics_plus:paradox",
+    "~forgotten_relics_plus:edict_of_banishment",
+    "~forgotten_relics_plus:dark_sun_ring",
+    "~forgotten_relics_plus:shiny_stone",
+    "~forgotten_relics_plus:dimensional_mirror"
+  ],
+  "row": 7,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.Apotheosis.1",
+      "warp": 10
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/apotheosis"
+      ],
+      "text": "fr.text.Apotheosis.2"
+    }
+  ]
+}

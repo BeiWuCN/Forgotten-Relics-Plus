@@ -1,0 +1,70 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -7,
+  "complexity": 7,
+  "icons": [
+    "forgotten_relics_plus:void_grimoire"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.VoidGrimoire",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:vacuos"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:tenebrae"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:alienis"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:motus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:edict_of_banishment",
+    "~thaumaturge:oculus",
+    "~forgotten_relics_plus:terror_crown",
+    "~forgotten_relics_plus:chaos_core"
+  ],
+  "row": 7,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.VoidGrimoire.1",
+      "warp": 4
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/void_grimoire"
+      ],
+      "text": "fr.text.VoidGrimoire.2"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -5,
+  "complexity": 7,
+  "icons": [
+    "forgotten_relics_plus:tome_of_lunar_flares"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.LunarFlares",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:lux"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:aer"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:aversio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praecantatio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:alienis"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:tome_of_predestiny",
+    "~forgotten_relics_plus:eldritch_spell",
+    "~thaumaturge:primordial_pearl"
+  ],
+  "row": 9,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.LunarFlares.1"
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/tome_of_lunar_flares"
+      ],
+      "text": "fr.text.LunarFlares.2"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 4,
+  "complexity": 6,
+  "icons": [
+    "forgotten_relics_plus:ancient_aegis"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.AncientAegis",
+  "note_aspects": [
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praemunio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:spiritus"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:alienis"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:praecantatio"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:metallum"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:ring_of_superposition",
+    "thaumaturge:unlock_eldritch"
+  ],
+  "row": 2,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:artifice"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:eldritch"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.AncientAegis.1"
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/ancient_aegis"
+      ],
+      "text": "fr.text.AncientAegis.2"
+    }
+  ]
+}

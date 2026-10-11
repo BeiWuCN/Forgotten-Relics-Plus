@@ -1,0 +1,74 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 3,
+  "complexity": 5,
+  "icons": [
+    "forgotten_relics_plus:advanced_mining_charm"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.AdvancedMiningCharm",
+  "note_aspects": [
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:instrumentum"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:metallum"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:potentia"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:mining_charm"
+  ],
+  "row": 4,
+  "stages": [
+    {
+      "craft": [
+        {
+          "amount": 1,
+          "items": "forgotten_relics_plus:mining_charm"
+        }
+      ],
+      "obtain": [
+        {
+          "amount": 1,
+          "items": "thaumaturge:void_pickaxe"
+        }
+      ],
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:artifice"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.AdvancedMiningCharm.1"
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/advanced_mining_charm"
+      ],
+      "text": "fr.text.AdvancedMiningCharm.2"
+    }
+  ]
+}

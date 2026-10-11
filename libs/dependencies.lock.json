@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "dependencies": [
+    {
+      "file": "botania-neoforge-1.21.1-457.jar",
+      "sha256": "e358558e457fd838002ae8676e40ba9013179e1e537a7ced2428d259867687b3",
+      "configuration": "implementation",
+      "url": null,
+      "optional": false
+    },
+    {
+      "file": "curios-neoforge-9.5.1+1.21.1.jar",
+      "sha256": "a45df2125c26219974aba7507ffc9afe7b83acc941a386af3faacb1cc0056fde",
+      "configuration": "implementation",
+      "url": "https://cdn.modrinth.com/data/vvuO3ImH/versions/yohfFbgD/curios-neoforge-9.5.1%2B1.21.1.jar",
+      "optional": false
+    },
+    {
+      "file": "Jade-1.21.1-NeoForge-15.10.6.jar",
+      "sha256": "276f1f65a20d04f536989c4f311949d770b52c440c23c2b904a08860f3c93810",
+      "configuration": "runtimeOnly",
+      "url": null,
+      "optional": true
+    },
+    {
+      "file": "jei-1.21.1-neoforge-19.36.0.360.jar",
+      "sha256": "3dd662a9a565b183e3d5a8832afc664d1b51b99cb3dc35615ded7ccd9c0a7439",
+      "configuration": "runtimeOnly",
+      "url": "https://maven.blamejared.com/mezz/jei/jei-1.21.1-neoforge/19.36.0.360/jei-1.21.1-neoforge-19.36.0.360.jar",
+      "optional": true
+    },
+    {
+      "file": "mezz_config-1.21.1-neoforge-0.5.12.jar",
+      "sha256": "d6140c4f3aa25d36fad430148978037cc6991376354a58008525d6f65949f93d",
+      "configuration": "runtimeOnly",
+      "url": "https://cdn.modrinth.com/data/7tEfOcA7/versions/MNYK1XxM/mezz_config-1.21.1-neoforge-0.5.12.jar",
+      "optional": true
+    },
+    {
+      "file": "Patchouli-1.21.1-93-NEOFORGE.jar",
+      "sha256": "959af52ed6640c316c3a8469203420be4aeea11ad6603890ba83bf48f5d9f993",
+      "configuration": "runtimeOnly",
+      "url": null,
+      "optional": false
+    },
+    {
+      "file": "TerraBlender-neoforge-1.21.1-4.1.0.8.jar",
+      "sha256": "0c49b5ef447a7f09100e9a210888a7347fbda0aa75322063991f6063b25fe3f9",
+      "configuration": "runtimeOnly",
+      "url": "https://cdn.modrinth.com/data/kkmrDlKT/versions/6e8GCrLb/TerraBlender-neoforge-1.21.1-4.1.0.8.jar",
+      "optional": true
+    },
+    {
+      "file": "thaumaturge-1.21.1-neoforge-1.0.0.jar",
+      "sha256": "986da4adaa84dc7265ee20edba76fe8b12ec69f636a8172ba01a19a89e681250",
+      "configuration": "implementation",
+      "url": null,
+      "optional": false,
+      "sourceCommit": "b4670aeacb76f22a53dd3b57ba04de2eaa0f70de"
+    },
+    {
+      "file": "lithostitched-1.8.0-neoforge-21.1.jar",
+      "sha256": "204699b4e3aa3176e2da5b145c6c66887363821f2bd671ba77bd94750036e169",
+      "configuration": "runtimeOnly",
+      "url": "https://cdn.modrinth.com/data/XaDC71GB/versions/sPmtDq1X/lithostitched-1.8.0-neoforge-21.1.jar",
+      "optional": false
+    }
+  ]
+}

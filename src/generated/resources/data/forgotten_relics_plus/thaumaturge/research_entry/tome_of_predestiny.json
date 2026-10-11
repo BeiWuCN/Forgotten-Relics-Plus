@@ -1,0 +1,63 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": -4,
+  "complexity": 4,
+  "icons": [
+    "forgotten_relics_plus:tome_of_predestiny"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.TelekinesisTome",
+  "note_aspects": [
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:motus"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:vinculum"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:potentia"
+    },
+    {
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:tome_of_discord",
+    "~thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:thunderpeal"
+  ],
+  "row": 7,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.TelekinesisTome.1"
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/tome_of_predestiny"
+      ],
+      "text": "fr.text.TelekinesisTome.2"
+    }
+  ]
+}

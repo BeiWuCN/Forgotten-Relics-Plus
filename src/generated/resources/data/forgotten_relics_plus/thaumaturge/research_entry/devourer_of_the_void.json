@@ -1,0 +1,71 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 0,
+  "complexity": 7,
+  "icons": [
+    "forgotten_relics_plus:devourer_of_the_void"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.ObeliskDrainer",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:vacuos"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:alienis"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:desiderium"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:perditio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:tome_of_discord",
+    "~thaumaturge:enter_outer_lands",
+    "~thaumaturge:base_eldritch",
+    "~thaumaturge:base_alchemy",
+    "~thaumaturge:oculus"
+  ],
+  "row": 7,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.ObeliskDrainer.1",
+      "warp": 4
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/devourer_of_the_void"
+      ],
+      "text": "fr.text.ObeliskDrainer.2"
+    }
+  ]
+}

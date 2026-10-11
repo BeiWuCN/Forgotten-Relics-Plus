@@ -1,4 +1,4 @@
-# Forgotten Relics + — high-version port
+# Forgotten Relics Plus — high-version port
 
 **English** | [简体中文](README.md)
 
@@ -26,7 +26,7 @@ Licence chain:
 | --- | --- | --- | --- |
 | Forgotten Relics (original) | 1.7.10 | Integral / Extegral / VictorShadow | [WTFPL](https://github.com/jss2a98aj/Forgotten-Relics/blob/master/LICENSE) |
 | Forgotten Relics RE (1.12.2 port) | 1.12.2 | NNYYOONNIIOO et al. | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) (**no code from it is used here**) |
-| **Forgotten Relics + (this project)** | 1.21.1 | BeiWu_Arctic | **[MIT](https://opensource.org/license/mit)** |
+| **Forgotten Relics Plus (this project)** | 1.21.1 | BeiWu_Arctic | **[MIT](https://opensource.org/license/mit)** |
 
 ### Code provenance
 
@@ -38,7 +38,7 @@ RE is used only to compare in-game behaviour; item textures and text come straig
 
 > **About the name**: this project ports the original **Forgotten Relics**, so it keeps the original's name.
 > The 1.12.2 port rebranded its Chinese name to "失落遗物学：重现"; that name belongs to that port's author
-> and is deliberately not used here. The "+" is this project's own suffix, marking this 1.21.1 branch only —
+> and is deliberately not used here. This project is named **Forgotten Relics Plus**, marking this 1.21.1 branch —
 > it does not imply any endorsement by either upstream author.
 
 ### You are free to
@@ -71,10 +71,10 @@ All of these are **required**:
 
 | Mod | Version | Notes |
 | --- | --- | --- |
-| [Thaumaturge](https://github.com/Leclowndu93150/Thaumaturge/) | 0.4.0+ | Thaumcraft for modern versions; provides arcane crafting, aspects and the research system |
+| [Thaumaturge](https://github.com/Leclowndu93150/Thaumaturge/) | 1.0.0+ | Thaumcraft for modern versions; provides arcane crafting, aspects and the research system |
 | [Botania](https://www.curseforge.com/minecraft/mc-mods/botania) | 457+ | Provides some materials and the wand API |
 | [Curios](https://www.curseforge.com/minecraft/mc-mods/curios) | 9.0.0+ | Accessory slots (the 1.12.2 equivalent of Baubles) |
-| [TerraBlender](https://www.curseforge.com/minecraft/mc-mods/terrablender) | 4.1.0.0+ | A Thaumaturge dependency, declared here as well |
+| [Lithostitched](https://modrinth.com/mod/lithostitched) | 1.8.0+ | World generation dependency of Thaumaturge 1.0.0 |
 
 > Note: Botania's version must be written as `457-SNAPSHOT` to match. The version declared inside the jar is
 > `457-SNAPSHOT`, which by Maven ordering sorts **below** `457`, so asking for `457` is instead judged
@@ -85,7 +85,7 @@ All of these are **required**:
 ## Project layout
 
 ```
-src/main/java/com/beiwu/forgottenrelics_plus/
+src/main/java/com/beiwu/forgottenrelicsplus/
 ├── ForgottenRelics.java        # main mod class
 ├── FRCommonEvents.java         # behaviour dispatcher: knows no concrete item, just forwards events
 ├── api/                        # behaviour interfaces (wearer tick, incoming damage, break speed, ally protection, rechargeable)
@@ -101,12 +101,15 @@ src/main/resources/
 │   └── textures/models/armor/  # armour layer textures
 ├── data/forgotten_relics_plus/
 │   ├── damage_type/            # custom damage types
-│   ├── recipe/infusion/        # infusion recipes
-│   └── thaumaturge/            # research category and entries
+│   └── recipe/infusion/        # infusion recipes
 └── data/curios/tags/item/      # accessory slot assignment
+
+src/generated/resources/data/forgotten_relics_plus/thaumaturge/
+├── research_category/
+└── research_entry/
 ```
 
-**All code comments are written in Chinese.**
+Research definitions live in `src/main/java/com/beiwu/forgottenrelicsplus/data/`.
 
 ---
 
@@ -116,3 +119,19 @@ src/main/resources/
 - **NNYYOONNIIOO** — the 1.12.2 port Forgotten Relics RE, used here only to compare behaviour;
 - The **Thaumaturge** team — Thaumcraft for modern versions;
 - The **Botania** and **Curios** teams — dependencies.
+
+## Research data generation
+
+The research category and builder helpers live in `data/FRResearchBootstrap.java`. The 37 entries are split into `FRBasicResearch`, `FRRelicResearch`, `FRTomeResearch` and `FRWeaponResearch`. `UpstreamResearchRegistries` isolates upstream datagen integration. After changing research, run `./gradlew runData`, commit the output under `src/generated/resources/data/forgotten_relics_plus/thaumaturge/`, then run `./gradlew build`. Generated resources are packaged automatically; keep research JSON out of `src/main/resources` to avoid duplicate definitions.
+
+## Build and verification
+
+Java 21 and Node.js 22 or newer are required. `libs/dependencies.lock.json` pins dependency filenames, SHA-256 hashes, configurations and optional status. Run `node scripts/setup-dependencies.cjs --source "directory containing dependency jars"` to install and verify them. Available public downloads are used automatically. Local builds without a public download URL must be supplied from that directory or through a download directory specified by `DEPS_BASE_URL`.
+
+`./gradlew clean build` runs dependency verification, JUnit regression tests, research and recipe reference checks, research cycle detection and JAR resource checks. `node scripts/verify-datagen.cjs` regenerates data and checks that file contents and paths match the existing generated resources.
+
+GitHub Actions runs the same checks. Configure the repository secret `DEPS_BASE_URL` before the first run to supply locked dependencies without public download URLs. CI does not upload dependency jars. The job requiring this secret does not run automatically for fork pull requests.
+
+`terrorCrownHavocInterval` controls the crown's brainwashing scan interval, defaulting to 5 ticks. Set it to 1 to restore scanning every tick. Gaze effects and repair retain their existing update frequency.
+
+See [research note difficulty](RESEARCH_NOTES.md) for the authored anchor sets and complexity levels. Crafting research requires a completed and learned note before revealing its recipe page. Complexity 2–8 support applies to this mod only.

@@ -1,0 +1,67 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 0,
+  "complexity": 5,
+  "icons": [
+    "forgotten_relics_plus:oblivion_amulet"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.OblivionAmulet",
+  "note_aspects": [
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:vacuos"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praemunio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:perditio"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:generic_theory",
+    "thaumaturge:unlock_eldritch",
+    "~forgotten_relics_plus:oblivion_stone",
+    "~forgotten_relics_plus:terror_crown",
+    "~thaumaturge:primordial_pearl"
+  ],
+  "row": -2,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:eldritch"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.OblivionAmulet.1",
+      "warp": 8
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/oblivion_amulet"
+      ],
+      "text": "fr.text.OblivionAmulet.2"
+    }
+  ]
+}

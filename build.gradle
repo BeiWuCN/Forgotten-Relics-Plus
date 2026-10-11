@@ -17,9 +17,6 @@ java {
 }
 
 repositories {
-    // 所有模组前置都是 libs/ 下的扁平文件，因此不需要任何模组 maven。
-    // 这里只留构建插件本身需要的仓库。
-    mavenLocal()
     mavenCentral()
 }
 
@@ -31,18 +28,17 @@ neoForge {
         minecraftVersion = project.parchment_minecraft_version
     }
 
-    // 只声明我们自己的 source set。Thaumaturge / Curios / TerraBlender 一律按 libs/ 里的
-    // 普通依赖解析，本项目不构建它们。
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
         }
     }
 
+
     runs {
         client {
             client()
-            // 需要快速进世界时： ./gradlew runClient -PquickPlay="世界名"
+
             if (project.hasProperty('quickPlay')) {
                 programArguments.addAll '--quickPlaySingleplayer', project.property('quickPlay')
             }
@@ -64,19 +60,69 @@ neoForge {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '.cache/**'
+}
+
+sourceSets.test {
+    compileClasspath += sourceSets.main.compileClasspath
+    runtimeClasspath += sourceSets.main.compileClasspath
+}
 
 dependencies {
     compileOnly "org.jspecify:jspecify:1.0.0"
-
-    // ---- 所有模组前置都是 libs/ 下的扁平 jar ----------------------------------
-    // Thaumaturge 不发布 maven 构件；扁平文件同时保证编译期用的就是运行期那一份。
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    def lockedDependencies = new groovy.json.JsonSlurper().parse(file('libs/dependencies.lock.json'))
+    lockedDependencies.dependencies.each { dependency ->
+        def artifact = file("libs/${dependency.file}")
+        if (!dependency.optional || artifact.exists()) {
+            add(dependency.configuration, files(artifact))
+        }
+    }
 }
+
+tasks.register('verifyDependencies') {
+    inputs.file('libs/dependencies.lock.json')
+    inputs.files(fileTree('libs') { include '*.jar' })
+    doLast {
+        def lockedDependencies = new groovy.json.JsonSlurper().parse(file('libs/dependencies.lock.json'))
+        def expectedNames = lockedDependencies.dependencies.collect { it.file } as Set
+        fileTree('libs').matching { include '*.jar' }.files.each { artifact ->
+            if (artifact.name ==~ /(?i)(thaumaturge|curios|botania|patchouli|terrablender|lithostitched|jei)-.*/ && !expectedNames.contains(artifact.name)) {
+                throw new GradleException("Unexpected dependency version: ${artifact.name}")
+            }
+        }
+        lockedDependencies.dependencies.each { dependency ->
+            def artifact = file("libs/${dependency.file}")
+            if (!artifact.exists()) {
+                if (!dependency.optional) {
+                    throw new GradleException("Missing ${dependency.file}. Run node scripts/setup-dependencies.cjs --source <directory>.")
+                }
+            } else {
+                def digest = java.security.MessageDigest.getInstance('SHA-256')
+                artifact.withInputStream { stream ->
+                    byte[] buffer = new byte[65536]
+                    int bytes
+                    while ((bytes = stream.read(buffer)) != -1) {
+                        digest.update(buffer, 0, bytes)
+                    }
+                }
+                if (digest.digest().encodeHex().toString() != dependency.sha256) {
+                    throw new GradleException("Dependency checksum mismatch: ${dependency.file}")
+                }
+            }
+        }
+    }
+}
+
+tasks.named('compileJava') { dependsOn 'verifyDependencies' }
 
 tasks.named('compileJava') {
     options.compilerArgs << '-Xmaxerrs' << '2000'
-    // 打开全部 javac 警告：IDEA 的黄色波浪线大多来自这里，编译期就暴露出来。
+
     options.compilerArgs << '-Xlint:all'
     options.encoding = 'UTF-8'
 }
@@ -94,7 +140,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
                              mod_authors            : mod_authors,
                              mod_description        : mod_description]
     inputs.properties replaceProperties
-    // expand 默认按平台编码读模板，mod_description 里的中文会变乱码，必须显式指定 UTF-8。
+
     filteringCharset = 'UTF-8'
     expand replaceProperties
     from "src/main/templates"
@@ -103,10 +149,43 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
 
-// 默认 test 任务关掉：真正有意义的校验需要在跑起来的游戏里做。
 tasks.named('test') {
-    enabled = false
+    useJUnitPlatform()
 }
+
+if (System.getProperty('os.name').toLowerCase().contains('windows') && projectDir.path.any { it > '\u007f' }) {
+    def staging = new File(gradle.gradleUserHomeDir,
+            "forgotten-relics-plus/test-classpath/${Integer.toHexString(projectDir.path.hashCode())}")
+    def originalTestClasspath = sourceSets.test.runtimeClasspath
+    def stageTestClasspath = tasks.register('stageTestClasspath', Sync) {
+        dependsOn 'testClasses', 'classes'
+        into staging
+        originalTestClasspath.files.eachWithIndex { artifact, index ->
+            if (artifact.path.any { it > '\u007f' }) {
+                from(artifact) { into "cp${index}" }
+            }
+        }
+    }
+    tasks.named('test') {
+        dependsOn stageTestClasspath
+        classpath = files(providers.provider {
+            originalTestClasspath.files.withIndex().collect { artifact, index ->
+                if (artifact.path.any { it > '\u007f' }) {
+                    def destination = new File(staging, "cp${index}")
+                    artifact.name.endsWith('.jar') ? new File(destination, artifact.name) : destination
+                } else {
+                    artifact
+                }
+            }
+        })
+    }
+}
+tasks.register('verifyResources', Exec) {
+    dependsOn 'jar'
+    commandLine 'node', 'scripts/verify-resources.cjs'
+}
+
+tasks.named('check') { dependsOn 'verifyResources' }
 
 jar {
     manifest {

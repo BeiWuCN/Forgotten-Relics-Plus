@@ -1,0 +1,64 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 6,
+  "complexity": 7,
+  "icons": [
+    "forgotten_relics_plus:paradox"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.TheParadox",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:aversio"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:permutatio"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:metallum"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praecantatio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:alienis"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:chaos_core",
+    "thaumaturge:infusion",
+    "~thaumaturge:primordial_pearl"
+  ],
+  "row": 0,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.TheParadox.1",
+      "warp": 8
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/paradox"
+      ],
+      "text": "fr.text.TheParadox.2"
+    }
+  ]
+}

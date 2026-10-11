@@ -1,0 +1,68 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 2,
+  "complexity": 6,
+  "icons": [
+    "forgotten_relics_plus:tome_of_primal_chaos"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.ChaosTome",
+  "note_aspects": [
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:perditio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:permutatio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:potentia"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:vitium"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:eldritch_spell",
+    "~thaumaturge:staff_primal"
+  ],
+  "row": 3,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.ChaosTome.1",
+      "warp": 7
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/tome_of_primal_chaos"
+      ],
+      "text": "fr.text.ChaosTome.2"
+    }
+  ]
+}

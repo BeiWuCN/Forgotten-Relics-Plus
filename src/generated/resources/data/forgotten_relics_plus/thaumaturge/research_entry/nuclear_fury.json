@@ -1,0 +1,68 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 4,
+  "complexity": 7,
+  "icons": [
+    "forgotten_relics_plus:nuclear_fury"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.NuclearFury",
+  "note_aspects": [
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:potentia"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:ignis"
+    },
+    {
+      "amount": 4,
+      "aspect": "thaumaturge:perditio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:aversio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praecantatio"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:tome_of_primal_chaos",
+    "~thaumaturge:primordial_pearl"
+  ],
+  "row": 5,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.NuclearFury.1",
+      "warp": 4
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/nuclear_fury"
+      ],
+      "text": "fr.text.NuclearFury.2"
+    }
+  ]
+}

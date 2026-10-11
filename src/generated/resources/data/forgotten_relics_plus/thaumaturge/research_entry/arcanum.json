@@ -1,0 +1,72 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 0,
+  "complexity": 6,
+  "icons": [
+    "forgotten_relics_plus:arcanum"
+  ],
+  "meta": [
+    "spiky",
+    "hidden"
+  ],
+  "name": "fr.name.NebulousCore",
+  "note_aspects": [
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:auram"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:praecantatio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:permutatio"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:vacuos"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:vitreus"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:deific_amulet",
+    "thaumaturge:infusion",
+    "~thaumaturge:primordial_pearl",
+    "~thaumaturge:vis_amulet",
+    "~forgotten_relics_plus:ring_of_superposition",
+    "~thaumaturge:metallurgy"
+  ],
+  "row": -6,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:eldritch"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.NebulousCore.1"
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/arcanum"
+      ],
+      "text": "fr.text.NebulousCore.2"
+    }
+  ]
+}

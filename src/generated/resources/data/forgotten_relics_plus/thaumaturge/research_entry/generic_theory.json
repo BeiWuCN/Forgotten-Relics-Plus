@@ -1,0 +1,39 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 0,
+  "icons": [
+    "thaumaturge:curio_knowledge"
+  ],
+  "meta": [
+    "round",
+    "spiky",
+    "hidden"
+  ],
+  "name": "fr.name.GenericTheory",
+  "parents": [
+    "thaumaturge:unlock_eldritch",
+    "~thaumaturge:infusion",
+    "~thaumaturge:metallurgy"
+  ],
+  "row": 0,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:artifice"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:eldritch"
+        }
+      ],
+      "text": "fr.text.GenericTheory.1"
+    },
+    {
+      "text": "fr.text.GenericTheory.2"
+    }
+  ]
+}

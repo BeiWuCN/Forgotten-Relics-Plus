@@ -1,0 +1,66 @@
+{
+  "category": "forgotten_relics_plus:forgotten_relics",
+  "column": 8,
+  "complexity": 5,
+  "icons": [
+    "forgotten_relics_plus:chaos_core"
+  ],
+  "meta": [
+    "hidden"
+  ],
+  "name": "fr.name.ChaosCore",
+  "note_aspects": [
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:perditio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:permutatio"
+    },
+    {
+      "amount": 3,
+      "aspect": "thaumaturge:vitium"
+    },
+    {
+      "amount": 2,
+      "aspect": "thaumaturge:potentia"
+    }
+  ],
+  "parents": [
+    "forgotten_relics_plus:generic_theory",
+    "thaumaturge:infusion",
+    "~thaumaturge:alumentum",
+    "~forgotten_relics_plus:ancient_aegis"
+  ],
+  "row": -4,
+  "stages": [
+    {
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:infusion"
+        },
+        {
+          "type": "observation",
+          "amount": 1,
+          "category": "thaumaturge:auromancy"
+        },
+        {
+          "type": "theory",
+          "amount": 1,
+          "category": "forgotten_relics_plus:forgotten_relics"
+        }
+      ],
+      "text": "fr.text.ChaosCore.1",
+      "warp": 2
+    },
+    {
+      "recipes": [
+        "forgotten_relics_plus:infusion/chaos_core"
+      ],
+      "text": "fr.text.ChaosCore.2"
+    }
+  ]
+}
