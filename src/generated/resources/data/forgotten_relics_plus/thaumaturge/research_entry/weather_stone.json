@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": -3,
+  "column": -6,
   "complexity": 2,
   "icons": [
     "forgotten_relics_plus:weather_stone"
@@ -22,7 +22,7 @@
     "thaumaturge:infusion",
     "~forgotten_relics_plus:deific_amulet"
   ],
-  "row": 0,
+  "row": -2,
   "stages": [
     {
       "obtain": [

@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": -1,
+  "column": -5,
   "complexity": 3,
   "icons": [
     "thaumaturge:pech_wand"
@@ -28,7 +28,7 @@
     "~thaumaturge:base_auromancy",
     "~thaumaturge:focus_elemental"
   ],
-  "row": -2,
+  "row": -4,
   "stages": [
     {
       "required_knowledge": [

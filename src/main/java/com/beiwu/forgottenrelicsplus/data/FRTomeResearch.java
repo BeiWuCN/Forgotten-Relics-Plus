@@ -7,7 +7,7 @@ final class FRTomeResearch {
     private FRTomeResearch() {}
 
     static void register(FRResearchBootstrap r) {
-        r.entry("experience_tome", "fr.name.XPTome", -5, 2)
+        r.entry("experience_tome", "fr.name.XPTome", -7, -4)
                 .parents("forgotten_relics_plus:weather_stone", "thaumaturge:jar_brain", "~thaumaturge:base_alchemy")
                 .icons("forgotten_relics_plus:xp_tome")
                 .stage(r.stage("fr.text.XPTome.1")
@@ -21,7 +21,7 @@ final class FRTomeResearch {
                 .researchNote(3, "cognitio", "sensus", "praecantatio")
                 .register();
 
-        r.entry("soul_tome", "fr.name.SoulTome", -1, 9)
+        r.entry("soul_tome", "fr.name.SoulTome", -2, 9)
                 .parents("forgotten_relics_plus:devourer_of_the_void", "~thaumaturge:jar_brain")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:soul_tome")
@@ -33,7 +33,7 @@ final class FRTomeResearch {
                 .researchNote(5, "spiritus", "mortuus", "exanimis", "praecantatio")
                 .register();
 
-        r.entry("tome_of_broken_fates", "fr.name.FateTome", -4, 2)
+        r.entry("tome_of_broken_fates", "fr.name.FateTome", -2, 4)
                 .parents("forgotten_relics_plus:spellbook_theory", "~thaumaturge:enter_outer_lands")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:tome_of_broken_fates")
@@ -45,7 +45,7 @@ final class FRTomeResearch {
                 .researchNote(8, "permutatio", "victus", "mortuus", "spiritus", "alienis", "praecantatio")
                 .register();
 
-        r.entry("tome_of_discord", "fr.name.DiscordTome", -2, 5)
+        r.entry("tome_of_discord", "fr.name.DiscordTome", 0, 5)
                 .parents("forgotten_relics_plus:spellbook_theory", "~thaumaturge:focus_rift")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:tome_of_discord")
@@ -57,7 +57,7 @@ final class FRTomeResearch {
                 .researchNote(5, "permutatio", "motus", "vacuos", "praecantatio")
                 .register();
 
-        r.entry("tome_of_lunar_flares", "fr.name.LunarFlares", -5, 9)
+        r.entry("tome_of_lunar_flares", "fr.name.LunarFlares", 1, 9)
                 .parents(
                         "forgotten_relics_plus:tome_of_predestiny",
                         "~forgotten_relics_plus:eldritch_spell",
@@ -71,7 +71,7 @@ final class FRTomeResearch {
                 .researchNote(7, "lux", "aer", "aversio", "praecantatio", "alienis")
                 .register();
 
-        r.entry("tome_of_predestiny", "fr.name.TelekinesisTome", -4, 7)
+        r.entry("tome_of_predestiny", "fr.name.TelekinesisTome", 1, 7)
                 .parents(
                         "forgotten_relics_plus:tome_of_discord",
                         "~thaumaturge:unlock_eldritch",
@@ -86,7 +86,7 @@ final class FRTomeResearch {
                 .researchNote(4, "motus", "vinculum", "potentia", "praecantatio")
                 .register();
 
-        r.entry("tome_of_primal_chaos", "fr.name.ChaosTome", 2, 3)
+        r.entry("tome_of_primal_chaos", "fr.name.ChaosTome", 0, 11)
                 .parents("forgotten_relics_plus:eldritch_spell", "~thaumaturge:staff_primal")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:tome_of_primal_chaos")
@@ -98,7 +98,7 @@ final class FRTomeResearch {
                 .researchNote(6, "perditio", "permutatio", "potentia", "vitium", "praecantatio")
                 .register();
 
-        r.entry("void_grimoire", "fr.name.VoidGrimoire", -7, 7)
+        r.entry("void_grimoire", "fr.name.VoidGrimoire", 3, 9)
                 .parents(
                         "forgotten_relics_plus:edict_of_banishment",
                         "~thaumaturge:oculus",

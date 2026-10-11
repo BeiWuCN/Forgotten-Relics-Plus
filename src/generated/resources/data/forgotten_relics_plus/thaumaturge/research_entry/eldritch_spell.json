@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 2,
+  "column": 0,
   "complexity": 6,
   "icons": [
     "forgotten_relics_plus:eldritch_spell"
@@ -34,7 +34,7 @@
   "parents": [
     "forgotten_relics_plus:devourer_of_the_void"
   ],
-  "row": 6,
+  "row": 9,
   "stages": [
     {
       "required_knowledge": [

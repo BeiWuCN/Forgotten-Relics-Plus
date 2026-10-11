@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 0,
+  "column": -1,
   "complexity": 7,
   "icons": [
     "forgotten_relics_plus:devourer_of_the_void"

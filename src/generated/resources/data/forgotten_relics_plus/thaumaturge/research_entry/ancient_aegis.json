@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 4,
+  "column": 1,
   "complexity": 6,
   "icons": [
     "forgotten_relics_plus:ancient_aegis"
@@ -35,7 +35,7 @@
     "forgotten_relics_plus:ring_of_superposition",
     "thaumaturge:unlock_eldritch"
   ],
-  "row": 2,
+  "row": -4,
   "stages": [
     {
       "required_knowledge": [

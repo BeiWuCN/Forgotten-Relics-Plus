@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": -7,
+  "column": 3,
   "complexity": 7,
   "icons": [
     "forgotten_relics_plus:void_grimoire"
@@ -37,7 +37,7 @@
     "~forgotten_relics_plus:terror_crown",
     "~forgotten_relics_plus:chaos_core"
   ],
-  "row": 7,
+  "row": 9,
   "stages": [
     {
       "required_knowledge": [

@@ -138,6 +138,33 @@ function Visit($id) {
     $visited[$id] = $true
 }
 foreach ($id in $entries.Keys) { Visit $id }
+$layout = @($entries.Keys)
+for ($index = 0; $index -lt $layout.Count; $index++) {
+    $id = $layout[$index]
+    $node = $entries[$id]
+    for ($otherIndex = $index + 1; $otherIndex -lt $layout.Count; $otherIndex++) {
+        $other = $entries[$layout[$otherIndex]]
+        $distance = [Math]::Pow($node.column - $other.column, 2) + [Math]::Pow($node.row - $other.row, 2)
+        Require ($distance -ge 1) "Research nodes overlap: $id and $($layout[$otherIndex])"
+    }
+    foreach ($reference in $node.parents) {
+        if ($reference.StartsWith('~')) { continue }
+        $parentId = $reference.Split('@')[0]
+        if (!$entries.ContainsKey($parentId)) { continue }
+        $parent = $entries[$parentId]
+        foreach ($otherId in $layout) {
+            if ($otherId -eq $id -or $otherId -eq $parentId) { continue }
+            $other = $entries[$otherId]
+            $vertical = $other.column -eq $node.column -and
+                $other.row -ge [Math]::Min($node.row, $parent.row) -and
+                $other.row -le [Math]::Max($node.row, $parent.row)
+            $horizontal = $other.row -eq $parent.row -and
+                $other.column -ge [Math]::Min($node.column, $parent.column) -and
+                $other.column -le [Math]::Max($node.column, $parent.column)
+            Require (!$vertical -and !$horizontal) "Research connector $parentId -> $id passes through $otherId"
+        }
+    }
+}
 $release = @(Get-ChildItem (Join-Path $root 'build/libs') -Filter "$namespace-*.jar" | Where-Object Name -NotLike '*-sources.jar')
 Require ($release.Count -eq 1) 'Expected one release JAR'
 $archive = [IO.Compression.ZipFile]::OpenRead($release[0].FullName)

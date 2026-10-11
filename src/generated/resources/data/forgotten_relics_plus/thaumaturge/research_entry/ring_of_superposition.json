@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 3,
+  "column": 2,
   "complexity": 4,
   "icons": [
     "forgotten_relics_plus:superposition_ring"
@@ -28,7 +28,7 @@
     "thaumaturge:infusion",
     "~thaumaturge:unlock_eldritch"
   ],
-  "row": -3,
+  "row": -2,
   "stages": [
     {
       "required_knowledge": [

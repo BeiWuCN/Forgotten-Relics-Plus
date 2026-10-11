@@ -6,7 +6,7 @@
     }
   ],
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": -2,
+  "column": -3,
   "complexity": 8,
   "icons": [
     "forgotten_relics_plus:omega_core"
@@ -44,10 +44,10 @@
   ],
   "parents": [
     "forgotten_relics_plus:apotheosis",
-    "forgotten_relics_plus:tome_of_broken_fates",
-    "forgotten_relics_plus:void_grimoire"
+    "~forgotten_relics_plus:tome_of_broken_fates",
+    "~forgotten_relics_plus:void_grimoire"
   ],
-  "row": 9,
+  "row": 11,
   "stages": [
     {
       "required_knowledge": [

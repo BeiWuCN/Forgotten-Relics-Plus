@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": -7,
+  "column": -6,
   "complexity": 7,
   "icons": [
     "forgotten_relics_plus:false_justice"
@@ -36,7 +36,7 @@
     "thaumaturge:unlock_eldritch",
     "~forgotten_relics_plus:apotheosis"
   ],
-  "row": 0,
+  "row": 2,
   "stages": [
     {
       "required_knowledge": [

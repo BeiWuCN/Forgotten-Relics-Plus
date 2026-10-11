@@ -7,7 +7,7 @@ final class FRWeaponResearch {
     private FRWeaponResearch() {}
 
     static void register(FRResearchBootstrap r) {
-        r.entry("apotheosis", "fr.name.Apotheosis", -2, 7)
+        r.entry("apotheosis", "fr.name.Apotheosis", -3, 7)
                 .parents(
                         "forgotten_relics_plus:tome_of_discord",
                         "~forgotten_relics_plus:tome_of_lunar_flares",
@@ -32,7 +32,7 @@ final class FRWeaponResearch {
                 .researchNote(8, "praecantatio", "aversio", "lux", "cognitio", "potentia", "alienis")
                 .register();
 
-        r.entry("arcanum", "fr.name.NebulousCore", 0, -6)
+        r.entry("arcanum", "fr.name.NebulousCore", -1, -4)
                 .parents(
                         "forgotten_relics_plus:deific_amulet",
                         "thaumaturge:infusion",
@@ -49,7 +49,7 @@ final class FRWeaponResearch {
                 .researchNote(6, "auram", "praecantatio", "permutatio", "vacuos", "vitreus")
                 .register();
 
-        r.entry("chaos_core", "fr.name.ChaosCore", 8, -4)
+        r.entry("chaos_core", "fr.name.ChaosCore", 4, -2)
                 .parents(
                         "forgotten_relics_plus:generic_theory",
                         "thaumaturge:infusion",
@@ -65,7 +65,7 @@ final class FRWeaponResearch {
                 .researchNote(5, "perditio", "permutatio", "vitium", "potentia")
                 .register();
 
-        r.entry("crimson_spell", "fr.name.CrimsonSpell", 3, 8)
+        r.entry("crimson_spell", "fr.name.CrimsonSpell", -1, 11)
                 .parents("forgotten_relics_plus:eldritch_spell")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:crimson_spell")
@@ -77,7 +77,7 @@ final class FRWeaponResearch {
                 .researchNote(6, "aversio", "ignis", "spiritus", "praecantatio", "vitium")
                 .register();
 
-        r.entry("devourer_of_the_void", "fr.name.ObeliskDrainer", 0, 7)
+        r.entry("devourer_of_the_void", "fr.name.ObeliskDrainer", -1, 7)
                 .parents(
                         "forgotten_relics_plus:tome_of_discord",
                         "~thaumaturge:enter_outer_lands",
@@ -95,7 +95,7 @@ final class FRWeaponResearch {
                 .researchNote(7, "vacuos", "alienis", "desiderium", "perditio", "praecantatio")
                 .register();
 
-        r.entry("edict_of_banishment", "fr.name.Overthrower", -5, 5)
+        r.entry("edict_of_banishment", "fr.name.Overthrower", 3, 7)
                 .parents("forgotten_relics_plus:tome_of_discord", "~thaumaturge:focus_hellbat")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:edict_of_banishment")
@@ -107,7 +107,7 @@ final class FRWeaponResearch {
                 .researchNote(6, "aversio", "potentia", "ignis", "motus", "praecantatio")
                 .register();
 
-        r.entry("eldritch_spell", "fr.name.EldritchSpell", 2, 6)
+        r.entry("eldritch_spell", "fr.name.EldritchSpell", 0, 9)
                 .parents("forgotten_relics_plus:devourer_of_the_void")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:eldritch_spell")
@@ -119,7 +119,7 @@ final class FRWeaponResearch {
                 .researchNote(6, "alienis", "tenebrae", "vacuos", "praecantatio", "aversio")
                 .register();
 
-        r.entry("false_justice", "fr.name.FalseJustice", -7, 0)
+        r.entry("false_justice", "fr.name.FalseJustice", -6, 2)
                 .parents(
                         "forgotten_relics_plus:generic_theory",
                         "thaumaturge:unlock_eldritch",
@@ -134,7 +134,7 @@ final class FRWeaponResearch {
                 .researchNote(7, "aversio", "praemunio", "permutatio", "spiritus", "alienis")
                 .register();
 
-        r.entry("nuclear_fury", "fr.name.NuclearFury", 4, 5)
+        r.entry("nuclear_fury", "fr.name.NuclearFury", 2, 11)
                 .parents("forgotten_relics_plus:tome_of_primal_chaos", "~thaumaturge:primordial_pearl")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:nuclear_fury")
@@ -146,7 +146,7 @@ final class FRWeaponResearch {
                 .researchNote(7, "potentia", "ignis", "perditio", "aversio", "praecantatio")
                 .register();
 
-        r.entry("thunderpeal", "fr.name.Thunderpeal", 0, 4)
+        r.entry("thunderpeal", "fr.name.Thunderpeal", 2, 4)
                 .parents(
                         "forgotten_relics_plus:spellbook_theory",
                         "~forgotten_relics_plus:tome_of_discord",
@@ -160,11 +160,11 @@ final class FRWeaponResearch {
                 .researchNote(4, "potentia", "aer", "aversio", "praecantatio")
                 .register();
 
-        r.entry("omega_core", "fr.name.OmegaCore", -2, 9)
+        r.entry("omega_core", "fr.name.OmegaCore", -3, 11)
                 .parents(
                         "forgotten_relics_plus:apotheosis",
-                        "forgotten_relics_plus:tome_of_broken_fates",
-                        "forgotten_relics_plus:void_grimoire")
+                        "~forgotten_relics_plus:tome_of_broken_fates",
+                        "~forgotten_relics_plus:void_grimoire")
                 .meta(ResearchEntryMeta.SPIKY, ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:omega_core")
                 .stage(r.stage("fr.text.OmegaCore.1")

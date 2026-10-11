@@ -17,7 +17,7 @@ final class FRBasicResearch {
                 .stage(r.stage("fr.text.GenericTheory.2"))
                 .register();
 
-        r.entry("pech_wand", "fr.name.PechWand", -1, -2)
+        r.entry("pech_wand", "fr.name.PechWand", -5, -4)
                 .parents(
                         "forgotten_relics_plus:weather_stone",
                         "~thaumaturge:base_auromancy",
@@ -31,7 +31,7 @@ final class FRBasicResearch {
                 .researchNote(3, "praecantatio", "desiderium", "humanus")
                 .register();
 
-        r.entry("spellbook_theory", "fr.name.SpellbookTheory", -1, 2)
+        r.entry("spellbook_theory", "fr.name.SpellbookTheory", 0, 2)
                 .parents("forgotten_relics_plus:generic_theory", "~thaumaturge:crimson_rites")
                 .meta(ResearchEntryMeta.ROUND, ResearchEntryMeta.HIDDEN)
                 .icons("minecraft:writable_book")

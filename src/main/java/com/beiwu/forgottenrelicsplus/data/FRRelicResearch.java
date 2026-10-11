@@ -7,7 +7,7 @@ final class FRRelicResearch {
     private FRRelicResearch() {}
 
     static void register(FRResearchBootstrap r) {
-        r.entry("advanced_mining_charm", "fr.name.AdvancedMiningCharm", 3, 4)
+        r.entry("advanced_mining_charm", "fr.name.AdvancedMiningCharm", -4, -4)
                 .parents("forgotten_relics_plus:mining_charm")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:advanced_mining_charm")
@@ -21,7 +21,7 @@ final class FRRelicResearch {
                 .researchNote(5, "instrumentum", "metallum", "potentia", "praecantatio")
                 .register();
 
-        r.entry("ancient_aegis", "fr.name.AncientAegis", 4, 2)
+        r.entry("ancient_aegis", "fr.name.AncientAegis", 1, -4)
                 .parents("forgotten_relics_plus:ring_of_superposition", "thaumaturge:unlock_eldritch")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:ancient_aegis")
@@ -33,7 +33,7 @@ final class FRRelicResearch {
                 .researchNote(6, "praemunio", "spiritus", "alienis", "praecantatio", "metallum")
                 .register();
 
-        r.entry("dark_sun_ring", "fr.name.DarkSunRing", -2, 2)
+        r.entry("dark_sun_ring", "fr.name.DarkSunRing", 6, 2)
                 .parents(
                         "forgotten_relics_plus:generic_theory",
                         "thaumaturge:infusion",
@@ -50,7 +50,7 @@ final class FRRelicResearch {
                 .researchNote(4, "tenebrae", "praemunio", "spiritus", "praecantatio")
                 .register();
 
-        r.entry("deific_amulet", "fr.name.DeificAmulet", 0, 2)
+        r.entry("deific_amulet", "fr.name.DeificAmulet", -2, -2)
                 .parents("forgotten_relics_plus:generic_theory", "thaumaturge:infusion")
                 .meta(ResearchEntryMeta.ROUND)
                 .icons("forgotten_relics_plus:deific_amulet")
@@ -61,7 +61,7 @@ final class FRRelicResearch {
                 .researchNote(3, "victus", "praemunio", "praecantatio")
                 .register();
 
-        r.entry("dimensional_mirror", "fr.name.DimensionalMirror", 0, 3)
+        r.entry("dimensional_mirror", "fr.name.DimensionalMirror", -4, 2)
                 .parents(
                         "forgotten_relics_plus:generic_theory",
                         "thaumaturge:mirror_hand",
@@ -79,7 +79,7 @@ final class FRRelicResearch {
                 .researchNote(4, "permutatio", "vacuos", "vitreus", "praecantatio")
                 .register();
 
-        r.entry("ghastly_skull", "fr.name.GhastlySkull", 2, -6)
+        r.entry("ghastly_skull", "fr.name.GhastlySkull", 0, -4)
                 .parents("forgotten_relics_plus:oblivion_amulet", "thaumaturge:unlock_eldritch")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:ghastly_skull")
@@ -90,7 +90,7 @@ final class FRRelicResearch {
                 .researchNote(6, "mortuus", "spiritus", "aversio", "tenebrae", "praecantatio")
                 .register();
 
-        r.entry("mining_charm", "fr.name.MiningCharm", 2, -2)
+        r.entry("mining_charm", "fr.name.MiningCharm", -4, -2)
                 .parents("forgotten_relics_plus:generic_theory", "thaumaturge:infusion", "~thaumaturge:elemental_tools")
                 .meta(ResearchEntryMeta.ROUND)
                 .icons("forgotten_relics_plus:mining_charm")
@@ -119,7 +119,7 @@ final class FRRelicResearch {
                 .researchNote(5, "vacuos", "praemunio", "perditio", "praecantatio")
                 .register();
 
-        r.entry("oblivion_stone", "fr.name.OblivionStone", 7, -2)
+        r.entry("oblivion_stone", "fr.name.OblivionStone", 3, -4)
                 .parents("forgotten_relics_plus:ring_of_superposition", "~thaumaturge:base_eldritch")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:oblivion_stone")
@@ -131,7 +131,7 @@ final class FRRelicResearch {
                 .researchNote(7, "vacuos", "perditio", "tenebrae", "permutatio", "praecantatio")
                 .register();
 
-        r.entry("paradox", "fr.name.TheParadox", 6, 0)
+        r.entry("paradox", "fr.name.TheParadox", 4, -4)
                 .parents("forgotten_relics_plus:chaos_core", "thaumaturge:infusion", "~thaumaturge:primordial_pearl")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:paradox")
@@ -142,7 +142,7 @@ final class FRRelicResearch {
                 .researchNote(7, "aversio", "permutatio", "metallum", "praecantatio", "alienis")
                 .register();
 
-        r.entry("ring_of_discord", "fr.name.DiscordRing", 1, -4)
+        r.entry("ring_of_discord", "fr.name.DiscordRing", -3, -4)
                 .parents(
                         "forgotten_relics_plus:deific_amulet",
                         "thaumaturge:unlock_eldritch",
@@ -156,7 +156,7 @@ final class FRRelicResearch {
                 .researchNote(2, "permutatio", "potentia", "praecantatio")
                 .register();
 
-        r.entry("ring_of_superposition", "fr.name.SuperpositionRing", 3, -3)
+        r.entry("ring_of_superposition", "fr.name.SuperpositionRing", 2, -2)
                 .parents("forgotten_relics_plus:generic_theory", "thaumaturge:infusion", "~thaumaturge:unlock_eldritch")
                 .icons("forgotten_relics_plus:superposition_ring")
                 .stage(r.stage("fr.text.SuperpositionRing.1")
@@ -168,7 +168,7 @@ final class FRRelicResearch {
                 .researchNote(4, "permutatio", "vinculum", "spiritus", "praecantatio")
                 .register();
 
-        r.entry("shiny_stone", "fr.name.ShinyStone", 4, -6)
+        r.entry("shiny_stone", "fr.name.ShinyStone", -2, -4)
                 .parents("forgotten_relics_plus:deific_amulet", "thaumaturge:infusion")
                 .meta(ResearchEntryMeta.HIDDEN)
                 .icons("forgotten_relics_plus:shiny_stone")
@@ -179,7 +179,7 @@ final class FRRelicResearch {
                 .researchNote(3, "lux", "victus", "potentia")
                 .register();
 
-        r.entry("terror_crown", "fr.name.TerrorCrown", 4, 0)
+        r.entry("terror_crown", "fr.name.TerrorCrown", 6, -2)
                 .parents(
                         "forgotten_relics_plus:generic_theory",
                         "thaumaturge:unlock_eldritch",
@@ -196,7 +196,7 @@ final class FRRelicResearch {
                 .researchNote(5, "sensus", "tenebrae", "aversio", "praecantatio")
                 .register();
 
-        r.entry("weather_stone", "fr.name.WeatherStone", -3, 0)
+        r.entry("weather_stone", "fr.name.WeatherStone", -6, -2)
                 .parents(
                         "forgotten_relics_plus:generic_theory",
                         "thaumaturge:infusion",

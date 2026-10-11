@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 2,
+  "column": 0,
   "complexity": 6,
   "icons": [
     "forgotten_relics_plus:tome_of_primal_chaos"
@@ -35,7 +35,7 @@
     "forgotten_relics_plus:eldritch_spell",
     "~thaumaturge:staff_primal"
   ],
-  "row": 3,
+  "row": 11,
   "stages": [
     {
       "required_knowledge": [

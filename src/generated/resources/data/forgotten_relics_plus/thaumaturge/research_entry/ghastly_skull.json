@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 2,
+  "column": 0,
   "complexity": 6,
   "icons": [
     "forgotten_relics_plus:ghastly_skull"
@@ -35,7 +35,7 @@
     "forgotten_relics_plus:oblivion_amulet",
     "thaumaturge:unlock_eldritch"
   ],
-  "row": -6,
+  "row": -4,
   "stages": [
     {
       "required_knowledge": [

@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 4,
+  "column": 6,
   "complexity": 5,
   "icons": [
     "forgotten_relics_plus:terror_crown"
@@ -34,7 +34,7 @@
     "~thaumaturge:enter_outer_lands",
     "~thaumaturge:oculus"
   ],
-  "row": 0,
+  "row": -2,
   "stages": [
     {
       "obtain": [

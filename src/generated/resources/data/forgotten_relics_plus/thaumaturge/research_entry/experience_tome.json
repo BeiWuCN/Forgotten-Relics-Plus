@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": -5,
+  "column": -7,
   "complexity": 3,
   "icons": [
     "forgotten_relics_plus:xp_tome"
@@ -25,7 +25,7 @@
     "thaumaturge:jar_brain",
     "~thaumaturge:base_alchemy"
   ],
-  "row": 2,
+  "row": -4,
   "stages": [
     {
       "obtain": [

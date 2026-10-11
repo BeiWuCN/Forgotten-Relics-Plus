@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 8,
+  "column": 4,
   "complexity": 5,
   "icons": [
     "forgotten_relics_plus:chaos_core"
@@ -33,7 +33,7 @@
     "~thaumaturge:alumentum",
     "~forgotten_relics_plus:ancient_aegis"
   ],
-  "row": -4,
+  "row": -2,
   "stages": [
     {
       "required_knowledge": [

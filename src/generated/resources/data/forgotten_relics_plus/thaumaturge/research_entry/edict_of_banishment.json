@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": -5,
+  "column": 3,
   "complexity": 6,
   "icons": [
     "forgotten_relics_plus:edict_of_banishment"
@@ -35,7 +35,7 @@
     "forgotten_relics_plus:tome_of_discord",
     "~thaumaturge:focus_hellbat"
   ],
-  "row": 5,
+  "row": 7,
   "stages": [
     {
       "required_knowledge": [

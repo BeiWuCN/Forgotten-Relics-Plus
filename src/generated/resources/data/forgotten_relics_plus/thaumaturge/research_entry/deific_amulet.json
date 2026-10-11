@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 0,
+  "column": -2,
   "complexity": 3,
   "icons": [
     "forgotten_relics_plus:deific_amulet"
@@ -27,7 +27,7 @@
     "forgotten_relics_plus:generic_theory",
     "thaumaturge:infusion"
   ],
-  "row": 2,
+  "row": -2,
   "stages": [
     {
       "required_knowledge": [

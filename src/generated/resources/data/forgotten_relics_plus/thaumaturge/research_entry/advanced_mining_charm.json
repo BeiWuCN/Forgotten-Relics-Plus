@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 3,
+  "column": -4,
   "complexity": 5,
   "icons": [
     "forgotten_relics_plus:advanced_mining_charm"
@@ -30,7 +30,7 @@
   "parents": [
     "forgotten_relics_plus:mining_charm"
   ],
-  "row": 4,
+  "row": -4,
   "stages": [
     {
       "craft": [

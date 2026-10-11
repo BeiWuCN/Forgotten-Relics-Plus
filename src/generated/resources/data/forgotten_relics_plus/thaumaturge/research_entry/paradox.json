@@ -1,6 +1,6 @@
 {
   "category": "forgotten_relics_plus:forgotten_relics",
-  "column": 6,
+  "column": 4,
   "complexity": 7,
   "icons": [
     "forgotten_relics_plus:paradox"
@@ -36,7 +36,7 @@
     "thaumaturge:infusion",
     "~thaumaturge:primordial_pearl"
   ],
-  "row": 0,
+  "row": -4,
   "stages": [
     {
       "required_knowledge": [
