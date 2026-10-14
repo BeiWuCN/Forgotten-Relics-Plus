@@ -124,6 +124,7 @@ foreach ($recipe in $recipes.Values) {
 }
 foreach ($resource in @($entries["${namespace}:omega_core"], $recipes["${namespace}:infusion/omega_core"])) {
     Require (@($resource['neoforge:conditions'] | Where-Object { $_.type -eq 'neoforge:mod_loaded' -and $_.modid -eq 'avaritia' }).Count -gt 0) 'Missing Omega Core mod condition'
+    Require (@($resource['neoforge:conditions'] | Where-Object { $_.type -eq "${namespace}:omega_core_enabled" }).Count -gt 0) 'Missing Omega Core config condition'
 }
 $baseAspects = ReadJson (Join-Path $root 'src/main/resources/data/thaumaturge/data_maps/item/base_aspects.json')
 foreach ($id in $baseAspects['values'].Keys) { if (!$id.StartsWith('#')) { CheckItem $id }; CheckAspects $baseAspects['values'][$id] }

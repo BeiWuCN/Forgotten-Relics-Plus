@@ -24,29 +24,40 @@ SOFTWARE.
 
 来源与署名 / Provenance
 
-本项目的唯一行为参照是 1.7.10 原版 Forgotten Relics：
+行为参考 / Gameplay reference:
 
-  Forgotten Relics (原版, 1.7.10)
+  Forgotten Relics: RE (1.12.2)
+    Author : Nyonio (NNYYOONNIIOO) and contributors
+    License: CC BY-NC-SA 4.0
+    Project: https://www.curseforge.com/minecraft/mc-mods/forgotten-relics-re
+    Source : https://github.com/NNYYOONNIIOO/Forgotten-Relics-RE
+
+本项目的行为参考 Forgotten Relics: RE，已取得该项目作者同意。
+Gameplay behavior is based on Forgotten Relics: RE with the author's permission.
+
+资产参考 / Asset reference:
+
+  Forgotten Relics (原版 / original, 1.7.10)
     Author : Integral (a.k.a. Extegral / VictorShadow)
     License: WTFPL
     Source : https://github.com/jss2a98aj/Forgotten-Relics
 
-物品纹理、语言文本与研究词条文本取自该版本。WTFPL 不附加任何条件，
-允许任意使用、修改与再授权，因此可以并入本项目。
+本项目的美术资产参考原版 Forgotten Relics，原版资产与文本归原作者所有。
+Art assets are based on the original Forgotten Relics; original assets and text
+remain credited to their creators.
 
-本项目**不包含** 1.12.2 移植版 Forgotten Relics RE 的任何代码。
-那一版采用 CC BY-NC-SA 4.0（禁止商业使用、要求同协议共享）；
-为避免把这些限制传导到本作品，本项目的全部 Java 代码均针对
-1.21.1 / NeoForge 的 API 独立实现，只对照其行为表现，未做逐行翻译：
+本项目针对 Minecraft 1.21.1 / NeoForge 的 API 独立实现，并适配 Thaumaturge
+的研究与充能体系，加入研究笔记解锁、条件研究及召唤物行为与渲染调整。
+This project implements modern Minecraft 1.21.1 / NeoForge APIs, integrates
+Thaumaturge research and charging, and adds research-note gates, conditional
+research and revised summon behavior and rendering.
 
-  Forgotten Relics RE (1.12.2 移植)
-    Author : NNYYOONNIIOO and contributors
-    License: CC BY-NC-SA 4.0
-    Source : https://github.com/NNYYOONNIIOO/Forgotten-Relics-RE
+本模组为社区非官方项目。作者同意不表示本项目属于原作者的官方发布。
+This is an unofficial community project; permission does not imply an official
+release by the original creators.
 
-本模组为社区非官方移植，与原版作者及 1.12.2 移植版作者无隶属关系，
-亦未获得其背书。原版的美术素材、研究文本与游戏设计的著作权归原作者所有。
-
-本协议仅覆盖本项目的代码与文档，不含 Minecraft 本体
-（「Minecraft」「我的世界」为 Mojang Studios 的商标），
-也不含 Thaumaturge、Curios、Botania 等前置模组，它们各有自己的协议。
+MIT 协议覆盖本项目的代码与文档；参考项目及原版资产保留各自许可与署名。
+Minecraft 本体以及 Thaumaturge、Curios、Botania 等前置模组各有自己的协议。
+The MIT license covers this project's code and documentation. Reference projects
+and original assets retain their respective licenses and credits. Minecraft,
+Thaumaturge, Curios, Botania and other dependencies have their own licenses.

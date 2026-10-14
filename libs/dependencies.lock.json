@@ -51,12 +51,11 @@
       "optional": true
     },
     {
-      "file": "thaumaturge-1.21.1-neoforge-1.0.0.jar",
-      "sha256": "986da4adaa84dc7265ee20edba76fe8b12ec69f636a8172ba01a19a89e681250",
+      "file": "thaumaturge-1.21.1-neoforge-1.0.2.jar",
+      "sha256": "ce1e6f239a27056d4a9c7fe1d015b60f68f092501c64078731ffa99fa68b6904",
       "configuration": "implementation",
       "url": null,
-      "optional": false,
-      "sourceCommit": "b4670aeacb76f22a53dd3b57ba04de2eaa0f70de"
+      "optional": false
     },
     {
       "file": "lithostitched-1.8.0-neoforge-21.1.jar",

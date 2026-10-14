@@ -4,7 +4,7 @@ English | [简体中文](README.md)
 
 An unofficial **Minecraft 1.21.1 / NeoForge** port of Forgotten Relics, bringing magical accessories, tomes and weapons into Thaumaturge's research system.
 
-Solve research notes with complexity **2–8** to unlock relic recipes and discover teleportation, telekinesis, protection and weather control. **Omega Core** research appears only with **Re:Avaritia** installed.
+Solve research notes with complexity **2–8** to unlock relic recipes and discover teleportation, telekinesis, protection and weather control. **Omega Core** research and crafting require **Re:Avaritia** and `omega_core.enabled` (enabled by default). Set it to `false` in `config/forgotten_relics_plus-common.toml` to hide the research and remove its recipe; restart after changing it.
 
 ![Research tree](show.png)
 
@@ -12,7 +12,7 @@ Solve research notes with complexity **2–8** to unlock relic recipes and disco
 
 Requires **NeoForge 21.1.250+, Java 21** and these mods:
 
-- Thaumaturge 1.0.0+
+- Thaumaturge 1.0.2+
 - Lithostitched 1.8.0+
 - Botania 457-SNAPSHOT+
 - Curios 9.0.0+
@@ -25,4 +25,8 @@ Use Java 21 and PowerShell 7. Prepare dependencies using the [dependency guide](
 
 ## Credits and license
 
-Originally created by **Integral / Extegral / VictorShadow**. This port is independently implemented for modern APIs, with assets and behavior based on the [1.7.10 original](https://github.com/jss2a98aj/Forgotten-Relics). It does not use RE code. Project code is licensed under [MIT](LICENSE); original assets belong to their creators.
+Gameplay behavior is based on [Forgotten Relics: RE](https://www.curseforge.com/minecraft/mc-mods/forgotten-relics-re) by **Nyonio (NNYYOONNIIOO) and contributors**, with the author's permission. Art assets are based on the original [Forgotten Relics](https://github.com/jss2a98aj/Forgotten-Relics) by **Integral (Extegral / VictorShadow)**.
+
+Compared with its predecessors, Plus targets **Minecraft 1.21.1 / NeoForge**, integrates Thaumaturge's research and charging systems, adds research-note recipe gates and conditional Omega Core research, and reworks projectile targeting, motion and rendering.
+
+Project code is licensed under [MIT](LICENSE); reference projects and original assets retain their respective licenses and credits.

@@ -3,6 +3,7 @@ package com.beiwu.forgottenrelicsplus;
 import com.beiwu.forgottenrelicsplus.api.FRRechargable;
 import com.beiwu.forgottenrelicsplus.config.FRConfig;
 import com.beiwu.forgottenrelicsplus.registry.FRArmorMaterials;
+import com.beiwu.forgottenrelicsplus.registry.FRConditions;
 import com.beiwu.forgottenrelicsplus.registry.FRCreativeTabs;
 import com.beiwu.forgottenrelicsplus.registry.FRDataComponents;
 import com.beiwu.forgottenrelicsplus.registry.FREntities;
@@ -35,6 +36,7 @@ public final class ForgottenRelics {
 
     public ForgottenRelics(IEventBus modBus, ModContainer container) {
         FRItems.register(modBus);
+        FRConditions.register(modBus);
         FREntities.register(modBus);
         FRArmorMaterials.register(modBus);
         FRDataComponents.register(modBus);

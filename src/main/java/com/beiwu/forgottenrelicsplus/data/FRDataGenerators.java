@@ -1,6 +1,7 @@
 package com.beiwu.forgottenrelicsplus.data;
 
 import com.beiwu.forgottenrelicsplus.ForgottenRelics;
+import com.beiwu.forgottenrelicsplus.conditions.OmegaCoreEnabledCondition;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
@@ -27,7 +28,7 @@ public final class FRDataGenerators {
                     .add(IResearchEntry.REGISTRY_KEY, FRResearchBootstrap::entries),
                     Map.of(ResourceKey.create(IResearchEntry.REGISTRY_KEY,
                                     ResourceLocation.fromNamespaceAndPath(ForgottenRelics.MOD_ID, "omega_core")),
-                            List.of(new ModLoadedCondition("avaritia"))));
+                            List.of(new ModLoadedCondition("avaritia"), new OmegaCoreEnabledCondition())));
             event.createProvider(FRResearchNoteValidation::new);
         }
     }

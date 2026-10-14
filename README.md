@@ -4,7 +4,7 @@
 
 Forgotten Relics 的 **Minecraft 1.21.1 / NeoForge** 非官方移植版，加入魔法饰品、典籍与武器，并接入 Thaumaturge 研究体系。
 
-解开复杂度为 **2～8** 的研究笔记，逐步解锁遗物配方，体验传送、念力、防护与天气控制等能力。欧米伽之核研究仅在安装 **Re:Avaritia** 时出现。
+解开复杂度为 **2～8** 的研究笔记，逐步解锁遗物配方，体验传送、念力、防护与天气控制等能力。欧米伽之核研究与配方需要安装 **Re:Avaritia**，并启用 `omega_core.enabled`（默认开启）。在 `config/forgotten_relics_plus-common.toml` 中设为 `false` 可隐藏研究并移除配方，修改后需重启。
 
 ![研究树](show.png)
 
@@ -12,7 +12,7 @@ Forgotten Relics 的 **Minecraft 1.21.1 / NeoForge** 非官方移植版，加入
 
 需要 **NeoForge 21.1.250+、Java 21**，以及以下前置：
 
-- Thaumaturge 1.0.0+
+- Thaumaturge 1.0.2+
 - Lithostitched 1.8.0+
 - Botania 457-SNAPSHOT+
 - Curios 9.0.0+
@@ -25,4 +25,8 @@ Forgotten Relics 的 **Minecraft 1.21.1 / NeoForge** 非官方移植版，加入
 
 ## 来源与许可
 
-原版由 **Integral / Extegral / VictorShadow** 创作。本项目针对新版本独立实现，素材与行为参照 [1.7.10 原版](https://github.com/jss2a98aj/Forgotten-Relics)，未使用 RE 版代码。本项目代码采用 [MIT](LICENSE) 协议；原版素材归原作者所有。
+本模组的行为参考 **Nyonio（NNYYOONNIIOO）及贡献者**开发的 [Forgotten Relics: RE](https://www.curseforge.com/minecraft/mc-mods/forgotten-relics-re)，**已取得作者同意**；美术资产参考 **Integral（Extegral / VictorShadow）**创作的原版 [Forgotten Relics](https://github.com/jss2a98aj/Forgotten-Relics)。
+
+与前作相比，Plus 面向 **Minecraft 1.21.1 / NeoForge**，适配 Thaumaturge 的研究与充能体系，加入研究笔记配方解锁和条件加载的欧米伽之核研究，并重做召唤物的觅敌、运动与渲染。
+
+本项目代码采用 [MIT](LICENSE) 协议；参考项目及原版资产保留各自的许可与署名。

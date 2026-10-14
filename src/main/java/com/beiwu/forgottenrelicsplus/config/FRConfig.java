@@ -175,6 +175,7 @@ public final class FRConfig {
 
     public static final ModConfigSpec.DoubleValue CHAOS_CORE_DAMAGE_MULT_MAX;
 
+    public static final ModConfigSpec.BooleanValue OMEGA_CORE_ENABLED;
     public static final ModConfigSpec.IntValue OMEGA_CORE_VIS_PER_TICK;
 
     public static final ModConfigSpec.IntValue OMEGA_CORE_RECHARGE_PER_TICK;
@@ -804,6 +805,11 @@ public final class FRConfig {
         builder.pop();
 
         builder.comment("欧米伽之核（第四波：原版无配方与研究的创造模式物品）").push("omega_core");
+        OMEGA_CORE_ENABLED = builder
+                .comment("Enable Omega Core research and crafting when Re:Avaritia is installed. Restart required.",
+                        "是否启用欧米伽之核研究与合成；仍需安装 Re:Avaritia。修改后需重启游戏或服务器。")
+                .worldRestart()
+                .define("enabled", true);
         OMEGA_CORE_VIS_PER_TICK = builder
                 .comment("Vis added to each primal aspect of each wand per tick while carried.",
                          "随身携带时，每 tick 给法杖的每个原初要素补充的 Vis。原版是 1。")

@@ -4,7 +4,7 @@
 
 | 依赖 | 版本 | 用途 |
 | --- | --- | --- |
-| Thaumaturge | 1.0.0，本地上游源码构建 | 编译与运行必需 |
+| Thaumaturge | 1.0.2，用户提供的发布包 | 编译与运行必需 |
 | Lithostitched | 1.8.0，NeoForge 21.1 | Thaumaturge 运行依赖 |
 | Botania | 457，本地现有构件 | 编译与运行必需 |
 | Curios | 9.5.1+1.21.1 | 编译与运行必需 |
@@ -12,7 +12,7 @@
 | Patchouli | 93 | Botania 运行依赖 |
 | JEI、Mezz Config、Jade | 见锁定清单 | 可选开发环境，仅加入运行类路径 |
 
-Thaumaturge 构建来自上游 `1.21.1` 分支提交 `b4670aeacb76f22a53dd3b57ba04de2eaa0f70de`，包含上游 datagen 生成资源。JEI 固定为上游使用的 19.36.0.360，避免其内部搜索接口与较新版本不兼容。锁定清单中的 `sourceCommit` 用于辨认同一版本号下的源码修订。
+Thaumaturge 使用提供的 1.0.2 发布包，锁定文件名为 `thaumaturge-1.21.1-neoforge-1.0.2.jar`，SHA-256 为 `ce1e6f239a27056d4a9c7fe1d015b60f68f092501c64078731ffa99fa68b6904`。此前 1.0.0 本地源码构建的提交标记已移除。JEI 继续使用 19.36.0.360；研究笔记注入与数据生成已在 1.0.2 上验证。
 
 本地光影开发环境使用 Iris 1.8.14-beta.1 与 Sodium 0.8.13，放在 `run/mods`；Iris 1.8.12 与 Sodium 0.6.13 的组合不兼容新版 Thaumaturge。这两项不是本模组的必需依赖。
 

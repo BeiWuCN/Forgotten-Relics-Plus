@@ -3,6 +3,9 @@
     {
       "type": "neoforge:mod_loaded",
       "modid": "avaritia"
+    },
+    {
+      "type": "forgotten_relics_plus:omega_core_enabled"
     }
   ],
   "type": "thaumaturge:infusion",
