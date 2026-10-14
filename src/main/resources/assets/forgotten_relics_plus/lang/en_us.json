@@ -471,5 +471,6 @@
   "fr.text.AdvancedMiningCharm.2": "After playing around with regular mining charm, you were sure that there should be a way to infuse even more power into it, increasing it's efficiency much further.<BR/>Your assumptions are now confirmed; here is the direct upgrade of mining charm, that speeds up mining and extends block reach even further.<BR/>It is noticeable, that wearing two mining charms of the same type is not efficient in any way, but wearing one regular charm and one ethereal one is still somehow useful.",
   "fr.name.OmegaCore": "The Omega Core",
   "fr.text.OmegaCore.1": "The final relic unites mastery of divine power, fate and the void. Complete its research note to reveal the final infusion.<BR/><BR/>Complete this page's research note (complexity: 8) to unlock the recipe on the next page.",
-  "fr.text.OmegaCore.2": "The Omega Core grants immortality and limitless vis. This infusion also requires Re-Avaritia materials and is available only when that mod is installed."
+  "fr.text.OmegaCore.2": "The Omega Core grants immortality and limitless vis. This infusion also requires Re-Avaritia materials and is available only when that mod is installed.",
+  "message.forgotten_relics_plus.omega_revoked": "The Creator has reclaimed your power."
 }

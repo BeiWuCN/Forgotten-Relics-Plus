@@ -70,6 +70,23 @@ sourceSets.test {
     runtimeClasspath += sourceSets.main.compileClasspath
 }
 
+if (project.hasProperty('omegaGameTests')) {
+    sourceSets {
+        gameTest {
+            compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+            runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+        }
+    }
+    neoForge.mods.named(mod_id) { sourceSet sourceSets.gameTest }
+    neoForge.runs {
+        omegaGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('build/omega-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        }
+    }
+}
+
 dependencies {
     compileOnly "org.jspecify:jspecify:1.0.0"
     testImplementation platform('org.junit:junit-bom:5.11.4')
@@ -188,6 +205,9 @@ tasks.register('verifyResources', Exec) {
 tasks.named('check') { dependsOn 'verifyResources' }
 
 jar {
+    exclude '**/gametest/**', '**/gameTest/**', '**/*Test.class', '**/*Tests.class', '**/*Test$*.class',
+            '**/omega_test.nbt', '**/scripts/**', '**/*.ps1', '**/*.py', '**/*.js', '**/*.cjs', '**/*.mjs'
+    exclude 'com/beiwu/forgottenrelicsplus/data/**'
     manifest {
         attributes([
                 'Specification-Title'     : mod_name,

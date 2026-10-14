@@ -171,7 +171,13 @@ Require ($release.Count -eq 1) 'Expected one release JAR'
 $archive = [IO.Compression.ZipFile]::OpenRead($release[0].FullName)
 try {
     $packed = @{}
-    foreach ($entry in $archive.Entries.FullName) { Require (!$packed.ContainsKey($entry)) "Duplicate JAR resource: $entry"; Require (!$entry.StartsWith('.cache/')) 'Datagen cache in JAR'; $packed[$entry] = $true }
+    foreach ($entry in $archive.Entries.FullName) {
+        Require (!$packed.ContainsKey($entry)) "Duplicate JAR resource: $entry"
+        Require (!$entry.StartsWith('.cache/')) 'Datagen cache in JAR'
+        Require ($entry -notmatch '(^|/)(gametest|gameTest|scripts)/|(^|/)omega_test\.nbt$|Test(s)?\.class$|\.(ps1|py|js|cjs|mjs)$') "Test or script included in release JAR: $entry"
+        Require (!$entry.StartsWith('com/beiwu/forgottenrelicsplus/data/')) "Development datagen/validation code included in release JAR: $entry"
+        $packed[$entry] = $true
+    }
     foreach ($resource in $resources.Keys) { Require ($packed.ContainsKey($resource)) "Missing packaged resource: $resource" }
 } finally { $archive.Dispose() }
 Write-Output "Verified $($entries.Count) research entries, $($recipes.Count) recipes and JAR resources."

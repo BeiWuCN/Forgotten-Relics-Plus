@@ -4,6 +4,7 @@ import com.beiwu.forgottenrelicsplus.api.DeathPreventionBehaviour;
 import com.beiwu.forgottenrelicsplus.api.FRRechargable;
 import com.beiwu.forgottenrelicsplus.config.FRConfig;
 import com.beiwu.forgottenrelicsplus.utils.FRCarriedItems;
+import com.beiwu.forgottenrelicsplus.utils.OmegaCoreProtection;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -83,12 +84,12 @@ public class ItemOmegaCore extends FRItem implements DeathPreventionBehaviour {
 
     @Override
     public void onLethalDamage(LivingDeathEvent event, Player player, ItemStack stack) {
-        if (!FRConfig.OMEGA_CORE_PREVENT_DEATH.get()) {
+        if (!OmegaCoreProtection.protects(player)) {
             return;
         }
         event.setCanceled(true);
 
-        player.setHealth(1.0F);
+        OmegaCoreProtection.restore(player);
     }
 
     @Override

@@ -9,14 +9,12 @@ import com.beiwu.forgottenrelicsplus.utils.CooldownHelper;
 import com.beiwu.forgottenrelicsplus.utils.FRDamageTypes;
 import com.beiwu.forgottenrelicsplus.utils.SoundHelper;
 import com.beiwu.forgottenrelicsplus.utils.TimedTargetState;
+import com.beiwu.forgottenrelicsplus.utils.TimedTargetStateStore;
+import com.beiwu.forgottenrelicsplus.utils.TelekinesisTargeting;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityThaumaturgeBoss;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -33,7 +31,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import vazkii.botania.common.entity.GaiaGuardianEntity;
@@ -52,7 +49,7 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
 
     private static final int VIS_INTERVAL = 20;
 
-    private static final Map<UUID, TimedTargetState> TOME_STATES = new HashMap<>();
+    private static final TimedTargetStateStore TOME_STATES = new TimedTargetStateStore();
 
     public ItemTelekinesisTome(Properties properties) {
         super(properties.stacksTo(1));
@@ -115,13 +112,7 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
     }
 
     public static void tickState(Player player) {
-        TimedTargetState state = TOME_STATES.get(player.getUUID());
-        if (state != null) {
-            state.tick();
-            if (state.isInactive()) {
-                TOME_STATES.remove(player.getUUID());
-            }
-        }
+        TOME_STATES.tick(player.getUUID());
     }
 
     public static void clearState(Player player) {
@@ -129,13 +120,7 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
     }
 
     public static void clearTargetState(Player player) {
-        TimedTargetState state = TOME_STATES.get(player.getUUID());
-        if (state != null) {
-            state.clearTarget();
-            if (state.isInactive()) {
-                TOME_STATES.remove(player.getUUID());
-            }
-        }
+        TOME_STATES.clearTarget(player.getUUID());
     }
 
     public static void clearStates() {
@@ -168,9 +153,6 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
             return;
         }
 
-        if (level.getEntity(state.target) == null) {
-            return;
-        }
         LivingEntity target = getExistingTarget(player, level, state.target, EXISTING_RANGE);
         if (target == null) {
             return;
@@ -189,7 +171,7 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
         }
 
         LivingEntity target = null;
-        if (state.target != -1 && server.getEntity(state.target) != null) {
+        if (state.target != -1) {
             target = getExistingTarget(player, level, state.target, EXISTING_RANGE);
         }
         if (target == null) {
@@ -252,42 +234,17 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
     }
 
     private static LivingEntity searchForTarget(Player player, Level level, double range) {
-        Vec3 target = centerOf(player);
-        Vec3 look = player.getLookAngle();
-        List<LivingEntity> entities = new ArrayList<>();
-        for (int distance = 1; entities.isEmpty() && distance < 32; distance++) {
-            target = target.add(look.scale(distance)).add(0.0D, 0.5D, 0.0D);
-            entities = new ArrayList<>(level.getEntitiesOfClass(LivingEntity.class, boxAround(target, range)));
-
-            entities.remove(player);
-        }
-        return entities.isEmpty() ? null : entities.get(0);
+        return TelekinesisTargeting.findTarget(level, player, centerOf(player), player.getLookAngle(), range);
     }
 
     private static LivingEntity getExistingTarget(Player player, Level level, int targetId, double range) {
         Entity tracked = level.getEntity(targetId);
-        if (!(tracked instanceof LivingEntity taritem)) {
+        if (!(tracked instanceof LivingEntity target) || target == player || target.isRemoved() || target.isSpectator()) {
             return null;
         }
-        Vec3 target = centerOf(player);
-        Vec3 look = player.getLookAngle();
-        int distance = 1;
-        while (distance < 32) {
-            target = target.add(look.scale(distance)).add(0.0D, 0.5D, 0.0D);
-            List<LivingEntity> entities =
-                    new ArrayList<>(level.getEntitiesOfClass(LivingEntity.class, boxAround(target, range)));
-            distance++;
-            entities.remove(player);
-            if (entities.contains(taritem)) {
-                return taritem;
-            }
-        }
-        return null;
-    }
-
-    private static AABB boxAround(Vec3 point, double range) {
-        return new AABB(
-                point.x - range, point.y - range, point.z - range, point.x + range, point.y + range, point.z + range);
+        return TelekinesisTargeting.isInReach(centerOf(player), player.getLookAngle(), target.getBoundingBox(), range)
+                ? target
+                : null;
     }
 
     private static void setEntityMotionFromVector(Entity entity, Vec3 originalPos, float modifier) {
@@ -381,7 +338,7 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
     }
 
     private static TimedTargetState state(Player player) {
-        return TOME_STATES.computeIfAbsent(player.getUUID(), id -> new TimedTargetState());
+        return TOME_STATES.getOrCreate(player.getUUID());
     }
 
     @Override
