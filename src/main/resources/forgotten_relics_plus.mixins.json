@@ -3,6 +3,20 @@
   "minVersion": "0.8",
   "package": "com.beiwu.forgottenrelicsplus.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["ResearchEntryMixin", "NoteGeneratorMixin", "OmegaLivingEntityMixin", "OmegaPlayerDeathMixin", "OmegaEntityRemovalMixin", "OmegaPlayerRemovalMixin"],
-  "injectors": { "defaultRequire": 1 }
+  "mixins": [
+    "ResearchEntryMixin",
+    "NoteGeneratorMixin",
+    "OmegaLivingEntityMixin",
+    "OmegaPlayerDeathMixin",
+    "OmegaEntityRemovalMixin",
+    "OmegaPlayerRemovalMixin",
+    "OmegaEffectMixin",
+    "OmegaInstantEffectMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "OmegaTaintFogMixin"
+  ]
 }

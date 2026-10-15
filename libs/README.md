@@ -11,6 +11,7 @@
 | TerraBlender | 4.1.0.8 | 可选开发依赖，新版 Thaumaturge 已不再要求 |
 | Patchouli | 93 | Botania 运行依赖 |
 | JEI、Mezz Config、Jade | 见锁定清单 | 可选开发环境，仅加入运行类路径 |
+| Modern UI | 3.13.0.1，Minecraft 1.21.1 NeoForge | 可选开发环境，用于客户端界面与字体渲染 |
 
 Thaumaturge 使用提供的 1.0.2 发布包，锁定文件名为 `thaumaturge-1.21.1-neoforge-1.0.2.jar`，SHA-256 为 `ce1e6f239a27056d4a9c7fe1d015b60f68f092501c64078731ffa99fa68b6904`。此前 1.0.0 本地源码构建的提交标记已移除。JEI 继续使用 19.36.0.360；研究笔记注入与数据生成已在 1.0.2 上验证。
 

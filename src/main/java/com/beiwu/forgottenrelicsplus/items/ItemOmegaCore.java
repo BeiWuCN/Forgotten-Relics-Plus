@@ -97,5 +97,7 @@ public class ItemOmegaCore extends FRItem implements DeathPreventionBehaviour {
             ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("item.OmegaCore1.lore"));
         tooltip.add(Component.translatable("item.OmegaCore2.lore"));
+        tooltip.add(Component.translatable("item.OmegaCore3.lore"));
+        tooltip.add(Component.translatable("item.OmegaCore4.lore"));
     }
 }

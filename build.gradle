@@ -108,7 +108,7 @@ tasks.register('verifyDependencies') {
         def lockedDependencies = new groovy.json.JsonSlurper().parse(file('libs/dependencies.lock.json'))
         def expectedNames = lockedDependencies.dependencies.collect { it.file } as Set
         fileTree('libs').matching { include '*.jar' }.files.each { artifact ->
-            if (artifact.name ==~ /(?i)(thaumaturge|curios|botania|patchouli|terrablender|lithostitched|jei)-.*/ && !expectedNames.contains(artifact.name)) {
+            if (artifact.name ==~ /(?i)(thaumaturge|curios|botania|patchouli|terrablender|lithostitched|jei|modernui)-.*/ && !expectedNames.contains(artifact.name)) {
                 throw new GradleException("Unexpected dependency version: ${artifact.name}")
             }
         }

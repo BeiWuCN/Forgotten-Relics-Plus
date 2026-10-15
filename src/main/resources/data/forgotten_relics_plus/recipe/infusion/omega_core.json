@@ -63,49 +63,49 @@
       "item": "forgotten_relics_plus:soul_tome"
     },
     {
-      "item": "forgotten_relics_plus:tome_of_broken_fates"
+      "item": "avaritia:infinity_umbrella"
+    },
+    {
+      "item": "thaumaturge:primordial_pearl"
+    },
+    {
+      "item": "botania:gaia_ingot"
     },
     {
       "item": "avaritia:infinity_totem"
     },
     {
-      "item": "thaumaturge:primordial_pearl"
+      "item": "avaritia:crystal_matrix_ingot"
     },
     {
       "item": "thaumaturge:primordial_pearl"
     },
     {
-      "item": "thaumaturge:primordial_pearl"
+      "item": "avaritia:full_matter_cluster"
+    },
+    {
+      "item": "forgotten_relics_plus:tome_of_broken_fates"
+    },
+    {
+      "item": "avaritia:infinity_catalyst"
     },
     {
       "item": "thaumaturge:primordial_pearl"
     },
     {
-      "item": "botania:gaia_spirit"
-    },
-    {
-      "item": "botania:dragonstone"
-    },
-    {
-      "item": "thaumaturge:salis_mundus"
-    },
-    {
-      "item": "thaumaturge:amulet_vis"
-    },
-    {
-      "item": "thaumaturge:causality_collapser"
-    },
-    {
-      "item": "thaumaturge:ingot_void"
-    },
-    {
-      "item": "minecraft:nether_star"
+      "item": "avaritia:infinity_ingot"
     },
     {
       "item": "thaumaturge:jar_node"
     },
     {
       "item": "botania:terrasteel_ingot"
+    },
+    {
+      "item": "thaumaturge:primordial_pearl"
+    },
+    {
+      "item": "avaritia:infinity_shield"
     }
   ],
   "instability": 64,

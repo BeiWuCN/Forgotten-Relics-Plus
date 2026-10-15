@@ -22,12 +22,17 @@ public final class OmegaCoreProtection {
         return reason == Entity.RemovalReason.KILLED || reason == Entity.RemovalReason.DISCARDED;
     }
 
+    public static boolean isCarriedBy(Entity entity) {
+        return entity instanceof Player player && !player.isRemoved() && player.getInventory() != null
+                && FRCarriedItems.anyMatch(player, stack -> stack.getItem() instanceof ItemOmegaCore);
+    }
+
     public static boolean protects(Entity entity) {
         if (!(entity instanceof Player player) || player.level().isClientSide() || player.isRemoved()
                 || player.getInventory() == null) return false;
         boolean enabled = FRConfig.SPEC.isLoaded()
                 ? FRConfig.OMEGA_CORE_PREVENT_DEATH.get() : FRConfig.OMEGA_CORE_PREVENT_DEATH.getDefault();
-        if (!enabled || !FRCarriedItems.anyMatch(player, stack -> stack.getItem() instanceof ItemOmegaCore)) return false;
+        if (!enabled || !isCarriedBy(player)) return false;
         if (belowVoidLimit(player.getY(), player.level().getMinBuildHeight())) {
             if (player instanceof OmegaDeathState state && state.forgottenRelicsPlus$canNotifyRevocation(player.tickCount)) {
                 player.displayClientMessage(Component.translatable("message.forgotten_relics_plus.omega_revoked"), true);

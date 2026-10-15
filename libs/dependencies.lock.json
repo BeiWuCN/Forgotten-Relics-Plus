@@ -63,6 +63,13 @@
       "configuration": "runtimeOnly",
       "url": "https://cdn.modrinth.com/data/XaDC71GB/versions/sPmtDq1X/lithostitched-1.8.0-neoforge-21.1.jar",
       "optional": false
+    },
+    {
+      "file": "ModernUI-NeoForge-1.21.1-3.13.0.1-universal.jar",
+      "sha256": "258623778012daad6fdd8793add3324b970df62a07c477697c43fe85deef1db6",
+      "configuration": "runtimeOnly",
+      "url": "https://cdn.modrinth.com/data/3sjzyvGR/versions/eMf1VSQd/ModernUI-NeoForge-1.21.1-3.13.0.1-universal.jar",
+      "optional": true
     }
   ]
 }
