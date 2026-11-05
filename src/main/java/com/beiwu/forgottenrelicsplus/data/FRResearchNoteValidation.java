@@ -44,14 +44,14 @@ public final class FRResearchNoteValidation implements DataProvider {
                 require(
                         RechargeAccess.profile(stack).capacity() == capacity,
                         "Incorrect capacity: " + registered.getId());
-                require(RechargeAccess.getCharge(stack) == 0, "New item already charged: " + registered.getId());
-                RechargeAccess.rechargeItemBlindly(stack, null, capacity + 1);
-                require(RechargeAccess.getCharge(stack) == capacity, "Charge exceeds capacity: " + registered.getId());
+                require(RechargeAccess.storedVis(stack) == 0, "New item already charged: " + registered.getId());
+                RechargeAccess.addVis(stack, capacity + 1);
+                require(RechargeAccess.storedVis(stack) == capacity, "Charge exceeds capacity: " + registered.getId());
                 require(
-                        RechargeAccess.consumeCharge(stack, null, capacity),
+                        RechargeAccess.spendVis(stack, capacity),
                         "Cannot spend charge: " + registered.getId());
                 require(
-                        !RechargeAccess.consumeCharge(stack, null, 1),
+                        !RechargeAccess.spendVis(stack, 1),
                         "Empty item spends charge: " + registered.getId());
                 rechargeableItems++;
             }

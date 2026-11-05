@@ -53,7 +53,7 @@ public class ItemOmegaCore extends FRItem implements DeathPreventionBehaviour {
         if (recharge > 0) {
             FRCarriedItems.forEach(player, carried -> {
                 if (carried.getItem() instanceof FRRechargable && !(carried.getItem() == this)) {
-                    RechargeAccess.rechargeItemBlindly(carried, player, recharge);
+                    RechargeAccess.addVis(carried, recharge);
                 }
             });
         }

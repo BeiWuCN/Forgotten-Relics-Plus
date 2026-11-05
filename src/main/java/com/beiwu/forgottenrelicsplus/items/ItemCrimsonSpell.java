@@ -57,7 +57,7 @@ public class ItemCrimsonSpell extends FRItem implements FRRechargable, IWarpingG
         }
 
         LivingEntity target = findTarget(level, player);
-        if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!RechargeAccess.spendVis(stack, getVisCost())) {
             return InteractionResultHolder.fail(stack);
         }
         spawnOrb(level, player, target);

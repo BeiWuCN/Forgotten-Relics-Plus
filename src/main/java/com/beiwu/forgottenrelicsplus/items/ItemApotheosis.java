@@ -84,7 +84,7 @@ public class ItemApotheosis extends FRItem implements FRRechargable, IWarpingGea
                 || remainingUseDuration % interval != 0) {
             return;
         }
-        if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!RechargeAccess.spendVis(stack, getVisCost())) {
             return;
         }
         spawnBabylonWeapon(level, player);

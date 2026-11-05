@@ -66,7 +66,7 @@ public class ItemGhastlySkull extends FRItem implements FRRechargable, IWarpingG
             player.displayClientMessage(Component.translatable("item.ItemGhastlySkullFail.lore"), true);
             return InteractionResultHolder.fail(stack);
         }
-        if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!RechargeAccess.spendVis(stack, getVisCost())) {
             player.displayClientMessage(Component.translatable("item.ItemGhastlySkullNoVis.lore"), true);
             return InteractionResultHolder.fail(stack);
         }

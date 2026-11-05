@@ -140,7 +140,7 @@ public class ItemOverthrower extends FRItem implements FRRechargable, IWarpingGe
 
         int duration = getUseDuration(stack, player);
         int elapsed = duration - remainingUseDuration;
-        if (elapsed % VIS_INTERVAL == 0 && !RechargeAccess.consumeCharge(stack, player, getVisCostPerSecond())) {
+        if (elapsed % VIS_INTERVAL == 0 && !RechargeAccess.spendVis(stack, getVisCostPerSecond())) {
             stack.remove(FRDataComponents.EDICT_TARGET.get());
             player.stopUsingItem();
             return;

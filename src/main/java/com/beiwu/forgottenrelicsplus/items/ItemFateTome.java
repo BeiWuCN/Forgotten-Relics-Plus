@@ -91,7 +91,7 @@ public class ItemFateTome extends FRItem implements FRRechargable, IWarpingGear,
             return;
         }
 
-        if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!RechargeAccess.spendVis(stack, getVisCost())) {
             return;
         }
 

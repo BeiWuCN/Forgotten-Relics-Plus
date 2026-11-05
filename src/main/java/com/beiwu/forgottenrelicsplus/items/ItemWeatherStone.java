@@ -87,7 +87,7 @@ public class ItemWeatherStone extends FRItem implements FRRechargable {
         if (!level.isRaining()) {
             return;
         }
-        if (!com.leclowndu93150.thaumaturge.api.items.RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!com.leclowndu93150.thaumaturge.api.items.RechargeAccess.spendVis(stack, getVisCost())) {
             return;
         }
         SoundHelper.play(

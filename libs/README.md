@@ -4,16 +4,18 @@
 
 | 依赖 | 版本 | 用途 |
 | --- | --- | --- |
-| Thaumaturge | 1.0.2，用户提供的发布包 | 编译与运行必需 |
+| Thaumaturge | 1.1.0，CurseForge 正式发布包 | 编译与运行必需 |
 | Lithostitched | 1.8.0，NeoForge 21.1 | Thaumaturge 运行依赖 |
 | Botania | 457，本地现有构件 | 编译与运行必需 |
 | Curios | 9.5.1+1.21.1 | 编译与运行必需 |
 | TerraBlender | 4.1.0.8 | 可选开发依赖，新版 Thaumaturge 已不再要求 |
 | Patchouli | 93 | Botania 运行依赖 |
-| JEI、Mezz Config、Jade | 见锁定清单 | 可选开发环境，仅加入运行类路径 |
+| JEI | 19.64.0.455 | 可选开发依赖，与 Thaumaturge 1.1.0 的 JEI 注入匹配 |
+| Mezz Config | 0.6.3 | 新版 JEI 的运行依赖 |
+| Jade | 见锁定清单 | 可选开发环境，仅加入运行类路径 |
 | Modern UI | 3.13.0.1，Minecraft 1.21.1 NeoForge | 可选开发环境，用于客户端界面与字体渲染 |
 
-Thaumaturge 使用提供的 1.0.2 发布包，锁定文件名为 `thaumaturge-1.21.1-neoforge-1.0.2.jar`，SHA-256 为 `ce1e6f239a27056d4a9c7fe1d015b60f68f092501c64078731ffa99fa68b6904`。此前 1.0.0 本地源码构建的提交标记已移除。JEI 继续使用 19.36.0.360；研究笔记注入与数据生成已在 1.0.2 上验证。
+Thaumaturge 使用 CurseForge 的 Minecraft 1.21.1 / NeoForge 1.1.0 正式发布包，锁定文件名为 `thaumaturge-1.21.1-NeoForge-1.1.0.jar`，SHA-256 为 `2671390136fad5ac9abd36797cb0a5a938967a5c32399442589bb7720d463900`，可由依赖脚本自动下载。项目 1.8.0 使用新版 `spendVis`、`addVis` 和 `drawFromAura` 充能 API，最低要求 Thaumaturge 1.1.0。研究笔记注入、数据生成及 13 项游戏内测试已在此发布包上验证。
 
 本地光影开发环境使用 Iris 1.8.14-beta.1 与 Sodium 0.8.13，放在 `run/mods`；Iris 1.8.12 与 Sodium 0.6.13 的组合不兼容新版 Thaumaturge。这两项不是本模组的必需依赖。
 

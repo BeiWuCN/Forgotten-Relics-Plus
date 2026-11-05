@@ -12,10 +12,12 @@ Forgotten Relics 的 **Minecraft 1.21.1 / NeoForge** 非官方移植版，加入
 
 需要 **NeoForge 21.1.250+、Java 21**，以及以下前置：
 
-- Thaumaturge 1.0.2+
+- Thaumaturge 1.1.0+
 - Lithostitched 1.8.0+
 - Botania 457-SNAPSHOT+
 - Curios 9.0.0+
+
+如安装 JEI，请使用 **19.64.0.455+**；旧版与 Thaumaturge 1.1.0 同用时会在进入世界时崩溃。
 
 [下载](https://github.com/BeiWuCN/Forgotten-Relics-Plus/releases) · [问题反馈](https://github.com/BeiWuCN/Forgotten-Relics-Plus/issues) · [MC 百科](https://www.mcmod.cn/class/28217.html)
 

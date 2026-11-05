@@ -45,7 +45,7 @@ public class ItemDeificAmulet extends FRCurioItem
         if (wearer.getAirSupply() <= 0) {
 
             int cost = (int) (FRConfig.DEIFIC_AMULET_VIS_COST.get() * FRConfig.DEIFIC_AMULET_VIS_MULT.get());
-            if (RechargeAccess.consumeCharge(stack, wearer, cost)) {
+            if (RechargeAccess.spendVis(stack, cost)) {
                 wearer.setAirSupply(FRConfig.DEIFIC_AMULET_AIR_SUPPLY.get());
             }
         }

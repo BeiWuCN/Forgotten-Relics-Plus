@@ -23,17 +23,17 @@
       "optional": true
     },
     {
-      "file": "jei-1.21.1-neoforge-19.36.0.360.jar",
-      "sha256": "3dd662a9a565b183e3d5a8832afc664d1b51b99cb3dc35615ded7ccd9c0a7439",
+      "file": "jei-1.21.1-neoforge-19.64.0.455.jar",
+      "sha256": "f7a9de3d7ee07eed8d293a1a1a0f6afaac556eb43c103523457bd07ebb551e7b",
       "configuration": "runtimeOnly",
-      "url": "https://maven.blamejared.com/mezz/jei/jei-1.21.1-neoforge/19.36.0.360/jei-1.21.1-neoforge-19.36.0.360.jar",
+      "url": "https://maven.blamejared.com/mezz/jei/jei-1.21.1-neoforge/19.64.0.455/jei-1.21.1-neoforge-19.64.0.455.jar",
       "optional": true
     },
     {
-      "file": "mezz_config-1.21.1-neoforge-0.5.12.jar",
-      "sha256": "d6140c4f3aa25d36fad430148978037cc6991376354a58008525d6f65949f93d",
+      "file": "mezz_config-1.21.1-neoforge-0.6.3.jar",
+      "sha256": "408aa9e3ae67bca3f7269030c9937b9e716d4d5e995eb67ac23a0b6e7233c30f",
       "configuration": "runtimeOnly",
-      "url": "https://cdn.modrinth.com/data/7tEfOcA7/versions/MNYK1XxM/mezz_config-1.21.1-neoforge-0.5.12.jar",
+      "url": "https://cdn.modrinth.com/data/7tEfOcA7/versions/zcRUPwOA/mezz_config-1.21.1-neoforge-0.6.3.jar",
       "optional": true
     },
     {
@@ -51,10 +51,10 @@
       "optional": true
     },
     {
-      "file": "thaumaturge-1.21.1-neoforge-1.0.2.jar",
-      "sha256": "ce1e6f239a27056d4a9c7fe1d015b60f68f092501c64078731ffa99fa68b6904",
+      "file": "thaumaturge-1.21.1-NeoForge-1.1.0.jar",
+      "sha256": "2671390136fad5ac9abd36797cb0a5a938967a5c32399442589bb7720d463900",
       "configuration": "implementation",
-      "url": null,
+      "url": "https://edge.forgecdn.net/files/9452/543/thaumaturge-1.21.1-NeoForge-1.1.0.jar",
       "optional": false
     },
     {

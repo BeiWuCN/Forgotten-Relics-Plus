@@ -35,7 +35,7 @@ public class ItemDormantArcanum extends FRCurioItem implements FRRechargable, We
         int lifetime = stack.getOrDefault(FRDataComponents.DORMANT_LIFETIME.get(), 0);
         if (lifetime > 0) {
 
-            if (RechargeAccess.consumeCharge(stack, player, FRConfig.DORMANT_ARCANUM_VIS_COST_PER_TICK.get())) {
+            if (RechargeAccess.spendVis(stack, FRConfig.DORMANT_ARCANUM_VIS_COST_PER_TICK.get())) {
                 stack.set(FRDataComponents.DORMANT_LIFETIME.get(), lifetime - 1);
             }
             return;

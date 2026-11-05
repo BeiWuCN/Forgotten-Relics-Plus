@@ -95,7 +95,7 @@ public class ItemLunarFlares extends FRItem implements FRRechargable, IWarpingGe
         if (hit == null) {
             return;
         }
-        if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!RechargeAccess.spendVis(stack, getVisCost())) {
             return;
         }
         spawnLunarFlare(level, player, hit);

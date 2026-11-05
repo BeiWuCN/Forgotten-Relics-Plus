@@ -82,7 +82,7 @@ public class ItemChaosTome extends FRItem implements FRRechargable, IWarpingGear
                 || remainingUseDuration == USE_DURATION) {
             return;
         }
-        if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!RechargeAccess.spendVis(stack, getVisCost())) {
             return;
         }
         spawnOrb(level, player);

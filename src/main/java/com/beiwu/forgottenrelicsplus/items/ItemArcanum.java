@@ -102,7 +102,7 @@ public class ItemArcanum extends FRCurioItem
         if (candidate.isEmpty()) {
             return false;
         }
-        return RechargeAccess.rechargeItem(player.serverLevel(), candidate, player.blockPosition(), player, 1) > 0.0F;
+        return RechargeAccess.drawFromAura(player.serverLevel(), candidate, player.blockPosition(), player, 1) > 0.0F;
     }
 
     private static boolean randomTeleport(ServerPlayer player, int range) {

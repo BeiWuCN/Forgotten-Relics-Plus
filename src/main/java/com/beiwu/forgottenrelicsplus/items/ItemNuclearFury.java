@@ -92,7 +92,7 @@ public class ItemNuclearFury extends FRItem implements FRRechargable, IWarpingGe
 
         if (elapsed > 0
                 && elapsed % VIS_INTERVAL == SHOT_INTERVAL
-                && !RechargeAccess.consumeCharge(stack, player, getVisCostPerSecond())) {
+                && !RechargeAccess.spendVis(stack, getVisCostPerSecond())) {
             player.stopUsingItem();
             return;
         }

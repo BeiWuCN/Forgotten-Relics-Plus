@@ -12,10 +12,12 @@ Solve research notes with complexity **2–8** to unlock relic recipes and disco
 
 Requires **NeoForge 21.1.250+, Java 21** and these mods:
 
-- Thaumaturge 1.0.2+
+- Thaumaturge 1.1.0+
 - Lithostitched 1.8.0+
 - Botania 457-SNAPSHOT+
 - Curios 9.0.0+
+
+If JEI is installed, use **19.64.0.455+**. Older versions crash when entering a world with Thaumaturge 1.1.0.
 
 [Downloads](https://github.com/BeiWuCN/Forgotten-Relics-Plus/releases) · [Issues](https://github.com/BeiWuCN/Forgotten-Relics-Plus/issues) · [MCMod.cn](https://www.mcmod.cn/class/28217.html)
 

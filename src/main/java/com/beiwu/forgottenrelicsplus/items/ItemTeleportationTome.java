@@ -86,7 +86,7 @@ public class ItemTeleportationTome extends FRItem implements FRRechargable, IWar
         }
 
         if (player.isShiftKeyDown()) {
-            if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+            if (!RechargeAccess.spendVis(stack, getVisCost())) {
                 return InteractionResultHolder.fail(stack);
             }
             teleportForward(level, player);
@@ -96,7 +96,7 @@ public class ItemTeleportationTome extends FRItem implements FRRechargable, IWar
 
         LivingEntity pointed = findPointedEntity(level, player);
         if (pointed != null) {
-            if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+            if (!RechargeAccess.spendVis(stack, getVisCost())) {
                 return InteractionResultHolder.fail(stack);
             }
             swapWith(level, player, pointed);
@@ -105,7 +105,7 @@ public class ItemTeleportationTome extends FRItem implements FRRechargable, IWar
         }
 
         BlockPos landing = findPointedColumnTop(level, player);
-        if (landing != null && RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (landing != null && RechargeAccess.spendVis(stack, getVisCost())) {
             teleportToColumnTop(level, player, landing);
             finish(player, hand);
             return InteractionResultHolder.success(stack);

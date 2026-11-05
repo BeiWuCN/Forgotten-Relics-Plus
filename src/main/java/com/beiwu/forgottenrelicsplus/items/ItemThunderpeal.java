@@ -45,7 +45,7 @@ public class ItemThunderpeal extends FRItem implements FRRechargable {
         if (CooldownHelper.isOnCooldown(player)) {
             return InteractionResultHolder.fail(stack);
         }
-        if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!RechargeAccess.spendVis(stack, getVisCost())) {
             return InteractionResultHolder.fail(stack);
         }
         spawnOrb(level, player);

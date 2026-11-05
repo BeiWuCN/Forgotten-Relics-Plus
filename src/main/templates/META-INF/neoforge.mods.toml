@@ -31,7 +31,7 @@ side = "BOTH"
 [[dependencies."${mod_id}"]]
 modId = "thaumaturge"
 type = "required"
-versionRange = "[1.0.2,)"
+versionRange = "[1.1.0,)"
 ordering = "AFTER"
 side = "BOTH"
 [[dependencies."${mod_id}"]]
@@ -52,3 +52,10 @@ type = "required"
 versionRange = "[1.8.0,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "jei"
+type = "optional"
+versionRange = "[19.64.0.455,)"
+ordering = "AFTER"
+side = "CLIENT"

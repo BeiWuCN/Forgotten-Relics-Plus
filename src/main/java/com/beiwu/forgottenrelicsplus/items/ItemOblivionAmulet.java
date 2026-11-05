@@ -90,7 +90,7 @@ public class ItemOblivionAmulet extends FRCurioItem
             return;
         }
         int cost = (int) (event.getAmount() * 8.0F * FRConfig.OBLIVION_AMULET_VIS_MULT.get());
-        if (!RechargeAccess.consumeCharge(stack, wearer, cost)) {
+        if (!RechargeAccess.spendVis(stack, cost)) {
             return;
         }
         setStoredDamage(stack, getStoredDamage(stack) + event.getAmount());

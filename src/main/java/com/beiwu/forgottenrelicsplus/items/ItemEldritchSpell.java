@@ -53,7 +53,7 @@ public class ItemEldritchSpell extends FRItem implements FRRechargable, IWarping
         if (CooldownHelper.isOnCooldown(player)) {
             return InteractionResultHolder.fail(stack);
         }
-        if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+        if (!RechargeAccess.spendVis(stack, getVisCost())) {
             return InteractionResultHolder.fail(stack);
         }
         spawnOrb(level, player);

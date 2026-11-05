@@ -189,7 +189,7 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
             return;
         }
 
-        if (elapsed % VIS_INTERVAL == 0 && !RechargeAccess.consumeCharge(stack, player, getControlVisCost())) {
+        if (elapsed % VIS_INTERVAL == 0 && !RechargeAccess.spendVis(stack, getControlVisCost())) {
             player.stopUsingItem();
             return;
         }
@@ -294,7 +294,7 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
         Vec3 moveVector = player.getLookAngle().normalize();
 
         double distance = player.distanceTo(target);
-        if (distance <= LIGHTNING_RANGE && RechargeAccess.consumeCharge(stack, player, getLightningVisCost())) {
+        if (distance <= LIGHTNING_RANGE && RechargeAccess.spendVis(stack, getLightningVisCost())) {
             if (level instanceof ServerLevel server) {
 
                 double width = 0.225D + player.distanceToSqr(target) / 2000.0D;
@@ -324,7 +324,7 @@ public class ItemTelekinesisTome extends FRItem implements FRRechargable, IWarpi
                     (min + level.random.nextDouble() * (max - min)));
         }
 
-        if (player.isShiftKeyDown() && RechargeAccess.consumeCharge(stack, player, getShoveVisCost())) {
+        if (player.isShiftKeyDown() && RechargeAccess.spendVis(stack, getShoveVisCost())) {
 
             target.setDeltaMovement(moveVector.x * 3.0D, moveVector.y * 1.5D, moveVector.z * 3.0D);
             target.hurtMarked = true;

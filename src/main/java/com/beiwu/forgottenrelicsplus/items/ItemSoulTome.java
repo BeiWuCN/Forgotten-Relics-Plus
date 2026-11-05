@@ -117,13 +117,13 @@ public class ItemSoulTome extends FRItem implements FRRechargable, IWarpingGear 
 
         for (LivingEntity target : entities) {
             if (player.distanceTo(target) <= KNOCKBACK_RANGE
-                    && RechargeAccess.consumeCharge(stack, player, getKnockbackVisCost())) {
+                    && RechargeAccess.spendVis(stack, getKnockbackVisCost())) {
                 knockBack(level, player, target);
             }
         }
 
         if (remainingUseDuration % DRAIN_INTERVAL == 0) {
-            if (!RechargeAccess.consumeCharge(stack, player, getVisCost())) {
+            if (!RechargeAccess.spendVis(stack, getVisCost())) {
                 return;
             }
             if (entities.isEmpty()) {

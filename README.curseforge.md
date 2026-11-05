@@ -8,7 +8,9 @@ Gameplay behavior is based on [Forgotten Relics: RE](https://www.curseforge.com/
 
 Compared with its predecessors, Plus targets **Minecraft 1.21.1 / NeoForge**, integrates Thaumaturge's research and charging systems, adds research-note recipe gates and conditional Omega Core research, and reworks projectile targeting, motion and rendering.
 
-**Requires:** Thaumaturge 1.0.2+, Lithostitched 1.8.0+, Botania and Curios.
+**Optional JEI:** 19.64.0.455+ is required if installed.
+
+**Requires:** Thaumaturge 1.1.0+, Lithostitched 1.8.0+, Botania and Curios.
 
 ---
 
@@ -22,7 +24,9 @@ Forgotten Relics 的 **Minecraft 1.21.1 / NeoForge** 非官方移植版，加入
 
 与前作相比，Plus 面向 **Minecraft 1.21.1 / NeoForge**，适配 Thaumaturge 的研究与充能体系，加入研究笔记配方解锁和条件加载的欧米伽之核研究，并重做召唤物的觅敌、运动与渲染。
 
-**必需前置：** Thaumaturge 1.0.2+、Lithostitched 1.8.0+、Botania 和 Curios。
+**可选 JEI：** 如安装，请使用 19.64.0.455+。
+
+**必需前置：** Thaumaturge 1.1.0+、Lithostitched 1.8.0+、Botania 和 Curios。
 
 ![Forgotten Relics Plus Research Tree](https://raw.githubusercontent.com/BeiWuCN/Forgotten-Relics-Plus/main/show.png)
 
