@@ -32,7 +32,7 @@ jobs:
         env:
           DEPS_BASE_URL: ${{ secrets.DEPS_BASE_URL }}
         shell: pwsh
-        run: ./scripts/setup-dependencies.ps1 -Source "$env:FR_DEPS_SOURCE"
+        run: ./scripts/setup-dependencies.ps1 -Source "$env:FR_DEPS_SOURCE" -Optional:([bool]$env:FR_DEPS_SOURCE)
       - name: Test and validate resources
         run: .\gradlew.bat clean build --console=plain
       - name: Check datagen output
